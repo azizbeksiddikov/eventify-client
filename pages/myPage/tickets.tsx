@@ -2,12 +2,11 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { EventInput } from '@/libs/types/event/event.input';
 import { Button } from '@/libs/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/libs/components/ui/card';
-import { Input } from '@/libs/components/ui/input';
-import { Label } from '@/libs/components/ui/label';
-import { Separator } from '@/libs/components/ui/separator';
+import { Card, CardContent, CardHeader, CardTitle } from '../../libs/components/ui/card';
+import { Input } from '../../libs/components/ui/input';
+import { Separator } from '../../libs/components/ui/separator';
 import { Calendar, MapPin, Clock, CreditCard } from 'lucide-react';
-import LoadingComponent from '@/libs/components/common/LoadingComponent';
+import LoadingComponent from '../../libs/components/common/LoadingComponent';
 
 const TicketPurchasePage = () => {
 	const router = useRouter();

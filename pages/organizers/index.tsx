@@ -1,14 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { Button } from '@/libs/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/libs/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/libs/components/ui/tabs';
-import { Avatar, AvatarFallback, AvatarImage } from '@/libs/components/ui/avatar';
-import { Input } from '@/libs/components/ui/input';
-import { Textarea } from '@/libs/components/ui/textarea';
-import { MemberInput, MemberStats, MemberActivity } from '@/libs/types/member/member.input';
-import ErrorComponent from '@/libs/components/common/ErrorComponent';
-import LoadingComponent from '@/libs/components/common/LoadingComponent';
+import { Button } from '../../libs/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '../../libs/components/ui/card';
+import { Avatar, AvatarFallback, AvatarImage } from '../../libs/components/ui/avatar';
+import { Input } from '../../libs/components/ui/input';
+import { MemberInput, MemberStats, MemberActivity } from '../../libs/types/member/member.input';
+import ErrorComponent from '../../libs/components/common/ErrorComponent';
+import LoadingComponent from '../../libs/components/common/LoadingComponent';
 
 const ProfilePage = () => {
 	const router = useRouter();

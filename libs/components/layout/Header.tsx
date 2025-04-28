@@ -30,7 +30,7 @@ const Header = () => {
 				<div className="flex items-center justify-between">
 					{/* Logo */}
 					<Link href="/" className="flex items-center gap-3">
-						<Image src="/images/image.png" alt="Eventify Logo" width={48} height={48} />
+						<Image src="/images/logo.png" alt="Eventify Logo" width={48} height={48} />
 						<span className="text-2xl font-bold text-foreground">Eventify</span>
 					</Link>
 

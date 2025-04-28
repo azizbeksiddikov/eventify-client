@@ -8,16 +8,7 @@ const withBasicLayout = (Page: NextPage) => {
 	const WrappedComponent = (props: Record<string, unknown>) => {
 		const device = useDeviceDetect();
 
-		if (device === 'mobile') {
-			return (
-				<div className="min-h-screen flex flex-col">
-					<div className="p-4">Mobile Layout</div>
-					<main className="flex-1">
-						<Page {...props} />
-					</main>
-				</div>
-			);
-		}
+		if (device === 'mobile') return null;
 
 		return (
 			<div className="min-h-screen flex flex-col">
