@@ -1,0 +1,36 @@
+import { EventStatus, EventCategory } from '../../enums/event.enum';
+import { Direction } from '../../enums/common.enum';
+
+export interface EventInput {
+	eventName: string;
+	eventDesc: string;
+	eventImage: string;
+	eventDate: Date;
+	eventStartTime: string;
+	eventEndTime: string;
+	eventAddress: string;
+	eventCapacity: number;
+	eventPrice?: number;
+	eventStatus?: EventStatus;
+	eventCategories: EventCategory[];
+	groupId: string;
+}
+
+export interface EISearch {
+	text?: string;
+	eventCategories?: EventCategory[];
+	eventStatus?: EventStatus;
+}
+
+export interface EventsInquiry {
+	page: number;
+	limit: number;
+	sort?: string;
+	direction?: Direction;
+	search: EISearch;
+}
+
+export interface OrdinaryEventInquiry {
+	page: number;
+	limit: number;
+}
