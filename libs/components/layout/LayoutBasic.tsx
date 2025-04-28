@@ -1,5 +1,5 @@
 import React from 'react';
-import Footer from '../Footer';
+import Footer from './Footer';
 import Header from './Header';
 import useDeviceDetect from '../../hooks/useDeviceDetect';
 import { NextPage } from 'next';
