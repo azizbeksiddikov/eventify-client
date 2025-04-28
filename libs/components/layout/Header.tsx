@@ -52,21 +52,14 @@ const Header = () => {
 					</nav>
 
 					{/* Mobile Menu Button */}
-					<button
-						className="md:hidden"
-						onClick={() => setIsMenuOpen(!isMenuOpen)}
-						aria-label="Toggle menu"
-					>
+					<button className="md:hidden" onClick={() => setIsMenuOpen(!isMenuOpen)} aria-label="Toggle menu">
 						<Menu className="h-6 w-6" />
 					</button>
 
 					{/* User Menu */}
 					{isAuthenticated ? (
 						<div className="relative">
-							<button
-								onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-								className="flex items-center gap-2"
-							>
+							<button onClick={() => setIsUserMenuOpen(!isUserMenuOpen)} className="flex items-center gap-2">
 								<Avatar>
 									<AvatarImage src={user?.profileImage} />
 									<AvatarFallback>
@@ -80,16 +73,10 @@ const Header = () => {
 							{isUserMenuOpen && (
 								<div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-background border">
 									<div className="py-1">
-										<Link
-											href="/profile"
-											className="block px-4 py-2 text-sm text-foreground hover:bg-accent"
-										>
+										<Link href="/profile" className="block px-4 py-2 text-sm text-foreground hover:bg-accent">
 											Profile
 										</Link>
-										<Link
-											href="/settings"
-											className="block px-4 py-2 text-sm text-foreground hover:bg-accent"
-										>
+										<Link href="/settings" className="block px-4 py-2 text-sm text-foreground hover:bg-accent">
 											Settings
 										</Link>
 										<button
@@ -165,4 +152,3 @@ const Header = () => {
 };
 
 export default Header;
- 

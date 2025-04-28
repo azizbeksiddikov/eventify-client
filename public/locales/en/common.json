@@ -1,0 +1,16 @@
+{
+	"common": {
+		"welcome": "Welcome to Eventify",
+		"login": "Login",
+		"register": "Register",
+		"logout": "Logout",
+		"profile": "Profile",
+		"settings": "Settings",
+		"events": "Events",
+		"createEvent": "Create Event",
+		"search": "Search",
+		"language": "Language",
+		"notifications": "Notifications",
+		"messages": "Messages"
+	}
+}

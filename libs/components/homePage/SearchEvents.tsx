@@ -1,118 +1,100 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 
-interface SearchFilters {
-	location: string;
-	eventType: string;
-	fromDate: string;
-	toDate: string;
-}
-
 const SearchEvents = () => {
 	const router = useRouter();
-	const [filters, setFilters] = useState<SearchFilters>({
-		location: '',
-		eventType: '',
-		fromDate: '',
-		toDate: '',
-	});
-
-	const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-		const { name, value } = e.target;
-		setFilters((prev) => ({
-			...prev,
-			[name]: value,
-		}));
-	};
+	const [searchQuery, setSearchQuery] = useState('');
+	const [startDate, setStartDate] = useState('');
+	const [endDate, setEndDate] = useState('');
+	const [location, setLocation] = useState('');
 
 	const handleSearch = (e: React.FormEvent) => {
 		e.preventDefault();
-		// Navigate to events page with search parameters
+
+		const query: Record<string, string> = {};
+
+		if (searchQuery.trim()) {
+			query.q = searchQuery.trim();
+		}
+		if (location.trim()) {
+			query.location = location.trim();
+		}
+		if (startDate) {
+			query.startDate = startDate;
+		}
+		if (endDate) {
+			query.endDate = endDate;
+		}
+
 		router.push({
-			pathname: '/events',
-			query: filters,
+			pathname: '/groups',
+			query,
 		});
 	};
 
 	return (
-		<div className="bg-white p-6 rounded-lg shadow-lg">
-			<h2 className="text-2xl font-bold text-gray-900 mb-6">Find Events</h2>
-			<form onSubmit={handleSearch} className="space-y-4">
-				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-					<div>
-						<label htmlFor="location" className="block text-sm font-medium text-gray-700">
-							Location
-						</label>
+		<div className="w-full bg-[#E60023]/5 py-12">
+			<div className="w-full max-w-6xl mx-auto">
+				<h2 className="text-3xl font-bold text-[#111111] mb-8 text-center">Find Your Next Event</h2>
+				<form onSubmit={handleSearch} className="flex items-center gap-4 bg-white p-8 rounded-2xl shadow-lg">
+					<div className="flex-1 relative">
 						<input
 							type="text"
-							id="location"
-							name="location"
-							value={filters.location}
-							onChange={handleChange}
-							placeholder="Enter city or venue"
-							className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+							placeholder="Search events, groups, or organizers..."
+							className="w-full px-6 py-5 rounded-full bg-white border border-[#E5E5E5] focus:outline-none focus:border-[#E60023] focus:ring-2 focus:ring-[#FF4D4D] text-[#111111] text-lg transition-all duration-300"
+							value={searchQuery}
+							onChange={(e) => setSearchQuery(e.target.value)}
 						/>
-					</div>
-
-					<div>
-						<label htmlFor="eventType" className="block text-sm font-medium text-gray-700">
-							Event Type
-						</label>
-						<select
-							id="eventType"
-							name="eventType"
-							value={filters.eventType}
-							onChange={handleChange}
-							className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+						<button
+							type="submit"
+							className="absolute right-2 top-1/2 transform -translate-y-1/2 p-2 text-[#E60023] hover:text-[#CC0000] transition-colors duration-300"
 						>
-							<option value="">All Types</option>
-							<option value="concert">Concert</option>
-							<option value="conference">Conference</option>
-							<option value="exhibition">Exhibition</option>
-							<option value="festival">Festival</option>
-							<option value="sports">Sports</option>
-							<option value="workshop">Workshop</option>
-						</select>
+							<svg
+								className="w-6 h-6"
+								fill="none"
+								stroke="currentColor"
+								viewBox="0 0 24 24"
+								xmlns="http://www.w3.org/2000/svg"
+							>
+								<path
+									strokeLinecap="round"
+									strokeLinejoin="round"
+									strokeWidth={2}
+									d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+								/>
+							</svg>
+						</button>
 					</div>
-
-					<div>
-						<label htmlFor="fromDate" className="block text-sm font-medium text-gray-700">
-							From Date
-						</label>
+					<input
+						type="text"
+						placeholder="Location"
+						className="w-48 px-6 py-5 rounded-full bg-white border border-[#E5E5E5] focus:outline-none focus:border-[#E60023] focus:ring-2 focus:ring-[#FF4D4D] text-[#111111] transition-all duration-300"
+						value={location}
+						onChange={(e) => setLocation(e.target.value)}
+					/>
+					<div className="flex items-center gap-2">
 						<input
 							type="date"
-							id="fromDate"
-							name="fromDate"
-							value={filters.fromDate}
-							onChange={handleChange}
-							className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+							value={startDate}
+							onChange={(e) => setStartDate(e.target.value)}
+							className="w-40 px-6 py-5 rounded-full bg-white border border-[#E5E5E5] focus:outline-none focus:border-[#E60023] focus:ring-2 focus:ring-[#FF4D4D] text-[#111111] transition-all duration-300"
 						/>
-					</div>
-
-					<div>
-						<label htmlFor="toDate" className="block text-sm font-medium text-gray-700">
-							To Date
-						</label>
+						<span className="text-[#6E6E6E]">to</span>
 						<input
 							type="date"
-							id="toDate"
-							name="toDate"
-							value={filters.toDate}
-							onChange={handleChange}
-							className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+							value={endDate}
+							onChange={(e) => setEndDate(e.target.value)}
+							className="w-40 px-6 py-5 rounded-full bg-white border border-[#E5E5E5] focus:outline-none focus:border-[#E60023] focus:ring-2 focus:ring-[#FF4D4D] text-[#111111] transition-all duration-300"
 						/>
 					</div>
-				</div>
-
-				<div className="flex justify-end">
 					<button
 						type="submit"
-						className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+						className="px-8 py-5 bg-[#E60023] text-white rounded-full font-medium hover:bg-[#CC0000] transition-colors duration-300 whitespace-nowrap shadow-md hover:shadow-lg"
 					>
 						Search Events
 					</button>
-				</div>
-			</form>
+				</form>
+			</div>
 		</div>
 	);
 };
