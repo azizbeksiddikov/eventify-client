@@ -124,21 +124,21 @@ const EventCreatePage = () => {
 								Select Group
 							</label>
 							<Select
-								value={formData.organizerId}
-								onValueChange={(value: string) => setFormData((prev) => ({ ...prev, organizerId: value }))}
+								value={formData.groupId}
+								onValueChange={(value: string) => setFormData((prev) => ({ ...prev, groupId: value }))}
 							>
 								<SelectTrigger className="w-full">
 									<SelectValue placeholder="Select a group">
-										{formData.organizerId && (
+										{formData.groupId && (
 											<div className="flex items-center space-x-3">
 												<div className="relative h-8 w-8 rounded-full overflow-hidden">
 													<img
-														src={userGroups.find((g) => g.id === formData.organizerId)?.image}
+														src={userGroups.find((g) => g.id === formData.groupId)?.image}
 														alt="Group preview"
 														className="object-cover w-full h-full"
 													/>
 												</div>
-												<span>{userGroups.find((g) => g.id === formData.organizerId)?.name}</span>
+												<span>{userGroups.find((g) => g.id === formData.groupId)?.name}</span>
 											</div>
 										)}
 									</SelectValue>
@@ -169,7 +169,7 @@ const EventCreatePage = () => {
 							<Input
 								id="name"
 								name="name"
-								value={formData.name}
+								value={formData.eventName}
 								onChange={handleInputChange}
 								placeholder="Enter event name"
 								required
@@ -184,7 +184,7 @@ const EventCreatePage = () => {
 							<Textarea
 								id="description"
 								name="description"
-								value={formData.description}
+								value={formData.eventDesc}
 								onChange={handleInputChange}
 								placeholder="Describe your event"
 								className="min-h-[120px]"
@@ -235,8 +235,8 @@ const EventCreatePage = () => {
 									id="startDate"
 									name="startDate"
 									type="datetime-local"
-									value={formData.startDate.toISOString().slice(0, 16)}
-									onChange={(e) => setFormData((prev) => ({ ...prev, startDate: new Date(e.target.value) }))}
+									value={formData.eventDate.toISOString().slice(0, 16)}
+									onChange={(e) => setFormData((prev) => ({ ...prev, eventDate: new Date(e.target.value) }))}
 									required
 								/>
 							</div>
@@ -248,8 +248,8 @@ const EventCreatePage = () => {
 									id="endDate"
 									name="endDate"
 									type="datetime-local"
-									value={formData.endDate.toISOString().slice(0, 16)}
-									onChange={(e) => setFormData((prev) => ({ ...prev, endDate: new Date(e.target.value) }))}
+									value={formData.eventDate.toISOString().slice(0, 16)}
+									onChange={(e) => setFormData((prev) => ({ ...prev, eventDate: new Date(e.target.value) }))}
 									required
 								/>
 							</div>
@@ -263,7 +263,7 @@ const EventCreatePage = () => {
 							<Input
 								id="location"
 								name="location"
-								value={formData.location}
+								value={formData.eventAddress}
 								onChange={handleInputChange}
 								placeholder="Enter event location"
 								required
@@ -281,7 +281,7 @@ const EventCreatePage = () => {
 									name="capacity"
 									type="number"
 									min="1"
-									value={formData.capacity}
+									value={formData.eventCapacity}
 									onChange={handleInputChange}
 									placeholder="Enter event capacity"
 									required
@@ -297,7 +297,7 @@ const EventCreatePage = () => {
 									type="number"
 									min="0"
 									step="0.01"
-									value={formData.price}
+									value={formData.eventPrice}
 									onChange={handleInputChange}
 									placeholder="Enter event price"
 									required
