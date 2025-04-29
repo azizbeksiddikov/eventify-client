@@ -15,6 +15,9 @@ export interface Group {
 	eventsCount: number;
 	createdAt: Date;
 	updatedAt: Date;
+
+	// from aggregate
+	meOwner?: boolean;
 }
 
 export interface Groups {

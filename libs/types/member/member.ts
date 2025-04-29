@@ -1,5 +1,6 @@
 import { MemberType, MemberStatus } from '../../enums/member.enum';
 import { MeFollowed } from '../follow/follow';
+import { Group } from '../group/group';
 import { MeLiked } from '../like/like';
 
 export interface Member {
@@ -25,6 +26,10 @@ export interface Member {
 
 	meLiked?: MeLiked[];
 	meFollowed?: MeFollowed[];
+	events?: Event[];
+	groups?: Group[];
+	organizedEvents?: Event[];
+	organizedGroups?: Group[];
 }
 
 export interface TotalCounter {
