@@ -1,19 +1,22 @@
 import { useState, useEffect } from 'react';
 import { Button } from '../libs/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../libs/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../libs/components/ui/tabs';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 import { Input } from '../libs/components/ui/input';
-import { MemberInput, EventInput, CommentInput } from '../libs/types';
 import ErrorComponent from '../libs/components/common/ErrorComponent';
 import LoadingComponent from '../libs/components/common/LoadingComponent';
 import { Search, Trash2, Ban, CheckCircle2, MessageSquare } from 'lucide-react';
+import { Member } from '@/libs/types/member/member';
+import { EventInput } from '@/libs/types/event/event.input';
+import { Event } from '@/libs/types/event/event';
+import { Comment } from '@/libs/types/comment/comment';
 
 const AdminPage = () => {
 	const [activeTab, setActiveTab] = useState('members');
 	const [searchTerm, setSearchTerm] = useState('');
-	const [members, setMembers] = useState<MemberInput[]>([]);
-	const [events, setEvents] = useState<EventInput[]>([]);
-	const [comments, setComments] = useState<CommentInput[]>([]);
+	const [members, setMembers] = useState<Member[]>([]);
+	const [events, setEvents] = useState<Event[]>([]);
+	const [comments, setComments] = useState<Comment[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 
