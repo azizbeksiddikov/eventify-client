@@ -7,23 +7,26 @@ import { Button } from '@/libs/components/ui/button';
 import { Badge } from '@/libs/components/ui/badge';
 import { Card } from '@/libs/components/ui/card';
 import { Avatar } from '@/libs/components/ui/avatar';
-import { Users, Calendar, MessageSquare, Heart, Eye, ChevronRight, Shield, Crown } from 'lucide-react';
+import { Users, Calendar, Heart, Eye, Shield, Crown } from 'lucide-react';
 import withBasicLayout from '@/libs/components/layout/LayoutBasic';
 import { GroupMember } from '@/libs/types/groupMembers/groupMember';
 import { GroupMemberRole, GroupCategory } from '@/libs/enums/group.enum';
-import { Event } from '@/libs/types/event/event';
 import { Comment } from '@/libs/types/comment/comment';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
-import { Textarea } from '@/components/ui/textarea';
+import Comments from '@/libs/components/CommentsComponent';
+import { CommentGroup } from '@/libs/enums/comment.enum';
+import { CommentStatus } from '@/libs/enums/comment.enum';
+import { MemberStatus, MemberType } from '@/libs/enums/member.enum';
+import { Event } from '@/libs/types/event/event';
+import { EventCategory } from '@/libs/enums/event.enum';
+import { EventStatus } from '@/libs/enums/event.enum';
 
 const GroupDetailPage = () => {
 	const router = useRouter();
-	const { groupId } = router.query;
+	// const { groupId } = router.query;
 	const [isLiked, setIsLiked] = useState(false);
 	const [likesCount, setLikesCount] = useState(0);
 	const [isJoined, setIsJoined] = useState(false);
-	const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
-	const [newComment, setNewComment] = useState('');
 
 	const handleLike = async () => {
 		try {
@@ -47,15 +50,6 @@ const GroupDetailPage = () => {
 		}
 	};
 
-	const handleAddComment = () => {
-		if (newComment.trim()) {
-			// TODO: Implement comment submission
-			setNewComment('');
-			setIsCommentModalOpen(false);
-		}
-	};
-
-	// Mock data
 	const group: Group = {
 		_id: '1',
 		groupLink: '/groups/1',
@@ -64,55 +58,93 @@ const GroupDetailPage = () => {
 			'A community for technology enthusiasts to share and learn. Join us for discussions, events, and networking opportunities.',
 		groupImage: 'https://images.pexels.com/photos/1181406/pexels-photo-1181406.jpeg',
 		groupOwnerId: 'owner1',
-		groupCategories: [GroupCategory.TECHNOLOGY],
+		groupCategories: [GroupCategory.TECHNOLOGY, GroupCategory.SPORTS],
 		groupViews: 1000,
 		groupLikes: 500,
 		memberCount: 150,
+		eventsCount: 10,
 		createdAt: new Date(),
 		updatedAt: new Date(),
 	};
 
 	const similarGroups: Group[] = [
 		{
-			_id: '2',
-			groupLink: '/groups/2',
-			groupName: 'Web Developers',
-			groupDesc: 'A community for web developers to share knowledge and collaborate.',
-			groupImage: 'https://images.pexels.com/photos/1181671/pexels-photo-1181671.jpeg',
-			groupOwnerId: 'owner2',
+			_id: '1',
+			groupLink: '/groups/1',
+			groupName: 'Tech Enthusiasts',
+			groupDesc:
+				'A community for technology enthusiasts to share and learn. Join us for discussions, events, and networking opportunities.',
+			groupImage: 'https://images.pexels.com/photos/1181406/pexels-photo-1181406.jpeg',
+			groupOwnerId: 'owner1',
 			groupCategories: [GroupCategory.TECHNOLOGY],
-			groupViews: 800,
-			groupLikes: 400,
-			memberCount: 200,
+			groupViews: 1000,
+			groupLikes: 500,
+			memberCount: 150,
+			eventsCount: 10,
 			createdAt: new Date(),
 			updatedAt: new Date(),
 		},
 		{
-			_id: '3',
-			groupLink: '/groups/3',
-			groupName: 'AI & ML Community',
-			groupDesc: 'Discussing artificial intelligence and machine learning topics.',
-			groupImage: 'https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg',
-			groupOwnerId: 'owner3',
+			_id: '1',
+			groupLink: '/groups/1',
+			groupName: 'Tech Enthusiasts',
+			groupDesc:
+				'A community for technology enthusiasts to share and learn. Join us for discussions, events, and networking opportunities.',
+			groupImage: 'https://images.pexels.com/photos/1181406/pexels-photo-1181406.jpeg',
+			groupOwnerId: 'owner1',
 			groupCategories: [GroupCategory.TECHNOLOGY],
-			groupViews: 600,
-			groupLikes: 300,
-			memberCount: 120,
+			groupViews: 1000,
+			groupLikes: 500,
+			memberCount: 150,
+			eventsCount: 10,
+			createdAt: new Date(),
+			updatedAt: new Date(),
+		},
+		{
+			_id: '1',
+			groupLink: '/groups/1',
+			groupName: 'Tech Enthusiasts',
+			groupDesc:
+				'A community for technology enthusiasts to share and learn. Join us for discussions, events, and networking opportunities.',
+			groupImage: 'https://images.pexels.com/photos/1181406/pexels-photo-1181406.jpeg',
+			groupOwnerId: 'owner1',
+			groupCategories: [GroupCategory.TECHNOLOGY],
+			groupViews: 1000,
+			groupLikes: 500,
+			memberCount: 150,
+			eventsCount: 10,
 			createdAt: new Date(),
 			updatedAt: new Date(),
 		},
 	];
 
 	// Mock data for group members
-	const groupMembers: GroupMember[] = [
+	const groupAdmins: GroupMember[] = [
 		{
 			_id: '1',
 			groupId: '1',
 			memberId: 'owner1',
 			groupMemberRole: GroupMemberRole.OWNER,
 			joinDate: new Date('2024-01-01'),
-			createdAt: new Date(),
-			updatedAt: new Date(),
+			createdAt: new Date('2024-01-01'),
+			updatedAt: new Date('2024-01-01'),
+			memberData: {
+				_id: 'owner1',
+				username: 'johnsmith',
+				memberEmail: 'john@example.com',
+				memberFullName: 'John Smith',
+				memberType: MemberType.ADMIN,
+				memberStatus: MemberStatus.ACTIVE,
+				emailVerified: true,
+				memberImage: 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg',
+				memberPoints: 1000,
+				memberLikes: 250,
+				memberFollowings: 50,
+				memberFollowers: 150,
+				memberViews: 500,
+				createdAt: new Date('2024-01-01'),
+				updatedAt: new Date('2024-01-01'),
+			},
 		},
 		{
 			_id: '2',
@@ -120,8 +152,25 @@ const GroupDetailPage = () => {
 			memberId: 'mod1',
 			groupMemberRole: GroupMemberRole.MODERATOR,
 			joinDate: new Date('2024-01-15'),
-			createdAt: new Date(),
-			updatedAt: new Date(),
+			createdAt: new Date('2024-01-15'),
+			updatedAt: new Date('2024-01-15'),
+			memberData: {
+				_id: 'mod1',
+				username: 'sarahj',
+				memberEmail: 'sarah@example.com',
+				memberFullName: 'Sarah Johnson',
+				memberType: MemberType.ORGANIZER,
+				memberStatus: MemberStatus.ACTIVE,
+				emailVerified: true,
+				memberImage: 'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg',
+				memberPoints: 750,
+				memberLikes: 180,
+				memberFollowings: 35,
+				memberFollowers: 90,
+				memberViews: 300,
+				createdAt: new Date('2024-01-15'),
+				updatedAt: new Date('2024-01-15'),
+			},
 		},
 		{
 			_id: '3',
@@ -129,8 +178,25 @@ const GroupDetailPage = () => {
 			memberId: 'mod2',
 			groupMemberRole: GroupMemberRole.MODERATOR,
 			joinDate: new Date('2024-02-01'),
-			createdAt: new Date(),
-			updatedAt: new Date(),
+			createdAt: new Date('2024-02-01'),
+			updatedAt: new Date('2024-02-01'),
+			memberData: {
+				_id: 'mod2',
+				username: 'mikeb',
+				memberEmail: 'mike@example.com',
+				memberFullName: 'Mike Brown',
+				memberType: MemberType.ORGANIZER,
+				memberStatus: MemberStatus.ACTIVE,
+				emailVerified: true,
+				memberImage: 'https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg',
+				memberPoints: 500,
+				memberLikes: 120,
+				memberFollowings: 25,
+				memberFollowers: 60,
+				memberViews: 200,
+				createdAt: new Date('2024-02-01'),
+				updatedAt: new Date('2024-02-01'),
+			},
 		},
 	];
 
@@ -153,71 +219,74 @@ const GroupDetailPage = () => {
 		},
 	};
 
-	// Mock data for group events
-	const groupEvents: Event[] = [
-		{
-			_id: '1',
-			eventName: 'Tech Meetup',
-			eventDesc: 'Monthly tech meetup for developers',
-			eventImage: 'https://images.pexels.com/photos/1181406/pexels-photo-1181406.jpeg',
-			eventDate: new Date('2024-04-15'),
-			eventTime: '18:00',
-			eventLocation: 'Tech Hub, Downtown',
-			eventCategories: [GroupCategory.TECHNOLOGY],
-			eventViews: 150,
-			eventLikes: 75,
-			eventParticipants: 50,
-			createdAt: new Date(),
-			updatedAt: new Date(),
-		},
-		{
-			_id: '2',
-			eventName: 'Web Development Workshop',
-			eventDesc: 'Hands-on workshop for web developers',
-			eventImage: 'https://images.pexels.com/photos/1181671/pexels-photo-1181671.jpeg',
-			eventDate: new Date('2024-04-20'),
-			eventTime: '14:00',
-			eventLocation: 'Innovation Center',
-			eventCategories: [GroupCategory.TECHNOLOGY],
-			eventViews: 200,
-			eventLikes: 100,
-			eventParticipants: 30,
-			createdAt: new Date(),
-			updatedAt: new Date(),
-		},
-	];
-
 	// Mock data for group comments
 	const groupComments: Comment[] = [
 		{
 			_id: '1',
-			content: 'Great group! Looking forward to the next meetup.',
-			authorId: 'user1',
-			groupId: '1',
+			commentStatus: CommentStatus.ACTIVE,
+			commentGroup: CommentGroup.GROUP,
+			commentContent: 'Great group! Looking forward to the next meetup.',
+			commentRefId: '1',
+			memberId: 'user1',
 			createdAt: new Date('2024-03-15'),
 			updatedAt: new Date('2024-03-15'),
 		},
 		{
 			_id: '2',
-			content: 'The last workshop was very informative. Thanks for organizing!',
-			authorId: 'user2',
-			groupId: '1',
+			commentStatus: CommentStatus.ACTIVE,
+			commentGroup: CommentGroup.GROUP,
+			commentContent: 'The last workshop was very informative. Thanks for organizing!',
+			commentRefId: '1',
+			memberId: 'user2',
 			createdAt: new Date('2024-03-20'),
 			updatedAt: new Date('2024-03-20'),
 		},
 	];
 
-	// Mock data for comment authors
-	const commentAuthors = {
-		user1: {
-			name: 'Alex Johnson',
-			avatar: 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg',
+	const groupEvents: Event[] = [
+		{
+			_id: '1',
+			eventName: 'Tech Meetup',
+			eventDesc: 'A meetup for technology enthusiasts to share and learn.',
+			eventImage: 'https://images.pexels.com/photos/1181406/pexels-photo-1181406.jpeg',
+			eventDate: new Date('2024-04-01'),
+			eventStartTime: '10:00',
+			eventEndTime: '12:00',
+			eventAddress: '123 Main St, Anytown, USA',
+			eventCapacity: 100,
+			eventPrice: 0,
+			eventStatus: EventStatus.UPCOMING,
+			eventCategories: [EventCategory.TECHNOLOGY],
+			groupId: '1',
+			eventOrganizerId: '1',
+			attendeeCount: 100,
+			eventLikes: 100,
+			eventViews: 100,
+			createdAt: new Date('2024-04-01'),
+			updatedAt: new Date('2024-04-01'),
 		},
-		user2: {
-			name: 'Emily Davis',
-			avatar: 'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg',
+		{
+			_id: '2',
+			eventName: 'Tech Meetup',
+			eventDesc: 'A meetup for technology enthusiasts to share and learn.',
+			eventImage: 'https://images.pexels.com/photos/1181406/pexels-photo-1181406.jpeg',
+			eventDate: new Date('2024-04-01'),
+			eventStartTime: '10:00',
+			eventEndTime: '12:00',
+			eventAddress: '123 Main St, Anytown, USA',
+			eventCapacity: 100,
+			eventPrice: 0,
+			eventStatus: EventStatus.UPCOMING,
+			eventCategories: [EventCategory.TECHNOLOGY],
+			groupId: '1',
+			eventOrganizerId: '1',
+			attendeeCount: 100,
+			eventLikes: 100,
+			eventViews: 100,
+			createdAt: new Date('2024-04-01'),
+			updatedAt: new Date('2024-04-01'),
 		},
-	};
+	];
 
 	return (
 		<div className="min-h-screen bg-background">
@@ -337,27 +406,27 @@ const GroupDetailPage = () => {
 						<Card className="p-6">
 							<h2 className="text-xl font-semibold mb-4 text-foreground">Moderators</h2>
 							<div className="space-y-4">
-								{groupMembers
+								{groupAdmins
 									.filter((member) => member.groupMemberRole === GroupMemberRole.MODERATOR)
-									.map((moderator) => (
+									.map((moderator: GroupMember) => (
 										<div key={moderator._id} className="flex items-center space-x-4">
 											<Avatar className="h-12 w-12">
 												<Image
-													src={memberProfiles[moderator.memberId].avatar}
-													alt={memberProfiles[moderator.memberId].name}
+													src={moderator.memberData?.memberImage ?? 'img/default-avatar.png'}
+													alt={moderator.memberData?.memberFullName ?? ''}
 													fill
 													className="object-cover"
 												/>
 											</Avatar>
 											<div>
 												<div className="flex items-center gap-2">
-													<h3 className="font-medium text-foreground">{memberProfiles[moderator.memberId].name}</h3>
+													<h3 className="font-medium text-foreground">{moderator.memberData?.memberFullName}</h3>
 													<Badge variant="secondary" className="bg-blue-100 text-blue-800">
 														<Shield className="h-3 w-3 mr-1" />
 														Moderator
 													</Badge>
 												</div>
-												<p className="text-sm text-muted-foreground">{memberProfiles[moderator.memberId].bio}</p>
+												<p className="text-sm text-muted-foreground">{moderator.memberData?.memberDesc}</p>
 												<p className="text-xs text-muted-foreground">
 													Joined {moderator.joinDate.toLocaleDateString()}
 												</p>
@@ -434,18 +503,18 @@ const GroupDetailPage = () => {
 											</Link>
 											<div className="flex items-center justify-between mb-4">
 												<Badge variant="secondary" className="bg-primary/10 text-primary">
-													{event.eventParticipants} going
+													{event.attendeeCount} going
 												</Badge>
 											</div>
 											<p className="text-muted-foreground mb-4">{event.eventDesc}</p>
 											<div className="space-y-2">
 												<div className="flex items-center text-sm text-muted-foreground">
 													<Calendar className="h-4 w-4 mr-2" />
-													{event.eventDate.toLocaleDateString()} at {event.eventTime}
+													{event.eventDate.toLocaleDateString()} at {event.eventDate.toLocaleTimeString()}
 												</div>
 												<div className="flex items-center text-sm text-muted-foreground">
 													<Users className="h-4 w-4 mr-2" />
-													{event.eventLocation}
+													{event.eventAddress}
 												</div>
 											</div>
 										</div>
@@ -459,61 +528,7 @@ const GroupDetailPage = () => {
 				</div>
 
 				{/* Comments Section */}
-				<div className="mt-8">
-					<div className="flex items-center justify-between mb-6">
-						<h2 className="text-2xl font-semibold text-foreground">Comments</h2>
-						<Button variant="outline" size="sm" onClick={() => setIsCommentModalOpen(true)}>
-							<MessageSquare className="h-4 w-4 mr-2" />
-							Add Comment
-						</Button>
-					</div>
-
-					{/* Add Comment Modal */}
-					{isCommentModalOpen && (
-						<Card className="mb-6 p-6">
-							<div className="space-y-4">
-								<Textarea
-									placeholder="Write your comment..."
-									value={newComment}
-									onChange={(e) => setNewComment(e.target.value)}
-									className="min-h-[100px]"
-								/>
-								<div className="flex justify-end space-x-2">
-									<Button variant="outline" onClick={() => setIsCommentModalOpen(false)}>
-										Cancel
-									</Button>
-									<Button onClick={handleAddComment} disabled={!newComment.trim()}>
-										Post Comment
-									</Button>
-								</div>
-							</div>
-						</Card>
-					)}
-
-					<div className="space-y-6">
-						{groupComments.map((comment) => (
-							<Card key={comment._id} className="p-6">
-								<div className="flex items-start space-x-4">
-									<Avatar className="h-10 w-10">
-										<Image
-											src={commentAuthors[comment.authorId].avatar}
-											alt={commentAuthors[comment.authorId].name}
-											fill
-											className="object-cover"
-										/>
-									</Avatar>
-									<div className="flex-1">
-										<div className="flex items-center justify-between">
-											<h4 className="font-medium text-foreground">{commentAuthors[comment.authorId].name}</h4>
-											<span className="text-xs text-muted-foreground">{comment.createdAt.toLocaleDateString()}</span>
-										</div>
-										<p className="mt-2 text-muted-foreground">{comment.content}</p>
-									</div>
-								</div>
-							</Card>
-						))}
-					</div>
-				</div>
+				<Comments comments={groupComments} commentRefId={group._id} commentGroup={CommentGroup.GROUP} />
 			</div>
 		</div>
 	);

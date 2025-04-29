@@ -1,4 +1,5 @@
 import { GroupMemberRole } from '../../enums/group.enum';
+import { Member } from '../member/member';
 
 export interface GroupMember {
 	_id: string;
@@ -8,4 +9,6 @@ export interface GroupMember {
 	joinDate: Date;
 	createdAt: Date;
 	updatedAt: Date;
+
+	memberData?: Member;
 }

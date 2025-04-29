@@ -20,7 +20,7 @@ export interface Member {
 	memberViews: number;
 	createdAt: Date;
 	updatedAt: Date;
-	memberPassword: string;
+	// memberPassword: string;
 	accessToken?: string;
 
 	meLiked?: MeLiked[];

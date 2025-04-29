@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { Event } from '@/libs/types/event/event';
 import { EventStatus, EventCategory } from '@/libs/enums/event.enum';
-import { MemberType } from '@/libs/enums/member.enum';
+import { MemberStatus, MemberType } from '@/libs/enums/member.enum';
 import { GroupCategory } from '@/libs/enums/group.enum';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -10,21 +10,21 @@ import { Button } from '@/libs/components/ui/button';
 import { Input } from '@/libs/components/ui/input';
 import { Badge } from '@/libs/components/ui/badge';
 import { Card } from '@/libs/components/ui/card';
-import { Separator } from '@/libs/components/ui/separator';
 import { Avatar } from '@/libs/components/ui/avatar';
-import { Calendar, Clock, MapPin, Users, MessageSquare, Heart, Eye } from 'lucide-react';
+import { Calendar, Clock, MapPin, Users, Heart, Eye } from 'lucide-react';
 import withBasicLayout from '@/libs/components/layout/LayoutBasic';
 import { Group } from '@/libs/types/group/group';
 import { Member } from '@/libs/types/member/member';
+import Comments from '@/libs/components/CommentsComponent';
+import { CommentGroup } from '@/libs/enums/comment.enum';
+import { CommentStatus } from '@/libs/enums/comment.enum';
+import { Comment } from '@/libs/types/comment/comment';
 
 const EventDetailPage = () => {
 	const router = useRouter();
-	const { eventId } = router.query;
+	// const { eventId } = router.query;
 	const [isLiked, setIsLiked] = useState(false);
 	const [likesCount, setLikesCount] = useState(0);
-	const [newComment, setNewComment] = useState('');
-	const [isSubmitting, setIsSubmitting] = useState(false);
-	const [isCommentFormOpen, setIsCommentFormOpen] = useState(false);
 
 	const handleLike = async () => {
 		try {
@@ -43,32 +43,35 @@ const EventDetailPage = () => {
 	// Mock data
 	const event: Event = {
 		_id: '1',
-		eventName: 'Tech Conference 2024',
-		eventDesc: 'Join us for the biggest tech conference of the year!',
-		eventImage: 'https://images.pexels.com/photos/3184292/pexels-photo-3184292.jpeg',
-		eventDate: new Date('2024-12-15'),
-		eventStartTime: '09:00',
-		eventEndTime: '18:00',
-		eventAddress: '123 Tech Street, Silicon Valley',
+		eventName: 'Tech Meetup',
+		eventDesc: 'A meetup for technology enthusiasts to share and learn.',
+		eventImage: 'https://images.pexels.com/photos/1181406/pexels-photo-1181406.jpeg',
+		eventDate: new Date('2024-04-01'),
+		eventStartTime: '10:00',
+		eventEndTime: '12:00',
+		eventAddress: '123 Main St, Anytown, USA',
 		eventCapacity: 100,
-		eventPrice: 99,
+		eventPrice: 0,
 		eventStatus: EventStatus.UPCOMING,
-		eventCategories: [EventCategory.TECHNOLOGY, EventCategory.BUSINESS],
+		eventCategories: [EventCategory.TECHNOLOGY],
 		groupId: '1',
 		eventOrganizerId: '1',
-		attendeeCount: 0,
-		eventLikes: 0,
-		eventViews: 0,
-		createdAt: new Date(),
-		updatedAt: new Date(),
+		attendeeCount: 100,
+		eventLikes: 100,
+		eventViews: 100,
+		createdAt: new Date('2024-04-01'),
+		updatedAt: new Date('2024-04-01'),
 	};
 
 	const organizer: Member = {
 		_id: '1',
+		username: 'johnsmith',
 		memberEmail: 'john@techconf.com',
 		memberFullName: 'John Smith',
 		memberPhone: '+1 234 567 8900',
 		memberType: MemberType.ORGANIZER,
+		memberStatus: MemberStatus.ACTIVE,
+		emailVerified: false,
 		memberImage: 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg',
 		memberDesc: 'Tech enthusiast and conference organizer with 10+ years of experience.',
 		memberPoints: 100,
@@ -82,106 +85,91 @@ const EventDetailPage = () => {
 
 	const group: Group = {
 		_id: '1',
-		groupLink: 'https://techconf.com',
-		groupName: 'Tech Innovators',
-		groupDesc: 'A community of technology enthusiasts and professionals.',
-		groupImage: 'https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg',
-		groupCategories: [GroupCategory.TECHNOLOGY],
-		groupOwnerId: '1',
+		groupLink: '/groups/1',
+		groupName: 'Tech Enthusiasts',
+		groupDesc:
+			'A community for technology enthusiasts to share and learn. Join us for discussions, events, and networking opportunities.',
+		groupImage: 'https://images.pexels.com/photos/1181406/pexels-photo-1181406.jpeg',
+		groupOwnerId: 'owner1',
+		groupCategories: [GroupCategory.TECHNOLOGY, GroupCategory.SPORTS],
 		groupViews: 1000,
 		groupLikes: 500,
-		memberCount: 1500,
-		eventsCount: 25,
+		memberCount: 150,
+		eventsCount: 10,
 		createdAt: new Date(),
 		updatedAt: new Date(),
 	};
 
 	const similarEvents: Event[] = [
 		{
-			_id: '2',
-			eventName: 'AI Summit 2024',
-			eventDesc: 'Explore the future of artificial intelligence.',
-			eventImage: 'https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg',
-			eventDate: new Date('2024-11-20'),
+			_id: '1',
+			eventName: 'Tech Meetup',
+			eventDesc: 'A meetup for technology enthusiasts to share and learn.',
+			eventImage: 'https://images.pexels.com/photos/1181406/pexels-photo-1181406.jpeg',
+			eventDate: new Date('2024-04-01'),
 			eventStartTime: '10:00',
-			eventEndTime: '17:00',
-			eventAddress: '456 AI Avenue, Tech City',
-			eventCapacity: 200,
-			eventPrice: 149,
+			eventEndTime: '12:00',
+			eventAddress: '123 Main St, Anytown, USA',
+			eventCapacity: 100,
+			eventPrice: 0,
 			eventStatus: EventStatus.UPCOMING,
-			eventCategories: [EventCategory.TECHNOLOGY, EventCategory.EDUCATION],
+			eventCategories: [EventCategory.TECHNOLOGY],
 			groupId: '1',
 			eventOrganizerId: '1',
-			attendeeCount: 0,
-			eventLikes: 0,
-			eventViews: 0,
-			createdAt: new Date(),
-			updatedAt: new Date(),
+			attendeeCount: 100,
+			eventLikes: 100,
+			eventViews: 100,
+			createdAt: new Date('2024-04-01'),
+			updatedAt: new Date('2024-04-01'),
 		},
 		{
-			_id: '3',
-			eventName: 'Startup Pitch Night',
-			eventDesc: 'Watch innovative startups pitch their ideas.',
+			_id: '2',
+			eventName: 'Tech Meetup',
+			eventDesc: 'A meetup for technology enthusiasts to share and learn.',
 			eventImage: 'https://images.pexels.com/photos/1181406/pexels-photo-1181406.jpeg',
-			eventDate: new Date('2024-12-10'),
-			eventStartTime: '18:00',
-			eventEndTime: '21:00',
-			eventAddress: '789 Startup Blvd, Innovation Hub',
-			eventCapacity: 150,
-			eventPrice: 49,
+			eventDate: new Date('2024-04-01'),
+			eventStartTime: '10:00',
+			eventEndTime: '12:00',
+			eventAddress: '123 Main St, Anytown, USA',
+			eventCapacity: 100,
+			eventPrice: 0,
 			eventStatus: EventStatus.UPCOMING,
-			eventCategories: [EventCategory.BUSINESS, EventCategory.TECHNOLOGY],
+			eventCategories: [EventCategory.TECHNOLOGY],
 			groupId: '1',
 			eventOrganizerId: '1',
-			attendeeCount: 0,
-			eventLikes: 0,
-			eventViews: 0,
-			createdAt: new Date(),
-			updatedAt: new Date(),
+			attendeeCount: 100,
+			eventLikes: 100,
+			eventViews: 100,
+			createdAt: new Date('2024-04-01'),
+			updatedAt: new Date('2024-04-01'),
 		},
 	];
 
 	// Mock comments data
-	const comments = [
+	const comments: Comment[] = [
 		{
-			id: '1',
-			author: {
-				name: 'John Doe',
-				avatar: 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg',
-			},
-			content: "This event looks amazing! I'm really looking forward to attending.",
+			_id: '1',
+			commentStatus: CommentStatus.ACTIVE,
+			commentGroup: CommentGroup.GROUP,
+			commentContent: 'Great group! Looking forward to the next meetup.',
+			commentRefId: '1',
+			memberId: 'user1',
 			createdAt: new Date('2024-03-15'),
+			updatedAt: new Date('2024-03-15'),
 		},
 		{
-			id: '2',
-			author: {
-				name: 'Jane Smith',
-				avatar: 'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg',
-			},
-			content: "The speaker lineup is impressive. Can't wait to learn from these experts!",
-			createdAt: new Date('2024-03-16'),
+			_id: '2',
+			commentStatus: CommentStatus.ACTIVE,
+			commentGroup: CommentGroup.GROUP,
+			commentContent: 'The last workshop was very informative. Thanks for organizing!',
+			commentRefId: '1',
+			memberId: 'user2',
+			createdAt: new Date('2024-03-20'),
+			updatedAt: new Date('2024-03-20'),
 		},
 	];
 
-	const handleCommentSubmit = async (e: React.FormEvent) => {
-		e.preventDefault();
-		if (!newComment.trim()) return;
-
-		setIsSubmitting(true);
-		try {
-			// TODO: Implement comment submission logic
-			console.log('Submitting comment:', newComment);
-			setNewComment('');
-			setIsCommentFormOpen(false);
-		} catch (error) {
-			console.error('Error submitting comment:', error);
-		} finally {
-			setIsSubmitting(false);
-		}
-	};
-
 	const handlePurchase = () => {
-		// TODO: Implement purchase logic
 		console.log('Purchasing 1 ticket');
 	};
 
@@ -394,85 +382,7 @@ const EventDetailPage = () => {
 				</div>
 
 				{/* Comments Section */}
-				<div className="mt-8">
-					<Card className="p-6">
-						<div className="flex items-center justify-between mb-6">
-							<h2 className="text-xl font-semibold text-foreground">Comments</h2>
-							<Button
-								variant="outline"
-								size="sm"
-								className="text-muted-foreground hover:text-foreground"
-								onClick={() => setIsCommentFormOpen(!isCommentFormOpen)}
-							>
-								<MessageSquare className="h-4 w-4 mr-2" />
-								{isCommentFormOpen ? 'Cancel' : 'Write a Comment'}
-							</Button>
-						</div>
-
-						{isCommentFormOpen && (
-							<form onSubmit={handleCommentSubmit} className="mb-6">
-								<div className="flex items-start space-x-4">
-									<Avatar className="h-10 w-10">
-										<Image
-											src="https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg"
-											alt="User avatar"
-											fill
-											className="object-cover"
-										/>
-									</Avatar>
-									<div className="flex-1 space-y-2">
-										<Input
-											placeholder="Write a comment..."
-											value={newComment}
-											onChange={(e) => setNewComment(e.target.value)}
-											className="min-h-[80px] resize-none"
-										/>
-										<div className="flex justify-end space-x-2">
-											<Button
-												type="button"
-												variant="ghost"
-												size="sm"
-												onClick={() => {
-													setIsCommentFormOpen(false);
-													setNewComment('');
-												}}
-											>
-												Cancel
-											</Button>
-											<Button
-												type="submit"
-												size="sm"
-												disabled={isSubmitting || !newComment.trim()}
-												className="bg-primary/90 hover:bg-primary text-primary-foreground"
-											>
-												{isSubmitting ? 'Posting...' : 'Post Comment'}
-											</Button>
-										</div>
-									</div>
-								</div>
-							</form>
-						)}
-
-						<Separator className="my-6" />
-
-						<div className="space-y-6">
-							{comments.map((comment) => (
-								<div key={comment.id} className="flex space-x-4">
-									<Avatar className="h-10 w-10">
-										<Image src={comment.author.avatar} alt={comment.author.name} fill className="object-cover" />
-									</Avatar>
-									<div className="flex-1">
-										<div className="flex items-center justify-between">
-											<h4 className="font-medium text-foreground">{comment.author.name}</h4>
-											<span className="text-sm text-muted-foreground">{comment.createdAt.toLocaleDateString()}</span>
-										</div>
-										<p className="mt-1 text-muted-foreground">{comment.content}</p>
-									</div>
-								</div>
-							))}
-						</div>
-					</Card>
-				</div>
+				<Comments comments={comments} commentGroup={CommentGroup.EVENT} commentRefId={event._id} />
 			</div>
 		</div>
 	);
