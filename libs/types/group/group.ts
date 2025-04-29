@@ -1,3 +1,4 @@
+import { GroupCategory } from '@/libs/enums/group.enum';
 import { TotalCounter } from '../member/member';
 
 export interface Group {
@@ -7,7 +8,7 @@ export interface Group {
 	groupDesc: string;
 	groupImage: string;
 	groupOwnerId: string;
-	groupCategories: string[];
+	groupCategories: GroupCategory[];
 	groupViews: number;
 	groupLikes: number;
 	memberCount: number;
