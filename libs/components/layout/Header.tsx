@@ -1,183 +1,138 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import Image from 'next/image';
-import { Avatar, AvatarImage, AvatarFallback } from '../ui/avatar';
-import { ChevronDown, Menu, X } from 'lucide-react';
-import { Button } from '../ui/button';
-
-interface MemberInput {
-	id: string;
-	email: string;
-	firstName: string;
-	lastName: string;
-	profileImage?: string;
-}
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
+import { User } from 'lucide-react';
+import type { Member } from '@/libs/types/member/member';
+import { MemberType, MemberStatus } from '@/libs/enums/member.enum';
 
 const Header = () => {
-	const [isMenuOpen, setIsMenuOpen] = useState(false);
-	const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
-	const [isAuthenticated, setIsAuthenticated] = useState(false);
-	const [user, setUser] = useState<MemberInput | null>(null);
+	const [isAuthenticated, setIsAuthenticated] = useState(true);
+	const [user, setUser] = useState<Member>({
+		_id: '1',
+		username: 'johndoe',
+		memberEmail: 'john@example.com',
+		memberFullName: 'John Doe',
+		memberType: MemberType.USER,
+		memberStatus: MemberStatus.ACTIVE,
+		emailVerified: true,
+		memberImage: '', // Empty string to test fallback
+		memberPoints: 100,
+		memberLikes: 50,
+		memberFollowings: 20,
+		memberFollowers: 30,
+		memberViews: 1000,
+		createdAt: new Date(),
+		updatedAt: new Date(),
+	});
 
 	const handleLogout = () => {
 		setIsAuthenticated(false);
-		setUser(null);
+		setUser({
+			_id: '',
+			username: '',
+			memberEmail: '',
+			memberFullName: '',
+			memberType: MemberType.USER,
+			memberStatus: MemberStatus.ACTIVE,
+			emailVerified: false,
+			memberImage: '',
+			memberPoints: 0,
+			memberLikes: 0,
+			memberFollowings: 0,
+			memberFollowers: 0,
+			memberViews: 0,
+			createdAt: new Date(),
+			updatedAt: new Date(),
+		});
 	};
 
 	return (
-		<header className="sticky  py-5 top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border/50">
-			<div className="container mx-auto px-4 py-6">
-				<div className="flex items-center justify-between">
+		<header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200/50">
+			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+				<div className="flex items-center justify-between h-16">
 					{/* Logo */}
-					<Link href="/" className="flex items-center gap-3">
-						<Image src="/images/logo.png" alt="Eventify Logo" width={48} height={48} />
-						<span className="text-2xl font-bold text-foreground">Eventify</span>
+					<Link href="/" className="flex items-center gap-3 group">
+						<Image
+							src="/images/logo.png"
+							alt="Eventify Logo"
+							width={32}
+							height={32}
+							className="group-hover:scale-105 transition-transform duration-300"
+						/>
+						<span className="text-xl font-semibold text-gray-900 group-hover:text-gray-700 transition-colors duration-300">
+							Eventify
+						</span>
 					</Link>
 
 					{/* Desktop Navigation */}
-					<nav className="hidden md:flex items-center gap-8">
-						<Link href="/" className="text-foreground hover:text-primary transition-colors duration-200 text-body">
+					<nav className="flex items-center gap-8">
+						<Link href="/" className="text-sm text-gray-600 hover:text-gray-900 transition-colors duration-300">
 							Home
 						</Link>
-						<Link
-							href="/events"
-							className="text-foreground hover:text-primary transition-colors duration-200 text-body"
-						>
+						<Link href="/events" className="text-sm text-gray-600 hover:text-gray-900 transition-colors duration-300">
 							Events
 						</Link>
-						<Link
-							href="/groups"
-							className="text-foreground hover:text-primary transition-colors duration-200 text-body"
-						>
+						<Link href="/groups" className="text-sm text-gray-600 hover:text-gray-900 transition-colors duration-300">
 							Groups
 						</Link>
-
 						<Link
 							href="/organizers"
-							className="text-foreground hover:text-primary transition-colors duration-200 text-body"
+							className="text-sm text-gray-600 hover:text-gray-900 transition-colors duration-300"
 						>
 							Organizers
 						</Link>
-						<Link href="/help" className="text-foreground hover:text-primary transition-colors duration-200 text-body">
+						<Link href="/help" className="text-sm text-gray-600 hover:text-gray-900 transition-colors duration-300">
 							Help
 						</Link>
-						<Link href="/admin" className="text-foreground hover:text-primary transition-colors duration-200 text-body">
+						<Link href="/admin" className="text-sm text-gray-600 hover:text-gray-900 transition-colors duration-300">
 							Admin
 						</Link>
 					</nav>
 
-					{/* Mobile Menu Button */}
-					<button
-						className="md:hidden p-2.5 rounded-full hover:bg-muted/80 transition-colors duration-200"
-						onClick={() => setIsMenuOpen(!isMenuOpen)}
-						aria-label="Toggle menu"
-					>
-						{isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-					</button>
-
 					{/* User Menu */}
 					{isAuthenticated ? (
-						<div className="relative">
-							<button
-								onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-								className="flex items-center gap-2.5 p-2.5 rounded-full hover:bg-muted/80 transition-colors duration-200"
-							>
-								<Avatar className="w-10 h-10">
-									<AvatarImage src={user?.profileImage} />
-									<AvatarFallback className="bg-primary/90 text-primary-foreground">
-										{user?.firstName?.[0]}
-										{user?.lastName?.[0]}
-									</AvatarFallback>
+						<div className="flex items-center gap-4">
+							<Link href="/profile" className="hover:opacity-80 transition-opacity duration-300">
+								<Avatar className="h-8 w-8">
+									{user?.memberImage && user?.memberImage !== '' ? (
+										<AvatarImage src={user.memberImage || '/placeholder.svg'} alt={user.memberFullName} />
+									) : (
+										<AvatarFallback className="bg-white border border-gray-200 flex items-center justify-center">
+											<User
+												className="text-gray-800"
+												style={{
+													width: 16,
+													height: 16,
+													strokeWidth: 2,
+												}}
+											/>
+										</AvatarFallback>
+									)}
 								</Avatar>
-								<ChevronDown className="h-4 w-4 text-muted-foreground" />
-							</button>
-
-							{isUserMenuOpen && (
-								<div className="absolute right-0 mt-2 w-56 rounded-lg shadow-lg bg-background/95 backdrop-blur-sm border border-border/50">
-									<div className="py-2">
-										<Link
-											href="/profile"
-											className="block px-4 py-2.5 text-body text-foreground hover:bg-muted/80 transition-colors duration-200"
-										>
-											Profile
-										</Link>
-										<Link
-											href="/settings"
-											className="block px-4 py-2.5 text-body text-foreground hover:bg-muted/80 transition-colors duration-200"
-										>
-											Settings
-										</Link>
-										<button
-											onClick={handleLogout}
-											className="block w-full text-left px-4 py-2.5 text-body text-foreground hover:bg-muted/80 transition-colors duration-200"
-										>
-											Logout
-										</button>
-									</div>
-								</div>
-							)}
+							</Link>
+							<Button
+								variant="outline"
+								onClick={handleLogout}
+								className="text-sm text-gray-900 border-gray-300 hover:bg-gray-50 h-9 px-4"
+							>
+								Logout
+							</Button>
 						</div>
 					) : (
-						<div className="hidden md:flex items-center gap-4">
+						<div className="flex items-center gap-4">
 							<Link href="/login">
-								<Button variant="outline" className="text-foreground h-11 px-6">
+								<Button variant="outline" className="text-sm text-gray-900 border-gray-300 hover:bg-gray-50 h-9 px-4">
 									Login
 								</Button>
 							</Link>
 							<Link href="/signup">
-								<Button className="bg-primary/90 text-primary-foreground hover:bg-primary h-11 px-6">Sign Up</Button>
+								<Button className="text-sm text-white bg-gray-900 hover:bg-gray-800 h-9 px-4">Sign Up</Button>
 							</Link>
 						</div>
 					)}
 				</div>
-
-				{/* Mobile Navigation */}
-				{isMenuOpen && (
-					<nav className="md:hidden mt-6 space-y-2">
-						<Link
-							href="/events"
-							className="block px-4 py-3 text-body text-foreground hover:bg-muted/80 rounded-lg transition-colors duration-200"
-							onClick={() => setIsMenuOpen(false)}
-						>
-							Events
-						</Link>
-						<Link
-							href="/groups"
-							className="block px-4 py-3 text-body text-foreground hover:bg-muted/80 rounded-lg transition-colors duration-200"
-							onClick={() => setIsMenuOpen(false)}
-						>
-							Groups
-						</Link>
-						<Link
-							href="/help"
-							className="block px-4 py-3 text-body text-foreground hover:bg-muted/80 rounded-lg transition-colors duration-200"
-							onClick={() => setIsMenuOpen(false)}
-						>
-							Help
-						</Link>
-						<Link
-							href="/admin"
-							className="block px-4 py-3 text-body text-foreground hover:bg-muted/80 rounded-lg transition-colors duration-200"
-							onClick={() => setIsMenuOpen(false)}
-						>
-							Admin
-						</Link>
-						{!isAuthenticated && (
-							<div className="flex flex-col gap-3 mt-6">
-								<Link href="/login" onClick={() => setIsMenuOpen(false)}>
-									<Button variant="outline" className="w-full h-11 text-foreground">
-										Login
-									</Button>
-								</Link>
-								<Link href="/signup" onClick={() => setIsMenuOpen(false)}>
-									<Button className="w-full h-11 bg-primary/90 text-primary-foreground hover:bg-primary">
-										Sign Up
-									</Button>
-								</Link>
-							</div>
-						)}
-					</nav>
-				)}
 			</div>
 		</header>
 	);
