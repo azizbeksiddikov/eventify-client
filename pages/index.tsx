@@ -2,13 +2,13 @@ import { NextPage } from 'next';
 
 import useDeviceDetect from '../libs/hooks/useDeviceDetect';
 import AutoScrollEvents from '../libs/components/homePage/AutoScrollEvents';
-import withBasicLayout from '../libs/components/layout/LayoutBasic';
 import EventsByCategory from '../libs/components/homePage/EventsByCategory';
 import TopOrganizers from '@/libs/components/homePage/TopOrganizers';
 import UpcomingEvents from '@/libs/components/homePage/UpcomingEvents';
 import TopGroups from '@/libs/components/homePage/TopGroups';
 import SearchEvents from '@/libs/components/homePage/SearchEvents';
 import Acknowledgements from '@/libs/components/homePage/Acknowledgements';
+import withHomeLayout from '@/libs/components/layout/LayoutHome';
 
 const Home: NextPage = () => {
 	const device = useDeviceDetect();
@@ -23,7 +23,7 @@ const Home: NextPage = () => {
 			</div>
 
 			{/* Main Content */}
-			<main className="w-[90%] mx-auto px-8 sm:px-12 lg:px-16 py-12 space-y-16">
+			<main className="w-[90%] mx-auto flex flex-col gap-10">
 				<UpcomingEvents />
 				<EventsByCategory />
 				<TopGroups />
@@ -34,4 +34,4 @@ const Home: NextPage = () => {
 	);
 };
 
-export default withBasicLayout(Home);
+export default withHomeLayout(Home);

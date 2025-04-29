@@ -6,14 +6,12 @@ import withBasicLayout from '../../libs/components/layout/LayoutBasic';
 import { Event } from '../../libs/types/event/event';
 import { EventsInquiry } from '../../libs/types/event/event.input';
 import { Direction } from '../../libs/enums/common.enum';
-import { Search, Calendar, Filter, MapPin, Users, ArrowUpDown, Ticket, CheckCircle2 } from 'lucide-react';
+import { Search, Calendar, MapPin, Users, ArrowUpDown } from 'lucide-react';
 import { Button } from '../../libs/components/ui/button';
 import { Input } from '../../libs/components/ui/input';
-import { Badge } from '../../libs/components/ui/badge';
 import {
 	Pagination,
 	PaginationContent,
-	PaginationEllipsis,
 	PaginationItem,
 	PaginationLink,
 	PaginationNext,
@@ -23,7 +21,6 @@ import { Checkbox } from '../../components/ui/checkbox';
 import { Label } from '../../components/ui/label';
 import { Popover, PopoverContent, PopoverTrigger } from '../../components/ui/popover';
 import { format } from 'date-fns';
-import { Calendar as CalendarComponent } from '../../components/ui/calendar';
 import { DateRange } from 'react-date-range';
 import 'react-date-range/dist/styles.css';
 import 'react-date-range/dist/theme/default.css';

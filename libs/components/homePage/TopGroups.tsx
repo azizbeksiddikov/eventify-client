@@ -21,7 +21,7 @@ const TopGroups = () => {
 
 	const groups: GroupInput[] = [
 		{
-			id: '1',
+			_id: '1',
 			name: 'Tech Innovators',
 			description: 'A community of technology enthusiasts and professionals.',
 			image: '/images/groups/tech-innovators.jpg',
@@ -33,7 +33,7 @@ const TopGroups = () => {
 			updatedAt: new Date(),
 		},
 		{
-			id: '2',
+			_id: '2',
 			name: 'Food Lovers',
 			description: 'Join us to explore the world of culinary arts and gastronomy.',
 			image: '/images/groups/food-lovers.jpg',
@@ -47,7 +47,7 @@ const TopGroups = () => {
 	];
 
 	return (
-		<section className="space-y-6 animate-fadeIn">
+		<section className=" animate-fadeIn">
 			<div className="flex items-center justify-between">
 				<h2 className="text-2xl font-bold text-[#111111]">Popular Groups</h2>
 				<Link
@@ -61,7 +61,7 @@ const TopGroups = () => {
 
 			<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 				{groups.map((group) => (
-					<GroupCard key={group.id} group={group} onJoin={handleJoinGroup} isJoined={joinedGroups.has(group.id)} />
+					<GroupCard key={group._id} group={group} onJoin={handleJoinGroup} isJoined={joinedGroups.has(group._id)} />
 				))}
 			</div>
 		</section>

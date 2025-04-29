@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { Button } from '@/libs/components/ui/button';
 import { Input } from '@/libs/components/ui/input';
-import { Search, ArrowUpDown, X, Heart, UserPlus } from 'lucide-react';
+import { ArrowUpDown, X } from 'lucide-react';
 import withBasicLayout from '@/libs/components/layout/LayoutBasic';
 import { MemberType } from '@/libs/enums/member.enum';
 import { Direction } from '@/libs/enums/common.enum';
@@ -15,7 +15,6 @@ import {
 	PaginationNext,
 	PaginationPrevious,
 } from '@/components/ui/pagination';
-import { Badge } from '@/libs/components/ui/badge';
 
 const sortOptions = [
 	{ value: 'createdAt', label: 'Newest' },
@@ -127,8 +126,8 @@ const OrganizersPage = () => {
 	const endPage = Math.min(totalPages, startPage + 4);
 
 	return (
-		<div className="min-h-screen bg-background py-8">
-			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+		<div className="bg-background">
+			<div className="max-w-7xl mx-auto ">
 				{/* Header */}
 				<div className="mb-8">
 					<h1 className="text-3xl font-semibold text-foreground">Organizers</h1>
@@ -151,7 +150,7 @@ const OrganizersPage = () => {
 							<select
 								value={sortBy}
 								onChange={(e) => handleSortChange(e.target.value)}
-								className="h-10 rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:border-primary/50 focus:ring-0"
+								className="h-10 rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-hidden focus:border-primary/50 focus:ring-0"
 							>
 								{sortOptions.map((option) => (
 									<option key={option.value} value={option.value}>

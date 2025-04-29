@@ -1,19 +1,19 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/router';
-import { EventInput } from '@/libs/types/event/event.input';
 import { Button } from '@/libs/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '../../libs/components/ui/card';
-import { Input } from '../../libs/components/ui/input';
-import { Separator } from '../../libs/components/ui/separator';
+import { Card, CardContent, CardHeader, CardTitle } from '@/libs/components/ui/card';
+import { Input } from '@/libs/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Separator } from '@/libs/components/ui/separator';
 import { Calendar, MapPin, Clock, CreditCard } from 'lucide-react';
-import LoadingComponent from '../../libs/components/common/LoadingComponent';
+import LoadingComponent from '@/libs/components/common/LoadingComponent';
+import { EventCategory, EventStatus } from '@/libs/enums/event.enum';
+import { Event } from '@/libs/types/event/event';
 
 const TicketPurchasePage = () => {
 	const router = useRouter();
 	const { eventId } = router.query;
-	const [event, setEvent] = useState<EventInput | null>(null);
 	const [isLoading, setIsLoading] = useState(true);
-	const [error, setError] = useState('');
 	const [ticketCount, setTicketCount] = useState(1);
 	const [paymentInfo, setPaymentInfo] = useState({
 		cardNumber: '',
@@ -22,39 +22,26 @@ const TicketPurchasePage = () => {
 		cardholderName: '',
 	});
 
-	useEffect(() => {
-		if (eventId) {
-			fetchEventData();
-		}
-	}, [eventId]);
-
-	const fetchEventData = async () => {
-		setIsLoading(true);
-		try {
-			// TODO: Replace with actual API call
-			const mockEvent: EventInput = {
-				id: eventId as string,
-				eventName: 'Tech Conference 2024',
-				eventDescription: 'Annual technology conference featuring the latest innovations and industry leaders.',
-				eventCategories: ['TECHNOLOGY'],
-				eventLocation: 'Convention Center, New York',
-				eventStartDate: new Date('2024-06-15'),
-				eventEndDate: new Date('2024-06-17'),
-				eventPrice: 299,
-				eventCapacity: 500,
-				eventImage: '/images/events/tech-conference.jpg',
-				organizerId: '1',
-				createdAt: new Date(),
-				updatedAt: new Date(),
-			};
-
-			setEvent(mockEvent);
-		} catch (error) {
-			console.error('Failed to fetch event data:', error);
-			setError('Failed to fetch event data');
-		} finally {
-			setIsLoading(false);
-		}
+	const event: Event = {
+		_id: 'dsnfjnfwoe23423',
+		eventName: 'Tech Conference 2024',
+		eventDesc: 'Annual technology conference featuring the latest innovations and industry leaders.',
+		eventCategories: [EventCategory.TECHNOLOGY],
+		eventAddress: 'Convention Center, New York',
+		eventDate: new Date('2024-06-15'),
+		eventStartTime: '10:00',
+		eventEndTime: '17:00',
+		eventPrice: 299,
+		eventCapacity: 500,
+		eventImage: '/images/events/tech-conference.jpg',
+		eventOrganizerId: '1',
+		attendeeCount: 100,
+		eventLikes: 100,
+		eventViews: 100,
+		eventStatus: EventStatus.UPCOMING,
+		groupId: '1',
+		createdAt: new Date(),
+		updatedAt: new Date(),
 	};
 
 	const handlePaymentInfoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -76,7 +63,6 @@ const TicketPurchasePage = () => {
 			router.push(`/events/${eventId}/confirmation`); // Redirect to confirmation page
 		} catch (error) {
 			console.error('Payment failed:', error);
-			setError('Payment failed. Please try again.');
 		} finally {
 			setIsLoading(false);
 		}
@@ -86,18 +72,10 @@ const TicketPurchasePage = () => {
 		return <LoadingComponent />;
 	}
 
-	if (error) {
-		return <ErrorComponent message={error} />;
-	}
-
-	if (!event) {
-		return <ErrorComponent message="Event not found" />;
-	}
-
 	const totalPrice = event.eventPrice * ticketCount;
 
 	return (
-		<div className="min-h-screen bg-background py-12">
+		<div className="min-h-screen bg-background">
 			<div className="max-w-4xl mx-auto px-4">
 				<div className="grid grid-cols-1 md:grid-cols-2 gap-8">
 					{/* Event Details */}
@@ -109,12 +87,12 @@ const TicketPurchasePage = () => {
 							<div className="flex items-center gap-2 text-card-foreground">
 								<Calendar className="h-5 w-5" />
 								<span>
-									{event.eventStartDate.toLocaleDateString()} - {event.eventEndDate.toLocaleDateString()}
+									{event.eventDate.toLocaleDateString()} - {event.eventDate.toLocaleDateString()}
 								</span>
 							</div>
 							<div className="flex items-center gap-2 text-card-foreground">
 								<MapPin className="h-5 w-5" />
-								<span>{event.eventLocation}</span>
+								<span>{event.eventAddress}</span>
 							</div>
 							<div className="flex items-center gap-2 text-card-foreground">
 								<Clock className="h-5 w-5" />

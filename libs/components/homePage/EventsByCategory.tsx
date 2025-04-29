@@ -96,7 +96,7 @@ const EventsByCategory = () => {
 	];
 
 	return (
-		<section className="space-y-6 animate-fadeIn">
+		<section className="animate-fadeIn">
 			<div className="flex items-center justify-between">
 				<h2 className="text-h1 font-bold text-[#111111]">Events by Category</h2>
 				<Link

@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
-import { EventCategory } from '@/libs/enums/event.enum';
+import { EventCategory, EventStatus } from '@/libs/enums/event.enum';
 import { Button } from '@/libs/components/ui/button';
 import { Input } from '@/libs/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Card } from '@/libs/components/ui/card';
 import { Badge } from '@/libs/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Calendar, Clock, MapPin, Users, DollarSign, ImageIcon, X } from 'lucide-react';
+import { ImageIcon, X } from 'lucide-react';
 import withBasicLayout from '@/libs/components/layout/LayoutBasic';
 import { EventInput } from '@/libs/types/event/event.input';
 
@@ -40,16 +40,18 @@ const EventCreatePage = () => {
 	const [selectedCategories, setSelectedCategories] = useState<EventCategory[]>([]);
 
 	const [formData, setFormData] = useState<EventInput>({
-		name: '',
-		description: '',
-		image: '',
-		category: EventCategory.OTHER,
-		organizerId: '', // This should be set from the current user
-		startDate: new Date(),
-		endDate: new Date(),
-		location: '',
-		capacity: 0,
-		price: 0,
+		eventName: '',
+		eventDesc: '',
+		eventImage: '',
+		eventDate: new Date(),
+		eventStartTime: '',
+		eventEndTime: '',
+		eventAddress: '',
+		eventCapacity: 0,
+		eventPrice: 0,
+		eventStatus: EventStatus.UPCOMING,
+		eventCategories: [],
+		groupId: '',
 	});
 
 	const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -100,7 +102,7 @@ const EventCreatePage = () => {
 	};
 
 	return (
-		<div className="min-h-screen bg-background py-8">
+		<div className="min-h-screen bg-background">
 			<div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
 				<div className="mb-8">
 					<Button

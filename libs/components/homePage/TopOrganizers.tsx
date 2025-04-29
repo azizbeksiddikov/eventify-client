@@ -58,7 +58,7 @@ const TopOrganizers = () => {
 	];
 
 	return (
-		<section className="space-y-6 animate-fadeIn">
+		<section className=" animate-fadeIn">
 			<div className="flex items-center justify-between">
 				<h2 className="text-h1 font-bold text-[#111111]">Top Organizers</h2>
 				<Link

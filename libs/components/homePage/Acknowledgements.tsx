@@ -2,7 +2,7 @@ import { Users, Heart, Code2 } from 'lucide-react';
 
 const Acknowledgements = () => {
 	return (
-		<section className="space-y-6 animate-fadeIn">
+		<section className="animate-fadeIn">
 			<div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 				{/* Team & Community Section */}
 				<div className="bg-white rounded-2xl shadow-sm overflow-hidden hover:shadow-md transition-all duration-200 animate-slideIn">

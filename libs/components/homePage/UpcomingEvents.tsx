@@ -67,7 +67,7 @@ export default function UpcomingEvents() {
 	const filteredEvents = getEventsForDate(selectedDate);
 
 	return (
-		<section className="max-w-6xl mx-auto px-4 py-6">
+		<section className="mt-8">
 			<div className="flex items-center justify-between mb-6">
 				<h2 className="text-2xl font-bold text-[#111111]">Upcoming Events</h2>
 				<button className="text-[#E60023] hover:text-[#CC0000] transition-colors duration-200 text-sm font-medium">

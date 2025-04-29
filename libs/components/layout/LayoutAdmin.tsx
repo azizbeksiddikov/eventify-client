@@ -21,7 +21,7 @@ const withAdminLayout = (Page: NextPage) => {
 		);
 	};
 
-	WrappedComponent.displayName = `withBasicLayout(${Page.displayName || Page.name || 'Component'})`;
+	WrappedComponent.displayName = `withAdminLayout(${Page.displayName || Page.name || 'Component'})`;
 	return WrappedComponent;
 };
 

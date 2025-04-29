@@ -4,7 +4,7 @@ import Header from './Header';
 import useDeviceDetect from '../../hooks/useDeviceDetect';
 import { NextPage } from 'next';
 
-const withBasicLayout = (Page: NextPage) => {
+const withHomeLayout = (Page: NextPage) => {
 	const WrappedComponent = (props: Record<string, unknown>) => {
 		const device = useDeviceDetect();
 
@@ -13,7 +13,7 @@ const withBasicLayout = (Page: NextPage) => {
 		return (
 			<div className="min-h-screen flex flex-col">
 				<Header />
-				<main className="flex-1 mt-8 mb-8">
+				<main className="flex-1 mb-8">
 					<Page {...props} />
 				</main>
 				<Footer />
@@ -21,8 +21,8 @@ const withBasicLayout = (Page: NextPage) => {
 		);
 	};
 
-	WrappedComponent.displayName = `withBasicLayout(${Page.displayName || Page.name || 'Component'})`;
+	WrappedComponent.displayName = `withHomeLayout(${Page.displayName || Page.name || 'Component'})`;
 	return WrappedComponent;
 };
 
-export default withBasicLayout;
+export default withHomeLayout;

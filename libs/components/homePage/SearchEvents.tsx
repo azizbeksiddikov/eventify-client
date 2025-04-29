@@ -41,7 +41,7 @@ const SearchEvents = () => {
 						<input
 							type="text"
 							placeholder="Search events, groups, or organizers..."
-							className="w-full px-6 py-5 rounded-full bg-white border border-[#E5E5E5] focus:outline-none focus:border-[#E60023] focus:ring-2 focus:ring-[#FF4D4D] text-[#111111] text-lg transition-all duration-300"
+							className="w-full px-6 py-5 rounded-full bg-white border border-[#E5E5E5] focus:outline-hidden focus:border-[#E60023] focus:ring-2 focus:ring-[#FF4D4D] text-[#111111] text-lg transition-all duration-300"
 							value={searchQuery}
 							onChange={(e) => setSearchQuery(e.target.value)}
 						/>
@@ -68,7 +68,7 @@ const SearchEvents = () => {
 					<input
 						type="text"
 						placeholder="Location"
-						className="w-48 px-6 py-5 rounded-full bg-white border border-[#E5E5E5] focus:outline-none focus:border-[#E60023] focus:ring-2 focus:ring-[#FF4D4D] text-[#111111] transition-all duration-300"
+						className="w-48 px-6 py-5 rounded-full bg-white border border-[#E5E5E5] focus:outline-hidden focus:border-[#E60023] focus:ring-2 focus:ring-[#FF4D4D] text-[#111111] transition-all duration-300"
 						value={location}
 						onChange={(e) => setLocation(e.target.value)}
 					/>
@@ -77,14 +77,14 @@ const SearchEvents = () => {
 							type="date"
 							value={startDate}
 							onChange={(e) => setStartDate(e.target.value)}
-							className="w-40 px-6 py-5 rounded-full bg-white border border-[#E5E5E5] focus:outline-none focus:border-[#E60023] focus:ring-2 focus:ring-[#FF4D4D] text-[#111111] transition-all duration-300"
+							className="w-40 px-6 py-5 rounded-full bg-white border border-[#E5E5E5] focus:outline-hidden focus:border-[#E60023] focus:ring-2 focus:ring-[#FF4D4D] text-[#111111] transition-all duration-300"
 						/>
 						<span className="text-[#6E6E6E]">to</span>
 						<input
 							type="date"
 							value={endDate}
 							onChange={(e) => setEndDate(e.target.value)}
-							className="w-40 px-6 py-5 rounded-full bg-white border border-[#E5E5E5] focus:outline-none focus:border-[#E60023] focus:ring-2 focus:ring-[#FF4D4D] text-[#111111] transition-all duration-300"
+							className="w-40 px-6 py-5 rounded-full bg-white border border-[#E5E5E5] focus:outline-hidden focus:border-[#E60023] focus:ring-2 focus:ring-[#FF4D4D] text-[#111111] transition-all duration-300"
 						/>
 					</div>
 					<button

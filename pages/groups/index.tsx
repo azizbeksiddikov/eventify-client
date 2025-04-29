@@ -31,6 +31,7 @@ const groups: Group[] = [
 		groupViews: 1000,
 		groupLikes: 500,
 		memberCount: 150,
+		eventsCount: 10,
 		createdAt: new Date(),
 		updatedAt: new Date(),
 	},
@@ -45,6 +46,7 @@ const groups: Group[] = [
 		groupViews: 800,
 		groupLikes: 400,
 		memberCount: 200,
+		eventsCount: 10,
 		createdAt: new Date(),
 		updatedAt: new Date(),
 	},
@@ -59,6 +61,7 @@ const groups: Group[] = [
 		groupViews: 600,
 		groupLikes: 300,
 		memberCount: 120,
+		eventsCount: 10,
 		createdAt: new Date(),
 		updatedAt: new Date(),
 	},
@@ -73,6 +76,7 @@ const groups: Group[] = [
 		groupViews: 900,
 		groupLikes: 450,
 		memberCount: 180,
+		eventsCount: 10,
 		createdAt: new Date(),
 		updatedAt: new Date(),
 	},
@@ -87,6 +91,7 @@ const groups: Group[] = [
 		groupViews: 1200,
 		groupLikes: 600,
 		memberCount: 250,
+		eventsCount: 10,
 		createdAt: new Date(),
 		updatedAt: new Date(),
 	},
@@ -100,6 +105,7 @@ const groups: Group[] = [
 		groupCategories: [GroupCategory.ENTERTAINMENT],
 		groupViews: 1500,
 		groupLikes: 750,
+		eventsCount: 10,
 		memberCount: 300,
 		createdAt: new Date(),
 		updatedAt: new Date(),
@@ -234,7 +240,7 @@ const GroupsPage = () => {
 	};
 
 	return (
-		<div className="min-h-screen bg-background py-8">
+		<div className="min-h-screen bg-background">
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 				{/* Header Section */}
 				<div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-12">
