@@ -40,29 +40,3 @@ export interface MembersInquiry {
 	direction?: Direction;
 	search: MISearch;
 }
-
-export enum MemberType {
-	USER = 'USER',
-	ORGANIZER = 'ORGANIZER',
-	ADMIN = 'ADMIN',
-}
-
-export interface OrganizerInput {
-	id: string;
-	email: string;
-	firstName: string;
-	lastName: string;
-	phoneNumber: string;
-	memberType: MemberType.ORGANIZER;
-	profileImage?: string;
-	bio?: string;
-	website?: string;
-	socialMedia?: {
-		facebook?: string;
-		twitter?: string;
-		instagram?: string;
-		linkedin?: string;
-	};
-	createdAt: Date;
-	updatedAt: Date;
-}

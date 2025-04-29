@@ -322,7 +322,7 @@ const GroupDetailPage = () => {
 								</Avatar>
 								<div>
 									<div className="flex items-center gap-2">
-										<h3 className="font-semibold text-foreground">{memberProfiles.owner1.name}</h3>
+										<h3 className="font-semibold text-foreground">{memberProfiles.owner1.name ?? 'No Name'}</h3>
 										<Badge variant="secondary" className="bg-yellow-100 text-yellow-800">
 											<Crown className="h-3 w-3 mr-1" />
 											Owner

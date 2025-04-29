@@ -4,18 +4,44 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-	/* Pinterest Brand Colors */
-	--color-primary: #e60023; /* Pinterest Red */
-	--color-primary-light: #ff4d4d; /* Lighter Red */
-	--color-primary-dark: #cc0000; /* Darker Red */
+	/* Apple Brand Colors */
+	--color-primary: #0071e3; /* Apple Blue */
+	--color-primary-light: #0077ed; /* Lighter Blue */
+	--color-primary-dark: #006edb; /* Darker Blue */
 
-	--color-secondary: #111111; /* Pinterest Black */
-	--color-secondary-light: #333333; /* Lighter Black */
+	--color-secondary: #1d1d1f; /* Apple Black */
+	--color-secondary-light: #2c2c2e; /* Lighter Black */
 	--color-secondary-dark: #000000; /* Darker Black */
 
-	--color-accent: #0073e6; /* Pinterest Blue */
-	--color-accent-light: #4da6ff; /* Lighter Blue */
-	--color-accent-dark: #0059b3; /* Darker Blue */
+	--color-accent: #34c759; /* Apple Green */
+	--color-accent-light: #30d158; /* Lighter Green */
+	--color-accent-dark: #248a3d; /* Darker Green */
+
+	/* Apple System Colors */
+	--color-background: #ffffff;
+	--color-foreground: #1d1d1f;
+	--color-muted: #86868b;
+	--color-muted-foreground: #6e6e73;
+	--color-border: #d2d2d7;
+	--color-input: #f5f5f7;
+	--color-ring: #0071e3;
+
+	/* Apple Semantic Colors */
+	--color-success: #34c759;
+	--color-warning: #ff9500;
+	--color-error: #ff3b30;
+	--color-info: #0071e3;
+
+	/* Apple Elevation Colors */
+	--color-elevation-1: #f5f5f7;
+	--color-elevation-2: #e5e5e7;
+	--color-elevation-3: #d2d2d7;
+
+	/* Apple Text Colors */
+	--color-text-primary: #1d1d1f;
+	--color-text-secondary: #86868b;
+	--color-text-tertiary: #6e6e73;
+	--color-text-quaternary: #86868b;
 
 	/* Status Colors */
 	--color-error: #e60023; /* Pinterest Red */
@@ -212,6 +238,25 @@ select:focus {
 }
 
 .dark {
+	--color-background: #000000;
+	--color-foreground: #ffffff;
+	--color-muted: #86868b;
+	--color-muted-foreground: #6e6e73;
+	--color-border: #2c2c2e;
+	--color-input: #1c1c1e;
+	--color-ring: #0071e3;
+
+	/* Dark mode elevation */
+	--color-elevation-1: #1c1c1e;
+	--color-elevation-2: #2c2c2e;
+	--color-elevation-3: #3a3a3c;
+
+	/* Dark mode text */
+	--color-text-primary: #ffffff;
+	--color-text-secondary: #ebebf5;
+	--color-text-tertiary: #c7c7cc;
+	--color-text-quaternary: #8e8e93;
+
 	--background: oklch(0.145 0 0);
 	--foreground: oklch(0.985 0 0);
 	--card: oklch(0.205 0 0);
@@ -222,14 +267,11 @@ select:focus {
 	--primary-foreground: oklch(0.205 0 0);
 	--secondary: oklch(0.269 0 0);
 	--secondary-foreground: oklch(0.985 0 0);
-	--muted: oklch(0.269 0 0);
-	--muted-foreground: oklch(0.708 0 0);
 	--accent: oklch(0.269 0 0);
 	--accent-foreground: oklch(0.985 0 0);
 	--destructive: oklch(0.704 0.191 22.216);
 	--border: oklch(1 0 0 / 10%);
 	--input: oklch(1 0 0 / 15%);
-	--ring: oklch(0.556 0 0);
 	--chart-1: oklch(0.488 0.243 264.376);
 	--chart-2: oklch(0.696 0.17 162.48);
 	--chart-3: oklch(0.769 0.188 70.08);

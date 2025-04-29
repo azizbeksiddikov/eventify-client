@@ -36,6 +36,9 @@ const Header = () => {
 
 					{/* Desktop Navigation */}
 					<nav className="hidden md:flex items-center gap-8">
+						<Link href="/" className="text-foreground hover:text-primary transition-colors duration-200 text-body">
+							Home
+						</Link>
 						<Link
 							href="/events"
 							className="text-foreground hover:text-primary transition-colors duration-200 text-body"
@@ -47,6 +50,13 @@ const Header = () => {
 							className="text-foreground hover:text-primary transition-colors duration-200 text-body"
 						>
 							Groups
+						</Link>
+
+						<Link
+							href="/organizers"
+							className="text-foreground hover:text-primary transition-colors duration-200 text-body"
+						>
+							Organizers
 						</Link>
 						<Link href="/help" className="text-foreground hover:text-primary transition-colors duration-200 text-body">
 							Help

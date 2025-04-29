@@ -12,6 +12,7 @@ export interface Group {
 	groupViews: number;
 	groupLikes: number;
 	memberCount: number;
+	eventsCount: number;
 	createdAt: Date;
 	updatedAt: Date;
 }

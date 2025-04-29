@@ -2,8 +2,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { Event } from '@/libs/types/event/event';
 import { EventStatus, EventCategory } from '@/libs/enums/event.enum';
-import { OrganizerInput, MemberType } from '@/libs/types/member/member.input';
-import { GroupInput } from '@/libs/types/group/group.input';
+import { MemberType } from '@/libs/enums/member.enum';
 import { GroupCategory } from '@/libs/enums/group.enum';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -13,8 +12,10 @@ import { Badge } from '@/libs/components/ui/badge';
 import { Card } from '@/libs/components/ui/card';
 import { Separator } from '@/libs/components/ui/separator';
 import { Avatar } from '@/libs/components/ui/avatar';
-import { Calendar, Clock, MapPin, Users, Globe, Twitter, Linkedin, MessageSquare, Heart, Eye } from 'lucide-react';
+import { Calendar, Clock, MapPin, Users, MessageSquare, Heart, Eye } from 'lucide-react';
 import withBasicLayout from '@/libs/components/layout/LayoutBasic';
+import { Group } from '@/libs/types/group/group';
+import { Member } from '@/libs/types/member/member';
 
 const EventDetailPage = () => {
 	const router = useRouter();
@@ -62,28 +63,34 @@ const EventDetailPage = () => {
 		updatedAt: new Date(),
 	};
 
-	const organizer: OrganizerInput = {
-		id: '1',
-		email: 'john@techconf.com',
-		firstName: 'John',
-		lastName: 'Smith',
-		phoneNumber: '+1 234 567 8900',
+	const organizer: Member = {
+		_id: '1',
+		memberEmail: 'john@techconf.com',
+		memberFullName: 'John Smith',
+		memberPhone: '+1 234 567 8900',
 		memberType: MemberType.ORGANIZER,
-		profileImage: 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg',
-		bio: 'Tech enthusiast and conference organizer with 10+ years of experience.',
-		website: 'https://techconf.com',
+		memberImage: 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg',
+		memberDesc: 'Tech enthusiast and conference organizer with 10+ years of experience.',
+		memberPoints: 100,
+		memberLikes: 0,
+		memberFollowings: 0,
+		memberFollowers: 0,
+		memberViews: 0,
 		createdAt: new Date(),
 		updatedAt: new Date(),
 	};
 
-	const group: GroupInput = {
-		id: '1',
-		name: 'Tech Innovators',
-		description: 'A community of technology enthusiasts and professionals.',
-		image: 'https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg',
-		category: GroupCategory.TECHNOLOGY,
-		organizerId: '1',
-		membersCount: 1500,
+	const group: Group = {
+		_id: '1',
+		groupLink: 'https://techconf.com',
+		groupName: 'Tech Innovators',
+		groupDesc: 'A community of technology enthusiasts and professionals.',
+		groupImage: 'https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg',
+		groupCategories: [GroupCategory.TECHNOLOGY],
+		groupOwnerId: '1',
+		groupViews: 1000,
+		groupLikes: 500,
+		memberCount: 1500,
 		eventsCount: 25,
 		createdAt: new Date(),
 		updatedAt: new Date(),
@@ -308,17 +315,15 @@ const EventDetailPage = () => {
 								<div className="flex items-center space-x-4">
 									<Avatar className="h-16 w-16">
 										<Image
-											src={organizer.profileImage || '/images/default-avatar.jpg'}
-											alt={`${organizer.firstName} ${organizer.lastName}`}
+											src={organizer?.memberImage || '/images/default-avatar.jpg'}
+											alt={organizer?.memberFullName}
 											fill
 											className="object-cover"
 										/>
 									</Avatar>
 									<div>
-										<h3 className="font-semibold text-foreground">
-											{organizer.firstName} {organizer.lastName}
-										</h3>
-										<p className="text-sm text-muted-foreground">{organizer.bio}</p>
+										<h3 className="font-semibold text-foreground">{organizer?.memberFullName ?? 'No Name'}</h3>
+										<p className="text-sm text-muted-foreground">{organizer?.memberDesc ?? 'No Description'}</p>
 									</div>
 								</div>
 							</Card>
@@ -329,17 +334,17 @@ const EventDetailPage = () => {
 								<h2 className="text-xl font-semibold mb-4 text-foreground">Hosting Group</h2>
 								<div className="flex items-center space-x-4">
 									<Avatar className="h-16 w-16 rounded-lg">
-										<Image src={group.image} alt={group.name} fill className="object-cover" />
+										<Image src={group.groupImage} alt={group.groupName} fill className="object-cover" />
 									</Avatar>
 									<div>
-										<Link href={`/groups/${group.id}`}>
+										<Link href={`/groups/${group._id}`}>
 											<h3 className="font-semibold text-foreground hover:text-primary transition-colors duration-200">
-												{group.name}
+												{group.groupName}
 											</h3>
 										</Link>
-										<p className="text-sm text-muted-foreground">{group.description}</p>
+										<p className="text-sm text-muted-foreground">{group.groupDesc}</p>
 										<div className="flex items-center space-x-4 mt-2">
-											<span className="text-sm text-muted-foreground">{group.membersCount} members</span>
+											<span className="text-sm text-muted-foreground">{group.memberCount} members</span>
 											<span className="text-sm text-muted-foreground">{group.eventsCount} events</span>
 										</div>
 									</div>
