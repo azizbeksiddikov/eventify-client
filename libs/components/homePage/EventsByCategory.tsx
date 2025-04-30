@@ -2,23 +2,8 @@ import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import { useState } from 'react';
 import { EventCard } from './EventCard';
-
-interface Event {
-	id: string;
-	title: string;
-	image: string;
-	date: string;
-	location: string;
-	type: string;
-	views: number;
-}
-
-interface Category {
-	id: string;
-	name: string;
-	events: Event[];
-	icon?: string;
-}
+import { Event } from '@/libs/types/event/event';
+import { eventsByCategory } from '@/data';
 
 const EventsByCategory = () => {
 	const [likedEvents, setLikedEvents] = useState<Set<string>>(new Set());
@@ -35,114 +20,53 @@ const EventsByCategory = () => {
 		});
 	};
 
-	const categories: Category[] = [
-		{
-			id: '1',
-			name: 'Music & Concerts',
-			icon: '🎵',
-			events: [
-				{
-					id: '1',
-					title: 'Summer Music Festival',
-					image: '/images/events/music-festival.jpg',
-					date: '2024-07-15',
-					location: 'Central Park, New York',
-					type: 'festival',
-					views: 1250,
-				},
-				{
-					id: '2',
-					title: 'Jazz Night',
-					image: '/images/events/jazz-night.jpg',
-					date: '2024-08-05',
-					location: 'Blue Note, NYC',
-					type: 'concert',
-					views: 850,
-				},
-			],
-		},
-		{
-			id: '2',
-			name: 'Conferences',
-			icon: '💡',
-			events: [
-				{
-					id: '3',
-					title: 'Tech Conference 2024',
-					image: '/images/events/tech-conference.jpg',
-					date: '2024-08-20',
-					location: 'San Francisco, CA',
-					type: 'conference',
-					views: 2100,
-				},
-			],
-		},
-		{
-			id: '3',
-			name: 'Exhibitions',
-			icon: '🎨',
-			events: [
-				{
-					id: '4',
-					title: 'Food & Wine Expo',
-					image: '/images/events/food-expo.jpg',
-					date: '2024-09-10',
-					location: 'Chicago, IL',
-					type: 'exhibition',
-					views: 950,
-				},
-			],
-		},
-	];
-
 	return (
-		<section className="animate-fadeIn">
-			<div className="flex items-center justify-between">
-				<h2 className="text-h1 font-bold text-[#111111]">Events by Category</h2>
-				<Link
-					href="/events"
-					className="text-[#E60023] hover:text-[#CC0000] transition-colors duration-200 flex items-center gap-1 text-body"
-				>
-					View All Categories
-					<ArrowRight className="w-4 h-4" />
-				</Link>
-			</div>
-
-			<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-				{categories.map((category) => (
-					<div
-						key={category.id}
-						className="bg-white rounded-2xl shadow-sm overflow-hidden hover:shadow-md transition-all duration-200 animate-slideIn flex flex-col"
+		<section className="my-20 bg-primary/10 py-20">
+			<div className="w-[90%] mx-auto ">
+				<div className="flex items-center justify-between mb-8">
+					<h2 className="text-2xl font-bold text-foreground">Events by Category</h2>
+					<Link
+						href="/events"
+						className="text-primary hover:text-primary/80 transition-colors duration-200 flex items-center gap-1 text-sm font-medium"
 					>
-						<div className="p-4 border-b border-[#F5F5F5]">
-							<div className="flex items-center gap-2">
-								{category.icon && <span className="text-xl">{category.icon}</span>}
-								<h3 className="text-lg font-semibold text-[#111111]">{category.name}</h3>
+						View All Events
+						<ArrowRight className="w-4 h-4" />
+					</Link>
+				</div>
+
+				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+					{Object.entries(eventsByCategory).map(([categoryName, events]) => (
+						<div
+							key={categoryName}
+							className="bg-card rounded-2xl shadow-sm overflow-hidden hover:shadow-md transition-all duration-200 animate-slideIn flex flex-col"
+						>
+							<div className="p-4 border-b border-border">
+								<h3 className="text-lg font-semibold text-foreground">{categoryName}</h3>
+							</div>
+							<div className="p-4 flex-1">
+								<div className="space-y-4">
+									{events.map((event: Event) => (
+										<EventCard
+											key={event._id}
+											event={event}
+											onLike={handleLikeEvent}
+											isLiked={likedEvents.has(event._id)}
+										/>
+									))}
+								</div>
+							</div>
+							<div className="p-4 border-t border-border mt-auto">
+								<Link
+									href={`/events?category=${categoryName.toLowerCase()}`}
+									className="text-sm text-primary hover:text-primary/80 font-medium flex items-center gap-1 transition-colors duration-200"
+								>
+									View all {categoryName} events
+									<ArrowRight className="w-3 h-3" />
+								</Link>
 							</div>
 						</div>
-						<div className="p-4 flex-1">
-							<div className="space-y-4">
-								{category.events.map((event) => (
-									<EventCard
-										key={event.id}
-										event={event}
-										onLike={handleLikeEvent}
-										isLiked={likedEvents.has(event.id)}
-									/>
-								))}
-							</div>
-						</div>
-						<div className="p-4 border-t border-[#F5F5F5] mt-auto">
-							<Link
-								href={`/events?category=${category.id}`}
-								className="text-sm text-[#E60023] hover:text-[#CC0000] font-medium flex items-center gap-1 transition-colors duration-200"
-							>
-								View all {category.name} events
-								<ArrowRight className="w-3 h-3" />
-							</Link>
-						</div>
-					</div>
-				))}
+					))}
+				</div>
 			</div>
 		</section>
 	);

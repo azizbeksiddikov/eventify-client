@@ -22,6 +22,7 @@ export interface Event {
 	eventViews: number;
 	createdAt: Date;
 	updatedAt: Date;
+	eventCity: string;
 
 	memberData?: Member;
 	meLiked?: MeLiked[];

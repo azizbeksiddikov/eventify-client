@@ -7,6 +7,7 @@ import { EventStatus, EventCategory } from '@/libs/enums/event.enum';
 import { GroupCategory } from '@/libs/enums/group.enum';
 import { TicketStatus } from '@/libs/enums/ticket.enum';
 import { Event } from '@/libs/types/event/event';
+
 // Generate a date in the past
 const getPastDate = (daysAgo: number) => {
 	const date = new Date();
@@ -213,6 +214,7 @@ export const fakeEvents: Events = {
 			eventViews: 300,
 			createdAt: getPastDate(60),
 			updatedAt: getPastDate(1),
+			eventCity: 'San Francisco',
 		},
 		{
 			_id: 'e2',
@@ -234,6 +236,7 @@ export const fakeEvents: Events = {
 			eventViews: 150,
 			createdAt: getPastDate(30),
 			updatedAt: getPastDate(2),
+			eventCity: 'New York',
 		},
 		{
 			_id: 'e3',
@@ -255,6 +258,7 @@ export const fakeEvents: Events = {
 			eventViews: 500,
 			createdAt: getPastDate(90),
 			updatedAt: getPastDate(3),
+			eventCity: 'Austin',
 		},
 		{
 			_id: 'e4',
@@ -276,6 +280,7 @@ export const fakeEvents: Events = {
 			eventViews: 250,
 			createdAt: getPastDate(120),
 			updatedAt: getPastDate(5),
+			eventCity: 'Seattle',
 		},
 		{
 			_id: 'e5',
@@ -297,6 +302,7 @@ export const fakeEvents: Events = {
 			eventViews: 200,
 			createdAt: getPastDate(30),
 			updatedAt: getPastDate(7),
+			eventCity: 'San Francisco',
 		},
 	],
 	metaCounter: [{ total: 5 }],
@@ -400,6 +406,7 @@ export const eventList: Event[] = [
 		eventViews: 210,
 		createdAt: getPastDate(21),
 		updatedAt: getPastDate(2),
+		eventCity: 'San Francisco',
 	},
 	{
 		_id: 'evt002',
@@ -421,6 +428,7 @@ export const eventList: Event[] = [
 		eventViews: 450,
 		createdAt: getPastDate(45),
 		updatedAt: getPastDate(5),
+		eventCity: 'New York',
 	},
 	{
 		_id: 'evt003',
@@ -442,6 +450,7 @@ export const eventList: Event[] = [
 		eventViews: 4200,
 		createdAt: getPastDate(90),
 		updatedAt: getPastDate(10),
+		eventCity: 'Austin',
 	},
 	{
 		_id: 'evt004',
@@ -463,6 +472,7 @@ export const eventList: Event[] = [
 		eventViews: 1200,
 		createdAt: getPastDate(60),
 		updatedAt: getPastDate(3),
+		eventCity: 'Seattle',
 	},
 	{
 		_id: 'evt005',
@@ -484,5 +494,56 @@ export const eventList: Event[] = [
 		eventViews: 560,
 		createdAt: getPastDate(30),
 		updatedAt: getPastDate(1),
+		eventCity: 'Boston',
+	},
+	{
+		_id: 'evt006',
+		eventName: 'Art Exhibition',
+		eventDesc: 'Showcasing local and international art pieces',
+		eventImage: 'https://picsum.photos/400/200?random=15',
+		eventDate: getFutureDate(10),
+		eventStartTime: '10:00',
+		eventEndTime: '16:00',
+		eventAddress: '123 Art Gallery, Cultural District, London',
+		eventCapacity: 100,
+		eventPrice: 0,
+		eventStatus: EventStatus.UPCOMING,
+		eventCategories: [EventCategory.ART],
+		groupId: 'g2',
+		eventOrganizerId: '2',
+		attendeeCount: 50,
+		eventLikes: 25,
+		eventViews: 120,
+		createdAt: getPastDate(15),
+		updatedAt: getPastDate(1),
+		eventCity: 'London',
+	},
+	{
+		_id: 'evt007',
+		eventName: 'Art Exhibition',
+		eventDesc: 'Showcasing local and international art pieces',
+		eventImage: 'https://picsum.photos/400/200?random=15',
+		eventDate: getFutureDate(10),
+		eventStartTime: '10:00',
+		eventEndTime: '16:00',
+		eventAddress: '123 Art Gallery, Cultural District, London',
+		eventCapacity: 100,
+		eventPrice: 0,
+		eventStatus: EventStatus.UPCOMING,
+		eventCategories: [EventCategory.ART],
+		groupId: 'g3',
+		eventOrganizerId: '5',
+		attendeeCount: 50,
+		eventLikes: 25,
+		eventViews: 120,
+		createdAt: getPastDate(15),
+		updatedAt: getPastDate(1),
+		eventCity: 'London',
 	},
 ];
+
+export const eventsByCategory: { [key: string]: Event[] } = {
+	TECHNOLOGY: [eventList[5], eventList[0]],
+	ENTERTAINMENT: [eventList[4], eventList[1]],
+	FOOD: [eventList[6]],
+};
