@@ -1,69 +1,58 @@
-import { useState, useEffect, useRef } from 'react';
-import Link from 'next/link';
+import type React from 'react';
 
-interface Event {
-	id: string;
-	title: string;
-	description: string;
-	image: string;
-	date: string;
-	location: string;
-	category: string;
-}
+import { useState, useEffect, useRef, useCallback } from 'react';
+import Link from 'next/link';
+import { Calendar, MapPin, ChevronLeft, ChevronRight } from 'lucide-react';
+import { cn } from '@/libs/utils';
+
+// Import from local data file
+import { eventList } from '@/data';
 
 const AutoScrollEvents = () => {
 	const [currentIndex, setCurrentIndex] = useState(0);
 	const [isHovered, setIsHovered] = useState(false);
 	const [hoverPosition, setHoverPosition] = useState<number | null>(null);
 	const containerRef = useRef<HTMLDivElement>(null);
-	const [events] = useState<Event[]>([
-		{
-			id: '1',
-			title: 'Summer Music Festival',
-			description: 'Join us for the biggest music festival of the year!',
-			image: '/images/events/music-festival.jpg',
-			date: '2024-07-15',
-			location: 'Central Park, New York',
-			category: 'Music',
-		},
-		{
-			id: '2',
-			title: 'Tech Conference 2024',
-			description: 'The future of technology and innovation',
-			image: '/images/events/tech-conference.jpg',
-			date: '2024-08-20',
-			location: 'San Francisco, CA',
-			category: 'Technology',
-		},
-		{
-			id: '3',
-			title: 'Food & Wine Expo',
-			description: 'Experience the finest culinary delights',
-			image: '/images/events/food-expo.jpg',
-			date: '2024-09-10',
-			location: 'Chicago, IL',
-			category: 'Food & Drink',
-		},
-		{
-			id: '4',
-			title: 'Art Exhibition',
-			description: 'Contemporary art from around the world',
-			image: '/images/events/art-exhibition.jpg',
-			date: '2024-10-05',
-			location: 'Los Angeles, CA',
-			category: 'Art',
-		},
-	]);
+	const autoScrollIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
+	// Handle keyboard navigation
+	const handleKeyDown = useCallback((e: KeyboardEvent) => {
+		if (e.key === 'ArrowLeft') {
+			handleNavigation('prev');
+		} else if (e.key === 'ArrowRight') {
+			handleNavigation('next');
+		}
+	}, []);
+
+	// Setup and cleanup keyboard event listeners
 	useEffect(() => {
-		if (isHovered) return;
+		window.addEventListener('keydown', handleKeyDown);
+		return () => {
+			window.removeEventListener('keydown', handleKeyDown);
+		};
+	}, [handleKeyDown]);
 
-		const interval = setInterval(() => {
-			setCurrentIndex((prevIndex) => (prevIndex + 1) % events.length);
-		}, 6000);
+	// Auto-scroll functionality
+	useEffect(() => {
+		if (isHovered) {
+			if (autoScrollIntervalRef.current) {
+				clearInterval(autoScrollIntervalRef.current);
+				autoScrollIntervalRef.current = null;
+			}
+			return;
+		}
 
-		return () => clearInterval(interval);
-	}, [events.length, isHovered]);
+		autoScrollIntervalRef.current = setInterval(() => {
+			setCurrentIndex((prevIndex) => (prevIndex + 1) % eventList.length);
+		}, 5000); // Slightly longer interval for better user experience
+
+		return () => {
+			if (autoScrollIntervalRef.current) {
+				clearInterval(autoScrollIntervalRef.current);
+				autoScrollIntervalRef.current = null;
+			}
+		};
+	}, [eventList.length, isHovered]);
 
 	const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
 		if (!containerRef.current) return;
@@ -82,126 +71,160 @@ const AutoScrollEvents = () => {
 		}
 	};
 
-	const handleNavigation = (direction: 'prev' | 'next') => {
-		if (direction === 'prev') {
-			setCurrentIndex((prevIndex) => (prevIndex - 1 + events.length) % events.length);
-		} else {
-			setCurrentIndex((prevIndex) => (prevIndex + 1) % events.length);
-		}
+	const handleNavigation = useCallback(
+		(direction: 'prev' | 'next') => {
+			if (direction === 'prev') {
+				setCurrentIndex((prevIndex) => (prevIndex - 1 + eventList.length) % eventList.length);
+			} else {
+				setCurrentIndex((prevIndex) => (prevIndex + 1) % eventList.length);
+			}
+		},
+		[eventList.length],
+	);
+
+	// Format date for better accessibility
+	const formatDate = (dateString: Date) => {
+		const date = new Date(dateString);
+		return new Intl.DateTimeFormat('en-US', {
+			weekday: 'long',
+			year: 'numeric',
+			month: 'long',
+			day: 'numeric',
+		}).format(date);
 	};
 
 	return (
-		<div
+		<section
 			ref={containerRef}
-			className="relative h-[80vh] overflow-hidden"
+			className="relative h-[calc(100vh-5rem)] overflow-hidden "
 			onMouseMove={handleMouseMove}
 			onMouseEnter={() => setIsHovered(true)}
 			onMouseLeave={() => {
 				setIsHovered(false);
 				setHoverPosition(null);
 			}}
+			aria-roledescription="carousel"
+			aria-label="Featured events"
 		>
-			{events.map((event, index) => (
-				<div
-					key={event.id}
-					className={`absolute inset-0 transition-all duration-1000 ease-in-out ${
-						index === currentIndex ? 'opacity-100 scale-100' : 'opacity-0 scale-105'
-					}`}
-				>
+			{/* Carousel items */}
+			<div className="h-full relative">
+				{eventList.map((event, index) => (
 					<div
-						className="absolute inset-0 bg-cover bg-center transition-transform duration-1000 ease-in-out"
-						style={{ backgroundImage: `url(${event.image})` }}
+						key={event._id}
+						className={cn(
+							'absolute inset-0 transition-all duration-1000 ease-in-out',
+							index === currentIndex ? 'opacity-100 scale-100 z-10' : 'opacity-0 scale-105 z-0',
+						)}
+						aria-hidden={index !== currentIndex}
+						role="group"
+						aria-roledescription="slide"
+						aria-label={`${index + 1} of ${eventList.length}: ${event.eventName}`}
 					>
-						{/* Gradient overlays for navigation */}
-						{hoverPosition === 0 && (
-							<div className="absolute inset-y-0 left-0 w-1/5 bg-gradient-to-r from-[#111111]/80 to-transparent" />
-						)}
-						{hoverPosition === 1 && (
-							<div className="absolute inset-y-0 right-0 w-1/5 bg-gradient-to-l from-[#111111]/80 to-transparent" />
-						)}
-						<div className="absolute inset-0 bg-gradient-to-b from-[#111111]/70 via-[#111111]/40 to-[#111111]/70" />
-					</div>
-					<div className="absolute inset-0 flex items-center justify-center">
-						<div className="text-center text-white max-w-4xl px-4 transform transition-all duration-1000 ease-in-out">
-							<div className="mb-4 flex flex-wrap justify-center gap-2">
-								{event.category.split(',').map((cat, index) => (
-									<span
-										key={index}
-										className="block bg-white/10 backdrop-blur-sm text-white px-3 py-1.5 rounded-full text-sm font-medium hover:bg-white/20 transition-colors duration-300"
-									>
-										#{cat.trim()}
+						<div
+							className="absolute inset-0 bg-cover bg-center transition-transform duration-1000 ease-in-out"
+							style={{ backgroundImage: `url(${event.eventImage})` }}
+							aria-hidden="true"
+						>
+							{/* Gradient overlays for navigation */}
+							{hoverPosition === 0 && (
+								<div className="absolute inset-y-0 left-0 w-1/4 bg-gradient-to-r from-black/90 to-transparent" />
+							)}
+							{hoverPosition === 1 && (
+								<div className="absolute inset-y-0 right-0 w-1/4 bg-gradient-to-l from-black/90 to-transparent" />
+							)}
+							<div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/40 to-black/70" />
+						</div>
+
+						<div className="absolute inset-0 flex items-center justify-center">
+							<div className="text-center text-white max-w-4xl px-4 sm:px-6 md:px-8 transform transition-all duration-1000 ease-in-out">
+								<div className="mb-4 flex flex-wrap justify-center gap-2">
+									{event.eventCategories.map((category, catIndex) => (
+										<span
+											key={catIndex}
+											className="block bg-gray-800/40 backdrop-blur-sm text-white px-3 py-1.5 rounded-full text-sm font-medium hover:bg-gray-800/50 transition-colors duration-300"
+										>
+											#{category}
+										</span>
+									))}
+								</div>
+								<h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6 bg-gray-800/40 backdrop-blur-sm text-white px-4 py-3 rounded-lg">
+									{event.eventName}
+								</h2>
+								<p className="text-lg sm:text-xl mb-6 sm:mb-8 text-white max-w-2xl mx-auto bg-gray-800/40 backdrop-blur-sm px-4 py-3 rounded-lg">
+									{event.eventDesc}
+								</p>
+								<div className="flex flex-col sm:flex-row justify-center sm:space-x-6 space-y-3 sm:space-y-0 mb-6 sm:mb-8">
+									<span className="flex items-center justify-center sm:justify-start bg-gray-800/40 backdrop-blur-sm px-4 py-2 rounded-full text-white">
+										<MapPin className="w-5 h-5 mr-2" />
+										<span>{event.eventAddress}</span>
 									</span>
-								))}
+									<span className="flex items-center justify-center sm:justify-start bg-gray-800/40 backdrop-blur-sm px-4 py-2 rounded-full text-white">
+										<Calendar className="w-5 h-5 mr-2" />
+										<time dateTime={new Date(event.eventDate).toISOString()}>{formatDate(event.eventDate)}</time>
+									</span>
+								</div>
+								<Link
+									href={`/events/${event._id}`}
+									className="inline-block bg-primary text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full font-medium hover:bg-primary/90 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
+									aria-label={`View details for ${event.eventName}`}
+								>
+									View Details
+								</Link>
 							</div>
-							<h2 className="text-5xl font-bold mb-6">{event.title}</h2>
-							<p className="text-xl mb-8 text-white/90 max-w-2xl mx-auto">{event.description}</p>
-							<div className="flex justify-center space-x-6 mb-8">
-								<span className="flex items-center bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full">
-									<svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-										<path
-											strokeLinecap="round"
-											strokeLinejoin="round"
-											strokeWidth={2}
-											d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-										/>
-										<path
-											strokeLinecap="round"
-											strokeLinejoin="round"
-											strokeWidth={2}
-											d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-										/>
-									</svg>
-									{event.location}
-								</span>
-								<span className="flex items-center bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full">
-									<svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-										<path
-											strokeLinecap="round"
-											strokeLinejoin="round"
-											strokeWidth={2}
-											d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-										/>
-									</svg>
-									{new Date(event.date).toLocaleDateString()}
-								</span>
-							</div>
-							<Link
-								href={`/events/${event.id}`}
-								className="-block bg-[#E60023] text-white px-8 py-4 rounded-full font-medium hover:bg-[#CC0000] transition-colors duration-300"
-							>
-								View Details
-							</Link>
 						</div>
 					</div>
-				</div>
-			))}
-			{/* Thin Navigation Buttons */}
+				))}
+			</div>
+
+			{/* Navigation buttons with improved accessibility */}
 			<button
 				onClick={() => handleNavigation('prev')}
-				className="absolute inset-y-0 left-0 w-1/5 cursor-pointer group"
+				className="absolute inset-y-0 left-0 w-1/5 cursor-pointer group flex items-center justify-start pl-4 sm:pl-6 md:pl-8 z-20"
 				aria-label="Previous event"
 			>
-				<div className="absolute inset-y-0 left-0 w-[2px] bg-white/20 group-hover:bg-white/40 transition-colors duration-300" />
+				<span className="sr-only">Previous</span>
+				<div className="absolute inset-y-0 left-0 w-[2px] bg-foreground/20 group-hover:bg-foreground/40 transition-colors duration-300" />
+				<ChevronLeft
+					className={cn(
+						'w-8 h-8 text-foreground/0 group-hover:text-white/80 transition-all duration-300',
+						hoverPosition === 0 ? 'text-foreground/80' : '',
+					)}
+				/>
 			</button>
 			<button
 				onClick={() => handleNavigation('next')}
-				className="absolute inset-y-0 right-0 w-1/5 cursor-pointer group"
+				className="absolute inset-y-0 right-0 w-1/5 cursor-pointer group flex items-center justify-end pr-4 sm:pr-6 md:pr-8 z-20"
 				aria-label="Next event"
 			>
-				<div className="absolute inset-y-0 right-0 w-[2px] bg-white/20 group-hover:bg-white/40 transition-colors duration-300" />
+				<span className="sr-only">Next</span>
+				<div className="absolute inset-y-0 right-0 w-[2px] bg-foreground/20 group-hover:bg-foreground/40 transition-colors duration-300" />
+				<ChevronRight
+					className={cn(
+						'w-8 h-8 text-foreground/0 group-hover:text-white/80 transition-all duration-300',
+						hoverPosition === 1 ? 'text-foreground/80' : '',
+					)}
+				/>
 			</button>
-			<div className="absolute bottom-8 left-0 right-0 flex justify-center space-x-2">
-				{events.map((_, index) => (
-					<button
-						key={index}
-						className={`w-3 h-3 rounded-full transition-all duration-300 ${
-							index === currentIndex ? 'bg-[#E60023] scale-125' : 'bg-white/50 hover:bg-white/75'
-						}`}
-						onClick={() => setCurrentIndex(index)}
-					/>
-				))}
+
+			{/* Carousel controls */}
+			<div className="absolute bottom-8 left-0 right-0 flex flex-col items-center space-y-4 z-20">
+				<div className="flex justify-center space-x-2" role="tablist" aria-label="Event slides">
+					{eventList.map((event, index) => (
+						<button
+							key={index}
+							className={cn(
+								'w-3 h-3 rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-foreground/50',
+								index === currentIndex ? 'bg-primary scale-125' : 'bg-foreground/50 hover:bg-foreground/75',
+							)}
+							onClick={() => setCurrentIndex(index)}
+							aria-label={`Go to slide ${index + 1}: ${event.eventName}`}
+							aria-selected={index === currentIndex}
+							role="tab"
+						/>
+					))}
+				</div>
 			</div>
-		</div>
+		</section>
 	);
 };
 

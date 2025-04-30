@@ -15,21 +15,16 @@ const Home: NextPage = () => {
 	if (device === 'mobile') return null;
 
 	return (
-		<div className="min-h-screen ">
+		<div className="min-h-screen  flex flex-col">
 			{/* Hero Section */}
-			<div className="relative">
-				<AutoScrollEvents />
-				<SearchEvents />
-			</div>
+			<AutoScrollEvents />
 
-			{/* Main Content */}
-			<main className="w-[90%] mx-auto flex flex-col gap-10">
-				<UpcomingEvents />
-				<EventsByCategory />
-				<TopGroups />
-				<TopOrganizers />
-				<Acknowledgements />
-			</main>
+			<SearchEvents />
+			<UpcomingEvents />
+			<EventsByCategory />
+			<TopGroups />
+			<TopOrganizers />
+			<Acknowledgements />
 		</div>
 	);
 };
