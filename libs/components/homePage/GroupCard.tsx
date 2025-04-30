@@ -1,20 +1,8 @@
 import { Users, Calendar, ChevronRight, Check } from 'lucide-react';
 import { Button } from '@/libs/components/ui/button';
 import Link from 'next/link';
-import { Card, CardContent, CardHeader, CardTitle } from '@/libs/components/ui/card';
-
-interface Group {
-	id: string;
-	name: string;
-	description: string;
-	image: string;
-	category: string;
-	organizerId: string;
-	membersCount: number;
-	eventsCount: number;
-	createdAt: Date;
-	updatedAt: Date;
-}
+import { Card, CardContent, CardTitle } from '@/libs/components/ui/card';
+import { Group } from '@/libs/types/group/group';
 
 interface GroupCardProps {
 	group: Group;
@@ -24,50 +12,51 @@ interface GroupCardProps {
 
 export const GroupCard = ({ group, onJoin, isJoined }: GroupCardProps) => {
 	return (
-		<Card className="group relative overflow-hidden rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 animate-slideIn bg-gradient-to-br from-white to-[#F8F8F8]">
-			<div className="relative h-40">
+		<Card className="group relative overflow-hidden rounded-xl border-2 border-border/50 hover:border-primary/50 transition-all duration-300 h-[420px] flex flex-col shadow-sm hover:shadow-md">
+			<div className="relative h-48 flex-shrink-0 overflow-hidden">
 				<img
-					src={group.image}
-					alt={group.name}
-					className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+					src={group.groupImage}
+					alt={group.groupName}
+					className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
 				/>
-				<div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+				<div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/30 to-transparent" />
+				<div className="absolute bottom-4 left-4 right-4">
+					<CardTitle className="text-xl font-bold text-foreground drop-shadow-lg">{group.groupName}</CardTitle>
+				</div>
 			</div>
-			<CardHeader className="p-4 pb-2">
-				<CardTitle className="text-lg font-semibold text-[#2D2D2D] group-hover:text-[#1A1A1A] transition-colors duration-200">
-					{group.name}
-				</CardTitle>
-			</CardHeader>
-			<CardContent className="p-4 pt-0">
-				<p className="text-sm text-[#4A4A4A] mb-4 line-clamp-2">{group.description}</p>
-				<div className="flex flex-col gap-3">
-					<div className="flex items-center justify-between text-xs text-[#4A4A4A]">
-						<div className="flex items-center gap-4">
-							<div className="flex items-center">
-								<Users className="w-3 h-3 mr-1" />
-								{group.membersCount.toLocaleString()} members
+			<CardContent className="p-6 flex flex-col h-[calc(420px-12rem)]">
+				<div className="flex flex-col h-full">
+					<div className="flex-grow-0">
+						<p className="text-sm text-muted-foreground mb-4 line-clamp-2 h-[2.5rem]">{group.groupDesc}</p>
+					</div>
+					<div className="flex items-center justify-between text-sm mt-auto">
+						<div className="flex items-center gap-6">
+							<div className="flex items-center text-muted-foreground">
+								<Users className="w-4 h-4 mr-2" />
+								{group.memberCount.toLocaleString()} members
 							</div>
-							<div className="flex items-center">
-								<Calendar className="w-3 h-3 mr-1" />
+							<div className="flex items-center text-muted-foreground">
+								<Calendar className="w-4 h-4 mr-2" />
 								{group.eventsCount} events
 							</div>
 						</div>
 						<Link
-							href={`/groups/${group.id}`}
-							className="text-[#2D2D2D] hover:text-[#1A1A1A] transition-colors duration-200 flex items-center gap-1"
+							href={`/groups/${group._id}`}
+							className="text-primary hover:text-primary/80 transition-colors duration-200 flex items-center gap-1 text-sm font-medium"
 						>
 							View details
-							<ChevronRight className="w-3 h-3" />
+							<ChevronRight className="w-4 h-4" />
 						</Link>
 					</div>
 					<Button
-						onClick={() => onJoin(group.id)}
-						className={`w-full transition-colors duration-200 ${
+						onClick={() => onJoin(group._id)}
+						className={`w-full mt-4 transition-all duration-200 ${
 							isJoined
-								? 'bg-[#00A862] hover:bg-[#008F54] text-white cursor-default'
-								: 'bg-[#2D2D2D] hover:bg-[#1A1A1A] text-white'
+								? 'bg-primary/10 text-primary hover:bg-primary/20 cursor-default'
+								: 'bg-primary text-primary-foreground hover:bg-primary/90'
 						}`}
 						disabled={isJoined}
+						variant={isJoined ? 'ghost' : 'default'}
 					>
 						{isJoined ? (
 							<div className="flex items-center gap-2">
