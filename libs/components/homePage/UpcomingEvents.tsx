@@ -20,7 +20,7 @@ export default function UpcomingEvents() {
 	};
 
 	return (
-		<section className="m-20">
+		<section className="my-20">
 			<div className="w-[90%] mx-auto">
 				<div className="flex items-center justify-between mb-6">
 					<h2 className="text-2xl font-bold text-foreground">Upcoming Events</h2>
