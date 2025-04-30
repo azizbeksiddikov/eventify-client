@@ -21,7 +21,7 @@ const EventsByCategory = () => {
 	};
 
 	return (
-		<section className="my-20 bg-primary/10 py-20">
+		<section className="my-10 bg-primary/10 py-20">
 			<div className="w-[90%] mx-auto ">
 				<div className="flex items-center justify-between mb-8">
 					<h2 className="text-2xl font-bold text-foreground">Events by Category</h2>
