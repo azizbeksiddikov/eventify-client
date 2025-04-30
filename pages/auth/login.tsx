@@ -69,7 +69,7 @@ const Login = () => {
 					<p className="mt-2 text-sm text-gray-600">
 						Or{' '}
 						<Link
-							href="/signup"
+							href="auth/signup"
 							className="font-medium text-gray-900 hover:text-gray-700 transition-colors duration-300 underline"
 						>
 							create a new account

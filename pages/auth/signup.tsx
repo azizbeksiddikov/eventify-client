@@ -98,7 +98,7 @@ const Signup = () => {
 					<p className="mt-2 text-sm text-gray-600">
 						Or{' '}
 						<Link
-							href="/login"
+							href="auth/login"
 							className="font-medium text-gray-900 hover:text-gray-700 transition-colors duration-300 underline"
 						>
 							sign in to your account

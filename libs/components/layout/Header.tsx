@@ -118,12 +118,12 @@ const Header = () => {
 						<UserNav handleLogout={handleLogout} authMember={authMember} />
 					) : (
 						<div className="flex items-center gap-4">
-							<Link href="/login">
+							<Link href="auth/login">
 								<Button variant="outline" className="text-sm  h-9 px-4">
 									Login
 								</Button>
 							</Link>
-							<Link href="/signup">
+							<Link href="auth/signup">
 								<Button className="text-sm 0 h-9 px-4">Sign Up</Button>
 							</Link>
 						</div>
