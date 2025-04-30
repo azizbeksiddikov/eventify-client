@@ -2,7 +2,7 @@ import { Html, Head, Main, NextScript } from 'next/document';
 
 export default function Document() {
 	return (
-		<Html lang="en">
+		<Html lang="en" suppressHydrationWarning>
 			<Head>
 				<meta name="robots" content="index,follow" />
 				<link rel="icon" type="image/png" href="/img/logo/favicon.svg" />
@@ -18,7 +18,7 @@ export default function Document() {
 					}
 				/>
 			</Head>
-			<body>
+			<body className={` bg-background antialiased`}>
 				<Main />
 				<NextScript />
 			</body>

@@ -1,15 +1,46 @@
 import Link from 'next/link';
 import { useState } from 'react';
-import Image from 'next/image';
-import { Avatar, AvatarImage, AvatarFallback } from '@/libs/components/ui/avatar';
-import { Button } from '@/libs/components/ui/button';
-import { User } from 'lucide-react';
+import { Button, buttonVariants } from '@/libs/components/ui/button';
 import type { Member } from '@/libs/types/member/member';
 import { MemberType, MemberStatus } from '@/libs/enums/member.enum';
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
+} from '@/libs/components/ui/dropdown-menu';
+import { ModeToggle } from '../ui/mode-toggle';
+import { Logo } from '../ui/logo';
+import { usePathname } from 'next/navigation';
+import { cn } from '@/libs/utils';
+import { UserNav } from './UserNav';
+
+const navLinks = [
+	{ href: '/', label: 'Home' },
+	{ href: '/events', label: 'Events' },
+	{ href: '/groups', label: 'Groups' },
+	{ href: '/organizers', label: 'Organizers' },
+	{ href: '/help', label: 'Help' },
+	{ href: '/admin', label: 'Admin' },
+];
 
 const Header = () => {
-	const [isAuthenticated, setIsAuthenticated] = useState(true);
-	const [user, setUser] = useState<Member>({
+	const pathname = usePathname();
+
+	const languages = [
+		{ code: 'en', name: 'English', flag: '🇺🇸' },
+		{ code: 'ru', name: 'Russian', flag: '🇷🇺' },
+		{ code: 'uz', name: 'Uzbek', flag: '🇺🇿' },
+		{ code: 'ko', name: 'Korean', flag: '🇰🇷' },
+	];
+
+	const [currentLanguage, setCurrentLanguage] = useState('en');
+
+	const handleLanguageChange = (langCode: string) => {
+		setCurrentLanguage(langCode);
+	};
+
+	const [authMember, setUser] = useState<Member | null>({
 		_id: '1',
 		username: 'johndoe',
 		memberEmail: 'john@example.com',
@@ -28,107 +59,72 @@ const Header = () => {
 	});
 
 	const handleLogout = () => {
-		setIsAuthenticated(false);
-		setUser({
-			_id: '',
-			username: '',
-			memberEmail: '',
-			memberFullName: '',
-			memberType: MemberType.USER,
-			memberStatus: MemberStatus.ACTIVE,
-			emailVerified: false,
-			memberImage: '',
-			memberPoints: 0,
-			memberLikes: 0,
-			memberFollowings: 0,
-			memberFollowers: 0,
-			memberViews: 0,
-			createdAt: new Date(),
-			updatedAt: new Date(),
-		});
+		setUser(null);
 	};
 
 	return (
-		<header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200/50">
-			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-				<div className="flex items-center justify-between h-16">
-					{/* Logo */}
-					<Link href="/" className="flex items-center gap-3 group">
-						<Image
-							src="/images/logo.png"
-							alt="Eventify Logo"
-							width={32}
-							height={32}
-							className="group-hover:scale-105 transition-transform duration-300"
-						/>
-						<span className="text-xl font-semibold text-gray-900 group-hover:text-gray-700 transition-colors duration-300">
-							Eventify
-						</span>
-					</Link>
+		<header className="sticky top-0 z-50 bg-background/80 backdrop-blur-sm border-b ">
+			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-20">
+				{/* Logo */}
+				<Link href="/" className="flex items-center gap-3 hover:scale-95 transition-transform duration-300">
+					<Logo className="h-8 w-8" />
+					<span className="text-xl font-semibold text-foreground">Eventify</span>
+				</Link>
 
-					{/* Desktop Navigation */}
-					<nav className="flex items-center gap-8">
-						<Link href="/" className="text-sm text-gray-600 hover:text-gray-900 transition-colors duration-300">
-							Home
-						</Link>
-						<Link href="/events" className="text-sm text-gray-600 hover:text-gray-900 transition-colors duration-300">
-							Events
-						</Link>
-						<Link href="/groups" className="text-sm text-gray-600 hover:text-gray-900 transition-colors duration-300">
-							Groups
-						</Link>
+				{/* Desktop Navigation */}
+				<nav className="flex items-center gap-8 ">
+					{navLinks.map((link, index) => (
 						<Link
-							href="/organizers"
-							className="text-sm text-gray-600 hover:text-gray-900 transition-colors duration-300"
+							key={index}
+							href={link.href}
+							className={`text-sm font-medium transition-colors duration-300 ${
+								pathname === link.href
+									? 'text-foneground font-semibold underline underline-offset-6'
+									: 'text-muted-foreground hover:text-foreground'
+							}`}
 						>
-							Organizers
+							{link.label}
 						</Link>
-						<Link href="/help" className="text-sm text-gray-600 hover:text-gray-900 transition-colors duration-300">
-							Help
-						</Link>
-						<Link href="/admin" className="text-sm text-gray-600 hover:text-gray-900 transition-colors duration-300">
-							Admin
-						</Link>
-					</nav>
+					))}
+				</nav>
+
+				{/* Auth & Lang & Theme */}
+				<div className="flex items-center gap-3">
+					{/* Theme Mode Switcher */}
+					<ModeToggle />
+
+					{/* Language Selector */}
+					<DropdownMenu>
+						<DropdownMenuTrigger
+							className={cn(buttonVariants({ variant: 'ghost', size: 'icon' }), 'offdet-0 text-xl h-10 w-10')}
+						>
+							{languages.find((lang) => lang.code === currentLanguage)?.flag || '🌐'}
+						</DropdownMenuTrigger>
+						<DropdownMenuContent align="end" className="w-40">
+							{languages.map((lang) => (
+								<DropdownMenuItem
+									key={lang.code}
+									className={`${currentLanguage === lang.code ? 'bg-background font-medium' : ''} cursor-pointer`}
+									onClick={() => handleLanguageChange(lang.code)}
+								>
+									{lang.name}
+								</DropdownMenuItem>
+							))}
+						</DropdownMenuContent>
+					</DropdownMenu>
 
 					{/* User Menu */}
-					{isAuthenticated ? (
-						<div className="flex items-center gap-4">
-							<Link href="/profile" className="hover:opacity-80 transition-opacity duration-300">
-								<Avatar className="h-8 w-8">
-									{user?.memberImage && user?.memberImage !== '' ? (
-										<AvatarImage src={user.memberImage || '/placeholder.svg'} alt={user.memberFullName} />
-									) : (
-										<AvatarFallback className="bg-white border border-gray-200 flex items-center justify-center">
-											<User
-												className="text-gray-800"
-												style={{
-													width: 16,
-													height: 16,
-													strokeWidth: 2,
-												}}
-											/>
-										</AvatarFallback>
-									)}
-								</Avatar>
-							</Link>
-							<Button
-								variant="outline"
-								onClick={handleLogout}
-								className="text-sm text-gray-900 border-gray-300 hover:bg-gray-50 h-9 px-4"
-							>
-								Logout
-							</Button>
-						</div>
+					{authMember ? (
+						<UserNav handleLogout={handleLogout} authMember={authMember} />
 					) : (
 						<div className="flex items-center gap-4">
 							<Link href="/login">
-								<Button variant="outline" className="text-sm text-gray-900 border-gray-300 hover:bg-gray-50 h-9 px-4">
+								<Button variant="outline" className="text-sm  h-9 px-4">
 									Login
 								</Button>
 							</Link>
 							<Link href="/signup">
-								<Button className="text-sm text-white bg-gray-900 hover:bg-gray-800 h-9 px-4">Sign Up</Button>
+								<Button className="text-sm 0 h-9 px-4">Sign Up</Button>
 							</Link>
 						</div>
 					)}
