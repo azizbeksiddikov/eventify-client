@@ -6,8 +6,8 @@ import { GroupCategory } from '@/libs/enums/group.enum';
 import { Direction } from '@/libs/enums/common.enum';
 import withBasicLayout from '../../libs/components/layout/LayoutBasic';
 import { Search } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Button } from '@/libs/components/ui/button';
+import { Input } from '@/libs/components/ui/input';
 import {
 	Pagination,
 	PaginationContent,
@@ -15,8 +15,8 @@ import {
 	PaginationLink,
 	PaginationNext,
 	PaginationPrevious,
-} from '../../components/ui/pagination';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+} from '@/libs/components/ui/pagination';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/libs/components/ui/select';
 import { GroupCard } from '@/libs/components/group/GroupCard';
 
 const groups: Group[] = [

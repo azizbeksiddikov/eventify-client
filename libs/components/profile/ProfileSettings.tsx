@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { Member } from '@/libs/types/member/member';
 import { MemberUpdateInput } from '@/libs/types/member/member.update';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/libs/components/ui/button';
+import { Input } from '@/libs/components/ui/input';
+import { Label } from '@/libs/components/ui/label';
+import { Textarea } from '@/libs/components/ui/textarea';
 import { ImageIcon } from 'lucide-react';
 
 interface ProfileSettingsProps {

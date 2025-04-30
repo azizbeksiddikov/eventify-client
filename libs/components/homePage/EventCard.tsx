@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { MapPin, Calendar, Heart, Eye } from 'lucide-react';
-import { Button } from '../ui/button';
+import { Button } from '@/libs/components/ui/button';
 
 interface Event {
 	id: string;

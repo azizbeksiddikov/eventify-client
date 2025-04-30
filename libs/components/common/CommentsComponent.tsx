@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import { Button } from './ui/button';
-import { Textarea } from './ui/textarea';
-import { Avatar } from './ui/avatar';
+import { Button } from '@/libs/components/ui/button';
+import { Textarea } from '@/libs/components/ui/textarea';
+import { Avatar } from '@/libs/components/ui/avatar';
 import { MessageSquare, Plus } from 'lucide-react';
-import { Separator } from './ui/separator';
-import type { Comment } from '../types/comment/comment';
-import { CommentGroup, CommentStatus } from '../enums/comment.enum';
+import { Separator } from '@/libs/components/ui/separator';
+import type { Comment } from '../../types/comment/comment';
+import { CommentGroup, CommentStatus } from '../../enums/comment.enum';
 
 interface CommentsProps {
 	comments: Comment[];

@@ -1,7 +1,7 @@
 import { Card } from '@/libs/components/ui/card';
 import withBasicLayout from '@/libs/components/layout/LayoutBasic';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/libs/components/ui/tabs';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/libs/components/ui/accordion';
 
 const faqCategories = [
 	{

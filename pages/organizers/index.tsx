@@ -14,7 +14,7 @@ import {
 	PaginationLink,
 	PaginationNext,
 	PaginationPrevious,
-} from '@/components/ui/pagination';
+} from '@/libs/components/ui/pagination';
 
 const sortOptions = [
 	{ value: 'createdAt', label: 'Newest' },

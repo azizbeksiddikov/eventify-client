@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { Calendar, ArrowRight, MapPin, Heart } from 'lucide-react';
-import { Button } from '../ui/button';
+import { Button } from '@/libs/components/ui/button';
 import { useState } from 'react';
 
 interface Organizer {

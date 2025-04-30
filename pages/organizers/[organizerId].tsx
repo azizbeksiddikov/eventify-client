@@ -13,10 +13,10 @@ import { Event } from '@/libs/types/event/event';
 import { EventStatus, EventCategory } from '@/libs/enums/event.enum';
 import { Group } from '@/libs/types/group/group';
 import { GroupCategory } from '@/libs/enums/group.enum';
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/libs/components/ui/carousel';
 import { CommentGroup, CommentStatus } from '@/libs/enums/comment.enum';
 import { Comment } from '@/libs/types/comment/comment';
-import CommentsComponent from '@/libs/components/CommentsComponent';
+import CommentsComponent from '@/libs/components/common/CommentsComponent';
 
 const OrganizerDetailPage = () => {
 	const router = useRouter();

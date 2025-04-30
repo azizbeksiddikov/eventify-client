@@ -1,8 +1,8 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import Image from 'next/image';
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
+import { Avatar, AvatarImage, AvatarFallback } from '@/libs/components/ui/avatar';
+import { Button } from '@/libs/components/ui/button';
 import { User } from 'lucide-react';
 import type { Member } from '@/libs/types/member/member';
 import { MemberType, MemberStatus } from '@/libs/enums/member.enum';

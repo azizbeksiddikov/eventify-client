@@ -1,8 +1,8 @@
 import { Users, Calendar, ChevronRight, Check, Hash } from 'lucide-react';
-import { Button } from '../ui/button';
+import { Button } from '@/libs/components/ui/button';
 import Link from 'next/link';
-import { Card } from '../ui/card';
-import { Badge } from '../ui/badge';
+import { Card } from '@/libs/components/ui/card';
+import { Badge } from '@/libs/components/ui/badge';
 import { Group } from '@/libs/types/group/group';
 import Image from 'next/image';
 

@@ -4,9 +4,9 @@ import { MemberStatus, MemberType } from '@/libs/enums/member.enum';
 import { EventStatus, EventCategory } from '@/libs/enums/event.enum';
 import { GroupCategory } from '@/libs/enums/group.enum';
 import { TicketStatus } from '@/libs/enums/ticket.enum';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Button } from '@/libs/components/ui/button';
+import { Input } from '@/libs/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/libs/components/ui/select';
 
 interface AdminSearchBarProps {
 	activeTab: string;

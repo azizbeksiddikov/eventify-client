@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { EventCategory, EventStatus } from '../../libs/enums/event.enum';
@@ -7,8 +7,8 @@ import { Event } from '../../libs/types/event/event';
 import { EventsInquiry } from '../../libs/types/event/event.input';
 import { Direction } from '../../libs/enums/common.enum';
 import { Search, Calendar, MapPin, Users, ArrowUpDown } from 'lucide-react';
-import { Button } from '../../libs/components/ui/button';
-import { Input } from '../../libs/components/ui/input';
+import { Button } from '@/libs/components/ui/button';
+import { Input } from '@/libs/components/ui/input';
 import {
 	Pagination,
 	PaginationContent,
@@ -16,10 +16,10 @@ import {
 	PaginationLink,
 	PaginationNext,
 	PaginationPrevious,
-} from '../../components/ui/pagination';
-import { Checkbox } from '../../components/ui/checkbox';
-import { Label } from '../../components/ui/label';
-import { Popover, PopoverContent, PopoverTrigger } from '../../components/ui/popover';
+} from '@/libs/components/ui/pagination';
+import { Checkbox } from '@/libs/components/ui/checkbox';
+import { Label } from '@/libs/components/ui/label';
+import { Popover, PopoverContent, PopoverTrigger } from '@/libs/components/ui/popover';
 import { format } from 'date-fns';
 import { DateRange } from 'react-date-range';
 import 'react-date-range/dist/styles.css';

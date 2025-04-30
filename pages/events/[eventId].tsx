@@ -15,7 +15,7 @@ import { Calendar, Clock, MapPin, Users, Heart, Eye } from 'lucide-react';
 import withBasicLayout from '@/libs/components/layout/LayoutBasic';
 import { Group } from '@/libs/types/group/group';
 import { Member } from '@/libs/types/member/member';
-import Comments from '@/libs/components/CommentsComponent';
+import Comments from '@/libs/components/common/CommentsComponent';
 import { CommentGroup } from '@/libs/enums/comment.enum';
 import { CommentStatus } from '@/libs/enums/comment.enum';
 import { Comment } from '@/libs/types/comment/comment';

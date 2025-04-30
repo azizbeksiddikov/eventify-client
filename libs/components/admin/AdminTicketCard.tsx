@@ -1,6 +1,6 @@
 import { Trash2 } from 'lucide-react';
 import { Ticket } from '@/libs/types/ticket/ticket';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/libs/components/ui/button';
 import { TicketStatus } from '@/libs/enums/ticket.enum';
 
 interface AdminTicketCardProps {

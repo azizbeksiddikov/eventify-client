@@ -1,7 +1,7 @@
 import { Users, Calendar, ChevronRight, Check } from 'lucide-react';
-import { Button } from '../ui/button';
+import { Button } from '@/libs/components/ui/button';
 import Link from 'next/link';
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/libs/components/ui/card';
 
 interface Group {
 	id: string;

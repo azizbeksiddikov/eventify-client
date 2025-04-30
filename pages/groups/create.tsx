@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { Button } from '@/libs/components/ui/button';
 import { Input } from '@/libs/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
+import { Textarea } from '@/libs/components/ui/textarea';
 import { Card } from '@/libs/components/ui/card';
 import { ImageIcon, X } from 'lucide-react';
 import withBasicLayout from '@/libs/components/layout/LayoutBasic';

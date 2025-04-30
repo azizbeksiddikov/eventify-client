@@ -1,6 +1,6 @@
 import { Trash2 } from 'lucide-react';
 import { Group } from '@/libs/types/group/group';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/libs/components/ui/button';
 import { GroupCategory } from '@/libs/enums/group.enum';
 
 interface AdminGroupCardProps {

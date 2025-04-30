@@ -1,7 +1,7 @@
 import { Users, Eye, Heart, Trash2 } from 'lucide-react';
 import { Event } from '@/libs/types/event/event';
 import { EventStatus } from '@/libs/enums/event.enum';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/libs/components/ui/button';
 
 interface AdminEventCardProps {
 	event: Event;

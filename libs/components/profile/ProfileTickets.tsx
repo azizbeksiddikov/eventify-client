@@ -1,7 +1,7 @@
 import { Ticket } from '@/libs/types/ticket/ticket';
 import { TicketStatus } from '@/libs/enums/ticket.enum';
 import { Calendar } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/libs/components/ui/button';
 
 interface ProfileTicketsProps {
 	tickets: Ticket[];

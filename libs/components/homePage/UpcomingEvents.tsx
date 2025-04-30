@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Calendar } from '@/components/ui/calendar';
+import { Calendar } from '@/libs/components/ui/calendar';
 import { MapPin, Clock, CalendarIcon, ChevronRight } from 'lucide-react';
 
 interface Event {

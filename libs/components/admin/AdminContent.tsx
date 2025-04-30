@@ -10,7 +10,7 @@ import {
 	PaginationLink,
 	PaginationNext,
 	PaginationPrevious,
-} from '@/components/ui/pagination';
+} from '@/libs/components/ui/pagination';
 import { Member } from '@/libs/types/member/member';
 import { Event } from '@/libs/types/event/event';
 import { Group } from '@/libs/types/group/group';

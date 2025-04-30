@@ -1,5 +1,5 @@
 import { Member } from '@/libs/types/member/member';
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarImage, AvatarFallback } from '@/libs/components/ui/avatar';
 import { User } from 'lucide-react';
 
 interface ProfileFollowingsProps {

@@ -1,6 +1,6 @@
 import { Trash2 } from 'lucide-react';
 import { Member } from '@/libs/types/member/member';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/libs/components/ui/button';
 
 interface AdminUserCardProps {
 	member: Member;
