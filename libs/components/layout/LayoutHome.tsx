@@ -13,7 +13,7 @@ const withHomeLayout = (Page: NextPage) => {
 		return (
 			<div className="min-h-screen flex flex-col">
 				<Header />
-				<main className="flex-1 pb-10">
+				<main className="flex-1">
 					<Page {...props} />
 				</main>
 				<Footer />

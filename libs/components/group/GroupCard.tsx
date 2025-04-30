@@ -1,106 +1,147 @@
-import { Users, Calendar, ChevronRight, Check, Hash } from 'lucide-react';
+import { useState } from 'react';
 import { Button } from '@/libs/components/ui/button';
-import Link from 'next/link';
-import { Card } from '@/libs/components/ui/card';
-import { Badge } from '@/libs/components/ui/badge';
+import { Card, CardContent, CardFooter, CardHeader } from '@/libs/components/ui/card';
+import { Heart, Calendar, Users, ExternalLink, Hash, Eye } from 'lucide-react';
 import { Group } from '@/libs/types/group/group';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/libs/components/ui/tooltip';
 import Image from 'next/image';
+import Link from 'next/link';
+import { Badge } from '@/libs/components/ui/badge';
 
 interface GroupCardProps {
 	group: Group;
-	onJoin: (groupId: string) => void;
-	isJoined: boolean;
 }
 
-const formatNumber = (num: number): string => {
-	if (num >= 1000000) {
-		return (num / 1000000).toFixed(1) + 'M';
-	}
-	if (num >= 1000) {
-		return (num / 1000).toFixed(1) + 'K';
-	}
-	return num.toString();
-};
+const GroupCard = ({ group }: GroupCardProps) => {
+	const [isLiked, setIsLiked] = useState(false);
+	const [isJoined, setIsJoined] = useState(false);
 
-export const GroupCard = ({ group, onJoin, isJoined }: GroupCardProps) => {
+	const handleLike = () => {
+		setIsLiked(!isLiked);
+	};
+
+	const handleJoin = () => {
+		setIsJoined(!isJoined);
+	};
+
 	return (
-		<div className="group">
-			<Card className="bg-card/50 backdrop-blur-sm rounded-2xl shadow-sm  overflow-hidden hover:shadow-md transition-all duration-300 group-hover:border-primary/50">
-				<div className="relative h-48 w-full overflow-hidden rounded-t-lg">
+		<Card className="pt-0 w-full mx-auto shadow-md hover:shadow-lg transition-all duration-300 bg-card/60 flex flex-col h-full group hover:scale-105">
+			<CardHeader className="p-0">
+				<div className="relative aspect-[16/9] w-full overflow-hidden rounded-t-xl">
 					<Link href={`/groups/${group._id}`}>
 						<Image
 							src={group.groupImage}
 							alt={group.groupName}
 							fill
-							className="object-cover transition-transform duration-300 hover:scale-105"
+							className="object-cover transition-transform duration-300"
 						/>
 					</Link>
-					{group.groupCategories && group.groupCategories.length > 0 && (
-						<div className="absolute top-2 right-2">
-							<Badge variant="secondary" className="bg-background/80 backdrop-blur-sm">
-								{group.groupCategories[0]}
-							</Badge>
-						</div>
-					)}
-				</div>
-				<div className="p-6">
-					<div className="flex justify-between items-start mb-3 h-[2.5rem]">
-						<h3 className="text-lg font-medium text-foreground line-clamp-1">{group.groupName}</h3>
+					<div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+						<Badge variant="secondary" className="bg-background/80 backdrop-blur-sm shadow-sm">
+							<Eye className="w-4 h-4 mr-1.5" />
+							{group.groupViews || 0}
+						</Badge>
 					</div>
-					<div className="flex flex-wrap gap-1.5 mb-3">
+				</div>
+			</CardHeader>
+
+			<CardContent className="space-y-5 p-4 flex-1">
+				<div className="space-y-2">
+					<h3 className="text-2xl font-semibold text-foreground line-clamp-1">{group.groupName}</h3>
+					<div className="flex flex-wrap gap-2">
 						{group.groupCategories.map((category, index) => (
 							<Badge
 								key={index}
 								variant="outline"
-								className="bg-white/90 backdrop-blur-sm text-[#4A4A4A] hover:bg-[#F8F8F8] transition-colors duration-200 text-xs px-2 py-1"
+								className="bg-accent/10 text-accent-foreground hover:bg-accent/20 transition-colors duration-200 text-sm px-3 py-1"
 							>
-								<Hash className="w-3 h-3 mr-1" />
+								<Hash className="w-4 h-4 mr-1.5" />
 								{category}
 							</Badge>
 						))}
 					</div>
-					<div className="h-[3.5rem] overflow-hidden">
-						<p className="text-muted-foreground text-sm line-clamp-2">{group.groupDesc}</p>
-					</div>
-					<div className="space-y-2 mt-4">
-						<div className="flex items-center text-sm text-muted-foreground">
-							<Users className="w-4 h-4 mr-2" />
-							{formatNumber(group.memberCount)} members
-						</div>
-						<div className="flex items-center text-sm text-muted-foreground">
-							<Calendar className="w-4 h-4 mr-2" />
-							{formatNumber(group.groupViews)} views
-						</div>
-					</div>
-					<div className="mt-6 border-t border-border/50 pt-4 flex items-center justify-between">
-						<Button
-							onClick={() => onJoin(group._id)}
-							className={`transition-all duration-200 ${
-								isJoined
-									? 'bg-[#00A862] hover:bg-[#008F54] text-white cursor-default'
-									: 'bg-[#2D2D2D] hover:bg-[#1A1A1A] text-white hover:scale-[1.02]'
-							}`}
-							disabled={isJoined}
-						>
-							{isJoined ? (
-								<div className="flex items-center gap-2">
-									<Check className="w-4 h-4" />
-									<span>Joined</span>
-								</div>
+				</div>
+
+				<div className="grid grid-cols-3 gap-2 p-3 bg-muted/50 rounded-xl">
+					<Tooltip>
+						<TooltipTrigger asChild>
+							<div className="flex items-center justify-center gap-2 p-2 rounded-md bg-card/70 hover:bg-card transition-colors cursor-help">
+								<Users className="h-4 w-4 text-primary" />
+								<p className="text-base font-medium">{group.memberCount || 0}</p>
+							</div>
+						</TooltipTrigger>
+						<TooltipContent side="bottom">Total group members</TooltipContent>
+					</Tooltip>
+
+					<Tooltip>
+						<TooltipTrigger asChild>
+							<div className="flex items-center justify-center gap-2 p-2 rounded-md bg-card/70 hover:bg-card transition-colors cursor-help">
+								<Calendar className="h-4 w-4 text-primary" />
+								<p className="text-base font-medium">{group.eventsCount || 0}</p>
+							</div>
+						</TooltipTrigger>
+						<TooltipContent side="bottom">Total events organized</TooltipContent>
+					</Tooltip>
+
+					<Tooltip>
+						<TooltipTrigger asChild>
+							<div className="flex items-center justify-center gap-2 p-2 rounded-md bg-card/70 hover:bg-card transition-colors cursor-help">
+								<Heart className="h-4 w-4 text-primary" />
+								<p className="text-base font-medium">{group.groupLikes || 0}</p>
+							</div>
+						</TooltipTrigger>
+						<TooltipContent side="bottom">Total likes received</TooltipContent>
+					</Tooltip>
+				</div>
+
+				<div className="px-1">
+					<div className="relative">
+						<div className="bg-muted/30 p-3 rounded-lg">
+							{group.groupDesc ? (
+								<p className="text-sm text-foreground leading-relaxed line-clamp-3">{group.groupDesc}</p>
 							) : (
-								'Join Group'
+								<p className="text-sm text-muted-foreground italic flex items-center justify-center py-2">
+									<span className="bg-muted/50 px-3 py-1 rounded-md">No description available</span>
+								</p>
 							)}
-						</Button>
-						<Link
-							href={group.groupLink}
-							className="text-[#2D2D2D] hover:text-[#1A1A1A] transition-colors duration-200 flex items-center gap-1.5 text-sm font-medium"
-						>
-							View details
-							<ChevronRight className="w-4 h-4" />
-						</Link>
+						</div>
 					</div>
 				</div>
-			</Card>
-		</div>
+			</CardContent>
+
+			<CardFooter className="pt-3 border-t border-border flex items-center justify-between gap-2 mt-auto">
+				<Button
+					variant="ghost"
+					size="sm"
+					className={`h-10 px-4 font-medium transition-all rounded-lg ${isLiked ? 'text-rose-500 hover:text-rose-600 hover:bg-rose-50/30' : 'hover:text-rose-500 hover:bg-rose-50/20'}`}
+					onClick={handleLike}
+				>
+					<Heart className={`h-4 w-4 mr-1.5 transition-all ${isLiked ? 'fill-current stroke-current' : ''}`} />
+					{isLiked ? 'Liked' : 'Like'}
+				</Button>
+
+				<Button
+					variant={isJoined ? 'outline' : 'default'}
+					size="sm"
+					className={`h-10 px-4 font-medium transition-all rounded-lg ${isJoined ? 'border-primary/30 text-primary hover:bg-primary/5' : ''}`}
+					onClick={handleJoin}
+				>
+					{isJoined ? 'Joined' : 'Join'}
+				</Button>
+
+				<Link href={`/groups/${group._id}`}>
+					<Button
+						variant="outline"
+						size="sm"
+						className="h-10 rounded-lg hover:bg-primary/5 border-primary/30 text-primary transition-colors"
+					>
+						<ExternalLink className="h-4 w-4 mr-1.5" />
+						View
+					</Button>
+				</Link>
+			</CardFooter>
+		</Card>
 	);
 };
+
+export default GroupCard;

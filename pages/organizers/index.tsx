@@ -6,7 +6,7 @@ import { ArrowUpDown, X } from 'lucide-react';
 import withBasicLayout from '@/libs/components/layout/LayoutBasic';
 import { MemberType } from '@/libs/enums/member.enum';
 import { Direction } from '@/libs/enums/common.enum';
-import OrganizerCard from '@/libs/components/organizer/OrganizerCard';
+import OrganizerCard from '@/libs/components/common/OrganizerCard';
 import {
 	Pagination,
 	PaginationContent,

@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { Calendar } from '@/libs/components/ui/calendar';
-import { MapPin, Clock, CalendarIcon, ChevronRight } from 'lucide-react';
+import { MapPin, Clock, CalendarIcon, ChevronRight, ArrowRight } from 'lucide-react';
 import { eventList } from '@/data';
 import { Event } from '@/libs/types/event/event';
-
+import { Button } from '../ui/button';
+import { useRouter } from 'next/navigation';
 export default function UpcomingEvents() {
+	const router = useRouter();
 	const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
 	const getEventsForDate = (date: Date | undefined) => {
 		if (!date) return [];
@@ -20,16 +22,17 @@ export default function UpcomingEvents() {
 	};
 
 	return (
-		<section className="my-20">
-			<div className="w-[90%] mx-auto">
-				<div className="flex items-center justify-between mb-6">
-					<h2 className="text-2xl font-bold text-foreground">Upcoming Events</h2>
-					<Link
-						href="/events"
-						className="text-primary hover:text-primary/80 transition-colors duration-200 text-sm font-medium"
-					>
-						View All Events
-					</Link>
+		<section className="py-20 bg-muted">
+			<div className="w-[90%] mx-auto ">
+				<div className="flex items-center justify-between mb-8">
+					<h2>Upcoming Events</h2>
+
+					<Button type="submit" onClick={() => router.push('/events')} className="h-14 px-8 ">
+						<div className="flex items-center gap-1 ">
+							View All Events
+							<ArrowRight className="w-4 h-4" />
+						</div>
+					</Button>
 				</div>
 
 				<div className="grid grid-cols-1 md:grid-cols-4 gap-6">

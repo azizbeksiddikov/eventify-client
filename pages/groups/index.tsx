@@ -17,7 +17,7 @@ import {
 	PaginationPrevious,
 } from '@/libs/components/ui/pagination';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/libs/components/ui/select';
-import { GroupCard } from '@/libs/components/group/GroupCard';
+import GroupCard from '@/libs/components/group/GroupCard';
 
 const groups: Group[] = [
 	{

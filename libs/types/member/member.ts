@@ -21,6 +21,7 @@ export interface Member {
 	memberViews: number;
 	createdAt: Date;
 	updatedAt: Date;
+	eventOrganizedCount: number;
 	// memberPassword: string;
 	accessToken?: string;
 

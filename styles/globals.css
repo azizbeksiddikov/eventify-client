@@ -84,11 +84,15 @@
 	body {
 		@apply bg-background text-foreground;
 	}
+
+	h2 {
+		@apply text-3xl font-bold text-foreground mb-8 text-center;
+	}
 }
 
 @layer utilities {
-	body {
-		font-family: Arial, Helvetica, sans-serif;
+	.flex-container {
+		@apply max-w-7xl mx-auto flex flex-col items-center justify-center;
 	}
 }
 
@@ -102,8 +106,8 @@
 	--popover-foreground: oklch(0.141 0.005 285.823);
 	--primary: oklch(0.606 0.25 292.717);
 	--primary-foreground: oklch(0.969 0.016 293.756);
-	--secondary: oklch(0.967 0.001 286.375);
-	--secondary-foreground: oklch(0.21 0.006 285.885);
+	--secondary: oklch(0.75 0.25 292.717);
+	--secondary-foreground: oklch(0.25 0.006 285.885);
 	--muted: oklch(0.967 0.001 286.375);
 	--muted-foreground: oklch(0.552 0.016 285.938);
 	--accent: oklch(0.967 0.001 286.375);
@@ -136,8 +140,8 @@
 	--popover-foreground: oklch(0.985 0 0);
 	--primary: oklch(0.541 0.281 293.009);
 	--primary-foreground: oklch(0.969 0.016 293.756);
-	--secondary: oklch(0.274 0.006 286.033);
-	--secondary-foreground: oklch(0.985 0 0);
+	--secondary: oklch(0.35 0.006 286.033);
+	--secondary-foreground: oklch(0.95 0 0);
 	--muted: oklch(0.274 0.006 286.033);
 	--muted-foreground: oklch(0.705 0.015 286.067);
 	--accent: oklch(0.274 0.006 286.033);

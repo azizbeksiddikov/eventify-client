@@ -1,37 +1,29 @@
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
-import { useState } from 'react';
-import { EventCard } from './EventCard';
+import { EventCard } from './EventCardHomepage';
 import { Event } from '@/libs/types/event/event';
+import { Button } from '../ui/button';
+import { useRouter } from 'next/navigation';
 import { eventsByCategory } from '@/data';
 
 const EventsByCategory = () => {
-	const [likedEvents, setLikedEvents] = useState<Set<string>>(new Set());
-
-	const handleLikeEvent = (eventId: string) => {
-		setLikedEvents((prev) => {
-			const newSet = new Set(prev);
-			if (newSet.has(eventId)) {
-				newSet.delete(eventId);
-			} else {
-				newSet.add(eventId);
-			}
-			return newSet;
-		});
-	};
+	const router = useRouter();
 
 	return (
-		<section className="my-10 bg-primary/10 py-20">
+		<section className="bg-secondary/50 py-20">
 			<div className="w-[90%] mx-auto ">
 				<div className="flex items-center justify-between mb-8">
-					<h2 className="text-2xl font-bold text-foreground">Events by Category</h2>
-					<Link
-						href="/events"
-						className="text-primary hover:text-primary/80 transition-colors duration-200 flex items-center gap-1 text-sm font-medium"
+					<h2>Events by Category</h2>
+					<Button
+						type="submit"
+						onClick={() => router.push('/events')}
+						className="h-14 px-8 bg-card text-card-foreground"
 					>
-						View All Events
-						<ArrowRight className="w-4 h-4" />
-					</Link>
+						<div className="flex items-center gap-1 ">
+							View All Events
+							<ArrowRight className="w-4 h-4" />
+						</div>
+					</Button>
 				</div>
 
 				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -46,12 +38,7 @@ const EventsByCategory = () => {
 							<div className="p-4 flex-1">
 								<div className="space-y-4">
 									{events.map((event: Event) => (
-										<EventCard
-											key={event._id}
-											event={event}
-											onLike={handleLikeEvent}
-											isLiked={likedEvents.has(event._id)}
-										/>
+										<EventCard key={event._id} event={event} />
 									))}
 								</div>
 							</div>

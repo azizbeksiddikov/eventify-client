@@ -137,7 +137,7 @@ const AutoScrollEvents = () => {
 						</div>
 
 						<div className="absolute inset-0 flex items-center justify-center flex-col">
-							<div className="text-center text-white max-w-4xl px-4 sm:px-6 md:px-8 transform transition-all duration-1000 ease-in-out  backdrop-blur-xs py-2">
+							<div className="text-center text-white max-w-4xl px-4 sm:px-6 md:px-8 transform transition-all duration-1000 ease-in-out  backdrop-blur-xs my-2">
 								<div className="mb-4 flex flex-wrap justify-center gap-2">
 									{event.eventCategories.map((category, catIndex) => (
 										<span
@@ -154,7 +154,7 @@ const AutoScrollEvents = () => {
 								<p className="text-lg sm:text-xl mb-6 sm:mb-8 text-white max-w-2xl mx-auto   px-4 py-3 rounded-lg">
 									{event.eventDesc}
 								</p>
-								<div className="flex flex-col sm:flex-row justify-center sm:space-x-6 space-y-3 sm:space-y-0 mb-6 sm:mb-8">
+								<div className="flex flex-col sm:flex-row justify-center sm:space-x-6 space-y-3 sm:space-y-0 mb-2 sm:mb-4">
 									<span className="flex items-center justify-center sm:justify-start   px-4 py-2 rounded-full text-white">
 										<MapPin className="w-5 h-5 mr-2" />
 										<span>{event.eventAddress}</span>

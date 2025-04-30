@@ -36,9 +36,9 @@ const SearchEvents = () => {
 	};
 
 	return (
-		<div className="bg-primary/5 py-24">
-			<div className="container w-full max-w-6xl mx-auto">
-				<h2 className="text-3xl font-bold text-foreground mb-8 text-center">Find Events</h2>
+		<div className="bg-secondary/50 py-24">
+			<div className="flex-container">
+				<h2>Find Events</h2>
 				<Card className="p-8">
 					<form onSubmit={handleSearch} className="flex items-center gap-4">
 						<div className="flex-1">

@@ -2,14 +2,15 @@ import Link from 'next/link';
 import { MapPin, Calendar, Heart, Eye } from 'lucide-react';
 import { Button } from '@/libs/components/ui/button';
 import { Event } from '@/libs/types/event/event';
+import { useState } from 'react';
 
 interface EventCardProps {
 	event: Event;
-	onLike: (eventId: string) => void;
-	isLiked: boolean;
 }
 
-export const EventCard = ({ event, onLike, isLiked }: EventCardProps) => {
+export const EventCard = ({ event }: EventCardProps) => {
+	const [isLiked, setIsLiked] = useState(false);
+
 	return (
 		<Link
 			href={`/events/${event._id}`}
@@ -36,7 +37,7 @@ export const EventCard = ({ event, onLike, isLiked }: EventCardProps) => {
 							size="sm"
 							onClick={(e) => {
 								e.preventDefault();
-								onLike(event._id);
+								setIsLiked(!isLiked);
 							}}
 							className="text-muted-foreground hover:text-primary transition-colors duration-200 hover:bg-primary/10"
 						>
