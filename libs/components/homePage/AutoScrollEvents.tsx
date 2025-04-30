@@ -10,7 +10,6 @@ import { eventList } from '@/data';
 
 const AutoScrollEvents = () => {
 	const [currentIndex, setCurrentIndex] = useState(0);
-	const [isHovered, setIsHovered] = useState(false);
 	const [hoverPosition, setHoverPosition] = useState<number | null>(null);
 	const containerRef = useRef<HTMLDivElement>(null);
 	const autoScrollIntervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -34,14 +33,6 @@ const AutoScrollEvents = () => {
 
 	// Auto-scroll functionality
 	useEffect(() => {
-		if (isHovered) {
-			if (autoScrollIntervalRef.current) {
-				clearInterval(autoScrollIntervalRef.current);
-				autoScrollIntervalRef.current = null;
-			}
-			return;
-		}
-
 		autoScrollIntervalRef.current = setInterval(() => {
 			setCurrentIndex((prevIndex) => (prevIndex + 1) % eventList.length);
 		}, 5000); // Slightly longer interval for better user experience
@@ -52,7 +43,7 @@ const AutoScrollEvents = () => {
 				autoScrollIntervalRef.current = null;
 			}
 		};
-	}, [eventList.length, isHovered]);
+	}, [eventList.length]);
 
 	const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
 		if (!containerRef.current) return;
@@ -73,11 +64,26 @@ const AutoScrollEvents = () => {
 
 	const handleNavigation = useCallback(
 		(direction: 'prev' | 'next') => {
+			// Clear the auto-scroll interval when user manually navigates
+			if (autoScrollIntervalRef.current) {
+				clearInterval(autoScrollIntervalRef.current);
+				autoScrollIntervalRef.current = null;
+			}
+
 			if (direction === 'prev') {
 				setCurrentIndex((prevIndex) => (prevIndex - 1 + eventList.length) % eventList.length);
 			} else {
 				setCurrentIndex((prevIndex) => (prevIndex + 1) % eventList.length);
 			}
+
+			// Restart auto-scroll after a delay
+			setTimeout(() => {
+				if (!autoScrollIntervalRef.current) {
+					autoScrollIntervalRef.current = setInterval(() => {
+						setCurrentIndex((prevIndex) => (prevIndex + 1) % eventList.length);
+					}, 4000);
+				}
+			}, 7000);
 		},
 		[eventList.length],
 	);
@@ -98,11 +104,6 @@ const AutoScrollEvents = () => {
 			ref={containerRef}
 			className="relative h-[calc(100vh-5rem)] overflow-hidden "
 			onMouseMove={handleMouseMove}
-			onMouseEnter={() => setIsHovered(true)}
-			onMouseLeave={() => {
-				setIsHovered(false);
-				setHoverPosition(null);
-			}}
 			aria-roledescription="carousel"
 			aria-label="Featured events"
 		>
@@ -132,45 +133,45 @@ const AutoScrollEvents = () => {
 							{hoverPosition === 1 && (
 								<div className="absolute inset-y-0 right-0 w-1/4 bg-gradient-to-l from-black/90 to-transparent" />
 							)}
-							<div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/40 to-black/70" />
+							<div className="absolute inset-0 bg-gradient-to-b from-black/90 via-black/40 to-black/70" />
 						</div>
 
-						<div className="absolute inset-0 flex items-center justify-center">
-							<div className="text-center text-white max-w-4xl px-4 sm:px-6 md:px-8 transform transition-all duration-1000 ease-in-out">
+						<div className="absolute inset-0 flex items-center justify-center flex-col">
+							<div className="text-center text-white max-w-4xl px-4 sm:px-6 md:px-8 transform transition-all duration-1000 ease-in-out  backdrop-blur-xs py-2">
 								<div className="mb-4 flex flex-wrap justify-center gap-2">
 									{event.eventCategories.map((category, catIndex) => (
 										<span
 											key={catIndex}
-											className="block bg-gray-800/40 backdrop-blur-sm text-white px-3 py-1.5 rounded-full text-sm font-medium hover:bg-gray-800/50 transition-colors duration-300"
+											className="block   text-white px-3 py-1.5 rounded-full text-sm font-medium hover:bg-gray-800/50 transition-colors duration-300"
 										>
 											#{category}
 										</span>
 									))}
 								</div>
-								<h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6 bg-gray-800/40 backdrop-blur-sm text-white px-4 py-3 rounded-lg">
+								<h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6   text-white px-4 py-3 rounded-lg">
 									{event.eventName}
 								</h2>
-								<p className="text-lg sm:text-xl mb-6 sm:mb-8 text-white max-w-2xl mx-auto bg-gray-800/40 backdrop-blur-sm px-4 py-3 rounded-lg">
+								<p className="text-lg sm:text-xl mb-6 sm:mb-8 text-white max-w-2xl mx-auto   px-4 py-3 rounded-lg">
 									{event.eventDesc}
 								</p>
 								<div className="flex flex-col sm:flex-row justify-center sm:space-x-6 space-y-3 sm:space-y-0 mb-6 sm:mb-8">
-									<span className="flex items-center justify-center sm:justify-start bg-gray-800/40 backdrop-blur-sm px-4 py-2 rounded-full text-white">
+									<span className="flex items-center justify-center sm:justify-start   px-4 py-2 rounded-full text-white">
 										<MapPin className="w-5 h-5 mr-2" />
 										<span>{event.eventAddress}</span>
 									</span>
-									<span className="flex items-center justify-center sm:justify-start bg-gray-800/40 backdrop-blur-sm px-4 py-2 rounded-full text-white">
+									<span className="flex items-center justify-center sm:justify-start   px-4 py-2 rounded-full text-white">
 										<Calendar className="w-5 h-5 mr-2" />
 										<time dateTime={new Date(event.eventDate).toISOString()}>{formatDate(event.eventDate)}</time>
 									</span>
 								</div>
-								<Link
-									href={`/events/${event._id}`}
-									className="inline-block bg-primary text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full font-medium hover:bg-primary/90 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
-									aria-label={`View details for ${event.eventName}`}
-								>
-									View Details
-								</Link>
 							</div>
+							<Link
+								href={`/events/${event._id}`}
+								className="inline-block bg-primary text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full font-medium hover:bg-primary/90 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
+								aria-label={`View details for ${event.eventName}`}
+							>
+								View Details
+							</Link>
 						</div>
 					</div>
 				))}
@@ -179,11 +180,11 @@ const AutoScrollEvents = () => {
 			{/* Navigation buttons with improved accessibility */}
 			<button
 				onClick={() => handleNavigation('prev')}
-				className="absolute inset-y-0 left-0 w-1/5 cursor-pointer group flex items-center justify-start pl-4 sm:pl-6 md:pl-8 z-20"
+				className="absolute inset-y-0 left-0 w-1/5 cursor-pointer group flex items-center justify-start pl-4 sm:pl-6 md:pl-8 z-20 focus-visible:outline-0"
 				aria-label="Previous event"
 			>
 				<span className="sr-only">Previous</span>
-				<div className="absolute inset-y-0 left-0 w-[2px] bg-foreground/20 group-hover:bg-foreground/40 transition-colors duration-300" />
+
 				<ChevronLeft
 					className={cn(
 						'w-8 h-8 text-foreground/0 group-hover:text-white/80 transition-all duration-300',
@@ -193,11 +194,11 @@ const AutoScrollEvents = () => {
 			</button>
 			<button
 				onClick={() => handleNavigation('next')}
-				className="absolute inset-y-0 right-0 w-1/5 cursor-pointer group flex items-center justify-end pr-4 sm:pr-6 md:pr-8 z-20"
+				className="absolute inset-y-0 right-0 w-1/5 cursor-pointer group flex items-center justify-end pr-4 sm:pr-6 md:pr-8 z-20 focus-visible:outline-0"
 				aria-label="Next event"
 			>
 				<span className="sr-only">Next</span>
-				<div className="absolute inset-y-0 right-0 w-[2px] bg-foreground/20 group-hover:bg-foreground/40 transition-colors duration-300" />
+
 				<ChevronRight
 					className={cn(
 						'w-8 h-8 text-foreground/0 group-hover:text-white/80 transition-all duration-300',
@@ -208,13 +209,13 @@ const AutoScrollEvents = () => {
 
 			{/* Carousel controls */}
 			<div className="absolute bottom-8 left-0 right-0 flex flex-col items-center space-y-4 z-20">
-				<div className="flex justify-center space-x-2" role="tablist" aria-label="Event slides">
+				<div className="flex justify-center items-center space-x-2" role="tablist" aria-label="Event slides">
 					{eventList.map((event, index) => (
 						<button
 							key={index}
 							className={cn(
-								'w-3 h-3 rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-foreground/50',
-								index === currentIndex ? 'bg-primary scale-125' : 'bg-foreground/50 hover:bg-foreground/75',
+								' rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/50',
+								index === currentIndex ? 'bg-primary scale-125 w-2.5 h-2.5' : 'bg-white/50 hover:bg-white/75 w-2 h-2',
 							)}
 							onClick={() => setCurrentIndex(index)}
 							aria-label={`Go to slide ${index + 1}: ${event.eventName}`}
