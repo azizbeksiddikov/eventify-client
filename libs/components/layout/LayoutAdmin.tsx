@@ -1,8 +1,8 @@
-import React from 'react';
-import Footer from './Footer';
-import Header from './Header';
-import useDeviceDetect from '../../hooks/useDeviceDetect';
 import { NextPage } from 'next';
+import React from 'react';
+import AdminHeader from './AdminHeader';
+import Footer from './Footer';
+import useDeviceDetect from '../../hooks/useDeviceDetect';
 
 const withAdminLayout = (Page: NextPage) => {
 	const WrappedComponent = (props: Record<string, unknown>) => {
@@ -12,8 +12,8 @@ const withAdminLayout = (Page: NextPage) => {
 
 		return (
 			<div className="min-h-screen flex flex-col">
-				<Header />
-				<main className="flex-1">
+				<AdminHeader />
+				<main className="flex-1 py-10">
 					<Page {...props} />
 				</main>
 				<Footer />
