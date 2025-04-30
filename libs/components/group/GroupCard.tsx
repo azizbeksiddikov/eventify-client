@@ -25,7 +25,7 @@ const formatNumber = (num: number): string => {
 export const GroupCard = ({ group, onJoin, isJoined }: GroupCardProps) => {
 	return (
 		<div className="group">
-			<Card className="bg-card/50 backdrop-blur-sm rounded-2xl shadow-sm border border-border/50 overflow-hidden hover:shadow-md transition-all duration-300 group-hover:border-primary/50">
+			<Card className="bg-card/50 backdrop-blur-sm rounded-2xl shadow-sm  overflow-hidden hover:shadow-md transition-all duration-300 group-hover:border-primary/50">
 				<div className="relative h-48 w-full overflow-hidden rounded-t-lg">
 					<Link href={`/groups/${group._id}`}>
 						<Image

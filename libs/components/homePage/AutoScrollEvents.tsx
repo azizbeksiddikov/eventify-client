@@ -127,7 +127,7 @@ const AutoScrollEvents = () => {
 								{event.category.split(',').map((cat, index) => (
 									<span
 										key={index}
-										className="inline-block bg-white/10 backdrop-blur-sm text-white px-3 py-1.5 rounded-full text-sm font-medium hover:bg-white/20 transition-colors duration-300"
+										className="block bg-white/10 backdrop-blur-sm text-white px-3 py-1.5 rounded-full text-sm font-medium hover:bg-white/20 transition-colors duration-300"
 									>
 										#{cat.trim()}
 									</span>
@@ -167,7 +167,7 @@ const AutoScrollEvents = () => {
 							</div>
 							<Link
 								href={`/events/${event.id}`}
-								className="inline-block bg-[#E60023] text-white px-8 py-4 rounded-full font-medium hover:bg-[#CC0000] transition-colors duration-300"
+								className="-block bg-[#E60023] text-white px-8 py-4 rounded-full font-medium hover:bg-[#CC0000] transition-colors duration-300"
 							>
 								View Details
 							</Link>

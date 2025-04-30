@@ -15,7 +15,7 @@ const Home: NextPage = () => {
 	if (device === 'mobile') return null;
 
 	return (
-		<div className="min-h-screen bg-white">
+		<div className="min-h-screen ">
 			{/* Hero Section */}
 			<div className="relative">
 				<AutoScrollEvents />

@@ -254,7 +254,7 @@ const GroupsPage = () => {
 				</div>
 
 				{/* Search and Filter Section */}
-				<div className="bg-card/50 backdrop-blur-sm rounded-2xl shadow-sm border border-border/50 p-6 mb-8">
+				<div className="bg-card/50 backdrop-blur-sm rounded-2xl shadow-sm  p-6 mb-8">
 					<div className="flex flex-wrap items-center gap-4">
 						<div className="flex-1 min-w-[200px]">
 							<Input

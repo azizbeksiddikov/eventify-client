@@ -157,7 +157,7 @@ const GroupCreatePage = () => {
 						{/* Image Section */}
 						<div className="space-y-4">
 							<label className="text-sm font-medium text-foreground">Group Image</label>
-							<div className="relative aspect-video w-full max-w-2xl mx-auto rounded-xl overflow-hidden border border-border/50">
+							<div className="relative aspect-video w-full max-w-2xl mx-auto rounded-xl overflow-hidden ">
 								{imagePreview ? (
 									<>
 										<img src={imagePreview} alt="Group preview" className="object-contain w-full h-full bg-muted/50" />

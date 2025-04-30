@@ -308,7 +308,7 @@ const GroupDetailPage = () => {
 				</div>
 				<div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 					<div className="lg:col-span-2">
-						<div className="bg-card rounded-2xl shadow-sm border border-border/50 overflow-hidden">
+						<div className="bg-card rounded-2xl shadow-sm  overflow-hidden">
 							<div className="relative h-[400px] w-full">
 								<Image src={group.groupImage} alt={group.groupName} fill className="object-cover" priority />
 							</div>

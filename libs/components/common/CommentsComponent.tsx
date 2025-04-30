@@ -41,7 +41,7 @@ const CommentsComponent = ({ comments: initialComments, commentGroup, commentRef
 	const totalComments = comments.length;
 
 	return (
-		<div className="rounded-xl border border-border/50 bg-card shadow-sm mt-5">
+		<div className="rounded-xl  bg-card shadow-sm mt-5">
 			<div className="p-8">
 				<div className="flex items-center justify-between mb-6">
 					<h3 className="text-xl font-semibold text-foreground">Comments</h3>
@@ -128,7 +128,7 @@ const CommentsComponent = ({ comments: initialComments, commentGroup, commentRef
 							return (
 								<div key={comment._id}>
 									<div className="flex space-x-4">
-										<Avatar className="h-10 w-10 border border-border/50">
+										<Avatar className="h-10 w-10 ">
 											<img src={memberImage} alt={memberName} className="object-cover" />
 										</Avatar>
 										<div className="flex-1">

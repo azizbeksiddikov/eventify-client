@@ -351,7 +351,7 @@ const EventsPage = () => {
 				</div>
 
 				{/* Search and Filter Section */}
-				<div className="bg-card/50 backdrop-blur-sm rounded-2xl shadow-sm border border-border/50 p-6 mb-8">
+				<div className="bg-card/50 backdrop-blur-sm rounded-2xl shadow-sm  p-6 mb-8">
 					<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
 						<div className="flex gap-2">
 							<Input
@@ -402,7 +402,7 @@ const EventsPage = () => {
 										showSelectionPreview={true}
 										editableDateInputs={false}
 										minDate={new Date()}
-										className="rounded-xl border border-border/50"
+										className="rounded-xl "
 									/>
 								</div>
 							</PopoverContent>
@@ -449,7 +449,7 @@ const EventsPage = () => {
 				<div className="flex flex-col md:flex-row gap-8">
 					{/* Categories Sidebar */}
 					<div className="w-full md:w-64 shrink-0">
-						<div className="bg-card/50 backdrop-blur-sm rounded-2xl shadow-sm border border-border/50 p-6">
+						<div className="bg-card/50 backdrop-blur-sm rounded-2xl shadow-sm  p-6">
 							<div className="flex items-center justify-between mb-6">
 								<h3 className="text-lg font-medium">Categories</h3>
 								<Button variant="ghost" size="sm" onClick={handleClearAll} className="text-muted-foreground">
@@ -480,7 +480,7 @@ const EventsPage = () => {
 								.slice((eventSearch.page - 1) * eventSearch.limit, eventSearch.page * eventSearch.limit)
 								.map((event) => (
 									<div key={event._id} className="group">
-										<div className="bg-card/50 backdrop-blur-sm rounded-2xl shadow-sm border border-border/50 overflow-hidden hover:shadow-md transition-all duration-300 group-hover:border-primary/50">
+										<div className="bg-card/50 backdrop-blur-sm rounded-2xl shadow-sm  overflow-hidden hover:shadow-md transition-all duration-300 group-hover:border-primary/50">
 											<Link href={`/events/${event._id}`}>
 												<div className="relative h-48">
 													<img
