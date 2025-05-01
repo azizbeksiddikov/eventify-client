@@ -112,7 +112,6 @@ const OrganizerDetailPage = () => {
 	const organizerGroups: Group[] = [
 		{
 			_id: '1',
-			groupLink: '/groups/1',
 			groupName: 'Tech Enthusiasts',
 			groupDesc:
 				'A community for technology enthusiasts to share and learn. Join us for discussions, events, and networking opportunities.',
@@ -128,7 +127,6 @@ const OrganizerDetailPage = () => {
 		},
 		{
 			_id: '1',
-			groupLink: '/groups/1',
 			groupName: 'Tech Enthusiasts',
 			groupDesc:
 				'A community for technology enthusiasts to share and learn. Join us for discussions, events, and networking opportunities.',
@@ -144,7 +142,6 @@ const OrganizerDetailPage = () => {
 		},
 		{
 			_id: '1',
-			groupLink: '/groups/1',
 			groupName: 'Tech Enthusiasts',
 			groupDesc:
 				'A community for technology enthusiasts to share and learn. Join us for discussions, events, and networking opportunities.',

@@ -4,23 +4,17 @@ import { Group, Groups } from '@/libs/types/group/group';
 import { Tickets } from '@/libs/types/ticket/ticket';
 import { MemberType, MemberStatus } from '@/libs/enums/member.enum';
 import { EventStatus, EventCategory } from '@/libs/enums/event.enum';
-import { GroupCategory } from '@/libs/enums/group.enum';
+import { GroupCategory, GroupMemberRole } from '@/libs/enums/group.enum';
 import { TicketStatus } from '@/libs/enums/ticket.enum';
 import { Event } from '@/libs/types/event/event';
 import { CommentStatus, CommentGroup } from '@/libs/enums/comment.enum';
 import { Comment } from '@/libs/types/comment/comment';
+import { GroupMember } from './libs/types/groupMembers/groupMember';
 
 // Generate a date in the past
 const getPastDate = (daysAgo: number) => {
 	const date = new Date();
 	date.setDate(date.getDate() - daysAgo);
-	return date;
-};
-
-// Generate a future date
-const getFutureDate = (daysAhead: number) => {
-	const date = new Date();
-	date.setDate(date.getDate() + daysAhead);
 	return date;
 };
 
@@ -143,7 +137,6 @@ export const fakeGroups: Groups = {
 	list: [
 		{
 			_id: 'g1',
-			groupLink: 'tech-enthusiasts',
 			groupName: 'Tech Enthusiasts',
 			groupDesc: 'A community for technology lovers and innovators',
 			groupOwnerId: '2',
@@ -158,7 +151,6 @@ export const fakeGroups: Groups = {
 		},
 		{
 			_id: 'g2',
-			groupLink: 'food-lovers',
 			groupName: 'Food Lovers',
 			groupDesc: 'Share your love for food and cooking',
 			groupOwnerId: '2',
@@ -173,7 +165,6 @@ export const fakeGroups: Groups = {
 		},
 		{
 			_id: 'g3',
-			groupLink: 'entertainment-fans',
 			groupName: 'Entertainment Fans',
 			groupDesc: 'For entertainment lovers and event goers',
 			groupOwnerId: '5',
@@ -188,7 +179,6 @@ export const fakeGroups: Groups = {
 		},
 		{
 			_id: 'g4',
-			groupLink: 'sports-community',
 			groupName: 'Sports Community',
 			groupDesc: 'Local sports events and activities',
 			groupOwnerId: '5',
@@ -212,7 +202,7 @@ export const fakeEvents: Events = {
 			_id: 'e1',
 			eventName: 'Tech Conference 2024',
 			eventDesc: 'Annual technology conference featuring latest innovations',
-			eventDate: getFutureDate(30),
+			eventDate: new Date('2025-05-10'),
 			eventStartTime: '09:00',
 			eventEndTime: '17:00',
 			eventAddress: '123 Tech Street, Silicon Valley',
@@ -225,8 +215,8 @@ export const fakeEvents: Events = {
 			attendeeCount: 150,
 			eventLikes: 75,
 			eventViews: 300,
-			createdAt: getPastDate(60),
-			updatedAt: getPastDate(1),
+			createdAt: new Date('2024-01-01'),
+			updatedAt: new Date('2024-01-01'),
 			eventCity: 'San Francisco',
 			eventImage:
 				'https://thumbs.dreamstime.com/b/beautiful-rain-forest-ang-ka-nature-trail-doi-inthanon-national-park-thailand-36703721.jpg',
@@ -235,7 +225,7 @@ export const fakeEvents: Events = {
 			_id: 'e2',
 			eventName: 'Cooking Workshop',
 			eventDesc: 'Learn to cook Italian cuisine from professional chefs',
-			eventDate: getFutureDate(15),
+			eventDate: new Date('2025-05-15'),
 			eventStartTime: '14:00',
 			eventEndTime: '18:00',
 			eventAddress: '456 Food Avenue, Downtown',
@@ -248,8 +238,8 @@ export const fakeEvents: Events = {
 			attendeeCount: 25,
 			eventLikes: 40,
 			eventViews: 150,
-			createdAt: getPastDate(30),
-			updatedAt: getPastDate(2),
+			createdAt: new Date('2024-01-01'),
+			updatedAt: new Date('2024-01-01'),
 			eventImage:
 				'https://thumbs.dreamstime.com/b/beautiful-rain-forest-ang-ka-nature-trail-doi-inthanon-national-park-thailand-36703721.jpg',
 
@@ -259,7 +249,7 @@ export const fakeEvents: Events = {
 			_id: 'e3',
 			eventName: 'Entertainment Festival',
 			eventDesc: 'Annual entertainment festival featuring local artists',
-			eventDate: getFutureDate(45),
+			eventDate: new Date('2025-05-20'),
 			eventStartTime: '12:00',
 			eventEndTime: '23:00',
 			eventImage:
@@ -283,7 +273,7 @@ export const fakeEvents: Events = {
 			_id: 'e4',
 			eventName: 'Basketball Tournament',
 			eventDesc: 'Annual city basketball tournament',
-			eventDate: getFutureDate(60),
+			eventDate: new Date('2025-05-25'),
 			eventStartTime: '08:00',
 			eventEndTime: '20:00',
 			eventAddress: '321 Sports Arena, City Center',
@@ -306,13 +296,13 @@ export const fakeEvents: Events = {
 			_id: 'e5',
 			eventName: 'Past Tech Meetup',
 			eventDesc: 'Monthly tech meetup for developers',
-			eventDate: getPastDate(7),
+			eventDate: new Date('2025-05-30'),
 			eventStartTime: '18:00',
 			eventEndTime: '21:00',
 			eventAddress: '123 Tech Street, Silicon Valley',
 			eventCapacity: 100,
 			eventPrice: 0,
-			eventStatus: EventStatus.COMPLETED,
+			eventStatus: EventStatus.UPCOMING,
 			eventCategories: [EventCategory.TECHNOLOGY],
 			groupId: 'g1',
 			eventOrganizerId: '2',
@@ -328,7 +318,6 @@ export const fakeEvents: Events = {
 	],
 	metaCounter: [{ total: 5 }],
 };
-
 // Fake Tickets Data
 export const fakeTickets: Tickets = {
 	list: [
@@ -435,5 +424,89 @@ export const comments: Comment[] = [
 		memberId: 'user2',
 		createdAt: new Date('2024-03-20'),
 		updatedAt: new Date('2024-03-20'),
+	},
+];
+
+export const groupAdmins: GroupMember[] = [
+	{
+		_id: '1',
+		groupId: '1',
+		memberId: 'owner1',
+		groupMemberRole: GroupMemberRole.OWNER,
+		joinDate: new Date('2024-01-01'),
+		createdAt: new Date('2024-01-01'),
+		updatedAt: new Date('2024-01-01'),
+		memberData: {
+			_id: 'owner1',
+			username: 'johnsmith',
+			memberEmail: 'john@example.com',
+			memberFullName: 'John Smith',
+			memberType: MemberType.ADMIN,
+			memberStatus: MemberStatus.ACTIVE,
+			emailVerified: true,
+			memberImage: 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg',
+			memberPoints: 1000,
+			memberLikes: 250,
+			memberFollowings: 50,
+			memberFollowers: 150,
+			memberViews: 500,
+			createdAt: new Date('2024-01-01'),
+			eventOrganizedCount: 0,
+			updatedAt: new Date('2024-01-01'),
+		},
+	},
+	{
+		_id: '2',
+		groupId: '1',
+		memberId: 'mod1',
+		groupMemberRole: GroupMemberRole.MODERATOR,
+		joinDate: new Date('2024-01-15'),
+		createdAt: new Date('2024-01-15'),
+		updatedAt: new Date('2024-01-15'),
+		memberData: {
+			_id: 'mod1',
+			username: 'sarahj',
+			memberEmail: 'sarah@example.com',
+			memberFullName: 'Sarah Johnson',
+			memberType: MemberType.ORGANIZER,
+			memberStatus: MemberStatus.ACTIVE,
+			emailVerified: true,
+			memberImage: 'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg',
+			memberPoints: 750,
+			memberLikes: 180,
+			memberFollowings: 35,
+			memberFollowers: 90,
+			memberViews: 300,
+			createdAt: new Date('2024-01-15'),
+			updatedAt: new Date('2024-01-15'),
+			eventOrganizedCount: 0,
+		},
+	},
+	{
+		_id: '3',
+		groupId: '1',
+		memberId: 'mod2',
+		groupMemberRole: GroupMemberRole.MODERATOR,
+		joinDate: new Date('2024-02-01'),
+		createdAt: new Date('2024-02-01'),
+		updatedAt: new Date('2024-02-01'),
+		memberData: {
+			_id: 'mod2',
+			username: 'mikeb',
+			memberEmail: 'mike@example.com',
+			memberFullName: 'Mike Brown',
+			memberType: MemberType.ORGANIZER,
+			memberStatus: MemberStatus.ACTIVE,
+			emailVerified: true,
+			memberImage: 'https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg',
+			memberPoints: 500,
+			memberLikes: 120,
+			memberFollowings: 25,
+			memberFollowers: 60,
+			memberViews: 200,
+			createdAt: new Date('2024-02-01'),
+			updatedAt: new Date('2024-02-01'),
+			eventOrganizedCount: 0,
+		},
 	},
 ];

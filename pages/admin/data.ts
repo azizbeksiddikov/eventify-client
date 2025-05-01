@@ -128,7 +128,6 @@ export const fakeGroups: Groups = {
 	list: [
 		{
 			_id: 'g1',
-			groupLink: 'tech-enthusiasts',
 			groupName: 'Tech Enthusiasts',
 			groupDesc: 'A community for technology lovers and innovators',
 			groupImage: 'https://picsum.photos/200/200?random=1',
@@ -143,7 +142,6 @@ export const fakeGroups: Groups = {
 		},
 		{
 			_id: 'g2',
-			groupLink: 'food-lovers',
 			groupName: 'Food Lovers',
 			groupDesc: 'Share your love for food and cooking',
 			groupImage: 'https://picsum.photos/200/200?random=2',
@@ -158,7 +156,6 @@ export const fakeGroups: Groups = {
 		},
 		{
 			_id: 'g3',
-			groupLink: 'entertainment-fans',
 			groupName: 'Entertainment Fans',
 			groupDesc: 'For entertainment lovers and event goers',
 			groupImage: 'https://picsum.photos/200/200?random=3',
@@ -173,7 +170,6 @@ export const fakeGroups: Groups = {
 		},
 		{
 			_id: 'g4',
-			groupLink: 'sports-community',
 			groupName: 'Sports Community',
 			groupDesc: 'Local sports events and activities',
 			groupImage: 'https://picsum.photos/200/200?random=4',
@@ -213,6 +209,15 @@ export const fakeEvents: Events = {
 			eventViews: 300,
 			createdAt: getPastDate(60),
 			updatedAt: getPastDate(1),
+			eventCity: 'San Francisco',
+			memberData: fakeMembers.list[1],
+			meLiked: [
+				{
+					memberId: '1',
+					likeRefId: '1',
+					myFavorite: true,
+				},
+			],
 		},
 		{
 			_id: 'e2',
@@ -234,6 +239,8 @@ export const fakeEvents: Events = {
 			eventViews: 150,
 			createdAt: getPastDate(30),
 			updatedAt: getPastDate(2),
+			eventCity: 'Los Angeles',
+			memberData: fakeMembers.list[1],
 		},
 		{
 			_id: 'e3',

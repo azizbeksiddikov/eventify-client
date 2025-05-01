@@ -37,7 +37,6 @@ const ProfilePage = () => {
 	const groups: Group[] = [
 		{
 			_id: '1',
-			groupLink: 'tech-enthusiasts',
 			groupName: 'Tech Enthusiasts',
 			groupDesc: 'A group for tech lovers',
 			groupImage:
@@ -53,7 +52,6 @@ const ProfilePage = () => {
 		},
 		{
 			_id: '2',
-			groupLink: 'music-lovers',
 			groupName: 'Music Lovers',
 			groupDesc: 'A group for music enthusiasts',
 			groupImage:
