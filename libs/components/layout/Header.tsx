@@ -21,7 +21,7 @@ const navLinks = [
 	{ href: '/groups', label: 'Groups' },
 	{ href: '/organizers', label: 'Organizers' },
 	{ href: '/help', label: 'Help' },
-	{ href: '/admin', label: 'Admin' },
+	{ href: '/_admin', label: 'Admin' },
 ];
 
 const Header = () => {

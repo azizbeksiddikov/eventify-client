@@ -3,6 +3,7 @@ import React from 'react';
 import AdminHeader from './AdminHeader';
 import Footer from './Footer';
 import useDeviceDetect from '../../hooks/useDeviceDetect';
+import AdminMenuList from '../admin/AdminMenuList';
 
 const withAdminLayout = (Page: NextPage) => {
 	const WrappedComponent = (props: Record<string, unknown>) => {
@@ -13,9 +14,14 @@ const withAdminLayout = (Page: NextPage) => {
 		return (
 			<div className="min-h-screen flex flex-col">
 				<AdminHeader />
-				<main className="flex-1 py-10">
-					<Page {...props} />
-				</main>
+				<div className="flex-1 flex">
+					<aside className="w-64 border-r border-border bg-background p-4">
+						<AdminMenuList />
+					</aside>
+					<main className="flex-1 py-10">
+						<Page {...props} />
+					</main>
+				</div>
 				<Footer />
 			</div>
 		);
