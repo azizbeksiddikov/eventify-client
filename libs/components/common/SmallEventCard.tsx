@@ -8,15 +8,15 @@ interface EventCardProps {
 	event: Event;
 }
 
-export const EventCard = ({ event }: EventCardProps) => {
+const SmallEventCard = ({ event }: EventCardProps) => {
 	const [isLiked, setIsLiked] = useState(false);
 
 	return (
 		<Link
 			href={`/events/${event._id}`}
-			className="block group hover:bg-muted/50 rounded-xl p-3 transition-all duration-200 hover:shadow-md border border-border/50"
+			className="block group hover:bg-muted/50 rounded-xl p-3 transition-all duration-200 hover:shadow-md border border-border/50 bg-background"
 		>
-			<div className="flex gap-4">
+			<div className="flex gap-4 ">
 				<div className="flex-shrink-0">
 					<div className="w-20 h-20 rounded-xl overflow-hidden relative">
 						<img
@@ -67,3 +67,5 @@ export const EventCard = ({ event }: EventCardProps) => {
 		</Link>
 	);
 };
+
+export default SmallEventCard;

@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
-import { EventCard } from './EventCardHomepage';
+import SmallEventCard from '../common/SmallEventCard';
 import { Event } from '@/libs/types/event/event';
 import { Button } from '../ui/button';
 import { useRouter } from 'next/navigation';
@@ -38,7 +38,7 @@ const EventsByCategory = () => {
 							<div className="p-4 flex-1">
 								<div className="space-y-4">
 									{events.map((event: Event) => (
-										<EventCard key={event._id} event={event} />
+										<SmallEventCard key={event._id} event={event} />
 									))}
 								</div>
 							</div>
