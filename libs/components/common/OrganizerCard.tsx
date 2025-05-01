@@ -28,7 +28,7 @@ const OrganizerCard = ({ organizer }: OrganizerCardProps) => {
 	};
 
 	return (
-		<Card className="w-full mx-auto shadow-md hover:shadow-lg transition-all duration-300 bg-card/60 flex flex-col h-full group hover:scale-105">
+		<Card className="w-full mx-auto shadow-md hover:shadow-lg transition-all duration-300 bg-card/60 flex flex-col h-full group ">
 			<CardHeader className="py-4">
 				<div className="flex gap-4 ">
 					{/* Improved avatar with enhanced border and shadow */}

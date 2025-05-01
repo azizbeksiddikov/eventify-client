@@ -9,7 +9,7 @@ import { comments, eventList, groupList, organizers } from '@/data';
 import UpcomingEvents from '@/libs/components/common/UpcomingEvents';
 import OrganizerHeader from '@/libs/components/organizer/OrganizerHeader';
 import OrganizerProfile from '@/libs/components/organizer/OrganizerProfile';
-import OrganizerGroups from '@/libs/components/organizer/OrganizerGroups';
+import SimilarGroups from '@/libs/components/common/SimilarGroups';
 
 const OrganizerDetailPage = () => {
 	const [isLiked, setIsLiked] = useState(false);
@@ -53,7 +53,7 @@ const OrganizerDetailPage = () => {
 						onFollow={handleFollow}
 					/>
 					<div className="space-y-6">
-						<OrganizerGroups groups={organizerGroups} />
+						<SimilarGroups groups={organizerGroups} text="Organizer Groups" />
 					</div>
 				</div>
 

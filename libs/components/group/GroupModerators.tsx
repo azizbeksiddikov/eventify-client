@@ -12,7 +12,7 @@ interface GroupModeratorsProps {
 
 const GroupModerators = ({ groupAdmins }: GroupModeratorsProps) => {
 	return (
-		<Card className="p-8 bg-card hover:bg-secondary/90 transition-all duration-300 shadow-sm hover:shadow-md border border-border/50">
+		<Card className="p-8 bg-card hover:bg-secondary/15 transition-all duration-300 shadow-sm hover:shadow-md border border-border/50">
 			<h2 className="text-2xl font-semibold mb-6 text-card-foreground flex items-center gap-2">
 				<Users className="w-5 h-5 text-card-foreground" />
 				Moderators
@@ -24,7 +24,7 @@ const GroupModerators = ({ groupAdmins }: GroupModeratorsProps) => {
 						<Link
 							key={moderator._id}
 							href={`/organizer/${moderator.memberData?._id}`}
-							className="block group hover:scale-105 transition-transform duration-300"
+							className="block group hover:scale-[1.02] transition-all duration-300 p-4 rounded-lg hover:bg-secondary/20 hover:border-l-4 hover:border-l-primary"
 						>
 							<div className="flex items-center space-x-6">
 								<div className="flex-shrink-0">

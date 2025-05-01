@@ -12,10 +12,9 @@ import { groupList, groupAdmins, organizers, comments, eventList } from '@/data'
 import { Member } from '@/libs/types/member/member';
 import ChosenGroupData from '@/libs/components/group/ChosenGroupData';
 import GroupModerators from '@/libs/components/group/GroupModerators';
-import GroupOwner from '@/libs/components/group/GroupOwner';
-import SimilarGroups from '@/libs/components/group/SimilarGroups';
+import SimilarGroups from '@/libs/components/common/SimilarGroups';
 import UpcomingEvents from '@/libs/components/common/UpcomingEvents';
-
+import Owner from '@/libs/components/common/Owner';
 const GroupDetailPage = () => {
 	// Mock data
 	const group: Group = groupList[0];
@@ -33,12 +32,12 @@ const GroupDetailPage = () => {
 					<ChosenGroupData group={group} />
 					<div className="space-y-6">
 						{/* Group Owner Section */}
-						<GroupOwner groupOwner={memberProfiles[0]} />
+						<Owner member={memberProfiles[0]} />
 
 						{/* Moderators Section */}
 						<GroupModerators groupAdmins={groupAdmins} />
 
-						<SimilarGroups similarGroups={similarGroups} />
+						<SimilarGroups groups={similarGroups} />
 					</div>
 				</div>
 

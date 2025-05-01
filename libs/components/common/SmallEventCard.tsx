@@ -14,9 +14,9 @@ const SmallEventCard = ({ event }: EventCardProps) => {
 	return (
 		<Link
 			href={`/events/${event._id}`}
-			className="block group hover:bg-muted/50 rounded-xl p-3 transition-all duration-200 hover:shadow-md border border-border/50 bg-background"
+			className="block group hover:scale-[1.02] transition-all duration-300 p-4 rounded-lg hover:bg-secondary/20 hover:border-l-4 hover:border-l-primary"
 		>
-			<div className="flex gap-4 ">
+			<div className="flex gap-4">
 				<div className="flex-shrink-0">
 					<div className="w-20 h-20 rounded-xl overflow-hidden relative">
 						<img
@@ -29,7 +29,7 @@ const SmallEventCard = ({ event }: EventCardProps) => {
 				</div>
 				<div className="flex-1 min-w-0">
 					<div className="flex items-start justify-between">
-						<h4 className="text-base font-semibold text-foreground group-hover:text-primary line-clamp-1">
+						<h4 className="text-base font-semibold text-card-foreground group-hover:text-card-foreground transition-colors duration-200 line-clamp-1">
 							{event.eventName}
 						</h4>
 						<Button
@@ -39,14 +39,14 @@ const SmallEventCard = ({ event }: EventCardProps) => {
 								e.preventDefault();
 								setIsLiked(!isLiked);
 							}}
-							className="text-muted-foreground hover:text-primary transition-colors duration-200 hover:bg-primary/10"
+							className="text-card-foreground/70 hover:text-primary transition-colors duration-200 hover:bg-primary/10"
 						>
 							<Heart className={`h-4 w-4 transition-all duration-200 ${isLiked ? 'fill-primary text-primary' : ''}`} />
 						</Button>
 					</div>
-					<div className="mt-2 flex items-center gap-4 text-sm text-muted-foreground">
+					<div className="mt-2 flex items-center gap-4 text-sm text-card-foreground/70">
 						<div className="flex items-center">
-							<Calendar className="w-3.5 h-3.5 mr-1.5 text-primary/70" />
+							<Calendar className="w-3.5 h-3.5 mr-1.5 text-card-foreground/70" />
 							{new Date(event.eventDate).toLocaleDateString('en-US', {
 								month: 'short',
 								day: 'numeric',
@@ -54,11 +54,11 @@ const SmallEventCard = ({ event }: EventCardProps) => {
 							})}
 						</div>
 						<div className="flex items-center">
-							<MapPin className="w-3.5 h-3.5 mr-1.5 text-primary/70" />
+							<MapPin className="w-3.5 h-3.5 mr-1.5 text-card-foreground/70" />
 							<span className="line-clamp-1">{event.eventCity}</span>
 						</div>
 						<div className="flex items-center ml-auto">
-							<Eye className="w-3.5 h-3.5 mr-1.5 text-primary/70" />
+							<Eye className="w-3.5 h-3.5 mr-1.5 text-card-foreground/70" />
 							{event.eventViews.toLocaleString()}
 						</div>
 					</div>
