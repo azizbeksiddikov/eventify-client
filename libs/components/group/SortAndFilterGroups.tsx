@@ -1,11 +1,11 @@
-import { Popover, PopoverContent, PopoverTrigger } from '@radix-ui/react-popover';
-import { Button, buttonVariants } from '../ui/button';
-import { Input } from '../ui/input';
+import { Button, buttonVariants } from '@/libs/components/ui/button';
+import { Input } from '@/libs/components/ui/input';
 import { Direction } from '@/libs/enums/common.enum';
 import { ArrowUpDown, X } from 'lucide-react';
 import { cn } from '@/libs/utils';
 import { GroupsInquiry } from '@/libs/types/group/group.input';
 import { Group } from '@/libs/types/group/group';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/libs/components/ui/select';
 
 const sortOptions = [
 	{ value: 'createdAt', label: 'Newest' },
@@ -69,31 +69,19 @@ function SortAndFilterGroups({ updateURL, groupSearch }: SortAndFilterProps) {
 				/>
 
 				<div className="flex items-center gap-4">
-					<Popover>
-						<PopoverTrigger asChild>
-							<Button
-								variant="outline"
-								className="w-40 justify-start text-left font-normal bg-background/80 backdrop-blur-sm border-border/50 hover:bg-accent/50 transition-colors"
-							>
-								<ArrowUpDown className="mr-2 h-4 w-4 text-muted-foreground" />
-								{sortOptions.find((option) => option.value === groupSearch.sort)?.label}
-							</Button>
-						</PopoverTrigger>
-						<PopoverContent className="w-48 z-[1000] bg-background/95 backdrop-blur-md rounded-lg shadow-xl border border-border/50">
-							<div className="space-y-2 p-2">
-								{sortOptions.map((option) => (
-									<Button
-										key={option.value}
-										variant="ghost"
-										className="w-full justify-start hover:bg-accent/50 transition-colors"
-										onClick={() => handleSortChange(option.value)}
-									>
-										{option.label}
-									</Button>
-								))}
-							</div>
-						</PopoverContent>
-					</Popover>
+					<Select value={groupSearch.sort} onValueChange={handleSortChange}>
+						<SelectTrigger className="w-[180px] h-11">
+							<ArrowUpDown className="text-muted-foreground" />
+							<SelectValue placeholder="Sort by" />
+						</SelectTrigger>
+						<SelectContent>
+							{sortOptions.map((option) => (
+								<SelectItem key={option.value} value={option.value}>
+									{option.label}
+								</SelectItem>
+							))}
+						</SelectContent>
+					</Select>
 
 					<Button
 						variant="outline"
@@ -115,11 +103,11 @@ function SortAndFilterGroups({ updateURL, groupSearch }: SortAndFilterProps) {
 
 					<Button
 						variant="outline"
-						size="icon"
 						onClick={clearAllFilters}
-						className="w-9 h-9 bg-background/80 backdrop-blur-sm border-border/50 hover:bg-accent/50 transition-colors"
+						className="h-11 hover:bg-accent hover:text-accent-foreground"
 					>
-						<X className="h-4 w-4 text-muted-foreground" />
+						<X className="h-4 w-4 " />
+						Clear
 					</Button>
 				</div>
 			</div>
