@@ -7,6 +7,8 @@ import { EventStatus, EventCategory } from '@/libs/enums/event.enum';
 import { GroupCategory } from '@/libs/enums/group.enum';
 import { TicketStatus } from '@/libs/enums/ticket.enum';
 import { Event } from '@/libs/types/event/event';
+import { CommentStatus, CommentGroup } from '@/libs/enums/comment.enum';
+import { Comment } from '@/libs/types/comment/comment';
 
 // Generate a date in the past
 const getPastDate = (daysAgo: number) => {
@@ -412,5 +414,26 @@ export const eventsByCategory: { [key: string]: Event[] } = {
 
 export const eventList: Event[] = fakeEvents.list;
 export const groupList: Group[] = fakeGroups.list;
-
 export const organizers: Member[] = fakeMembers.list.slice(0, 4);
+export const comments: Comment[] = [
+	{
+		_id: '1',
+		commentStatus: CommentStatus.ACTIVE,
+		commentGroup: CommentGroup.GROUP,
+		commentContent: 'Great group! Looking forward to the next meetup.',
+		commentRefId: '1',
+		memberId: 'user1',
+		createdAt: new Date('2024-03-15'),
+		updatedAt: new Date('2024-03-15'),
+	},
+	{
+		_id: '2',
+		commentStatus: CommentStatus.ACTIVE,
+		commentGroup: CommentGroup.GROUP,
+		commentContent: 'The last workshop was very informative. Thanks for organizing!',
+		commentRefId: '1',
+		memberId: 'user2',
+		createdAt: new Date('2024-03-20'),
+		updatedAt: new Date('2024-03-20'),
+	},
+];

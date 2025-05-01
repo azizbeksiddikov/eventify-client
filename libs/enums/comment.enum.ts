@@ -1,10 +1,10 @@
 export enum CommentStatus {
-  ACTIVE = "ACTIVE",
-  DELETE = "DELETE",
+	ACTIVE = 'ACTIVE',
+	DELETE = 'DELETE',
 }
 
 export enum CommentGroup {
-  MEMBER = "MEMBER",
-  EVENT = "EVENT",
-  GROUP = "GROUP",
+	MEMBER = 'MEMBER',
+	EVENT = 'EVENT',
+	GROUP = 'GROUP',
 }
