@@ -4,16 +4,15 @@ import { Button } from '@/libs/components/ui/button';
 import { Input } from '@/libs/components/ui/input';
 import { Textarea } from '@/libs/components/ui/textarea';
 import { Card } from '@/libs/components/ui/card';
-import { ImageIcon, X } from 'lucide-react';
+import { ImageIcon, RefreshCw } from 'lucide-react';
 import withBasicLayout from '@/libs/components/layout/LayoutBasic';
 import { GroupCategory } from '@/libs/enums/group.enum';
 import { GroupInput } from '@/libs/types/group/group.input';
-import { Badge } from '@/libs/components/ui/badge';
 
 const GroupCreatePage = () => {
 	const router = useRouter();
 	const [isSubmitting, setIsSubmitting] = useState(false);
-	const [imagePreview, setImagePreview] = useState<string>('');
+	const [imagePreview, setImagePreview] = useState<string | null>(null);
 	const [selectedCategories, setSelectedCategories] = useState<GroupCategory[]>([]);
 
 	const [formData, setFormData] = useState<GroupInput>({
@@ -31,8 +30,9 @@ const GroupCreatePage = () => {
 		if (file) {
 			const reader = new FileReader();
 			reader.onloadend = () => {
-				setImagePreview(reader.result as string);
-				setFormData((prev) => ({ ...prev, image: reader.result as string }));
+				const result = reader.result as string;
+				setImagePreview(result);
+				setFormData((prev) => ({ ...prev, image: result }));
 			};
 			reader.readAsDataURL(file);
 		}
@@ -58,35 +58,43 @@ const GroupCreatePage = () => {
 	};
 
 	const handleCategorySelect = (category: GroupCategory) => {
-		if (selectedCategories.length >= 3 && !selectedCategories.includes(category)) {
-			return; // Don't allow more than 3 categories
+		if (selectedCategories.includes(category)) {
+			// If category is already selected, remove it
+			setSelectedCategories((prev) => prev.filter((c) => c !== category));
+		} else if (selectedCategories.length < 3) {
+			// If category is not selected and we haven't reached the limit, add it
+			setSelectedCategories((prev) => [...prev, category]);
 		}
-		setSelectedCategories((prev) => {
-			if (prev.includes(category)) {
-				return prev.filter((c) => c !== category);
-			}
-			return [...prev, category];
-		});
-	};
-
-	const removeCategory = (category: GroupCategory) => {
-		setSelectedCategories((prev) => prev.filter((c) => c !== category));
 	};
 
 	return (
 		<div className="min-h-screen bg-background">
-			<div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+			<div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 				<div className="mb-8">
 					<Button
-						variant="ghost"
+						variant="outline"
 						onClick={() => router.push('/groups')}
-						className="text-muted-foreground hover:text-foreground transition-colors duration-200"
+						className="flex items-center gap-2 text-primary hover:text-primary-foreground hover:bg-primary border-primary hover:border-primary/80 transition-colors duration-200"
 					>
-						← Back to Groups
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="24"
+							height="24"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							strokeWidth="2"
+							strokeLinecap="round"
+							strokeLinejoin="round"
+							className="h-4 w-4"
+						>
+							<path d="m15 18-6-6 6-6" />
+						</svg>
+						Back to Groups
 					</Button>
 				</div>
 
-				<Card className="p-6">
+				<Card className="p-6 bg-card text-card-foreground">
 					<h1 className="text-3xl font-semibold text-foreground mb-6">Create New Group</h1>
 
 					<form onSubmit={handleSubmit} className="space-y-6">
@@ -101,6 +109,7 @@ const GroupCreatePage = () => {
 								value={formData.name}
 								onChange={handleInputChange}
 								placeholder="Enter group name"
+								className="bg-input text-input-foreground border-input"
 								required
 							/>
 						</div>
@@ -116,7 +125,7 @@ const GroupCreatePage = () => {
 								value={formData.description}
 								onChange={handleInputChange}
 								placeholder="Describe your group"
-								className="min-h-[120px]"
+								className="min-h-[120px] bg-input text-input-foreground border-input"
 								required
 							/>
 						</div>
@@ -124,20 +133,6 @@ const GroupCreatePage = () => {
 						{/* Categories */}
 						<div className="space-y-2">
 							<label className="text-sm font-medium text-foreground">Categories (Select up to 3)</label>
-							<div className="flex flex-wrap gap-2 mb-2">
-								{selectedCategories.map((category) => (
-									<Badge
-										key={category}
-										variant="secondary"
-										className="flex items-center gap-1 bg-primary/10 text-primary"
-									>
-										{category.charAt(0) + category.slice(1).toLowerCase().replace('_', ' ')}
-										<button type="button" onClick={() => removeCategory(category)} className="hover:text-primary/80">
-											<X className="h-3 w-3" />
-										</button>
-									</Badge>
-								))}
-							</div>
 							<div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
 								{Object.values(GroupCategory).map((category) => (
 									<Button
@@ -146,7 +141,11 @@ const GroupCreatePage = () => {
 										variant={selectedCategories.includes(category) ? 'default' : 'outline'}
 										onClick={() => handleCategorySelect(category)}
 										disabled={selectedCategories.length >= 3 && !selectedCategories.includes(category)}
-										className="h-10"
+										className={`h-10 transition-all duration-200 ${
+											selectedCategories.includes(category)
+												? 'bg-primary text-primary-foreground font-semibold shadow-sm hover:bg-primary/90'
+												: 'bg-transparent text-foreground hover:bg-accent hover:text-accent-foreground'
+										} disabled:opacity-50 disabled:cursor-not-allowed`}
 									>
 										{category.charAt(0) + category.slice(1).toLowerCase().replace('_', ' ')}
 									</Button>
@@ -157,17 +156,18 @@ const GroupCreatePage = () => {
 						{/* Image Section */}
 						<div className="space-y-4">
 							<label className="text-sm font-medium text-foreground">Group Image</label>
-							<div className="relative aspect-video w-full max-w-2xl mx-auto rounded-xl overflow-hidden ">
+							<div className="relative aspect-video w-full max-w-2xl mx-auto rounded-xl overflow-hidden bg-muted/50">
 								{imagePreview ? (
 									<>
-										<img src={imagePreview} alt="Group preview" className="object-contain w-full h-full bg-muted/50" />
+										<img src={imagePreview} alt="Group preview" className="object-contain w-full h-full" />
 										<label
 											htmlFor="image"
-											className="absolute inset-0 flex items-center justify-center bg-black/0 hover:bg-black/50 transition-colors duration-200 cursor-pointer"
+											className="absolute inset-0 flex items-center justify-center bg-black/0 hover:bg-black/20 transition-colors duration-200 cursor-pointer"
 										>
-											<span className="text-white font-medium opacity-0 hover:opacity-100 transition-opacity duration-200">
-												Reset Image
-											</span>
+											<div className="flex items-center gap-2 bg-white/90 text-foreground px-4 py-2 rounded-lg opacity-0 hover:opacity-100 transition-opacity duration-200">
+												<RefreshCw className="h-4 w-4" />
+												<span className="font-medium">Reset Image</span>
+											</div>
 										</label>
 									</>
 								) : (
@@ -183,11 +183,12 @@ const GroupCreatePage = () => {
 									id="image"
 									name="image"
 									type="file"
-									accept="image/*"
+									accept=".jpg,.jpeg,.png,image/jpeg,image/png"
 									onChange={handleImageChange}
 									className="hidden"
 									required
 								/>
+								<p className="text-sm text-muted-foreground mt-1">Only JPG, JPEG, and PNG files are allowed</p>
 							</div>
 						</div>
 
@@ -197,7 +198,7 @@ const GroupCreatePage = () => {
 								type="submit"
 								size="lg"
 								disabled={isSubmitting || selectedCategories.length === 0}
-								className="bg-primary/90 hover:bg-primary text-primary-foreground px-8"
+								className="bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed px-8"
 							>
 								{isSubmitting ? 'Creating...' : 'Create Group'}
 							</Button>

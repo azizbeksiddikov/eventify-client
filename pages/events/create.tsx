@@ -502,11 +502,12 @@ const EventCreatePage = () => {
 									id="image"
 									name="image"
 									type="file"
-									accept="image/*"
+									accept=".jpg,.jpeg,.png,image/jpeg,image/png"
 									onChange={handleImageChange}
 									className="hidden"
 									required
 								/>
+								<p className="text-sm text-muted-foreground mt-1">Only JPG, JPEG, and PNG files are allowed</p>
 							</div>
 						</div>
 
