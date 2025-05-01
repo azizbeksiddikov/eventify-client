@@ -56,6 +56,7 @@ const Header = () => {
 		memberViews: 1000,
 		createdAt: new Date(),
 		updatedAt: new Date(),
+		eventOrganizedCount: 0,
 	});
 
 	const handleLogout = () => {
