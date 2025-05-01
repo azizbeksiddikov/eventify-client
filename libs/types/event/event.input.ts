@@ -6,12 +6,13 @@ export interface EventInput {
 	eventDesc: string;
 	eventImage: string;
 	eventDate: Date;
-	eventStartTime: string;
-	eventEndTime: string;
+	eventStartTime: string; // hh:mm
+	eventEndTime: string; // hh:mm
 	eventAddress: string;
 	eventCapacity: number;
 	eventPrice: number;
 	eventStatus: EventStatus;
+	eventCity: string;
 	eventCategories: EventCategory[];
 	groupId: string;
 }
