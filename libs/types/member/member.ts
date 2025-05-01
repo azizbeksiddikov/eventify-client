@@ -19,9 +19,9 @@ export interface Member {
 	memberFollowings: number;
 	memberFollowers: number;
 	memberViews: number;
+	eventOrganizedCount: number;
 	createdAt: Date;
 	updatedAt: Date;
-	eventOrganizedCount: number;
 	// memberPassword: string;
 	accessToken?: string;
 

@@ -1,19 +1,25 @@
 import { useRouter } from 'next/router';
 import { Button } from '@/libs/components/ui/button';
+import { ArrowLeft } from 'lucide-react';
 
 const OrganizerHeader = () => {
 	const router = useRouter();
 
 	return (
-		<div className="flex justify-between items-center mb-8">
-			<Button
-				variant="ghost"
-				onClick={() => router.push('/organizers')}
-				className="text-muted-foreground hover:text-foreground transition-colors duration-200"
-			>
-				← Back to Organizers
-			</Button>
-		</div>
+		<section className="bg-gradient-to-b from-secondary/40 to-background py-10">
+			<div className="flex items-center justify-between mb-8 w-[90%] mx-auto">
+				<Button
+					type="button"
+					onClick={() => router.push('/groups')}
+					className="h-14 px-8 bg-primary text-primary-foreground hover:bg-primary/90 transition-colors duration-200"
+				>
+					<div className="flex items-center gap-2">
+						<ArrowLeft className="w-4 h-4 mr-2" />
+						Back to Groups
+					</div>
+				</Button>
+			</div>
+		</section>
 	);
 };
 

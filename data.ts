@@ -27,7 +27,7 @@ export const fakeMembers: Members = {
 			memberEmail: 'john@example.com',
 			memberPhone: '+1234567890',
 			memberFullName: 'John Doe',
-			memberType: MemberType.USER,
+			memberType: MemberType.ORGANIZER,
 			memberStatus: MemberStatus.ACTIVE,
 			emailVerified: true,
 			memberDesc: 'Tech enthusiast and event lover',
