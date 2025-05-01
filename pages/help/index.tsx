@@ -121,9 +121,9 @@ const helpResources = [
 
 const HelpPage = () => {
 	return (
-		<div className="container">
+		<div className="container max-w-4xl mx-auto my-10">
 			<div className="text-center mb-16">
-				<h1 className="text-4xl font-bold mb-4">How can we help you?</h1>
+				<h1 className="text-4xl font-bold mb-4 text-foreground">How can we help you?</h1>
 				<p className="text-muted-foreground text-lg">
 					Find answers to common questions or get in touch with our support team.
 				</p>
@@ -131,11 +131,11 @@ const HelpPage = () => {
 
 			<div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
 				{helpResources.map((resource) => (
-					<Card key={resource.title} className="p-6 hover:shadow-md transition-shadow cursor-pointer">
-						<div className="flex items-start space-x-4">
+					<Card key={resource.title} className="p-6 hover:bg-muted/50 transition-all duration-300 group">
+						<div className="flex flex-col items-center text-center space-y-4">
 							<span className="text-3xl">{resource.icon}</span>
 							<div>
-								<h3 className="font-semibold text-lg mb-2">{resource.title}</h3>
+								<h3 className="font-semibold text-lg mb-2 text-foreground">{resource.title}</h3>
 								<p className="text-muted-foreground text-sm">{resource.description}</p>
 							</div>
 						</div>
