@@ -14,7 +14,7 @@ import ChosenGroupData from '@/libs/components/group/ChosenGroupData';
 import GroupModerators from '@/libs/components/group/GroupModerators';
 import GroupOwner from '@/libs/components/group/GroupOwner';
 import SimilarGroups from '@/libs/components/group/SimilarGroups';
-import UpcomingEvents from '@/libs/components/group/UpcomingEvents';
+import UpcomingEvents from '@/libs/components/common/UpcomingEvents';
 
 const GroupDetailPage = () => {
 	// Mock data
@@ -43,7 +43,7 @@ const GroupDetailPage = () => {
 				</div>
 
 				{/* Events Section */}
-				<UpcomingEvents groupEvents={groupEvents} />
+				<UpcomingEvents events={groupEvents} />
 
 				{/* Comments Section */}
 				<Comments comments={groupComments} commentRefId={group._id} commentGroup={CommentGroup.GROUP} />
