@@ -37,3 +37,8 @@ export interface OrdinaryEventInquiry {
 	page: number;
 	limit: number;
 }
+
+export interface EventsByCategoryInquiry {
+	categories: EventCategory[];
+	limit: number;
+}

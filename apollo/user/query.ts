@@ -206,6 +206,37 @@ export const GET_EVENTS = gql`
 	}
 `;
 
+export const GET_EVENTS_BY_CATEGORY = gql`
+	query GetEventsByCategory($input: EventsByCategoryInquiry!) {
+		getEventsByCategory(input: $input) {
+			categories {
+				category
+				events {
+					_id
+					eventName
+					eventDesc
+					eventImage
+					eventDate
+					eventStartTime
+					eventEndTime
+					eventAddress
+					eventCapacity
+					eventPrice
+					eventStatus
+					eventCategories
+					groupId
+					eventOrganizerId
+					attendeeCount
+					eventLikes
+					eventViews
+					createdAt
+					updatedAt
+				}
+			}
+		}
+	}
+`;
+
 export const GET_MY_EVENTS = gql`
 	query GetMyEvents {
 		getMyEvents {

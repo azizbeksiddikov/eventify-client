@@ -32,3 +32,8 @@ export interface Events {
 	list: Event[];
 	metaCounter: TotalCounter[];
 }
+
+export interface CategoryEvents {
+	category: EventCategory;
+	events: Event[];
+}
