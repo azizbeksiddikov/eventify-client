@@ -30,13 +30,13 @@ const AutoScrollEvents = ({
 	const autoScrollIntervalRef = useRef<NodeJS.Timeout | null>(null);
 	const lastInteractionTimeRef = useRef<number>(Date.now());
 
-	const { data, loading } = useQuery(GET_EVENTS, {
+	const { data: upcomingEvents, loading: upcomingEventsLoading } = useQuery(GET_EVENTS, {
 		fetchPolicy: 'cache-and-network',
 		variables: { input: initialInput },
 		notifyOnNetworkStatusChange: true,
 	});
 
-	const eventList: Event[] = data?.getEvents?.list || [];
+	const eventList: Event[] = upcomingEvents?.getEvents?.list || [];
 
 	// Handle keyboard navigation with proper dependencies
 	const handleNavigation = useCallback(
@@ -135,7 +135,7 @@ const AutoScrollEvents = ({
 		}).format(date);
 	}, []);
 
-	if (loading || !eventList.length) return null;
+	if (upcomingEventsLoading || !eventList.length) return null;
 	return (
 		<section
 			ref={containerRef}

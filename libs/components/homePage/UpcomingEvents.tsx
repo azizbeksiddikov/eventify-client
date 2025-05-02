@@ -2,34 +2,54 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { Calendar } from '@/libs/components/ui/calendar';
 import { MapPin, Clock, CalendarIcon, ChevronRight, ArrowRight } from 'lucide-react';
-import { eventList } from '@/data';
 import { Event } from '@/libs/types/event/event';
 import { Button } from '../ui/button';
 import { useRouter } from 'next/navigation';
-export default function UpcomingEvents() {
+import { useTranslation } from 'next-i18next';
+import { GET_EVENTS } from '@/apollo/user/query';
+import { useQuery } from '@apollo/client';
+import { EventsInquiry } from '@/libs/types/event/event.input';
+import { EventStatus } from '@/libs/enums/event.enum';
+
+interface UpcomingEventsProps {
+	initialInput?: EventsInquiry;
+}
+
+export default function UpcomingEvents({
+	initialInput = {
+		page: 1,
+		search: { eventStatus: EventStatus.UPCOMING },
+	},
+}: UpcomingEventsProps) {
 	const router = useRouter();
 	const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
-	const getEventsForDate = (date: Date | undefined) => {
-		if (!date) return [];
+	const { t } = useTranslation('common');
 
-		return eventList.filter((event) => new Date(event.eventDate).toDateString() === date.toDateString());
-	};
+	const { data: upcomingEvents, loading: upcomingEventsLoading } = useQuery(GET_EVENTS, {
+		fetchPolicy: 'cache-and-network',
+		variables: {
+			input: initialInput,
+		},
+		notifyOnNetworkStatusChange: true,
+	});
 
-	const filteredEvents = getEventsForDate(selectedDate);
+	const events: Event[] = upcomingEvents?.getEvents?.list || [];
+	const filteredEvents = events.filter(
+		(event) => new Date(event.eventDate).toDateString() === selectedDate?.toDateString(),
+	);
 
-	const hasEvents = (date: Date) => {
-		return eventList.some((event) => new Date(event.eventDate).toDateString() === date.toDateString());
-	};
+	console.log('No events scheduled', t('No events scheduled'));
+	console.log('No events scheduled common', t('common', 'No events scheduled'));
 
 	return (
 		<section className="py-20 bg-muted">
 			<div className="w-[90%] mx-auto ">
 				<div className="flex items-center justify-between mb-8">
-					<h2>Upcoming Events</h2>
+					<h2>{t('Upcoming Events')}</h2>
 
 					<Button type="submit" onClick={() => router.push('/events')} className="h-14 px-8 ">
 						<div className="flex items-center gap-1 ">
-							View All Events
+							{t('View All Events')}
 							<ArrowRight className="w-4 h-4" />
 						</div>
 					</Button>
@@ -72,7 +92,9 @@ export default function UpcomingEvents() {
 								DayContent: ({ date }) => (
 									<div className="flex flex-col items-center">
 										<span>{date.getDate()}</span>
-										{hasEvents(date) && <span className="w-1.5 h-1.5 rounded-full bg-primary mt-1" />}
+										{filteredEvents.some(
+											(event) => new Date(event.eventDate).toDateString() === date.toDateString(),
+										) && <span className="w-1.5 h-1.5 rounded-full bg-primary mt-1" />}
 									</div>
 								),
 							}}
@@ -109,7 +131,7 @@ export default function UpcomingEvents() {
 												</div>
 												<div className="flex items-center mt-1 text-xs text-muted-foreground">
 													<Clock className="w-3.5 h-3.5 mr-1.5" />
-													{event.eventDate.toLocaleDateString('en-US', {
+													{new Date(event.eventDate).toLocaleDateString('en-US', {
 														month: 'long',
 														day: 'numeric',
 														year: 'numeric',
@@ -126,8 +148,8 @@ export default function UpcomingEvents() {
 							) : (
 								<div className="flex flex-col items-center justify-center h-[calc(100%-2rem)] text-center">
 									<CalendarIcon className="w-10 h-10 text-muted-foreground/30 mb-2" />
-									<p className="text-muted-foreground text-sm">No events scheduled</p>
-									<p className="text-muted-foreground text-xs mt-1">Select another date</p>
+									<p className="text-muted-foreground text-sm">{t('No events scheduled')}</p>
+									<p className="text-muted-foreground text-xs mt-1">{t('Select another date')}</p>
 								</div>
 							)}
 						</div>

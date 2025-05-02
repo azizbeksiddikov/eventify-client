@@ -27,7 +27,7 @@ export interface EISearch {
 
 export interface EventsInquiry {
 	page: number;
-	limit: number;
+	limit?: number;
 	sort?: string;
 	direction?: Direction;
 	search: EISearch;

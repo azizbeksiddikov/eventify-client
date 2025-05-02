@@ -7,6 +7,7 @@ import { Calendar } from '@/libs/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/libs/components/ui/popover';
 import { format } from 'date-fns';
 import { CalendarIcon } from 'lucide-react';
+import { useTranslation } from 'next-i18next';
 
 const SearchEvents = () => {
 	const router = useRouter();
@@ -14,7 +15,7 @@ const SearchEvents = () => {
 	const [startDate, setStartDate] = useState<Date | undefined>();
 	const [endDate, setEndDate] = useState<Date | undefined>();
 	const [location, setLocation] = useState('');
-
+	const { t } = useTranslation('common');
 	const handleSearch = (e: React.FormEvent) => {
 		e.preventDefault();
 
@@ -42,13 +43,13 @@ const SearchEvents = () => {
 	return (
 		<div className="bg-secondary/50 py-24">
 			<div className="flex-container">
-				<h2>Find Events</h2>
+				<h2>{t('Find Events')}</h2>
 				<Card className="p-8">
 					<form onSubmit={handleSearch} className="flex items-center gap-4">
 						<div className="flex-1">
 							<Input
 								type="text"
-								placeholder="Search events..."
+								placeholder={t('Search Events')}
 								className="w-full h-14 text-lg"
 								value={searchQuery}
 								onChange={(e) => setSearchQuery(e.target.value)}
@@ -56,7 +57,7 @@ const SearchEvents = () => {
 						</div>
 						<Input
 							type="text"
-							placeholder="Location"
+							placeholder={t('Location')}
 							className="w-48 h-14"
 							value={location}
 							onChange={(e) => setLocation(e.target.value)}
@@ -66,19 +67,18 @@ const SearchEvents = () => {
 								<PopoverTrigger asChild>
 									<Button variant="outline" className="w-40 h-14 justify-start text-left font-normal">
 										<CalendarIcon className="mr-2 h-4 w-4" />
-										{startDate ? format(startDate, 'PPP') : <span>Start date</span>}
+										{startDate ? format(startDate, 'PPP') : <span>{t('Start date')}</span>}
 									</Button>
 								</PopoverTrigger>
 								<PopoverContent className="w-auto p-0">
 									<Calendar mode="single" selected={startDate} onSelect={setStartDate} initialFocus />
 								</PopoverContent>
 							</Popover>
-							<span className="text-muted-foreground">to</span>
 							<Popover>
 								<PopoverTrigger asChild>
 									<Button variant="outline" className="w-40 h-14 justify-start text-left font-normal">
 										<CalendarIcon className="mr-2 h-4 w-4" />
-										{endDate ? format(endDate, 'PPP') : <span>End date</span>}
+										{endDate ? format(endDate, 'PPP') : <span>{t('End date')}</span>}
 									</Button>
 								</PopoverTrigger>
 								<PopoverContent className="w-auto p-0">
@@ -87,7 +87,7 @@ const SearchEvents = () => {
 							</Popover>
 						</div>
 						<Button type="submit" className="h-14 px-8">
-							Search
+							{t('Search')}
 						</Button>
 					</form>
 				</Card>
