@@ -29,6 +29,6 @@ export enum Message {
 
 // ===== Direction =====
 export enum Direction {
-	ASC = 1,
-	DESC = -1,
+	ASC = 'ASC',
+	DESC = 'DESC',
 }
