@@ -11,6 +11,7 @@ import {
 	DropdownMenuTrigger,
 } from '@/libs/components/ui/dropdown-menu';
 import { Member } from '@/libs/types/member/member';
+import { User } from 'lucide-react';
 import { useRouter } from 'next/router';
 
 export function UserNav({ authMember }: { authMember: Member }) {
@@ -20,8 +21,10 @@ export function UserNav({ authMember }: { authMember: Member }) {
 			<DropdownMenuTrigger asChild>
 				<Button variant="ghost" className="relative h-10 w-10 rounded-full">
 					<Avatar className="h-8 w-8">
-						<AvatarImage src={authMember?.memberImage} alt="@shadcn" />
-						<AvatarFallback>SP</AvatarFallback>
+						<AvatarImage src={authMember?.memberImage} alt={authMember?.memberFullName} />
+						<AvatarFallback>
+							<User className="h-4 w-4" />
+						</AvatarFallback>
 					</Avatar>
 				</Button>
 			</DropdownMenuTrigger>

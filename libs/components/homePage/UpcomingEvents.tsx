@@ -42,7 +42,6 @@ export default function UpcomingEvents() {
 							mode="single"
 							selected={selectedDate}
 							onSelect={(date) => {
-								console.log(date);
 								setSelectedDate(date);
 							}}
 							className="rounded-md border-0 w-full"

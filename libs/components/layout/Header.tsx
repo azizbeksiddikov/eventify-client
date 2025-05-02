@@ -123,11 +123,11 @@ const Header = () => {
 					</DropdownMenu>
 
 					{/* User Menu */}
-					{authMember ? (
+					{authMember._id ? (
 						<UserNav authMember={authMember} />
 					) : (
 						<div className="flex items-center gap-4">
-							<Link href="auth/login">
+							<Link href="/auth/login">
 								<Button variant="outline" className="text-sm  h-9 px-4">
 									Login
 								</Button>

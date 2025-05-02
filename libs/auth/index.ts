@@ -1,9 +1,11 @@
 import decodeJWT from 'jwt-decode';
-import { initializeApollo } from '../../apollo/client';
-import { userVar } from '../../apollo/store';
-import { CustomJwtPayload } from '../types/customJwtPayload';
-import { sweetMixinErrorAlert } from '../sweetAlert';
-import { LOGIN, SIGN_UP } from '../../apollo/user/mutation';
+import { initializeApollo } from '@/apollo/client';
+import { userVar } from '@/apollo/store';
+import { CustomJwtPayload } from '@/libs/types/customJwtPayload';
+import { sweetMixinErrorAlert } from '@/libs/sweetAlert';
+import { LOGIN, SIGN_UP } from '@/apollo/user/mutation';
+import { smallError } from '../alert';
+import { Message } from '../enums/common.enum';
 
 export function getJwtToken(): any {
 	if (typeof window !== 'undefined') {
@@ -15,9 +17,9 @@ export function setJwtToken(token: string) {
 	localStorage.setItem('accessToken', token);
 }
 
-export const logIn = async (nick: string, password: string): Promise<void> => {
+export const logIn = async (username: string, memberPassword: string): Promise<void> => {
 	try {
-		const { jwtToken } = await requestJwtToken({ nick, password });
+		const { jwtToken } = await requestJwtToken({ username, memberPassword });
 
 		if (jwtToken) {
 			updateStorage({ jwtToken });
@@ -25,47 +27,52 @@ export const logIn = async (nick: string, password: string): Promise<void> => {
 		}
 	} catch (err) {
 		console.warn('login err', err);
-		logOut();
+		deleteStorage();
+		deleteUserInfo();
+		throw new Error(Message.LOGIN_FAILED);
 	}
 };
 
 const requestJwtToken = async ({
-	nick,
-	password,
+	username,
+	memberPassword,
 }: {
-	nick: string;
-	password: string;
+	username: string;
+	memberPassword: string;
 }): Promise<{ jwtToken: string }> => {
 	const apolloClient = await initializeApollo();
 
 	try {
 		const result = await apolloClient.mutate({
 			mutation: LOGIN,
-			variables: { input: { memberNick: nick, memberPassword: password } },
+			variables: { input: { username: username, memberPassword: memberPassword } },
 			fetchPolicy: 'network-only',
 		});
 
-		console.log('---------- login ----------');
 		const { accessToken } = result?.data?.login;
 
 		return { jwtToken: accessToken };
 	} catch (err: any) {
-		console.log('request token err', err.graphQLErrors);
 		switch (err.graphQLErrors[0].message) {
 			case 'Definer: login and password do not match':
-				await sweetMixinErrorAlert('Please check your password again');
+				await smallError('Please check your password again');
 				break;
 			case 'Definer: user has been blocked!':
-				await sweetMixinErrorAlert('User has been blocked!');
+				await smallError('User has been blocked!');
 				break;
 		}
 		throw new Error('token error');
 	}
 };
 
-export const signUp = async (nick: string, password: string, phone: string, type: string): Promise<void> => {
+export const signUp = async (
+	username: string,
+	memberPassword: string,
+	memberEmail: string,
+	memberFullName: string,
+): Promise<void> => {
 	try {
-		const { jwtToken } = await requestSignUpJwtToken({ nick, password, phone, type });
+		const { jwtToken } = await requestSignUpJwtToken({ username, memberPassword, memberEmail, memberFullName });
 
 		if (jwtToken) {
 			updateStorage({ jwtToken });
@@ -78,15 +85,15 @@ export const signUp = async (nick: string, password: string, phone: string, type
 };
 
 const requestSignUpJwtToken = async ({
-	nick,
-	password,
-	phone,
-	type,
+	username,
+	memberPassword,
+	memberEmail,
+	memberFullName,
 }: {
-	nick: string;
-	password: string;
-	phone: string;
-	type: string;
+	username: string;
+	memberPassword: string;
+	memberEmail: string;
+	memberFullName: string;
 }): Promise<{ jwtToken: string }> => {
 	const apolloClient = await initializeApollo();
 
@@ -94,12 +101,11 @@ const requestSignUpJwtToken = async ({
 		const result = await apolloClient.mutate({
 			mutation: SIGN_UP,
 			variables: {
-				input: { memberNick: nick, memberPassword: password, memberPhone: phone, memberType: type },
+				input: { username, memberPassword, memberEmail, memberFullName },
 			},
 			fetchPolicy: 'network-only',
 		});
 
-		console.log('---------- login ----------');
 		const { accessToken } = result?.data?.signup;
 
 		return { jwtToken: accessToken };
@@ -117,12 +123,12 @@ const requestSignUpJwtToken = async ({
 	}
 };
 
-export const updateStorage = ({ jwtToken }: { jwtToken: any }) => {
+export const updateStorage = ({ jwtToken }: { jwtToken: string }) => {
 	setJwtToken(jwtToken);
 	window.localStorage.setItem('login', Date.now().toString());
 };
 
-export const updateUserInfo = (jwtToken: any) => {
+export const updateUserInfo = (jwtToken: string) => {
 	if (!jwtToken) return false;
 
 	const claims = decodeJWT<CustomJwtPayload>(jwtToken);

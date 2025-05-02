@@ -61,6 +61,7 @@
 		"react-spring": "^9.4.5",
 		"react-telegram-auth": "^1.0.3",
 		"react-tree": "^0.0.4",
+		"sonner": "^2.0.3",
 		"subscriptions-transport-ws": "^0.9.19",
 		"sweetalert2": "^11.19.1",
 		"tailwind-merge": "^3.2.0",
