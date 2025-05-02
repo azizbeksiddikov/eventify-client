@@ -1,16 +1,8 @@
 {
-	"common": {
-		"welcome": "Eventify'ga xush kelibsiz",
-		"login": "Kirish",
-		"register": "Ro'yxatdan o'tish",
-		"logout": "Chiqish",
-		"profile": "Profil",
-		"settings": "Sozlamalar",
-		"events": "Tadbirlar",
-		"createEvent": "Tadbir yaratish",
-		"search": "Qidirish",
-		"language": "Til",
-		"notifications": "Bildirishnomalar",
-		"messages": "Xabarlar"
-	}
+	"Home": "Bosh sahifa",
+	"Groups": "Guruhlar",
+	"Organizers": "Organizatorlar",
+	"Help": "Yordam",
+	"Admin": "Admin",
+	"Events": "Tadbirlar"
 }

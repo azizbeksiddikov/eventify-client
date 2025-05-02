@@ -1,19 +1,24 @@
 import Link from 'next/link';
-import { useState } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Button, buttonVariants } from '@/libs/components/ui/button';
-import type { Member } from '@/libs/types/member/member';
-import { MemberType, MemberStatus } from '@/libs/enums/member.enum';
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from '@/libs/components/ui/dropdown-menu';
-import { ModeToggle } from '../ui/mode-toggle';
-import { Logo } from '../ui/logo';
+import { ModeToggle } from '@/libs/components/ui/mode-toggle';
+import { Logo } from '@/libs/components/ui/logo';
 import { usePathname } from 'next/navigation';
+import { useRouter, withRouter } from 'next/router';
+
 import { cn } from '@/libs/utils';
 import { UserNav } from './UserNav';
+import { useTranslation } from 'next-i18next';
+import { useReactiveVar } from '@apollo/client';
+import { userVar } from '@/apollo/store';
+import { getJwtToken, updateUserInfo } from '@/libs/auth';
+import { Member } from '@/libs/types/member/member';
 
 const navLinks = [
 	{ href: '/', label: 'Home' },
@@ -21,11 +26,15 @@ const navLinks = [
 	{ href: '/groups', label: 'Groups' },
 	{ href: '/organizers', label: 'Organizers' },
 	{ href: '/help', label: 'Help' },
-	{ href: '/admin', label: 'Admin' },
+	{ href: '/_admin', label: 'Admin' },
 ];
 
 const Header = () => {
 	const pathname = usePathname();
+	const authMember = useReactiveVar(userVar) as Member;
+	const { t } = useTranslation('common');
+	const router = useRouter();
+	const [currentLanguage, setCurrentLanguage] = useState<string>('en');
 
 	const languages = [
 		{ code: 'en', name: 'English', flag: '🇺🇸' },
@@ -34,34 +43,32 @@ const Header = () => {
 		{ code: 'ko', name: 'Korean', flag: '🇰🇷' },
 	];
 
-	const [currentLanguage, setCurrentLanguage] = useState('en');
+	/** LIFECYCLES **/
+	// Set current language
+	useEffect(() => {
+		if (localStorage.getItem('locale') === null) {
+			localStorage.setItem('locale', 'en');
+			setCurrentLanguage('en');
+		} else {
+			setCurrentLanguage(localStorage.getItem('locale') || 'en');
+		}
+	}, [router]);
 
-	const handleLanguageChange = (langCode: string) => {
-		setCurrentLanguage(langCode);
-	};
+	// Update user info
+	useEffect(() => {
+		const jwt = getJwtToken();
+		if (jwt) updateUserInfo(jwt);
+	}, []);
 
-	const [authMember, setUser] = useState<Member | null>({
-		_id: '1',
-		username: 'johndoe',
-		memberEmail: 'john@example.com',
-		memberFullName: 'John Doe',
-		memberType: MemberType.USER,
-		memberStatus: MemberStatus.ACTIVE,
-		emailVerified: true,
-		memberImage: '', // Empty string to test fallback
-		memberPoints: 100,
-		memberLikes: 50,
-		memberFollowings: 20,
-		memberFollowers: 30,
-		memberViews: 1000,
-		createdAt: new Date(),
-		updatedAt: new Date(),
-		eventOrganizedCount: 0,
-	});
-
-	const handleLogout = () => {
-		setUser(null);
-	};
+	/** HANDLERS **/
+	const handleLanguageChange = useCallback(
+		async (languageCode: string) => {
+			setCurrentLanguage(languageCode);
+			localStorage.setItem('locale', languageCode);
+			await router.push(router.asPath, undefined, { locale: languageCode });
+		},
+		[router],
+	);
 
 	return (
 		<header className="sticky top-0 z-50 bg-background/80 backdrop-blur-sm border-b ">
@@ -84,7 +91,7 @@ const Header = () => {
 									: 'text-muted-foreground hover:text-foreground'
 							}`}
 						>
-							{link.label}
+							{t(`${link.label}`)}
 						</Link>
 					))}
 				</nav>
@@ -101,14 +108,15 @@ const Header = () => {
 						>
 							{languages.find((lang) => lang.code === currentLanguage)?.flag || '🌐'}
 						</DropdownMenuTrigger>
-						<DropdownMenuContent align="end" className="w-40">
-							{languages.map((lang) => (
+						<DropdownMenuContent align="end">
+							{languages.map((language) => (
 								<DropdownMenuItem
-									key={lang.code}
-									className={`${currentLanguage === lang.code ? 'bg-background font-medium' : ''} cursor-pointer`}
-									onClick={() => handleLanguageChange(lang.code)}
+									key={language.code}
+									className={`${currentLanguage === language.code ? 'bg-background ' : ''} cursor-pointer w-full`}
+									onClick={() => handleLanguageChange(language.code)}
 								>
-									{lang.name}
+									{language.name} {'  '}
+									{language.flag}
 								</DropdownMenuItem>
 							))}
 						</DropdownMenuContent>
@@ -116,7 +124,7 @@ const Header = () => {
 
 					{/* User Menu */}
 					{authMember ? (
-						<UserNav handleLogout={handleLogout} authMember={authMember} />
+						<UserNav authMember={authMember} />
 					) : (
 						<div className="flex items-center gap-4">
 							<Link href="auth/login">
@@ -135,4 +143,5 @@ const Header = () => {
 	);
 };
 
-export default Header;
+// export default withRouter(Header);
+export default withRouter(Header);

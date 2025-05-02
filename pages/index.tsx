@@ -8,6 +8,13 @@ import TopGroups from '@/libs/components/homepage/PopularGroups';
 import SearchEvents from '@/libs/components/homepage/SearchEvents';
 import Acknowledgements from '@/libs/components/homepage/Acknowledgements';
 import withHomeLayout from '@/libs/components/layout/LayoutHome';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+
+export const getStaticProps = async ({ locale }: any) => ({
+	props: {
+		...(await serverSideTranslations(locale, ['common'])),
+	},
+});
 
 const Home: NextPage = () => {
 	const device = useDeviceDetect();

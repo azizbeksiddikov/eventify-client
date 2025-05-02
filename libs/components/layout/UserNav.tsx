@@ -1,3 +1,4 @@
+import { logOut } from '@/libs/auth';
 import { Avatar, AvatarFallback, AvatarImage } from '@/libs/components/ui/avatar';
 import { Button } from '@/libs/components/ui/button';
 import {
@@ -12,14 +13,14 @@ import {
 import { Member } from '@/libs/types/member/member';
 import { useRouter } from 'next/router';
 
-export function UserNav({ handleLogout, authMember }: { handleLogout: () => void; authMember: Member }) {
+export function UserNav({ authMember }: { authMember: Member }) {
 	const router = useRouter();
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
 				<Button variant="ghost" className="relative h-10 w-10 rounded-full">
 					<Avatar className="h-8 w-8">
-						<AvatarImage src="/avatars/01.png" alt="@shadcn" />
+						<AvatarImage src={authMember?.memberImage} alt="@shadcn" />
 						<AvatarFallback>SP</AvatarFallback>
 					</Avatar>
 				</Button>
@@ -37,7 +38,7 @@ export function UserNav({ handleLogout, authMember }: { handleLogout: () => void
 				</DropdownMenuGroup>
 				<DropdownMenuSeparator />
 
-				<DropdownMenuItem onClick={handleLogout}>Log out</DropdownMenuItem>
+				<DropdownMenuItem onClick={logOut}>Log out</DropdownMenuItem>
 			</DropdownMenuContent>
 		</DropdownMenu>
 	);

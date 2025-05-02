@@ -1,4 +1,7 @@
 import type { NextConfig } from 'next';
+import { i18n } from './next-i18next.config';
+
+/** @type {import('next').NextConfig} */
 
 const nextConfig: NextConfig = {
 	/* config options here */
@@ -12,6 +15,13 @@ const nextConfig: NextConfig = {
 			'hips.hearstapps.com',
 		],
 	},
+	env: {
+		REACT_APP_API_URL: process.env.REACT_APP_API_URL,
+		REACT_APP_API_GRAPHQL_URL: process.env.REACT_APP_API_GRAPHQL_URL,
+		REACT_APP_API_WS: process.env.REACT_APP_API_WS,
+	},
 };
 
-export default nextConfig;
+nextConfig.i18n = i18n;
+
+module.exports = nextConfig;

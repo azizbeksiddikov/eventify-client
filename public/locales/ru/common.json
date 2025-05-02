@@ -1,16 +1,8 @@
 {
-	"common": {
-		"welcome": "Добро пожаловать в Eventify",
-		"login": "Войти",
-		"register": "Регистрация",
-		"logout": "Выйти",
-		"profile": "Профиль",
-		"settings": "Настройки",
-		"events": "Мероприятия",
-		"createEvent": "Создать мероприятие",
-		"search": "Поиск",
-		"language": "Язык",
-		"notifications": "Уведомления",
-		"messages": "Сообщения"
-	}
+	"Home": "Главная",
+	"Groups": "Группы",
+	"Organizers": "Организаторы",
+	"Help": "Помощь",
+	"Admin": "Админ",
+	"Events": "Мероприятия"
 }
