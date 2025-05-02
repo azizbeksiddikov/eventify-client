@@ -1,27 +1,84 @@
-import type React from 'react';
-
-import { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
+import { useQuery } from '@apollo/client';
+
 import { Calendar, MapPin, ChevronLeft, ChevronRight } from 'lucide-react';
 import { cn } from '@/libs/utils';
+import { EventsInquiry } from '@/libs/types/event/event.input';
+import { GET_EVENTS } from '@/apollo/user/query';
+import { Direction } from '@/libs/enums/common.enum';
+import { EventStatus } from '@/libs/enums/event.enum';
+import { Event } from '@/libs/types/event/event';
 
-// Import from local data file
-import { eventList } from '@/data';
+interface AutoScrollEventsProps {
+	initialInput?: EventsInquiry;
+}
 
-const AutoScrollEvents = () => {
+const AutoScrollEvents = ({
+	initialInput = {
+		page: 1,
+		limit: 8,
+		sort: 'eventViews',
+		direction: Direction.DESC,
+		search: { eventStatus: EventStatus.UPCOMING },
+	},
+}: AutoScrollEventsProps) => {
 	const [currentIndex, setCurrentIndex] = useState(0);
 	const [hoverPosition, setHoverPosition] = useState<number | null>(null);
+	const [isAutoScrolling, setIsAutoScrolling] = useState(true);
 	const containerRef = useRef<HTMLDivElement>(null);
 	const autoScrollIntervalRef = useRef<NodeJS.Timeout | null>(null);
+	const lastInteractionTimeRef = useRef<number>(Date.now());
+
+	const { data, loading } = useQuery(GET_EVENTS, {
+		fetchPolicy: 'cache-and-network',
+		variables: { input: initialInput },
+		notifyOnNetworkStatusChange: true,
+	});
+
+	const eventList: Event[] = data?.getEvents?.list || [];
+
+	// Handle keyboard navigation with proper dependencies
+	const handleNavigation = useCallback(
+		(direction: 'prev' | 'next') => {
+			setIsAutoScrolling(false);
+			lastInteractionTimeRef.current = Date.now();
+
+			if (autoScrollIntervalRef.current) {
+				clearInterval(autoScrollIntervalRef.current);
+				autoScrollIntervalRef.current = null;
+			}
+
+			setCurrentIndex((prevIndex) => {
+				if (direction === 'prev') {
+					return (prevIndex - 1 + eventList.length) % eventList.length;
+				}
+				return (prevIndex + 1) % eventList.length;
+			});
+
+			// Restart auto-scroll after a delay of inactivity
+			setTimeout(() => {
+				if (!autoScrollIntervalRef.current && isAutoScrolling) {
+					autoScrollIntervalRef.current = setInterval(() => {
+						setCurrentIndex((prevIndex) => (prevIndex + 1) % eventList.length);
+					}, 4000);
+				}
+			}, 7000);
+		},
+		[eventList.length, isAutoScrolling],
+	);
 
 	// Handle keyboard navigation
-	const handleKeyDown = useCallback((e: KeyboardEvent) => {
-		if (e.key === 'ArrowLeft') {
-			handleNavigation('prev');
-		} else if (e.key === 'ArrowRight') {
-			handleNavigation('next');
-		}
-	}, []);
+	const handleKeyDown = useCallback(
+		(e: KeyboardEvent) => {
+			if (e.key === 'ArrowLeft') {
+				handleNavigation('prev');
+			} else if (e.key === 'ArrowRight') {
+				handleNavigation('next');
+			}
+		},
+		[handleNavigation],
+	);
 
 	// Setup and cleanup keyboard event listeners
 	useEffect(() => {
@@ -33,9 +90,14 @@ const AutoScrollEvents = () => {
 
 	// Auto-scroll functionality
 	useEffect(() => {
+		if (!eventList.length || !isAutoScrolling) return;
+
 		autoScrollIntervalRef.current = setInterval(() => {
-			setCurrentIndex((prevIndex) => (prevIndex + 1) % eventList.length);
-		}, 5000); // Slightly longer interval for better user experience
+			// Check if there was recent user interaction
+			if (Date.now() - lastInteractionTimeRef.current > 5000) {
+				setCurrentIndex((prevIndex) => (prevIndex + 1) % eventList.length);
+			}
+		}, 5000);
 
 		return () => {
 			if (autoScrollIntervalRef.current) {
@@ -43,9 +105,9 @@ const AutoScrollEvents = () => {
 				autoScrollIntervalRef.current = null;
 			}
 		};
-	}, [eventList.length]);
+	}, [eventList.length, isAutoScrolling]);
 
-	const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+	const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
 		if (!containerRef.current) return;
 
 		const rect = containerRef.current.getBoundingClientRect();
@@ -54,42 +116,16 @@ const AutoScrollEvents = () => {
 		const threshold = width * 0.2;
 
 		if (x < threshold) {
-			setHoverPosition(0); // Left edge
+			setHoverPosition(0);
 		} else if (x > width - threshold) {
-			setHoverPosition(1); // Right edge
+			setHoverPosition(1);
 		} else {
 			setHoverPosition(null);
 		}
-	};
-
-	const handleNavigation = useCallback(
-		(direction: 'prev' | 'next') => {
-			// Clear the auto-scroll interval when user manually navigates
-			if (autoScrollIntervalRef.current) {
-				clearInterval(autoScrollIntervalRef.current);
-				autoScrollIntervalRef.current = null;
-			}
-
-			if (direction === 'prev') {
-				setCurrentIndex((prevIndex) => (prevIndex - 1 + eventList.length) % eventList.length);
-			} else {
-				setCurrentIndex((prevIndex) => (prevIndex + 1) % eventList.length);
-			}
-
-			// Restart auto-scroll after a delay
-			setTimeout(() => {
-				if (!autoScrollIntervalRef.current) {
-					autoScrollIntervalRef.current = setInterval(() => {
-						setCurrentIndex((prevIndex) => (prevIndex + 1) % eventList.length);
-					}, 4000);
-				}
-			}, 7000);
-		},
-		[eventList.length],
-	);
+	}, []);
 
 	// Format date for better accessibility
-	const formatDate = (dateString: Date) => {
+	const formatDate = useCallback((dateString: Date) => {
 		const date = new Date(dateString);
 		return new Intl.DateTimeFormat('en-US', {
 			weekday: 'long',
@@ -97,8 +133,9 @@ const AutoScrollEvents = () => {
 			month: 'long',
 			day: 'numeric',
 		}).format(date);
-	};
+	}, []);
 
+	if (loading || !eventList.length) return null;
 	return (
 		<section
 			ref={containerRef}
@@ -109,7 +146,7 @@ const AutoScrollEvents = () => {
 		>
 			{/* Carousel items */}
 			<div className="h-full relative">
-				{eventList.map((event, index) => (
+				{eventList.map((event: Event, index: number) => (
 					<div
 						key={event._id}
 						className={cn(
