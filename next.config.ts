@@ -14,6 +14,8 @@ const nextConfig: NextConfig = {
 			'images.unsplash.com',
 			'hips.hearstapps.com',
 			'www.fourseasons.com',
+			'www.rrc.ca',
+			'blogs.nvidia.com',
 		],
 	},
 	env: {

@@ -4,7 +4,7 @@ import { EventCategory, EventStatus } from '../../libs/enums/event.enum';
 import withBasicLayout from '../../libs/components/layout/LayoutBasic';
 import { Event } from '../../libs/types/event/event';
 import { EventsInquiry } from '../../libs/types/event/event.input';
-import { Direction } from '../../libs/enums/common.enum';
+import { Direction, Message } from '../../libs/enums/common.enum';
 import {
 	Pagination,
 	PaginationContent,
@@ -15,32 +15,54 @@ import {
 } from '@/libs/components/ui/pagination';
 import 'react-date-range/dist/styles.css';
 import 'react-date-range/dist/theme/default.css';
-import { eventList as events } from '@/data';
 import EventCard from '@/libs/components/events/EventCard';
 import SortAndFilter from '@/libs/components/events/SortAndFilter';
 import EventsHeader from '@/libs/components/events/EventsHeader';
 import CategoriesSidebar from '@/libs/components/events/CategoriesSidebar';
+import { useTranslation } from 'react-i18next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { useMutation, useReactiveVar } from '@apollo/client';
+import { useQuery } from '@apollo/client';
+import { GET_EVENTS } from '@/apollo/user/query';
+import { smallError } from '@/libs/alert';
+import { smallSuccess } from '@/libs/alert';
+import { userVar } from '@/apollo/store';
+import { LIKE_TARGET_EVENT } from '@/apollo/user/mutation';
 
-const initialSearch: EventsInquiry = {
-	page: 1,
-	limit: 6,
-	sort: 'createdAt',
-	direction: Direction.DESC,
-	search: {
-		text: '',
-		eventCategories: [],
-		eventStatus: undefined,
-		eventStartDay: undefined,
-		eventEndDay: undefined,
+export const getStaticProps = async ({ locale }: any) => ({
+	props: {
+		...(await serverSideTranslations(locale, ['common'])),
 	},
-};
+});
 
-const EventsPage = () => {
+interface EventsPageProps {
+	initialSearch?: EventsInquiry;
+}
+
+const EventsPage = ({
+	initialSearch = {
+		page: 1,
+		limit: 6,
+		sort: 'createdAt',
+		direction: Direction.DESC,
+		search: {
+			text: '',
+			eventCategories: [],
+			eventStatus: undefined,
+			eventStartDay: undefined,
+			eventEndDay: undefined,
+		},
+	},
+}: EventsPageProps) => {
 	const router = useRouter();
+	const { t } = useTranslation('common');
+	const user = useReactiveVar(userVar);
+	const [totalPages, setTotalPages] = useState<number>(1);
+	const [events, setEvents] = useState<Event[]>([]);
 
 	const readUrl = (): EventsInquiry => {
 		if (router?.query) {
-			console.log(router.query);
+			console.log('router.query:', router.query);
 			const categories =
 				(router.query.categories as string)
 					?.split('-')
@@ -51,6 +73,7 @@ const EventsPage = () => {
 			// Safely parse dates
 			const parseDate = (dateStr: string | undefined): Date | undefined => {
 				if (!dateStr) return undefined;
+				// Handle both YYYY-MM-DD and ISO string formats
 				const date = new Date(dateStr);
 				return isNaN(date.getTime()) ? undefined : date;
 			};
@@ -71,13 +94,12 @@ const EventsPage = () => {
 		}
 		return initialSearch;
 	};
-
-	const [eventSearch, setEventSearch] = useState<EventsInquiry>(() => readUrl());
+	const [eventsSearchFilters, setEventsSearchFilters] = useState<EventsInquiry>(() => readUrl());
 
 	const updateURL = (newSearch: EventsInquiry) => {
 		const query: Record<string, string> = {
-			page: Math.max(1, newSearch.page).toString(),
-			limit: Math.max(1, newSearch.limit).toString(),
+			page: Math.max(1, newSearch.page || 1).toString(),
+			limit: Math.max(1, newSearch.limit || 6).toString(),
 			sort: newSearch.sort || 'createdAt',
 			direction: newSearch.direction === Direction.ASC ? '1' : '-1',
 		};
@@ -92,51 +114,88 @@ const EventsPage = () => {
 			query.status = newSearch.search.eventStatus;
 		}
 		if (newSearch.search.eventStartDay) {
-			query.startDate = newSearch.search.eventStartDay.toISOString();
+			query.startDate = newSearch.search.eventStartDay.toISOString().split('T')[0];
 		}
 		if (newSearch.search.eventEndDay) {
-			query.endDate = newSearch.search.eventEndDay.toISOString();
+			query.endDate = newSearch.search.eventEndDay.toISOString().split('T')[0];
 		}
 
 		router.push({ query }, undefined, { shallow: true });
 	};
 
+	/** APOLLO REQUESTS **/
+	const [likeTargetEvent] = useMutation(LIKE_TARGET_EVENT);
+
+	const { data: getEventsData, refetch: getEventsRefetch } = useQuery(GET_EVENTS, {
+		fetchPolicy: 'network-only',
+		variables: {
+			input: eventsSearchFilters,
+		},
+		notifyOnNetworkStatusChange: true,
+	});
+
+	/** LIFECYCLES **/
+
+	useEffect(() => {
+		setEventsSearchFilters(readUrl());
+	}, [router]);
+
+	useEffect(() => {
+		getEventsRefetch({ input: eventsSearchFilters }).then();
+	}, [eventsSearchFilters]);
+
+	useEffect(() => {
+		if (getEventsData) {
+			setEvents(getEventsData?.getEvents?.list);
+			setTotalPages(Math.max(1, Math.ceil(getEventsData?.getEvents?.list.length / (eventsSearchFilters.limit || 6))));
+		}
+	}, [getEventsData]);
+
+	/** HANDLERS */
 	const handlePageChange = (page: number) => {
 		if (page >= 1 && page <= totalPages) {
-			updateURL({ ...eventSearch, page });
+			updateURL({ ...eventsSearchFilters, page });
 		}
 	};
 
-	useEffect(() => {
-		const search = readUrl();
-		setEventSearch(search);
-	}, [router]);
+	const likeEventHandler = async (eventId: string) => {
+		try {
+			if (!eventId) return;
+			if (!user._id || user._id === '') throw new Error(Message.NOT_AUTHENTICATED);
 
-	// Calculate total pages based on events length and limit
-	const totalPages = Math.max(1, Math.ceil(events.length / eventSearch.limit));
-	const startPage = Math.max(1, Math.min(eventSearch.page - 2, totalPages - 4));
-	const endPage = Math.min(totalPages, startPage + 4);
+			await likeTargetEvent({
+				variables: { input: eventId },
+			});
+
+			await smallSuccess(t('Event liked successfully'));
+		} catch (err: any) {
+			console.log('ERROR, likeEventHandler:', err.message);
+			smallError(err.message);
+		}
+	};
 
 	return (
 		<div>
 			<EventsHeader />
-			<SortAndFilter updateURL={updateURL} eventSearch={eventSearch} />
+			<SortAndFilter updateURL={updateURL} eventsSearchFilters={eventsSearchFilters} initialSearch={initialSearch} />
 
 			<div className="max-w-7xl py-10 mx-auto mb-10">
 				<div className="flex flex-row gap-8">
 					{/* Categories Sidebar */}
-					<CategoriesSidebar eventSearch={eventSearch} updateURL={updateURL} initialSearch={initialSearch} />
+					<CategoriesSidebar
+						eventsSearchFilters={eventsSearchFilters}
+						updateURL={updateURL}
+						initialSearch={initialSearch}
+					/>
 
 					{/* Events Grid */}
 					<div className="flex-1">
 						{events.length > 0 ? (
 							<>
 								<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-									{events
-										.slice((eventSearch.page - 1) * eventSearch.limit, eventSearch.page * eventSearch.limit)
-										.map((event) => (
-											<EventCard key={event._id} event={event} />
-										))}
+									{events.map((event) => (
+										<EventCard key={event._id} event={event} likeEventHandler={likeEventHandler} />
+									))}
 								</div>
 
 								{/* Pagination */}
@@ -145,14 +204,17 @@ const EventsPage = () => {
 										<PaginationContent>
 											<PaginationItem>
 												<PaginationPrevious
-													onClick={() => handlePageChange(eventSearch.page - 1)}
-													className={eventSearch.page <= 1 ? 'pointer-events-none opacity-50' : ''}
+													onClick={() => handlePageChange(eventsSearchFilters.page - 1)}
+													className={eventsSearchFilters.page <= 1 ? 'pointer-events-none opacity-50' : ''}
 												/>
 											</PaginationItem>
 
-											{Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i).map((page) => (
+											{Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
 												<PaginationItem key={page}>
-													<PaginationLink isActive={eventSearch.page === page} onClick={() => handlePageChange(page)}>
+													<PaginationLink
+														isActive={eventsSearchFilters.page === page}
+														onClick={() => handlePageChange(page)}
+													>
 														{page}
 													</PaginationLink>
 												</PaginationItem>
@@ -160,8 +222,8 @@ const EventsPage = () => {
 
 											<PaginationItem>
 												<PaginationNext
-													onClick={() => handlePageChange(eventSearch.page + 1)}
-													className={eventSearch.page >= totalPages ? 'pointer-events-none opacity-50' : ''}
+													onClick={() => handlePageChange(eventsSearchFilters.page + 1)}
+													className={eventsSearchFilters.page >= totalPages ? 'pointer-events-none opacity-50' : ''}
 												/>
 											</PaginationItem>
 										</PaginationContent>
@@ -170,7 +232,7 @@ const EventsPage = () => {
 							</>
 						) : (
 							<div className="text-center py-12">
-								<p className="text-muted-foreground">No events found. Try adjusting your filters.</p>
+								<p className="text-muted-foreground">{t('No events found. Try adjusting your filters.')}</p>
 							</div>
 						)}
 					</div>

@@ -1,13 +1,16 @@
+import { useTranslation } from 'react-i18next';
+import { format } from 'date-fns';
+
 import { Popover, PopoverContent, PopoverTrigger } from '@/libs/components/ui/popover';
 import { Button, buttonVariants } from '@/libs/components/ui/button';
 import { Input } from '@/libs/components/ui/input';
 import { EventsInquiry } from '@/libs/types/event/event.input';
 import { Direction } from '@/libs/enums/common.enum';
-import { Calendar, ArrowUpDown, X } from 'lucide-react';
-import { format } from 'date-fns';
-import { Calendar as CalendarComponent } from '../ui/calendar';
-import { cn } from '@/libs/utils';
+import { Calendar as CalendarComponent } from '@/libs/components/ui/calendar';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/libs/components/ui/select';
+import { Calendar, ArrowUpDown, X } from 'lucide-react';
+import { cn } from '@/libs/utils';
+import { smallError } from '@/libs/alert';
 
 const sortOptions = [
 	{ value: 'createdAt', label: 'Newest' },
@@ -18,13 +21,16 @@ const sortOptions = [
 
 interface SortAndFilterProps {
 	updateURL: (search: EventsInquiry) => void;
-	eventSearch: EventsInquiry;
+	eventsSearchFilters: EventsInquiry;
+	initialSearch: EventsInquiry;
 }
 
-function SortAndFilter({ updateURL, eventSearch }: SortAndFilterProps) {
+function SortAndFilter({ updateURL, eventsSearchFilters, initialSearch }: SortAndFilterProps) {
+	const { t } = useTranslation('common');
+
 	const handleSearch = (text: string) => {
 		updateURL({
-			...eventSearch,
+			...eventsSearchFilters,
 			search: {
 				text: text,
 			},
@@ -33,23 +39,24 @@ function SortAndFilter({ updateURL, eventSearch }: SortAndFilterProps) {
 
 	const handleStartDateChange = (date: Date | undefined) => {
 		const today = new Date();
-		const startDate = date || today;
+		// Set the time to noon UTC to avoid timezone issues
+		const startDate = date ? new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), 12, 0, 0)) : today;
 
 		// If end date exists and is before the new start date, clear it
-		if (eventSearch.search.eventEndDay && startDate > eventSearch.search.eventEndDay) {
+		if (eventsSearchFilters.search.eventEndDay && startDate > eventsSearchFilters.search.eventEndDay) {
 			updateURL({
-				...eventSearch,
+				...eventsSearchFilters,
 				search: {
-					...eventSearch.search,
+					...eventsSearchFilters.search,
 					eventStartDay: startDate,
 					eventEndDay: undefined,
 				},
 			});
 		} else {
 			updateURL({
-				...eventSearch,
+				...eventsSearchFilters,
 				search: {
-					...eventSearch.search,
+					...eventsSearchFilters.search,
 					eventStartDay: startDate,
 				},
 			});
@@ -58,14 +65,15 @@ function SortAndFilter({ updateURL, eventSearch }: SortAndFilterProps) {
 
 	const handleEndDateChange = (date: Date | undefined) => {
 		const today = new Date();
-		const endDate = date || today;
+		// Set the time to noon UTC to avoid timezone issues
+		const endDate = date ? new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), 12, 0, 0)) : today;
 
 		// Only allow end date if it's after start date or if start date is not set
-		if (!eventSearch.search.eventStartDay || endDate >= eventSearch.search.eventStartDay) {
+		if (!eventsSearchFilters.search.eventStartDay || endDate >= eventsSearchFilters.search.eventStartDay) {
 			updateURL({
-				...eventSearch,
+				...eventsSearchFilters,
 				search: {
-					...eventSearch.search,
+					...eventsSearchFilters.search,
 					eventEndDay: endDate,
 				},
 			});
@@ -73,31 +81,28 @@ function SortAndFilter({ updateURL, eventSearch }: SortAndFilterProps) {
 	};
 
 	const handleSortChange = (value: string) => {
+		// check if the value is in the sortOptions array
+		const sortOption = sortOptions.find((option) => option.value === value);
+
+		console.log('sortOption', sortOption);
+
+		if (!sortOption) smallError(t('Invalid sort option'));
+
 		updateURL({
-			...eventSearch,
-			sort: value as keyof Event,
+			...eventsSearchFilters,
+			sort: sortOption?.value,
 		});
 	};
 
 	const toggleDirection = () => {
 		updateURL({
-			...eventSearch,
-			direction: eventSearch.direction === Direction.ASC ? Direction.DESC : Direction.ASC,
+			...eventsSearchFilters,
+			direction: eventsSearchFilters.direction === Direction.ASC ? Direction.DESC : Direction.ASC,
 		});
 	};
 
 	const clearAllFilters = () => {
-		updateURL({
-			search: {
-				text: '',
-				eventStartDay: undefined,
-				eventEndDay: undefined,
-			},
-			sort: 'createdAt',
-			direction: Direction.DESC,
-			page: 1,
-			limit: 10,
-		});
+		updateURL(initialSearch);
 	};
 
 	return (
@@ -105,7 +110,7 @@ function SortAndFilter({ updateURL, eventSearch }: SortAndFilterProps) {
 			<div className="flex flex-row items-center justify-between gap-12">
 				<Input
 					placeholder="Search events..."
-					value={eventSearch.search?.text}
+					value={eventsSearchFilters.search?.text}
 					onChange={(e) => handleSearch(e.target.value)}
 					className={cn(
 						buttonVariants({ variant: 'ghost', size: 'icon' }),
@@ -121,19 +126,21 @@ function SortAndFilter({ updateURL, eventSearch }: SortAndFilterProps) {
 								className="w-48 justify-start text-left font-normal bg-background/80 backdrop-blur-sm border-border/50 hover:bg-accent/50 transition-colors"
 							>
 								<Calendar className="mr-2 h-4 w-4 text-muted-foreground" />
-								{format(eventSearch.search.eventStartDay || new Date(), 'MMM d, yyyy')}
+								{eventsSearchFilters.search.eventStartDay
+									? format(eventsSearchFilters.search.eventStartDay, 'MMM d, yyyy')
+									: t('Start Date')}
 							</Button>
 						</PopoverTrigger>
 						<PopoverContent className="w-auto p-0 z-[1000]" align="start">
 							<div className="bg-background/95 backdrop-blur-md rounded-lg shadow-xl border border-border/50">
 								<CalendarComponent
 									mode="single"
-									selected={eventSearch.search.eventStartDay || new Date()}
+									selected={eventsSearchFilters.search.eventStartDay}
 									onSelect={handleStartDateChange}
 									initialFocus
 									disabled={(date) =>
 										date < new Date() ||
-										(eventSearch.search.eventEndDay ? date > eventSearch.search.eventEndDay : false)
+										(eventsSearchFilters.search.eventEndDay ? date > eventsSearchFilters.search.eventEndDay : false)
 									}
 									className="rounded-md"
 									classNames={{
@@ -171,19 +178,21 @@ function SortAndFilter({ updateURL, eventSearch }: SortAndFilterProps) {
 								className="w-48 justify-start text-left font-normal bg-background/80 backdrop-blur-sm border-border/50 hover:bg-accent/50 transition-colors"
 							>
 								<Calendar className="mr-2 h-4 w-4 text-muted-foreground" />
-								{format(eventSearch.search.eventEndDay || new Date(), 'MMM d, yyyy')}
+								{eventsSearchFilters.search.eventEndDay
+									? format(eventsSearchFilters.search.eventEndDay, 'MMM d, yyyy')
+									: t('End Date')}
 							</Button>
 						</PopoverTrigger>
 						<PopoverContent className="w-auto p-0 z-[1000]" align="start">
 							<div className="bg-background/95 backdrop-blur-md rounded-lg shadow-xl border border-border/50">
 								<CalendarComponent
 									mode="single"
-									selected={eventSearch.search.eventEndDay || new Date()}
+									selected={eventsSearchFilters.search.eventEndDay}
 									onSelect={handleEndDateChange}
 									initialFocus
 									disabled={(date) =>
 										date < new Date() ||
-										(eventSearch.search.eventStartDay ? date < eventSearch.search.eventStartDay : false)
+										(eventsSearchFilters.search.eventStartDay ? date < eventsSearchFilters.search.eventStartDay : false)
 									}
 									className="rounded-md"
 									classNames={{
@@ -216,7 +225,7 @@ function SortAndFilter({ updateURL, eventSearch }: SortAndFilterProps) {
 				</div>
 
 				<div className="flex items-center gap-4">
-					<Select value={eventSearch.sort} onValueChange={handleSortChange}>
+					<Select value={eventsSearchFilters.sort} onValueChange={handleSortChange}>
 						<SelectTrigger className="w-[180px] h-11">
 							<ArrowUpDown className="text-muted-foreground" />
 							<SelectValue placeholder="Sort by" />
@@ -224,7 +233,7 @@ function SortAndFilter({ updateURL, eventSearch }: SortAndFilterProps) {
 						<SelectContent>
 							{sortOptions.map((option) => (
 								<SelectItem key={option.value} value={option.value}>
-									{option.label}
+									{t(option.label)}
 								</SelectItem>
 							))}
 						</SelectContent>
@@ -237,12 +246,12 @@ function SortAndFilter({ updateURL, eventSearch }: SortAndFilterProps) {
 						className="w-16 h-9 bg-background/80 backdrop-blur-sm border-border/50 hover:bg-accent/50 transition-colors flex items-center justify-center gap-1"
 					>
 						<span
-							className={`${eventSearch.direction === Direction.ASC ? 'text-lg font-bold text-primary' : 'text-sm text-muted-foreground'}`}
+							className={`${eventsSearchFilters.direction === Direction.ASC ? 'text-lg font-bold text-primary' : 'text-sm text-muted-foreground'}`}
 						>
 							↑
 						</span>
 						<span
-							className={`${eventSearch.direction === Direction.DESC ? 'text-lg font-bold text-primary' : 'text-sm text-muted-foreground'}`}
+							className={`${eventsSearchFilters.direction === Direction.DESC ? 'text-lg font-bold text-primary' : 'text-sm text-muted-foreground'}`}
 						>
 							↓
 						</span>
@@ -254,7 +263,7 @@ function SortAndFilter({ updateURL, eventSearch }: SortAndFilterProps) {
 						className="h-11 hover:bg-accent hover:text-accent-foreground"
 					>
 						<X className="h-4 w-4 " />
-						Clear
+						{t('Clear')}
 					</Button>
 				</div>
 			</div>

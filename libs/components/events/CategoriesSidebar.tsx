@@ -1,30 +1,33 @@
+import { useTranslation } from 'react-i18next';
+
 import { EventCategory } from '@/libs/enums/event.enum';
-import { Button } from '../ui/button';
-import { Checkbox } from '../ui/checkbox';
-import { Label } from '../ui/label';
+import { Button } from '@/libs/components/ui/button';
+import { Checkbox } from '@/libs/components/ui/checkbox';
+import { Label } from '@/libs/components/ui/label';
 import { EventsInquiry } from '@/libs/types/event/event.input';
 import { X } from 'lucide-react';
 
 interface CategoriesSidebarProps {
-	eventSearch: EventsInquiry;
+	eventsSearchFilters: EventsInquiry;
 	updateURL: (search: EventsInquiry) => void;
 	initialSearch: EventsInquiry;
 }
 
-const CategoriesSidebar = ({ eventSearch, updateURL, initialSearch }: CategoriesSidebarProps) => {
+const CategoriesSidebar = ({ eventsSearchFilters, updateURL, initialSearch }: CategoriesSidebarProps) => {
+	const { t } = useTranslation('common');
 	const handleClearAll = () => {
 		updateURL(initialSearch);
 	};
 
 	const handleCategoryChange = (category: EventCategory) => {
-		const currentCategories = eventSearch.search.eventCategories || [];
+		const currentCategories = eventsSearchFilters.search.eventCategories || [];
 		const newCategories = currentCategories.includes(category)
 			? currentCategories.filter((cat) => cat !== category)
 			: [...currentCategories, category];
 
 		updateURL({
-			...eventSearch,
-			search: { ...eventSearch.search, eventCategories: newCategories },
+			...eventsSearchFilters,
+			search: { ...eventsSearchFilters.search, eventCategories: newCategories },
 		});
 	};
 
@@ -32,11 +35,11 @@ const CategoriesSidebar = ({ eventSearch, updateURL, initialSearch }: Categories
 		<div className="w-full md:w-72 shrink-0">
 			<div className="bg-primary/5 backdrop-blur-sm rounded-2xl shadow-sm border border-primary/20 p-6">
 				<div className="flex items-center justify-between mb-6">
-					<h3 className="text-lg font-semibold text-primary">Categories</h3>
+					<h3 className="text-lg font-semibold text-primary">{t('Categories')}</h3>
 					<Button type="submit" onClick={handleClearAll} className="h-10 px-6 bg-secondary/50 text-card-foreground">
 						<div className="flex items-center gap-1">
 							<X className="w-4 h-4" />
-							Clear All
+							{t('Clear All')}
 						</div>
 					</Button>
 				</div>
@@ -49,14 +52,14 @@ const CategoriesSidebar = ({ eventSearch, updateURL, initialSearch }: Categories
 						>
 							<Checkbox
 								id={`sidebar-${category}`}
-								checked={eventSearch.search?.eventCategories?.includes(category)}
+								checked={eventsSearchFilters.search?.eventCategories?.includes(category)}
 								className="border-primary/50 data-[state=checked]:bg-primary data-[state=checked]:border-primary pointer-events-none"
 							/>
 							<Label
 								htmlFor={`sidebar-${category}`}
 								className="text-sm cursor-pointer text-foreground/90 hover:text-primary transition-colors duration-200 pointer-events-none"
 							>
-								{category.charAt(0) + category.slice(1).toLowerCase().replace('_', ' ')}
+								{t(category).charAt(0).toUpperCase() + t(category).slice(1).toLowerCase().replace('_', ' ')}
 							</Label>
 						</div>
 					))}

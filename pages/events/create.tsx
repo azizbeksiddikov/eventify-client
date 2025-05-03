@@ -16,8 +16,15 @@ import withBasicLayout from '@/libs/components/layout/LayoutBasic';
 import { EventInput } from '@/libs/types/event/event.input';
 import { Group } from '@/libs/types/group/group';
 
+export const getStaticProps = async ({ locale }: any) => ({
+	props: {
+		...(await serverSideTranslations(locale, ['common'])),
+	},
+});
+
 // Mock data for user's groups
 import { groupList as userGroups } from '@/data';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 
 const EventCreatePage = () => {
 	const router = useRouter();
