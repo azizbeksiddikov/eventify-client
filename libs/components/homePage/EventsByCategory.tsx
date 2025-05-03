@@ -15,6 +15,7 @@ import { Message } from '@/libs/enums/common.enum';
 import { smallError, smallSuccess } from '@/libs/alert';
 import { useReactiveVar } from '@apollo/client';
 import { userVar } from '@/apollo/store';
+import { likeHandler } from '@/libs/utils';
 
 interface EventsByCategoryProps {
 	initialInput?: EventsByCategoryInquiry;
@@ -41,20 +42,9 @@ const EventsByCategory = ({
 
 	/** HANDLERS **/
 	const likeEventHandler = async (eventId: string) => {
-		try {
-			if (!eventId) return;
-			if (!user._id || user._id === '') throw new Error(Message.NOT_AUTHENTICATED);
-
-			await likeTargetEvent({
-				variables: { input: eventId },
-			});
-
-			await smallSuccess(t('Event liked successfully'));
-		} catch (err: any) {
-			console.log('ERROR, likeEventHandler:', err.message);
-			smallError(err.message);
-		}
+		await likeHandler(user._id, eventId, likeTargetEvent, t('Event liked successfully'));
 	};
+
 	return (
 		<section className="bg-secondary/50 py-20">
 			<div className="w-[90%] mx-auto ">

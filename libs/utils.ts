@@ -1,8 +1,8 @@
 import numeral from 'numeral';
-import { sweetMixinErrorAlert } from './sweetAlert';
-
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import { Message } from './enums/common.enum';
+import { smallError, smallSuccess } from './alert';
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
@@ -12,41 +12,23 @@ export const formatterStr = (value: number | undefined): string => {
 	return numeral(value).format('0,0') != '0' ? numeral(value).format('0,0') : '';
 };
 
-export const likeTargetPropertyHandler = async (likeTargetProperty: any, id: string) => {
+export const likeHandler = async (
+	userId: string,
+	likeRefId: string,
+	likeTargetHandler: (options?: any) => Promise<any>,
+	success_msg: string,
+) => {
 	try {
-		await likeTargetProperty({
-			variables: {
-				input: id,
-			},
-		});
-	} catch (err: any) {
-		console.log('ERROR, likeTargetPropertyHandler:', err.message);
-		sweetMixinErrorAlert(err.message).then();
-	}
-};
+		if (!likeRefId || likeRefId === '') return;
+		if (!userId || userId === '') throw new Error(Message.NOT_AUTHENTICATED);
 
-export const likeTargetBoardArticleHandler = async (likeTargetBoardArticle: any, id: string) => {
-	try {
-		await likeTargetBoardArticle({
-			variables: {
-				input: id,
-			},
+		await likeTargetHandler({
+			variables: { input: likeRefId },
 		});
-	} catch (err: any) {
-		console.log('ERROR, likeTargetBoardArticleHandler:', err.message);
-		sweetMixinErrorAlert(err.message).then();
-	}
-};
-
-export const likeTargetMemberHandler = async (likeTargetMember: any, id: string) => {
-	try {
-		await likeTargetMember({
-			variables: {
-				input: id,
-			},
-		});
-	} catch (err: any) {
-		console.log('ERROR, likeTargetMemberHandler:', err.message);
-		sweetMixinErrorAlert(err.message).then();
+		await smallSuccess(success_msg);
+	} catch (err: unknown) {
+		const error = err as Error;
+		console.log('ERROR, likeEventHandler:', error.message);
+		smallError(error.message);
 	}
 };

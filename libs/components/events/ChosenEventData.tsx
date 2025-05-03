@@ -3,19 +3,19 @@ import { Event } from '@/libs/types/event/event';
 import Image from 'next/image';
 import { Badge } from '../ui/badge';
 import { Heart, Eye, Calendar, Clock, MapPin, Users } from 'lucide-react';
-import { useState } from 'react';
 import { cn } from '@/libs/utils';
+import { useTranslation } from 'react-i18next';
 
-const ChosenEventData = ({ event }: { event: Event }) => {
-	const [isLiked, setIsLiked] = useState(false);
+interface ChosenEventDataProps {
+	event: Event | null;
+	purchaseTicketHandler: () => void;
+	likeEventHandler: (eventId: string) => void;
+}
 
-	const handleLike = () => {
-		setIsLiked(!isLiked);
-	};
+const ChosenEventData = ({ event, purchaseTicketHandler, likeEventHandler }: ChosenEventDataProps) => {
+	const { t } = useTranslation('common');
 
-	const handlePurchase = () => {
-		console.log('Purchasing 1 ticket');
-	};
+	if (!event) return null;
 
 	return (
 		<article className="bg-card rounded-xl shadow-sm overflow-hidden border border-border/50">
@@ -46,29 +46,35 @@ const ChosenEventData = ({ event }: { event: Event }) => {
 					</div>
 					<div className="text-right">
 						<div className="text-2xl font-bold text-primary">${event.eventPrice}</div>
-						<div className="text-sm text-muted-foreground">per ticket</div>
+						<div className="text-sm text-muted-foreground">{t('per ticket')}</div>
 					</div>
 				</header>
 
 				<div className="flex items-center gap-6">
 					<button
-						onClick={handleLike}
+						onClick={() => likeEventHandler(event?._id)}
 						className={cn(
 							'flex items-center gap-2 transition-colors duration-200',
-							isLiked ? 'text-destructive hover:text-destructive/90' : 'text-muted-foreground hover:text-primary',
+							event?.meLiked?.[0]?.myFavorite
+								? 'text-destructive hover:text-destructive/90'
+								: 'text-muted-foreground hover:text-primary',
 						)}
 					>
 						<Heart
 							className={cn(
 								'h-5 w-5 transition-colors duration-200',
-								isLiked ? 'fill-destructive text-destructive' : 'text-muted-foreground',
+								event?.meLiked?.[0]?.myFavorite ? 'fill-destructive text-destructive' : 'text-muted-foreground',
 							)}
 						/>
-						<span className="text-sm">{event.eventLikes} likes</span>
+						<span className="text-sm">
+							{event.eventLikes} {t('likes')}
+						</span>
 					</button>
 					<div className="flex items-center gap-2 text-muted-foreground">
 						<Eye className="h-5 w-5" />
-						<span className="text-sm">{event.eventViews} views</span>
+						<span className="text-sm">
+							{event.eventViews} {t('views')}
+						</span>
 					</div>
 				</div>
 
@@ -97,25 +103,29 @@ const ChosenEventData = ({ event }: { event: Event }) => {
 						</div>
 						<div className="flex items-center gap-3">
 							<Users className="h-5 w-5 text-muted-foreground flex-shrink-0" />
-							<span className="text-foreground">{event.eventCapacity} capacity</span>
+							<span className="text-foreground">
+								{event.eventCapacity} {t('capacity')}
+							</span>
 						</div>
 					</div>
 					<div className="space-y-4">
 						<div>
-							<h3 className="text-lg font-semibold mb-2 text-foreground">Description</h3>
+							<h3 className="text-lg font-semibold mb-2 text-foreground">{t('Description')}</h3>
 							<p className="text-muted-foreground leading-relaxed whitespace-pre-line">{event.eventDesc}</p>
 						</div>
 					</div>
 				</div>
 
 				<div className="pt-6 border-t border-border/50 flex items-center justify-between gap-4">
-					<div className="text-sm text-muted-foreground">{event.eventCapacity} places available</div>
+					<div className="text-sm text-muted-foreground">
+						{event.eventCapacity} {t('places available')}
+					</div>
 					<Button
-						onClick={handlePurchase}
+						onClick={purchaseTicketHandler}
 						size="lg"
 						className="bg-primary/90 hover:bg-primary text-primary-foreground px-8"
 					>
-						Buy Ticket
+						{t('Buy Ticket')}
 					</Button>
 				</div>
 			</div>

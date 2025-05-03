@@ -16,7 +16,10 @@ const Owner = ({ member }: OwnerProps) => {
 				<Users className="w-5 h-5 text-card-foreground" />
 				Group Owner
 			</h2>
-			<Link href={`/organizer/${member._id}`} className="block group hover:scale-105 transition-transform duration-300">
+			<Link
+				href={`/organizers/detail?id=${member._id}`}
+				className="block group hover:scale-105 transition-transform duration-300"
+			>
 				<div className="flex items-center space-x-6">
 					<div className="flex-shrink-0">
 						<div className="w-20 h-20 rounded-xl overflow-hidden relative">

@@ -13,7 +13,7 @@ const SmallEventCard = ({ event, likeEventHandler }: EventCardProps) => {
 		<div className="p-4 rounded-lg hover:bg-secondary/20 hover:border-l-4 hover:border-l-primary transition-all duration-300">
 			<div className="flex items-center gap-4">
 				{/* Image and Description Column */}
-				<Link href={`/events/${event._id}`} className="flex-1 flex items-center gap-4 group">
+				<Link href={`/events/detail?id=${event._id}`} className="flex-1 flex items-center gap-4 group">
 					{/* Image */}
 					<div className="flex-shrink-0">
 						<div className="w-20 h-20 rounded-xl overflow-hidden relative">
@@ -57,7 +57,7 @@ const SmallEventCard = ({ event, likeEventHandler }: EventCardProps) => {
 					<Button
 						variant="ghost"
 						size="sm"
-						onClick={() => likeEventHandler(event._id)}
+						onClick={() => likeEventHandler(event?._id)}
 						className="text-card-foreground/70 hover:text-primary transition-colors duration-200 hover:bg-primary/10"
 					>
 						<Heart

@@ -4,15 +4,7 @@ import { EventCategory, EventStatus } from '../../libs/enums/event.enum';
 import withBasicLayout from '../../libs/components/layout/LayoutBasic';
 import { Event } from '../../libs/types/event/event';
 import { EventsInquiry } from '../../libs/types/event/event.input';
-import { Direction, Message } from '../../libs/enums/common.enum';
-import {
-	Pagination,
-	PaginationContent,
-	PaginationItem,
-	PaginationLink,
-	PaginationNext,
-	PaginationPrevious,
-} from '@/libs/components/ui/pagination';
+import { Direction } from '../../libs/enums/common.enum';
 import 'react-date-range/dist/styles.css';
 import 'react-date-range/dist/theme/default.css';
 import EventCard from '@/libs/components/events/EventCard';
@@ -24,14 +16,15 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useMutation, useReactiveVar } from '@apollo/client';
 import { useQuery } from '@apollo/client';
 import { GET_EVENTS } from '@/apollo/user/query';
-import { smallError } from '@/libs/alert';
-import { smallSuccess } from '@/libs/alert';
 import { userVar } from '@/apollo/store';
 import { LIKE_TARGET_EVENT } from '@/apollo/user/mutation';
+import PaginationComponent from '@/libs/components/common/PaginationComponent';
+import { GetStaticProps } from 'next';
+import { likeHandler } from '@/libs/utils';
 
-export const getStaticProps = async ({ locale }: any) => ({
+export const getStaticProps: GetStaticProps = async ({ locale }) => ({
 	props: {
-		...(await serverSideTranslations(locale, ['common'])),
+		...(await serverSideTranslations(locale || 'en', ['common'])),
 	},
 });
 
@@ -159,19 +152,7 @@ const EventsPage = ({
 	};
 
 	const likeEventHandler = async (eventId: string) => {
-		try {
-			if (!eventId) return;
-			if (!user._id || user._id === '') throw new Error(Message.NOT_AUTHENTICATED);
-
-			await likeTargetEvent({
-				variables: { input: eventId },
-			});
-
-			await smallSuccess(t('Event liked successfully'));
-		} catch (err: any) {
-			console.log('ERROR, likeEventHandler:', err.message);
-			smallError(err.message);
-		}
+		await likeHandler(user._id, eventId, likeTargetEvent, t('Event liked successfully'));
 	};
 
 	return (
@@ -200,34 +181,12 @@ const EventsPage = ({
 
 								{/* Pagination */}
 								<div className="mt-8 flex justify-center">
-									<Pagination>
-										<PaginationContent>
-											<PaginationItem>
-												<PaginationPrevious
-													onClick={() => handlePageChange(eventsSearchFilters.page - 1)}
-													className={eventsSearchFilters.page <= 1 ? 'pointer-events-none opacity-50' : ''}
-												/>
-											</PaginationItem>
-
-											{Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-												<PaginationItem key={page}>
-													<PaginationLink
-														isActive={eventsSearchFilters.page === page}
-														onClick={() => handlePageChange(page)}
-													>
-														{page}
-													</PaginationLink>
-												</PaginationItem>
-											))}
-
-											<PaginationItem>
-												<PaginationNext
-													onClick={() => handlePageChange(eventsSearchFilters.page + 1)}
-													className={eventsSearchFilters.page >= totalPages ? 'pointer-events-none opacity-50' : ''}
-												/>
-											</PaginationItem>
-										</PaginationContent>
-									</Pagination>
+									<PaginationComponent
+										totalItems={totalPages}
+										currentPage={eventsSearchFilters.page}
+										setCurrentPage={handlePageChange}
+										limit={eventsSearchFilters.limit}
+									/>
 								</div>
 							</>
 						) : (

@@ -1,6 +1,7 @@
-import { EventStatus, EventCategory } from '../../enums/event.enum';
-import { Member, TotalCounter } from '../member/member';
-import { MeLiked } from '../like/like';
+import { EventStatus, EventCategory } from '@/libs/enums/event.enum';
+import { Member, TotalCounter } from '@/libs/types/member/member';
+import { Group } from '@/libs/types/group/group';
+import { MeLiked } from '@/libs/types/like/like';
 
 export interface Event {
 	_id: string;
@@ -26,6 +27,8 @@ export interface Event {
 
 	memberData?: Member;
 	meLiked?: MeLiked[];
+	hostingGroup?: Group;
+	similarEvents?: Event[];
 }
 
 export interface Events {

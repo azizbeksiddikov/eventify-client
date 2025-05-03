@@ -212,9 +212,73 @@ export const GET_GROUP = gql`
  *************************/
 
 export const GET_EVENT = gql`
-	query GetEvents($input: EventsInquiry!) {
-		getEvents(input: $input) {
-			list {
+	query GetEvent($input: String!) {
+		getEvent(eventId: $input) {
+			_id
+			eventName
+			eventDesc
+			eventImage
+			eventDate
+			eventStartTime
+			eventEndTime
+			eventCity
+			eventAddress
+			eventCapacity
+			eventPrice
+			eventStatus
+			eventCategories
+			groupId
+			memberId
+			attendeeCount
+			eventLikes
+			eventViews
+			createdAt
+			updatedAt
+			memberData {
+				_id
+				username
+				memberEmail
+				memberPhone
+				memberFullName
+				memberType
+				memberStatus
+				emailVerified
+				memberDesc
+				memberImage
+				memberPoints
+				memberLikes
+				memberFollowings
+				memberFollowers
+				memberViews
+				memberRank
+				createdAt
+				updatedAt
+				accessToken
+				meLiked {
+					memberId
+					likeRefId
+					myFavorite
+				}
+			}
+			hostingGroup {
+				_id
+				groupName
+				groupDesc
+				groupImage
+				memberId
+				groupCategories
+				groupViews
+				groupLikes
+				memberCount
+				createdAt
+				updatedAt
+			}
+			meLiked {
+				memberId
+				likeRefId
+				myFavorite
+			}
+			similarEvents {
 				_id
 				eventName
 				eventDesc
@@ -222,6 +286,7 @@ export const GET_EVENT = gql`
 				eventDate
 				eventStartTime
 				eventEndTime
+				eventCity
 				eventAddress
 				eventCapacity
 				eventPrice
@@ -234,34 +299,11 @@ export const GET_EVENT = gql`
 				eventViews
 				createdAt
 				updatedAt
-				memberData {
-					_id
-					username
-					memberEmail
-					memberPhone
-					memberFullName
-					memberType
-					memberStatus
-					emailVerified
-					memberDesc
-					memberImage
-					memberPoints
-					memberLikes
-					memberFollowings
-					memberFollowers
-					memberViews
-					createdAt
-					updatedAt
-					accessToken
-				}
 				meLiked {
 					memberId
 					likeRefId
 					myFavorite
 				}
-			}
-			metaCounter {
-				total
 			}
 		}
 	}

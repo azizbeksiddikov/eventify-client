@@ -20,7 +20,7 @@ const EventCardInGroup = ({ event }: EventCardInGroupProps) => {
 	return (
 		<Card className="pt-0 w-full mx-auto shadow-md hover:shadow-lg transition-all duration-300 bg-card/60 flex flex-col h-[600px] group">
 			<div className="relative aspect-[16/9] w-full overflow-hidden rounded-t-xl">
-				<Link href={`/events/${event._id}`}>
+				<Link href={`/events/detail?id=${event._id}`}>
 					<Image
 						src={event.eventImage}
 						alt={event.eventName}
@@ -80,7 +80,7 @@ const EventCardInGroup = ({ event }: EventCardInGroupProps) => {
 					{isLiked ? 'Liked' : 'Like'}
 				</Button>
 
-				<Link href={`/events/${event._id}`} className="flex-1">
+				<Link href={`/events/detail?id=${event._id}`} className="flex-1">
 					<Button
 						variant="outline"
 						size="sm"

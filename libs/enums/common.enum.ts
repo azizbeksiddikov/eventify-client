@@ -26,6 +26,10 @@ export enum Message {
 	// ===== Group Related Messages =====
 
 	// ===== Ticket Related Messages =====
+
+	// ===== Comment Related Messages =====
+	COMMENT_REF_ID_REQUIRED = 'Comment ref id is required',
+	COMMENT_CONTENT_REQUIRED = 'Comment content is required',
 }
 
 // ===== Direction =====

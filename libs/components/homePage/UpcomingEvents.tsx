@@ -119,7 +119,7 @@ export default function UpcomingEvents({
 									{filteredEvents.map((event: Event) => (
 										<li key={event._id} className="border-l-2 border-primary pl-3 py-1">
 											<Link
-												href={`/events/${event._id}`}
+												href={`/events/detail?id=${event._id}`}
 												className="block group hover:bg-muted -ml-3 pl-3 pr-2 py-2 rounded-r-lg transition-colors"
 											>
 												<div className="flex justify-between items-start">
