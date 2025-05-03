@@ -25,6 +25,7 @@ export default function UpcomingEvents({
 	const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
 	const { t } = useTranslation('common');
 
+	/** APOLLO */
 	const { data: upcomingEvents, loading: upcomingEventsLoading } = useQuery(GET_EVENTS, {
 		fetchPolicy: 'cache-and-network',
 		variables: {

@@ -108,7 +108,7 @@ const GroupCard = ({ group, likeGroupHandler, handleJoinGroup, handleLeaveGroup 
 					variant="ghost"
 					size="sm"
 					className={`h-10 px-4 font-medium transition-all rounded-lg ${group?.meLiked?.[0]?.myFavorite ? 'text-rose-500 hover:text-rose-600 hover:bg-rose-50/30' : 'hover:text-rose-500 hover:bg-rose-50/20'}`}
-					onClick={() => likeGroupHandler(user._id, group._id)}
+					onClick={() => likeGroupHandler(group._id)}
 				>
 					<Heart
 						className={`h-4 w-4 mr-1.5 transition-all ${group?.meLiked?.[0]?.myFavorite ? 'fill-current stroke-current' : ''}`}
@@ -120,11 +120,7 @@ const GroupCard = ({ group, likeGroupHandler, handleJoinGroup, handleLeaveGroup 
 					variant={group?.meJoined?.[0]?.meJoined ? 'outline' : 'default'}
 					size="sm"
 					className={`h-10 px-4 font-medium transition-all rounded-lg ${group?.meJoined?.[0]?.meJoined ? 'border-primary/30 text-primary hover:bg-primary/5' : ''}`}
-					onClick={() =>
-						group?.meJoined?.[0]?.meJoined
-							? handleLeaveGroup(user._id, group._id)
-							: handleJoinGroup(user._id, group._id)
-					}
+					onClick={() => (group?.meJoined?.[0]?.meJoined ? handleLeaveGroup(group._id) : handleJoinGroup(group._id))}
 				>
 					{group?.meJoined?.[0]?.meJoined ? t('Leave') : t('Join')}
 				</Button>

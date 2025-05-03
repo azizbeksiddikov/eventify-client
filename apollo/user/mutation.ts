@@ -88,18 +88,24 @@ export const LIKE_TARGET_MEMBER = gql`
 			memberPhone
 			memberFullName
 			memberType
-			memberPoints
-			memberDesc
-			memberImage
 			memberStatus
 			emailVerified
+			memberDesc
+			memberImage
+			memberPoints
 			memberLikes
 			memberFollowings
 			memberFollowers
 			memberViews
+			memberRank
 			createdAt
 			updatedAt
 			accessToken
+			meLiked {
+				memberId
+				likeRefId
+				myFavorite
+			}
 		}
 	}
 `;
@@ -108,49 +114,28 @@ export const SUBSCRIBE = gql`
 	mutation Subscribe($input: String!) {
 		subscribe(input: $input) {
 			_id
-			followingId
-			followerId
+			username
+			memberEmail
+			memberPhone
+			memberFullName
+			memberType
+			memberStatus
+			emailVerified
+			memberDesc
+			memberImage
+			memberPoints
+			memberLikes
+			memberFollowings
+			memberFollowers
+			memberViews
+			memberRank
 			createdAt
 			updatedAt
-			meLiked {
-				memberId
-				likeRefId
-				myFavorite
-			}
+			accessToken
 			meFollowed {
 				followingId
 				followerId
 				myFollowing
-			}
-			followerData {
-				_id
-				username
-				memberEmail
-				memberPhone
-				memberFullName
-				memberType
-				memberPoints
-				memberDesc
-				memberImage
-				memberStatus
-				emailVerified
-				memberLikes
-				memberFollowings
-				memberFollowers
-				memberViews
-				createdAt
-				updatedAt
-				accessToken
-				meLiked {
-					memberId
-					likeRefId
-					myFavorite
-				}
-				meFollowed {
-					followingId
-					followerId
-					myFollowing
-				}
 			}
 		}
 	}
@@ -160,10 +145,29 @@ export const UNSUBSCRIBE = gql`
 	mutation Unsubscribe($input: String!) {
 		unsubscribe(input: $input) {
 			_id
-			followingId
-			followerId
+			username
+			memberEmail
+			memberPhone
+			memberFullName
+			memberType
+			memberStatus
+			emailVerified
+			memberDesc
+			memberImage
+			memberPoints
+			memberLikes
+			memberFollowings
+			memberFollowers
+			memberViews
+			memberRank
 			createdAt
 			updatedAt
+			accessToken
+			meFollowed {
+				followingId
+				followerId
+				myFollowing
+			}
 		}
 	}
 `;

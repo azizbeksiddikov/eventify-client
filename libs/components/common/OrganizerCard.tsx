@@ -1,30 +1,24 @@
-import { useState } from 'react';
 import { Button } from '@/libs/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/libs/components/ui/avatar';
 import { Card, CardContent, CardFooter, CardHeader } from '@/libs/components/ui/card';
 import { Heart, Calendar, Users, ExternalLink, Mail, User } from 'lucide-react';
 import { Member } from '@/libs/types/member/member';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/libs/components/ui/tooltip';
-
+import { useRouter } from 'next/navigation';
+import { useTranslation } from 'react-i18next';
 interface OrganizerCardProps {
 	organizer: Member;
+	likeHandler: (memberId: string) => void;
+	subscribeHandler: (memberId: string) => void;
+	unsubscribeHandler: (memberId: string) => void;
 }
 
-const OrganizerCard = ({ organizer }: OrganizerCardProps) => {
-	const [isLiked, setIsLiked] = useState(false);
-	const [isFollowing, setIsFollowing] = useState(false);
-
-	const handleLike = () => {
-		setIsLiked(!isLiked);
-	};
-
-	const handleFollow = () => {
-		setIsFollowing(!isFollowing);
-	};
+const OrganizerCard = ({ organizer, likeHandler, subscribeHandler, unsubscribeHandler }: OrganizerCardProps) => {
+	const router = useRouter();
+	const { t } = useTranslation('common');
 
 	const navigateToProfile = () => {
-		// Using window.location instead of router for client components
-		window.location.href = `/organizers/${organizer._id}`;
+		router.push(`/organizers/${organizer._id}`);
 	};
 
 	return (
@@ -61,7 +55,7 @@ const OrganizerCard = ({ organizer }: OrganizerCardProps) => {
 								<p className="text-base font-medium">{organizer.eventOrganizedCount || 0}</p>
 							</div>
 						</TooltipTrigger>
-						<TooltipContent side="bottom">Events organized</TooltipContent>
+						<TooltipContent side="bottom">{t('Events organized')}</TooltipContent>
 					</Tooltip>
 
 					<Tooltip>
@@ -71,7 +65,7 @@ const OrganizerCard = ({ organizer }: OrganizerCardProps) => {
 								<p className="text-base font-medium">{organizer.memberFollowers || 0}</p>
 							</div>
 						</TooltipTrigger>
-						<TooltipContent side="bottom">People following this organizer</TooltipContent>
+						<TooltipContent side="bottom">{t('People following this organizer')}</TooltipContent>
 					</Tooltip>
 
 					<Tooltip>
@@ -81,7 +75,7 @@ const OrganizerCard = ({ organizer }: OrganizerCardProps) => {
 								<p className="text-base font-medium">{organizer.memberLikes || 0}</p>
 							</div>
 						</TooltipTrigger>
-						<TooltipContent side="bottom">Total likes received</TooltipContent>
+						<TooltipContent side="bottom">{t('Total likes received')}</TooltipContent>
 					</Tooltip>
 				</div>
 
@@ -93,7 +87,7 @@ const OrganizerCard = ({ organizer }: OrganizerCardProps) => {
 								<p className="text-sm text-foreground leading-relaxed line-clamp-3">{organizer.memberDesc}</p>
 							) : (
 								<p className="text-sm text-muted-foreground italic flex items-center justify-center py-2">
-									<span className="bg-muted/50 px-3 py-1 rounded-md">No description available</span>
+									<span className="bg-muted/50 px-3 py-1 rounded-md">{t('No description available')}</span>
 								</p>
 							)}
 						</div>
@@ -105,20 +99,30 @@ const OrganizerCard = ({ organizer }: OrganizerCardProps) => {
 				<Button
 					variant="ghost"
 					size="sm"
-					className={`h-10 px-4 font-medium transition-all rounded-lg ${isLiked ? 'text-rose-500 hover:text-rose-600 hover:bg-rose-50/30' : 'hover:text-rose-500 hover:bg-rose-50/20'}`}
-					onClick={handleLike}
+					className={`h-10 px-4 font-medium transition-all rounded-lg ${organizer?.meLiked?.[0]?.myFavorite ? 'text-rose-500 hover:text-rose-600 hover:bg-rose-50/30' : 'hover:text-rose-500 hover:bg-rose-50/20'}`}
+					onClick={() => {
+						likeHandler(organizer._id);
+					}}
 				>
-					<Heart className={`h-4 w-4 mr-1.5 transition-all ${isLiked ? 'fill-current stroke-current' : ''}`} />
-					{isLiked ? 'Liked' : 'Like'}
+					<Heart
+						className={`h-4 w-4 mr-1.5 transition-all ${organizer?.meLiked?.[0]?.myFavorite ? 'fill-current stroke-current' : ''}`}
+					/>
+					{organizer?.meLiked?.[0]?.myFavorite ? t('Liked') : t('Like')}
 				</Button>
 
 				<Button
-					variant={isFollowing ? 'outline' : 'default'}
+					variant={organizer?.meFollowed?.[0]?.myFollowing ? 'outline' : 'default'}
 					size="sm"
-					className={`h-10 px-4 font-medium transition-all rounded-lg ${isFollowing ? 'border-primary/30 text-primary hover:bg-primary/5' : ''}`}
-					onClick={handleFollow}
+					className={`h-10 px-4 font-medium transition-all rounded-lg ${organizer?.meFollowed?.[0]?.myFollowing ? 'border-primary/30 text-primary hover:bg-primary/5' : ''}`}
+					onClick={() => {
+						if (organizer?.meFollowed?.[0]?.myFollowing) {
+							unsubscribeHandler(organizer._id);
+						} else {
+							subscribeHandler(organizer._id);
+						}
+					}}
 				>
-					{isFollowing ? 'Following' : 'Follow'}
+					{organizer?.meFollowed?.[0]?.myFollowing ? t('Following') : t('Follow')}
 				</Button>
 
 				<Button
@@ -128,7 +132,7 @@ const OrganizerCard = ({ organizer }: OrganizerCardProps) => {
 					onClick={navigateToProfile}
 				>
 					<ExternalLink className="h-4 w-4 mr-1.5" />
-					View
+					{t('View Profile')}
 				</Button>
 			</CardFooter>
 		</Card>

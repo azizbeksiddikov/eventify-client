@@ -20,6 +20,7 @@ export interface Member {
 	memberFollowers: number;
 	memberViews: number;
 	eventOrganizedCount: number;
+	memberRank: number;
 	createdAt: Date;
 	updatedAt: Date;
 	// memberPassword: string;
