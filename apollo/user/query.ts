@@ -233,6 +233,31 @@ export const GET_EVENT = gql`
 			memberId
 			createdAt
 			updatedAt
+			memberData {
+				_id
+				username
+				memberEmail
+				memberPhone
+				memberFullName
+				memberType
+				memberStatus
+				emailVerified
+				memberDesc
+				memberImage
+				memberPoints
+				memberLikes
+				memberFollowings
+				memberFollowers
+				memberViews
+				createdAt
+				updatedAt
+				accessToken
+			}
+			meLiked {
+				memberId
+				likeRefId
+				myFavorite
+			}
 		}
 	}
 `;
@@ -253,13 +278,38 @@ export const GET_EVENTS = gql`
 				eventPrice
 				eventStatus
 				eventCategories
+				groupId
+				memberId
 				attendeeCount
 				eventLikes
 				eventViews
-				groupId
-				memberId
 				createdAt
 				updatedAt
+				memberData {
+					_id
+					username
+					memberEmail
+					memberPhone
+					memberFullName
+					memberType
+					memberStatus
+					emailVerified
+					memberDesc
+					memberImage
+					memberPoints
+					memberLikes
+					memberFollowings
+					memberFollowers
+					memberViews
+					createdAt
+					updatedAt
+					accessToken
+				}
+				meLiked {
+					memberId
+					likeRefId
+					myFavorite
+				}
 			}
 			metaCounter {
 				total
@@ -293,6 +343,31 @@ export const GET_EVENTS_BY_CATEGORY = gql`
 					eventViews
 					createdAt
 					updatedAt
+					memberData {
+						_id
+						username
+						memberEmail
+						memberPhone
+						memberFullName
+						memberType
+						memberStatus
+						emailVerified
+						memberDesc
+						memberImage
+						memberPoints
+						memberLikes
+						memberFollowings
+						memberFollowers
+						memberViews
+						createdAt
+						updatedAt
+						accessToken
+					}
+					meLiked {
+						memberId
+						likeRefId
+						myFavorite
+					}
 				}
 			}
 		}

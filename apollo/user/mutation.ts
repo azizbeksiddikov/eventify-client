@@ -354,11 +354,11 @@ export const CREATE_EVENT = gql`
 			eventPrice
 			eventStatus
 			eventCategories
+			groupId
+			memberId
 			attendeeCount
 			eventLikes
 			eventViews
-			groupId
-			memberId
 			createdAt
 			updatedAt
 		}
@@ -380,11 +380,11 @@ export const UPDATE_EVENT = gql`
 			eventPrice
 			eventStatus
 			eventCategories
+			groupId
+			memberId
 			attendeeCount
 			eventLikes
 			eventViews
-			groupId
-			memberId
 			createdAt
 			updatedAt
 		}
@@ -465,9 +465,35 @@ export const LIKE_TARGET_EVENT = gql`
 			eventViews
 			createdAt
 			updatedAt
+			memberData {
+				_id
+				username
+				memberEmail
+				memberPhone
+				memberFullName
+				memberType
+				memberStatus
+				emailVerified
+				memberDesc
+				memberImage
+				memberPoints
+				memberLikes
+				memberFollowings
+				memberFollowers
+				memberViews
+				createdAt
+				updatedAt
+				accessToken
+			}
+			meLiked {
+				memberId
+				likeRefId
+				myFavorite
+			}
 		}
 	}
 `;
+
 /**************************
  *         COMMENT         *
  *************************/

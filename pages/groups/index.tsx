@@ -12,7 +12,7 @@ import {
 	PaginationNext,
 	PaginationPrevious,
 } from '@/libs/components/ui/pagination';
-import GroupCard from '@/libs/components/group/GroupCard';
+import GroupCard from '@/libs/components/common/GroupCard';
 
 import { groupList as groups } from '@/data';
 import { GroupsInquiry } from '@/libs/types/group/group.input';

@@ -38,9 +38,7 @@ export default function UpcomingEvents({
 		(event) => new Date(event.eventDate).toDateString() === selectedDate?.toDateString(),
 	);
 
-	console.log('No events scheduled', t('No events scheduled'));
-	console.log('No events scheduled common', t('common', 'No events scheduled'));
-
+	console.log('events', events);
 	return (
 		<section className="py-20 bg-muted">
 			<div className="w-[90%] mx-auto ">
@@ -92,9 +90,9 @@ export default function UpcomingEvents({
 								DayContent: ({ date }) => (
 									<div className="flex flex-col items-center">
 										<span>{date.getDate()}</span>
-										{filteredEvents.some(
-											(event) => new Date(event.eventDate).toDateString() === date.toDateString(),
-										) && <span className="w-1.5 h-1.5 rounded-full bg-primary mt-1" />}
+										{events.some((event) => new Date(event.eventDate).toDateString() === date.toDateString()) && (
+											<span className="w-1.5 h-1.5 rounded-full bg-primary mt-1" />
+										)}
 									</div>
 								),
 							}}

@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/navigation';
-import { useQuery } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client';
 
 import { GET_EVENTS_BY_CATEGORY } from '@/apollo/user/query';
 import { Button } from '@/libs/components/ui/button';
@@ -10,6 +10,11 @@ import SmallEventCard from '@/libs/components/common/SmallEventCard';
 import { Event, CategoryEvents } from '@/libs/types/event/event';
 import { EventsByCategoryInquiry } from '@/libs/types/event/event.input';
 import { EventCategory } from '@/libs/enums/event.enum';
+import { LIKE_TARGET_EVENT } from '@/apollo/user/mutation';
+import { Message } from '@/libs/enums/common.enum';
+import { smallError, smallSuccess } from '@/libs/alert';
+import { useReactiveVar } from '@apollo/client';
+import { userVar } from '@/apollo/store';
 
 interface EventsByCategoryProps {
 	initialInput?: EventsByCategoryInquiry;
@@ -23,15 +28,33 @@ const EventsByCategory = ({
 }: EventsByCategoryProps) => {
 	const router = useRouter();
 	const { t } = useTranslation('common');
+	const user = useReactiveVar(userVar);
+	/** APOLLO */
+	const [likeTargetEvent] = useMutation(LIKE_TARGET_EVENT);
 
 	const { data } = useQuery(GET_EVENTS_BY_CATEGORY, {
-		variables: {
-			input: initialInput,
-		},
+		fetchPolicy: 'cache-and-network',
+		variables: { input: initialInput },
+		notifyOnNetworkStatusChange: true,
 	});
-
 	const eventsByCategory: CategoryEvents[] = data?.getEventsByCategory?.categories;
 
+	/** HANDLERS **/
+	const likeEventHandler = async (eventId: string) => {
+		try {
+			if (!eventId) return;
+			if (!user._id || user._id === '') throw new Error(Message.NOT_AUTHENTICATED);
+
+			await likeTargetEvent({
+				variables: { input: eventId },
+			});
+
+			await smallSuccess(t('Event liked successfully'));
+		} catch (err: any) {
+			console.log('ERROR, likeEventHandler:', err.message);
+			smallError(err.message);
+		}
+	};
 	return (
 		<section className="bg-secondary/50 py-20">
 			<div className="w-[90%] mx-auto ">
@@ -61,7 +84,7 @@ const EventsByCategory = ({
 							<div className="p-4 flex-1">
 								<div className="space-y-4">
 									{categoryData.events.map((event: Event) => (
-										<SmallEventCard key={event._id} event={event} />
+										<SmallEventCard key={event._id} event={event} likeEventHandler={likeEventHandler} />
 									))}
 								</div>
 							</div>

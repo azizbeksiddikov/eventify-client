@@ -6,20 +6,16 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/libs/components/ui/to
 import Image from 'next/image';
 import Link from 'next/link';
 import { Badge } from '@/libs/components/ui/badge';
-import { useReactiveVar } from '@apollo/client';
-
-import { userVar } from '@/apollo/store';
 import { useTranslation } from 'react-i18next';
 
 interface GroupCardProps {
 	group: Group;
-	likeGroupHandler: (userId: string, groupId: string) => void;
-	handleJoinGroup: (userId: string, groupId: string) => void;
-	handleLeaveGroup: (userId: string, groupId: string) => void;
+	likeGroupHandler: (groupId: string) => void;
+	handleJoinGroup: (groupId: string) => void;
+	handleLeaveGroup: (groupId: string) => void;
 }
 
 const GroupCard = ({ group, likeGroupHandler, handleJoinGroup, handleLeaveGroup }: GroupCardProps) => {
-	const user = useReactiveVar(userVar);
 	const { t } = useTranslation('common');
 
 	return (
