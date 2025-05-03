@@ -176,14 +176,14 @@ export const CREATE_GROUP = gql`
 	mutation CreateGroup($input: GroupInput!) {
 		createGroup(input: $input) {
 			_id
-			groupLink
+
 			groupName
 			groupDesc
-			groupOwnerId
 			groupImage
+			memberId
+			groupCategories
 			groupViews
 			groupLikes
-			groupCategories
 			memberCount
 			createdAt
 			updatedAt
@@ -195,10 +195,10 @@ export const UPDATE_GROUP = gql`
 	mutation UpdateGroup($input: GroupUpdateInput!) {
 		updateGroup(input: $input) {
 			_id
-			groupLink
+
 			groupName
 			groupDesc
-			groupOwnerId
+			groupmemberId
 			groupImage
 			groupViews
 			groupLikes
@@ -214,12 +214,23 @@ export const JOIN_GROUP = gql`
 	mutation JoinGroup($input: String!) {
 		joinGroup(groupId: $input) {
 			_id
-			groupId
+			groupName
+			groupDesc
+			groupImage
 			memberId
-			groupMemberRole
-			joinDate
+			groupCategories
+			groupViews
+			groupLikes
+			memberCount
 			createdAt
 			updatedAt
+			meJoined {
+				memberId
+				groupId
+				groupMemberRole
+				joinDate
+				meJoined
+			}
 		}
 	}
 `;
@@ -228,16 +239,26 @@ export const LEAVE_GROUP = gql`
 	mutation LeaveGroup($input: String!) {
 		leaveGroup(groupId: $input) {
 			_id
-			groupId
+			groupName
+			groupDesc
+			groupImage
 			memberId
-			groupMemberRole
-			joinDate
+			groupCategories
+			groupViews
+			groupLikes
+			memberCount
 			createdAt
 			updatedAt
+			meJoined {
+				memberId
+				groupId
+				groupMemberRole
+				joinDate
+				meJoined
+			}
 		}
 	}
 `;
-
 export const UPDATE_GROUP_MEMBER_ROLE = gql`
 	mutation UpdateGroupMemberRole($input: GroupMemberUpdateInput!) {
 		updateGroupMemberRole(input: $input) {
@@ -256,10 +277,10 @@ export const DELETE_GROUP = gql`
 	mutation DeleteGroup($input: String!) {
 		deleteGroup(groupId: $input) {
 			_id
-			groupLink
+
 			groupName
 			groupDesc
-			groupOwnerId
+			groupmemberId
 			groupImage
 			groupViews
 			groupLikes
@@ -267,6 +288,49 @@ export const DELETE_GROUP = gql`
 			memberCount
 			createdAt
 			updatedAt
+		}
+	}
+`;
+
+export const LIKE_TARGET_GROUP = gql`
+	mutation LikeTargetGroup($input: String!) {
+		likeTargetGroup(groupId: $input) {
+			_id
+			groupName
+			groupDesc
+			groupImage
+			memberId
+			groupCategories
+			groupViews
+			groupLikes
+			memberCount
+			createdAt
+			updatedAt
+			memberData {
+				_id
+				username
+				memberEmail
+				memberPhone
+				memberFullName
+				memberType
+				memberStatus
+				emailVerified
+				memberDesc
+				memberImage
+				memberPoints
+				memberLikes
+				memberFollowings
+				memberFollowers
+				memberViews
+				createdAt
+				updatedAt
+				accessToken
+			}
+			meLiked {
+				memberId
+				likeRefId
+				myFavorite
+			}
 		}
 	}
 `;
@@ -294,7 +358,7 @@ export const CREATE_EVENT = gql`
 			eventLikes
 			eventViews
 			groupId
-			eventOrganizerId
+			memberId
 			createdAt
 			updatedAt
 		}
@@ -320,7 +384,7 @@ export const UPDATE_EVENT = gql`
 			eventLikes
 			eventViews
 			groupId
-			eventOrganizerId
+			memberId
 			createdAt
 			updatedAt
 		}
@@ -346,7 +410,7 @@ export const ATTEND_EVENT = gql`
 			eventLikes
 			eventViews
 			groupId
-			eventOrganizerId
+			memberId
 			createdAt
 			updatedAt
 		}
@@ -372,13 +436,38 @@ export const WITHDRAW_EVENT = gql`
 			eventLikes
 			eventViews
 			groupId
-			eventOrganizerId
+			memberId
 			createdAt
 			updatedAt
 		}
 	}
 `;
 
+export const LIKE_TARGET_EVENT = gql`
+	mutation LikeTargetEvent($input: String!) {
+		likeTargetEvent(eventId: $input) {
+			_id
+			eventName
+			eventDesc
+			eventImage
+			eventDate
+			eventStartTime
+			eventEndTime
+			eventAddress
+			eventCapacity
+			eventPrice
+			eventStatus
+			eventCategories
+			groupId
+			memberId
+			attendeeCount
+			eventLikes
+			eventViews
+			createdAt
+			updatedAt
+		}
+	}
+`;
 /**************************
  *         COMMENT         *
  *************************/

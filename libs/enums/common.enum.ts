@@ -19,6 +19,7 @@ export enum Message {
 	PASSWORD_TOO_SHORT = 'Password must be at least 8 characters',
 	CONFIRM_PASSWORD_REQUIRED = 'Please confirm your password',
 	PASSWORDS_DONT_MATCH = 'Passwords do not match',
+	NOT_AUTHENTICATED = 'You are not authenticated',
 
 	// ===== Event Related Messages =====
 

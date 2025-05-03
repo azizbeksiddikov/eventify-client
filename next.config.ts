@@ -13,6 +13,7 @@ const nextConfig: NextConfig = {
 			'thumbs.dreamstime.com',
 			'images.unsplash.com',
 			'hips.hearstapps.com',
+			'www.fourseasons.com',
 		],
 	},
 	env: {

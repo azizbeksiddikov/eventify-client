@@ -19,6 +19,9 @@ export const userVar = makeVar<CustomJwtPayload>({
 	memberFollowings: 0,
 	memberFollowers: 0,
 	memberViews: 0,
+	eventOrganizedCount: 0,
+	createdAt: new Date(),
+	updatedAt: new Date(),
 });
 
 //@ts-expect-error

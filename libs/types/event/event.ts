@@ -16,7 +16,7 @@ export interface Event {
 	eventStatus: EventStatus;
 	eventCategories: EventCategory[];
 	groupId: string;
-	eventOrganizerId: string;
+	memberId: string;
 	attendeeCount: number;
 	eventLikes: number;
 	eventViews: number;

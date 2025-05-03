@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Button } from '@/libs/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader } from '@/libs/components/ui/card';
 import { Heart, Calendar, Users, ExternalLink, Hash, Eye } from 'lucide-react';
@@ -7,22 +6,21 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/libs/components/ui/to
 import Image from 'next/image';
 import Link from 'next/link';
 import { Badge } from '@/libs/components/ui/badge';
+import { useReactiveVar } from '@apollo/client';
+
+import { userVar } from '@/apollo/store';
+import { useTranslation } from 'react-i18next';
 
 interface GroupCardProps {
 	group: Group;
+	likeGroupHandler: (userId: string, groupId: string) => void;
+	handleJoinGroup: (userId: string, groupId: string) => void;
+	handleLeaveGroup: (userId: string, groupId: string) => void;
 }
 
-const GroupCard = ({ group }: GroupCardProps) => {
-	const [isLiked, setIsLiked] = useState(false);
-	const [isJoined, setIsJoined] = useState(false);
-
-	const handleLike = () => {
-		setIsLiked(!isLiked);
-	};
-
-	const handleJoin = () => {
-		setIsJoined(!isJoined);
-	};
+const GroupCard = ({ group, likeGroupHandler, handleJoinGroup, handleLeaveGroup }: GroupCardProps) => {
+	const user = useReactiveVar(userVar);
+	const { t } = useTranslation('common');
 
 	return (
 		<Card className="pt-0 w-full mx-auto shadow-md hover:shadow-lg transition-all duration-300 bg-card/60 flex flex-col h-full group hover:scale-105">
@@ -70,7 +68,7 @@ const GroupCard = ({ group }: GroupCardProps) => {
 								<p className="text-base font-medium">{group.memberCount || 0}</p>
 							</div>
 						</TooltipTrigger>
-						<TooltipContent side="bottom">Total group members</TooltipContent>
+						<TooltipContent side="bottom">{t('Total group members')}</TooltipContent>
 					</Tooltip>
 
 					<Tooltip>
@@ -80,7 +78,7 @@ const GroupCard = ({ group }: GroupCardProps) => {
 								<p className="text-base font-medium">{group.eventsCount || 0}</p>
 							</div>
 						</TooltipTrigger>
-						<TooltipContent side="bottom">Total events organized</TooltipContent>
+						<TooltipContent side="bottom">{t('Total events organized')}</TooltipContent>
 					</Tooltip>
 
 					<Tooltip>
@@ -90,7 +88,7 @@ const GroupCard = ({ group }: GroupCardProps) => {
 								<p className="text-base font-medium">{group.groupLikes || 0}</p>
 							</div>
 						</TooltipTrigger>
-						<TooltipContent side="bottom">Total likes received</TooltipContent>
+						<TooltipContent side="bottom">{t('Total likes received')}</TooltipContent>
 					</Tooltip>
 				</div>
 
@@ -101,7 +99,7 @@ const GroupCard = ({ group }: GroupCardProps) => {
 								<p className="text-sm text-foreground leading-relaxed line-clamp-3">{group.groupDesc}</p>
 							) : (
 								<p className="text-sm text-muted-foreground italic flex items-center justify-center py-2">
-									<span className="bg-muted/50 px-3 py-1 rounded-md">No description available</span>
+									<span className="bg-muted/50 px-3 py-1 rounded-md">{t('No description available')}</span>
 								</p>
 							)}
 						</div>
@@ -113,20 +111,26 @@ const GroupCard = ({ group }: GroupCardProps) => {
 				<Button
 					variant="ghost"
 					size="sm"
-					className={`h-10 px-4 font-medium transition-all rounded-lg ${isLiked ? 'text-rose-500 hover:text-rose-600 hover:bg-rose-50/30' : 'hover:text-rose-500 hover:bg-rose-50/20'}`}
-					onClick={handleLike}
+					className={`h-10 px-4 font-medium transition-all rounded-lg ${group?.meLiked?.[0]?.myFavorite ? 'text-rose-500 hover:text-rose-600 hover:bg-rose-50/30' : 'hover:text-rose-500 hover:bg-rose-50/20'}`}
+					onClick={() => likeGroupHandler(user._id, group._id)}
 				>
-					<Heart className={`h-4 w-4 mr-1.5 transition-all ${isLiked ? 'fill-current stroke-current' : ''}`} />
-					{isLiked ? 'Liked' : 'Like'}
+					<Heart
+						className={`h-4 w-4 mr-1.5 transition-all ${group?.meLiked?.[0]?.myFavorite ? 'fill-current stroke-current' : ''}`}
+					/>
+					{group?.meLiked?.[0]?.myFavorite ? t('Liked') : t('Like')}
 				</Button>
 
 				<Button
-					variant={isJoined ? 'outline' : 'default'}
+					variant={group?.meJoined?.[0]?.meJoined ? 'outline' : 'default'}
 					size="sm"
-					className={`h-10 px-4 font-medium transition-all rounded-lg ${isJoined ? 'border-primary/30 text-primary hover:bg-primary/5' : ''}`}
-					onClick={handleJoin}
+					className={`h-10 px-4 font-medium transition-all rounded-lg ${group?.meJoined?.[0]?.meJoined ? 'border-primary/30 text-primary hover:bg-primary/5' : ''}`}
+					onClick={() =>
+						group?.meJoined?.[0]?.meJoined
+							? handleLeaveGroup(user._id, group._id)
+							: handleJoinGroup(user._id, group._id)
+					}
 				>
-					{isJoined ? 'Joined' : 'Join'}
+					{group?.meJoined?.[0]?.meJoined ? t('Leave') : t('Join')}
 				</Button>
 
 				<Link href={`/groups/${group._id}`}>
@@ -136,7 +140,7 @@ const GroupCard = ({ group }: GroupCardProps) => {
 						className="h-10 rounded-lg hover:bg-primary/5 border-primary/30 text-primary transition-colors"
 					>
 						<ExternalLink className="h-4 w-4 mr-1.5" />
-						View
+						{t('View')}
 					</Button>
 				</Link>
 			</CardFooter>

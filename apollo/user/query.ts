@@ -88,17 +88,48 @@ export const GET_GROUPS = gql`
 		getGroups(input: $input) {
 			list {
 				_id
-				groupLink
 				groupName
 				groupDesc
-				groupOwnerId
 				groupImage
+				memberId
+				groupCategories
 				groupViews
 				groupLikes
-				groupCategories
 				memberCount
 				createdAt
 				updatedAt
+				memberData {
+					_id
+					username
+					memberEmail
+					memberPhone
+					memberFullName
+					memberType
+					memberStatus
+					emailVerified
+					memberDesc
+					memberImage
+					memberPoints
+					memberLikes
+					memberFollowings
+					memberFollowers
+					memberViews
+					createdAt
+					updatedAt
+					accessToken
+				}
+				meLiked {
+					memberId
+					likeRefId
+					myFavorite
+				}
+				meJoined {
+					memberId
+					groupId
+					groupMemberRole
+					joinDate
+					meJoined
+				}
 			}
 			metaCounter {
 				total
@@ -111,10 +142,10 @@ export const GET_MY_GROUPS = gql`
 	query GetMyGroups {
 		getMyGroups {
 			_id
-			groupLink
+
 			groupName
 			groupDesc
-			groupOwnerId
+			groupmemberId
 			groupImage
 			groupViews
 			groupLikes
@@ -130,17 +161,48 @@ export const GET_GROUP = gql`
 	query GetGroup($input: String!) {
 		getGroup(groupId: $input) {
 			_id
-			groupLink
 			groupName
 			groupDesc
-			groupOwnerId
 			groupImage
+			memberId
+			groupCategories
 			groupViews
 			groupLikes
-			groupCategories
 			memberCount
 			createdAt
 			updatedAt
+			memberData {
+				_id
+				username
+				memberEmail
+				memberPhone
+				memberFullName
+				memberType
+				memberStatus
+				emailVerified
+				memberDesc
+				memberImage
+				memberPoints
+				memberLikes
+				memberFollowings
+				memberFollowers
+				memberViews
+				createdAt
+				updatedAt
+				accessToken
+			}
+			meLiked {
+				memberId
+				likeRefId
+				myFavorite
+			}
+			meJoined {
+				memberId
+				groupId
+				groupMemberRole
+				joinDate
+				meJoined
+			}
 		}
 	}
 `;
@@ -168,7 +230,7 @@ export const GET_EVENT = gql`
 			eventLikes
 			eventViews
 			groupId
-			eventOrganizerId
+			memberId
 			createdAt
 			updatedAt
 		}
@@ -195,7 +257,7 @@ export const GET_EVENTS = gql`
 				eventLikes
 				eventViews
 				groupId
-				eventOrganizerId
+				memberId
 				createdAt
 				updatedAt
 			}
@@ -225,7 +287,7 @@ export const GET_EVENTS_BY_CATEGORY = gql`
 					eventStatus
 					eventCategories
 					groupId
-					eventOrganizerId
+					memberId
 					attendeeCount
 					eventLikes
 					eventViews
@@ -255,7 +317,7 @@ export const GET_MY_EVENTS = gql`
 			eventLikes
 			eventViews
 			groupId
-			eventOrganizerId
+			memberId
 			createdAt
 			updatedAt
 			eventName
@@ -283,7 +345,7 @@ export const GET_FAVORITES = gql`
 				eventLikes
 				eventViews
 				groupId
-				eventOrganizerId
+				memberId
 				createdAt
 				updatedAt
 			}
@@ -314,7 +376,7 @@ export const GET_VISITED = gql`
 				eventLikes
 				eventViews
 				groupId
-				eventOrganizerId
+				memberId
 				createdAt
 				updatedAt
 			}

@@ -16,4 +16,8 @@ export interface CustomJwtPayload extends JwtPayload {
 	memberFollowings: number;
 	memberFollowers: number;
 	memberViews: number;
+
+	eventOrganizedCount: number;
+	createdAt: Date;
+	updatedAt: Date;
 }

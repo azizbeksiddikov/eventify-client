@@ -4,7 +4,7 @@ import AutoScrollEvents from '@/libs/components/homepage/AutoScrollEvents';
 import EventsByCategory from '@/libs/components/homepage/EventsByCategory';
 import TopOrganizers from '@/libs/components/homepage/TopOrganizers';
 import UpcomingEvents from '@/libs/components/homepage/UpcomingEvents';
-import TopGroups from '@/libs/components/homepage/PopularGroups';
+import PopularGroups from '@/libs/components/homepage/PopularGroups';
 import SearchEvents from '@/libs/components/homepage/SearchEvents';
 import Acknowledgements from '@/libs/components/homepage/Acknowledgements';
 import withHomeLayout from '@/libs/components/layout/LayoutHome';
@@ -28,7 +28,7 @@ const Home: NextPage = () => {
 			<SearchEvents />
 			<UpcomingEvents />
 			<EventsByCategory />
-			<TopGroups />
+			<PopularGroups />
 			<TopOrganizers />
 			<Acknowledgements />
 		</div>

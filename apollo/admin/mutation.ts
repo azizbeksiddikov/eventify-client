@@ -23,7 +23,7 @@ export const REMOVE_EVENT_BY_ADMIN = gql`
 			eventLikes
 			eventViews
 			groupId
-			eventOrganizerId
+			memberId
 			createdAt
 			updatedAt
 		}
