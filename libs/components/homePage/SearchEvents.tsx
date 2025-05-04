@@ -35,7 +35,7 @@ const SearchEvents = () => {
 		}
 
 		router.push({
-			pathname: '/events',
+			pathname: '/event',
 			query,
 		});
 	};

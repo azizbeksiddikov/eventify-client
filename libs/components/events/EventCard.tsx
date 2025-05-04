@@ -28,7 +28,7 @@ const EventCard = ({ event, likeEventHandler }: EventCardProps) => {
 		<Card className="pt-0 w-full mx-auto shadow-md hover:shadow-lg transition-all duration-300 bg-card/60 flex flex-col h-full group hover:scale-105 gap-0">
 			<CardHeader className="p-0  gap-0">
 				<div className="relative aspect-[16/9] w-full overflow-hidden rounded-t-xl ">
-					<Link href={`/events/detail?id=${event._id}`}>
+					<Link href={`/event/detail?id=${event._id}`}>
 						<Image
 							src={`${REACT_APP_API_URL}/${event.eventImage}`}
 							alt={event.eventName}
@@ -131,7 +131,7 @@ const EventCard = ({ event, likeEventHandler }: EventCardProps) => {
 					{event?.meLiked?.[0]?.myFavorite ? t('Liked') : t('Like')}
 				</Button>
 
-				<Link href={`/events/detail?id=${event._id}`}>
+				<Link href={`/event/detail?id=${event._id}`}>
 					<Button
 						variant="outline"
 						size="sm"

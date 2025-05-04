@@ -43,7 +43,7 @@ const PopularGroups = ({
 				<div className="flex items-center justify-between mb-8">
 					<h2>{t('Popular Groups')}</h2>
 
-					<Button type="submit" onClick={() => router.push('/groups')} className="h-14 px-8 ">
+					<Button type="submit" onClick={() => router.push('/group')} className="h-14 px-8 ">
 						<div className="flex items-center gap-1 ">
 							{t('View All Groups')}
 							<ArrowRight className="w-4 h-4" />

@@ -17,7 +17,7 @@ const ChosenEventHeader = () => {
 			smallError(t('Only organizers can create events'));
 			return;
 		}
-		router.push('/events/create');
+		router.push('/event/create');
 	};
 
 	return (
@@ -25,7 +25,7 @@ const ChosenEventHeader = () => {
 			<div className="flex items-center justify-between mb-8 w-[90%] mx-auto">
 				<Button
 					type="button"
-					onClick={() => router.push('/events')}
+					onClick={() => router.push('/event')}
 					className="h-14 px-8 bg-primary text-primary-foreground hover:bg-primary/90 transition-colors duration-200"
 				>
 					<div className="flex items-center gap-2">

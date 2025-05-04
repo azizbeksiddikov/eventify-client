@@ -149,20 +149,15 @@ const OrganizersPage = ({
 					{organizers.length > 0 ? (
 						<>
 							<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-								{organizers
-									.slice(
-										(organizerSearch.page - 1) * organizerSearch.limit,
-										organizerSearch.page * organizerSearch.limit,
-									)
-									.map((organizer) => (
-										<OrganizerCard
-											key={organizer._id}
-											organizer={organizer}
-											likeHandler={likeMemberHandler}
-											subscribeHandler={subscribeHandler}
-											unsubscribeHandler={unsubscribeHandler}
-										/>
-									))}
+								{organizers.map((organizer) => (
+									<OrganizerCard
+										key={organizer._id}
+										organizer={organizer}
+										likeHandler={likeMemberHandler}
+										subscribeHandler={subscribeHandler}
+										unsubscribeHandler={unsubscribeHandler}
+									/>
+								))}
 							</div>
 
 							{/* Pagination */}

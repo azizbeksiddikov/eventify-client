@@ -23,7 +23,7 @@ const Owner = ({ member }: OwnerProps) => {
 				{t('Group Owner')}
 			</h2>
 			<Link
-				href={`/organizers/detail?id=${member._id}`}
+				href={`/organizer/detail?userId=${member._id}`}
 				className="block group hover:scale-105 transition-transform duration-300"
 			>
 				<div className="flex items-center space-x-6">

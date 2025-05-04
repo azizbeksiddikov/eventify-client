@@ -20,7 +20,7 @@ const OrganizerCard = ({ organizer, likeHandler, subscribeHandler, unsubscribeHa
 	const { t } = useTranslation('common');
 
 	const navigateToProfile = () => {
-		router.push(`/organizers/${organizer._id}`);
+		router.push(`/organizer/detail?userId=${organizer._id}`);
 	};
 
 	return (

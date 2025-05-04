@@ -124,7 +124,7 @@ const GroupCreatePage = () => {
 			});
 
 			await smallSuccess(t('Group created successfully'));
-			router.push('/groups');
+			router.push('/group');
 		} catch (error: unknown) {
 			if (error instanceof Error) {
 				smallError(error.message);
@@ -161,7 +161,7 @@ const GroupCreatePage = () => {
 				<div className="mb-8">
 					<Button
 						variant="outline"
-						onClick={() => router.push('/groups')}
+						onClick={() => router.push('/group')}
 						className="flex items-center gap-2 text-primary hover:text-primary-foreground hover:bg-primary border-primary hover:border-primary/80 transition-colors duration-200"
 					>
 						<svg

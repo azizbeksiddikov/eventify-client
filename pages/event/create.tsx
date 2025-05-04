@@ -181,7 +181,7 @@ const EventCreatePage = () => {
 			});
 
 			await smallSuccess(t('Event created successfully'));
-			router.push('/events');
+			router.push('/event');
 		} catch (error: unknown) {
 			if (error instanceof Error) {
 				smallError(error.message);
@@ -218,7 +218,7 @@ const EventCreatePage = () => {
 				<div className="mb-8">
 					<Button
 						variant="outline"
-						onClick={() => router.push('/events')}
+						onClick={() => router.push('/event')}
 						className="flex items-center gap-2 text-primary hover:text-primary-foreground hover:bg-primary border-primary hover:border-primary/80 transition-colors duration-200"
 					>
 						<svg

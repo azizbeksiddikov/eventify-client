@@ -25,7 +25,7 @@ const ChosenEventOther = ({ event, likeEventHandler }: ChosenEventOtherProps) =>
 			{/* Hosting Group */}
 			{event?.hostingGroup && (
 				<Link
-					href={`/groups/detail?groupId=${event.hostingGroup._id}`}
+					href={`/group/detail?groupId=${event.hostingGroup._id}`}
 					className="block group hover:scale-[1.02] transition-all duration-300"
 				>
 					<Card className="p-8 bg-card hover:bg-secondary/15 transition-all duration-300 shadow-sm hover:shadow-md border border-border/50">

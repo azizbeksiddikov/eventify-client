@@ -52,7 +52,7 @@ const EventsByCategory = ({
 					<h2>{t('Events by Category')}</h2>
 					<Button
 						type="submit"
-						onClick={() => router.push('/events')}
+						onClick={() => router.push('/event')}
 						className="h-14 px-8 bg-card text-card-foreground"
 					>
 						<div className="flex items-center gap-1 ">
@@ -80,7 +80,7 @@ const EventsByCategory = ({
 							</div>
 							<div className="p-4 border-t border-border mt-auto">
 								<Link
-									href={`/events?category=${categoryData.category.toLowerCase()}`}
+									href={`/event?category=${categoryData.category.toLowerCase()}`}
 									className="text-sm text-primary hover:text-primary/80 font-medium flex items-center gap-1 transition-colors duration-200"
 								>
 									{t('View All')} {categoryData.category} {t('events')}

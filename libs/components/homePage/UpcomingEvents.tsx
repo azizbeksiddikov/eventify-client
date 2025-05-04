@@ -46,7 +46,7 @@ export default function UpcomingEvents({
 				<div className="flex items-center justify-between mb-8">
 					<h2>{t('Upcoming Events')}</h2>
 
-					<Button type="submit" onClick={() => router.push('/events')} className="h-14 px-8 ">
+					<Button type="submit" onClick={() => router.push('/event')} className="h-14 px-8 ">
 						<div className="flex items-center gap-1 ">
 							{t('View All Events')}
 							<ArrowRight className="w-4 h-4" />
@@ -119,7 +119,7 @@ export default function UpcomingEvents({
 									{filteredEvents.map((event: Event) => (
 										<li key={event._id} className="border-l-2 border-primary pl-3 py-1">
 											<Link
-												href={`/events/detail?id=${event._id}`}
+												href={`/event/detail?id=${event._id}`}
 												className="block group hover:bg-muted -ml-3 pl-3 pr-2 py-2 rounded-r-lg transition-colors"
 											>
 												<div className="flex justify-between items-start">

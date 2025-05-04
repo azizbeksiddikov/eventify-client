@@ -80,7 +80,7 @@ const GroupCard = ({ group }: GroupCardProps) => {
 		<Card className="pt-0 w-full mx-auto shadow-md hover:shadow-lg transition-all duration-300 bg-card/60 flex flex-col h-full group hover:scale-105 overflow-hidden">
 			<CardHeader className="p-0 flex-shrink-0">
 				<div className="relative aspect-[16/9] w-full overflow-hidden rounded-t-xl">
-					<Link href={`/groups/${group._id}`}>
+					<Link href={`/group/detail?groupId=${group._id}`}>
 						<Image
 							src={`${REACT_APP_API_URL}/${group.groupImage}`}
 							alt={group.groupName}
@@ -183,7 +183,7 @@ const GroupCard = ({ group }: GroupCardProps) => {
 					{group?.meJoined?.[0]?.meJoined ? t('Leave') : t('Join')}
 				</Button>
 
-				<Link href={`/groups/detail?groupId=${group._id}`} className="w-full sm:w-auto">
+				<Link href={`/group/detail?groupId=${group._id}`} className="w-full sm:w-auto">
 					<Button
 						variant="outline"
 						size="sm"

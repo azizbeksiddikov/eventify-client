@@ -17,7 +17,7 @@ const GroupsHeader = () => {
 			smallError(t('Only organizers can create groups'));
 			return;
 		}
-		router.push('/groups/create');
+		router.push('/group/create');
 	};
 
 	return (

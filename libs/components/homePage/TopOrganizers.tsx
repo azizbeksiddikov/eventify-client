@@ -101,7 +101,7 @@ const TopOrganizers = ({
 					<h2>{t('Top Organizers')}</h2>
 					<Button
 						type="submit"
-						onClick={() => router.push('/organizers')}
+						onClick={() => router.push('/organizer')}
 						className="h-14 px-8 bg-card text-card-foreground"
 					>
 						<div className="flex items-center gap-1 ">

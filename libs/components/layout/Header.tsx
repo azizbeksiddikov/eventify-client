@@ -22,9 +22,9 @@ import { Member } from '@/libs/types/member/member';
 
 const navLinks = [
 	{ href: '/', label: 'Home' },
-	{ href: '/events', label: 'Events' },
-	{ href: '/groups', label: 'Groups' },
-	{ href: '/organizers', label: 'Organizers' },
+	{ href: '/event', label: 'Events' },
+	{ href: '/group', label: 'Groups' },
+	{ href: '/organizer', label: 'Organizers' },
 	{ href: '/help', label: 'Help' },
 ];
 
