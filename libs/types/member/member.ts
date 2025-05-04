@@ -20,10 +20,11 @@ export interface Member {
 	memberFollowings: number;
 	memberFollowers: number;
 	memberViews: number;
-	eventOrganizedCount: number;
+	eventsOrganizedCount: number;
 	memberRank: number;
 	memberGroups: number;
 	memberEvents: number;
+
 	createdAt: Date;
 	updatedAt: Date;
 	// memberPassword: string;

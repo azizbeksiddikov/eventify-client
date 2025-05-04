@@ -1,6 +1,7 @@
-import { Member } from '@/libs/types/member/member';
 import { User } from 'lucide-react';
-import { MemberTypeBadge } from './MemberTypeBadge';
+
+import { Member } from '@/libs/types/member/member';
+import { REACT_APP_API_URL } from '@/libs/config';
 
 interface ProfileHeaderProps {
 	member: Member;
@@ -8,28 +9,29 @@ interface ProfileHeaderProps {
 
 export const ProfileHeader = ({ member }: ProfileHeaderProps) => {
 	return (
-		<div className="bg-white rounded-2xl shadow-sm p-8 mb-8">
-			<div className="flex items-center space-x-8">
+		<div className="bg-card rounded-xl shadow-sm p-6 md:p-8 mb-8">
+			<div className="flex flex-col md:flex-row items-center md:items-start gap-6 md:gap-8">
 				<div className="relative">
 					{member.memberImage ? (
 						<img
-							src={member.memberImage}
+							src={`${REACT_APP_API_URL}/${member.memberImage}`}
 							alt={member.memberFullName}
-							className="w-32 h-32 rounded-full object-cover ring-2 ring-gray-100"
+							className="w-24 h-24 md:w-32 md:h-32 rounded-full object-cover ring-2 ring-ring/20"
 						/>
 					) : (
-						<div className="w-32 h-32 rounded-full bg-gray-50 flex items-center justify-center ring-2 ring-gray-100">
-							<User className="h-16 w-16 text-gray-300" />
+						<div className="w-24 h-24 md:w-32 md:h-32 rounded-full bg-muted flex items-center justify-center ring-2 ring-ring/20">
+							<User className="h-12 w-12 md:h-16 md:w-16 text-muted-foreground/50" />
 						</div>
 					)}
-					<div className="absolute -bottom-2 -right-2">
-						<MemberTypeBadge memberType={member.memberType} size="lg" />
-					</div>
 				</div>
-				<div className="space-y-2">
-					<h1 className="text-3xl font-semibold text-gray-900 tracking-tight">{member.memberFullName}</h1>
-					<p className="text-gray-500 text-lg">@{member.username}</p>
-					{member.memberDesc && <p className="text-gray-600 text-lg mt-4 max-w-2xl">{member.memberDesc}</p>}
+				<div className="flex flex-col items-center md:items-start space-y-3">
+					<h1 className="text-2xl md:text-3xl font-semibold text-card-foreground">{member.memberFullName}</h1>
+					<p className="text-muted-foreground text-base md:text-lg">@{member.username}</p>
+					{member.memberDesc && (
+						<p className="text-card-foreground/80 text-base md:text-lg mt-2 max-w-2xl text-center md:text-left">
+							{member.memberDesc}
+						</p>
+					)}
 				</div>
 			</div>
 		</div>

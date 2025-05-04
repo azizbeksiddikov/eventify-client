@@ -17,6 +17,7 @@ export const GET_MEMBER = gql`
 			memberDesc
 			memberImage
 			memberStatus
+			memberEvents
 			emailVerified
 			memberLikes
 			memberFollowings
@@ -24,17 +25,6 @@ export const GET_MEMBER = gql`
 			memberViews
 			createdAt
 			updatedAt
-			accessToken
-			meLiked {
-				memberId
-				likeRefId
-				myFavorite
-			}
-			meFollowed {
-				followingId
-				followerId
-				myFollowing
-			}
 		}
 	}
 `;
@@ -230,6 +220,36 @@ export const GET_MY_GROUPS = gql`
 			memberCount
 			createdAt
 			updatedAt
+		}
+	}
+`;
+
+export const GET_JOINED_GROUPS = gql`
+	query GetJoinedGroups {
+		getJoinedGroups {
+			_id
+			groupName
+			groupDesc
+			groupImage
+			memberId
+			groupCategories
+			groupViews
+			groupLikes
+			memberCount
+			createdAt
+			updatedAt
+			meJoined {
+				memberId
+				groupId
+				groupMemberRole
+				joinDate
+				meJoined
+			}
+			meLiked {
+				memberId
+				likeRefId
+				myFavorite
+			}
 		}
 	}
 `;
@@ -642,44 +662,17 @@ export const GET_VISITED = gql`
  *************************/
 
 export const GET_TICKETS = gql`
-	query GetTickets($input: TicketInquiry!) {
-		getTickets(input: $input) {
-			list {
-				_id
-				eventId
-				memberId
-				ticketStatus
-				ticketPrice
-				ticketQuantity
-				totalPrice
-				createdAt
-				updatedAt
-				event {
-					_id
-					eventName
-					eventDesc
-					eventImage
-					eventDate
-					eventStartTime
-					eventEndTime
-					eventCity
-					eventAddress
-					eventCapacity
-					eventPrice
-					eventStatus
-					eventCategories
-					groupId
-					memberId
-					attendeeCount
-					eventLikes
-					eventViews
-					createdAt
-					updatedAt
-				}
-			}
-			metaCounter {
-				total
-			}
+	query GetTickets {
+		getTickets {
+			_id
+			eventId
+			memberId
+			ticketStatus
+			ticketPrice
+			ticketQuantity
+			totalPrice
+			createdAt
+			updatedAt
 		}
 	}
 `;
@@ -733,6 +726,85 @@ export const GET_COMMENTS = gql`
 			}
 			metaCounter {
 				total
+			}
+		}
+	}
+`;
+
+/**************************
+ *         FOLLOWERS         *
+ *************************/
+
+export const GET_MEMBER_FOLLOWERS_LIST = gql`
+	query GetMemberFollowersList {
+		getMemberFollowersList {
+			_id
+			username
+			memberEmail
+			memberPhone
+			memberFullName
+			memberType
+			memberStatus
+			emailVerified
+			memberDesc
+			memberImage
+			memberPoints
+			memberLikes
+			memberFollowings
+			memberFollowers
+			memberViews
+			memberRank
+			memberGroups
+			memberEvents
+			createdAt
+			updatedAt
+			meLiked {
+				memberId
+				likeRefId
+				myFavorite
+			}
+			meFollowed {
+				followingId
+				followerId
+				myFollowing
+			}
+		}
+	}
+`;
+
+export const GET_MEMBER_FOLLOWINGS_LIST = gql`
+	query GetMemberFollowingsList {
+		getMemberFollowingsList {
+			_id
+			username
+			memberEmail
+			memberPhone
+			memberFullName
+			memberType
+			memberStatus
+			emailVerified
+			memberDesc
+			memberImage
+			memberPoints
+			memberLikes
+			memberFollowings
+			memberFollowers
+			memberViews
+			memberRank
+			memberGroups
+			memberEvents
+			createdAt
+			updatedAt
+			accessToken
+			meFollowed {
+				followingId
+				followerId
+				myFollowing
+			}
+			meLiked {
+				memberId
+				likeRefId
+				myFavorite
 			}
 		}
 	}
