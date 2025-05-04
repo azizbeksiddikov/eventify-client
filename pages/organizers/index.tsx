@@ -1,43 +1,53 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { Direction } from '@/libs/enums/common.enum';
+import { Direction, Message } from '@/libs/enums/common.enum';
 import withBasicLayout from '@/libs/components/layout/LayoutBasic';
-import {
-	Pagination,
-	PaginationContent,
-	PaginationItem,
-	PaginationLink,
-	PaginationNext,
-	PaginationPrevious,
-} from '@/libs/components/ui/pagination';
 import OrganizerCard from '@/libs/components/common/OrganizerCard';
-import { organizers } from '@/data';
 import { OrganizersInquiry } from '@/libs/types/member/member.input';
 import OrganizersHeader from '@/libs/components/organizer/OrganizersHeader';
 import SortAndFilterOrganizers from '@/libs/components/organizer/SortAndFilterOrganizers';
+import PaginationComponent from '@/libs/components/common/PaginationComponent';
+import { smallError } from '@/libs/alert';
+import { useQuery, useReactiveVar } from '@apollo/client';
+import { SUBSCRIBE, UNSUBSCRIBE } from '@/apollo/user/mutation';
+import { LIKE_TARGET_MEMBER } from '@/apollo/user/mutation';
+import { useMutation } from '@apollo/client';
+import { GET_ORGANIZERS } from '@/apollo/user/query';
+import { Member } from '@/libs/types/member/member';
+import { userVar } from '@/apollo/store';
+import { smallSuccess } from '@/libs/alert';
+import { useTranslation } from 'react-i18next';
 
-const initialSearch: OrganizersInquiry = {
-	page: 1,
-	limit: 6,
-	sort: 'createdAt',
-	direction: Direction.DESC,
-	search: {
-		text: '',
+interface OrganizersPageProps {
+	initialSearch?: OrganizersInquiry;
+}
+
+const OrganizersPage = ({
+	initialSearch = {
+		page: 1,
+		limit: 6,
+		sort: 'createdAt',
+		direction: Direction.DESC,
+		search: {
+			text: '',
+		},
 	},
-};
-
-const OrganizersPage = () => {
+}: OrganizersPageProps) => {
 	const router = useRouter();
+	const user = useReactiveVar(userVar);
+	const { t } = useTranslation('common');
+
+	const [currentPage, setCurrentPage] = useState(initialSearch.page);
 
 	const readUrl = (): OrganizersInquiry => {
 		if (router?.query) {
 			return {
-				page: Math.max(1, Number(router.query.page) || 1),
-				limit: Math.max(1, Number(router.query.limit) || 6),
-				sort: (router.query.sort as string) || 'createdAt',
+				page: Math.max(1, Number(router.query.page) || initialSearch.page),
+				limit: Math.max(1, Number(router.query.limit) || initialSearch.limit),
+				sort: (router.query.sort as string) || initialSearch.sort,
 				direction: router.query.direction === '1' ? Direction.ASC : Direction.DESC,
 				search: {
-					text: (router.query.text as string) || '',
+					text: (router.query.text as string) || initialSearch.search.text,
 				},
 			};
 		}
@@ -48,9 +58,9 @@ const OrganizersPage = () => {
 
 	const updateURL = (newSearch: OrganizersInquiry) => {
 		const query: Record<string, string> = {
-			page: Math.max(1, newSearch.page).toString(),
+			page: Math.max(initialSearch.page, newSearch.page).toString(),
 			limit: Math.max(1, newSearch.limit).toString(),
-			sort: newSearch.sort || 'createdAt',
+			sort: newSearch.sort || initialSearch.sort,
 			direction: newSearch.direction === Direction.ASC ? '1' : '-1',
 		};
 
@@ -60,26 +70,78 @@ const OrganizersPage = () => {
 
 		router.push({ query }, undefined, { shallow: true });
 	};
+	/** APOLLO */
+	const [likeTargetMember] = useMutation(LIKE_TARGET_MEMBER);
+	const [subscribe] = useMutation(SUBSCRIBE);
+	const [unsubscribe] = useMutation(UNSUBSCRIBE);
 
-	const handlePageChange = (page: number) => {
-		if (page >= 1 && page <= totalPages) {
-			updateURL({ ...organizerSearch, page });
+	const { data: organizersData } = useQuery(GET_ORGANIZERS, {
+		fetchPolicy: 'cache-and-network',
+		variables: {
+			input: organizerSearch,
+		},
+		notifyOnNetworkStatusChange: true,
+	});
+
+	const organizers: Member[] = organizersData?.getOrganizers?.list || [];
+
+	/** LIFECYCLE */
+	useEffect(() => {
+		setOrganizerSearch(readUrl());
+	}, [router]);
+
+	/** HANDLERS */
+	const likeMemberHandler = async (memberId: string) => {
+		try {
+			if (!memberId) return;
+			if (!user._id || user._id === '') throw new Error(Message.NOT_AUTHENTICATED);
+
+			await likeTargetMember({
+				variables: { input: memberId },
+			});
+
+			await smallSuccess(t('Member liked successfully'));
+		} catch (err: any) {
+			console.log('ERROR, likeMemberHandler:', err.message);
+			smallError(err.message);
 		}
 	};
 
-	useEffect(() => {
-		const search = readUrl();
-		setOrganizerSearch(search);
-	}, [router]);
+	const subscribeHandler = async (memberId: string) => {
+		try {
+			if (!memberId) return;
+			if (!user._id || user._id === '') throw new Error(Message.NOT_AUTHENTICATED);
 
-	const totalPages = Math.max(1, Math.ceil(organizers.length / organizerSearch.limit));
-	const startPage = Math.max(1, Math.min(organizerSearch.page - 2, totalPages - 4));
-	const endPage = Math.min(totalPages, startPage + 4);
+			await subscribe({
+				variables: { input: memberId },
+			});
+
+			await smallSuccess(t('Member subscribed successfully'));
+		} catch (err: any) {
+			console.log('ERROR, subscribeHandler:', err.message);
+		}
+	};
+
+	const unsubscribeHandler = async (memberId: string) => {
+		try {
+			if (!memberId) return;
+			if (!user._id || user._id === '') throw new Error(Message.NOT_AUTHENTICATED);
+
+			await unsubscribe({
+				variables: { input: memberId },
+			});
+
+			await smallSuccess(t('Member unsubscribed successfully'));
+		} catch (err: any) {
+			console.log('ERROR, unsubscribeHandler:', err.message);
+			smallError(err.message);
+		}
+	};
 
 	return (
 		<div className="bg-background">
 			<OrganizersHeader />
-			<SortAndFilterOrganizers updateURL={updateURL} organizerSearch={organizerSearch} />
+			<SortAndFilterOrganizers updateURL={updateURL} organizerSearch={organizerSearch} initialSearch={initialSearch} />
 
 			<div className="max-w-7xl py-10 mx-auto mb-10">
 				{/* Organizers Grid */}
@@ -93,54 +155,24 @@ const OrganizersPage = () => {
 										organizerSearch.page * organizerSearch.limit,
 									)
 									.map((organizer) => (
-										<OrganizerCard key={organizer._id} organizer={organizer} />
+										<OrganizerCard
+											key={organizer._id}
+											organizer={organizer}
+											likeHandler={likeMemberHandler}
+											subscribeHandler={subscribeHandler}
+											unsubscribeHandler={unsubscribeHandler}
+										/>
 									))}
 							</div>
 
 							{/* Pagination */}
 							<div className="mt-8 flex justify-center">
-								<Pagination>
-									<PaginationContent>
-										<PaginationItem>
-											<PaginationPrevious
-												onClick={() => handlePageChange(organizerSearch.page - 1)}
-												className={
-													organizerSearch.page <= 1
-														? 'pointer-events-none opacity-50'
-														: 'hover:bg-accent hover:text-accent-foreground'
-												}
-											/>
-										</PaginationItem>
-
-										{Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i).map((page) => (
-											<PaginationItem key={page}>
-												<PaginationLink
-													isActive={organizerSearch.page === page}
-													onClick={() => handlePageChange(page)}
-													className="hover:bg-accent hover:text-accent-foreground"
-												>
-													{page}
-												</PaginationLink>
-											</PaginationItem>
-										))}
-
-										<PaginationItem>
-											<PaginationNext
-												onClick={() => handlePageChange(organizerSearch.page + 1)}
-												className={
-													organizerSearch.page >= totalPages
-														? 'pointer-events-none opacity-50'
-														: 'hover:bg-accent hover:text-accent-foreground'
-												}
-											/>
-										</PaginationItem>
-									</PaginationContent>
-								</Pagination>
+								<PaginationComponent totalItems={organizers.length} setCurrentPage={setCurrentPage} />
 							</div>
 						</>
 					) : (
 						<div className="text-center py-12">
-							<p className="text-muted-foreground">No organizers found. Try adjusting your filters.</p>
+							<p className="text-muted-foreground">{t('No organizers found. Try adjusting your filters')}.</p>
 						</div>
 					)}
 				</div>

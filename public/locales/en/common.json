@@ -111,5 +111,8 @@
 	"Creating...": "Creating...",
 	"Create Group": "Create Group",
 	"Group created successfully": "Group created successfully",
-	"Back to Groups": "Back to Groups"
+	"Back to Groups": "Back to Groups",
+	"Browse through our list of event organizers": "Browse through our list of event organizers",
+	"No organizers found. Try adjusting your filters": "No organizers found. Try adjusting your filters",
+	"Top Organizers": "Top Organizers"
 }

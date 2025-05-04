@@ -14,3 +14,11 @@ export const groupsSortOptions = [
 	{ value: 'groupViews', label: 'Views' },
 	{ value: 'groupLikes', label: 'Likes' },
 ];
+
+export const organizersSortOptions = [
+	{ value: 'createdAt', label: 'Newest' },
+	{ value: 'memberFollowers', label: 'Followers' },
+	{ value: 'memberEvents', label: 'Events' },
+	{ value: 'memberGroups', label: 'Groups' },
+	{ value: 'memberRank', label: 'Rank' },
+];

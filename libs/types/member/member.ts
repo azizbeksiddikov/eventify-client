@@ -1,7 +1,7 @@
-import { MemberType, MemberStatus } from '../../enums/member.enum';
-import { MeFollowed } from '../follow/follow';
-import { Group } from '../group/group';
-import { MeLiked } from '../like/like';
+import { MemberType, MemberStatus } from '@/libs/enums/member.enum';
+import { MeFollowed } from '@/libs/types/follow/follow';
+import { Group } from '@/libs/types/group/group';
+import { MeLiked } from '@/libs/types/like/like';
 
 export interface Member {
 	_id: string;
@@ -21,6 +21,8 @@ export interface Member {
 	memberViews: number;
 	eventOrganizedCount: number;
 	memberRank: number;
+	memberGroups: number;
+	memberEvents: number;
 	createdAt: Date;
 	updatedAt: Date;
 	// memberPassword: string;

@@ -4,20 +4,18 @@ import { ArrowUpDown, Search, X } from 'lucide-react';
 import { Button } from '@/libs/components/ui/button';
 import { Input } from '@/libs/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/libs/components/ui/select';
-
-const sortOptions = [
-	{ value: 'createdAt', label: 'Newest' },
-	{ value: 'memberPoints', label: 'Points' },
-	{ value: 'memberFollowers', label: 'Followers' },
-	{ value: 'memberEvents', label: 'Events' },
-];
+import { organizersSortOptions } from '@/libs/config';
+import { useTranslation } from 'react-i18next';
 
 interface SortAndFilterOrganizersProps {
 	updateURL: (newSearch: OrganizersInquiry) => void;
 	organizerSearch: OrganizersInquiry;
+	initialSearch: OrganizersInquiry;
 }
 
-const SortAndFilterOrganizers = ({ updateURL, organizerSearch }: SortAndFilterOrganizersProps) => {
+const SortAndFilterOrganizers = ({ updateURL, organizerSearch, initialSearch }: SortAndFilterOrganizersProps) => {
+	const { t } = useTranslation('common');
+
 	const handleSearch = (text: string) => {
 		updateURL({
 			...organizerSearch,
@@ -43,15 +41,7 @@ const SortAndFilterOrganizers = ({ updateURL, organizerSearch }: SortAndFilterOr
 	};
 
 	const handleClearFilters = () => {
-		updateURL({
-			...organizerSearch,
-			page: 1,
-			sort: 'createdAt',
-			direction: Direction.DESC,
-			search: {
-				text: '',
-			},
-		});
+		updateURL(initialSearch);
 	};
 
 	return (
@@ -75,7 +65,7 @@ const SortAndFilterOrganizers = ({ updateURL, organizerSearch }: SortAndFilterOr
 								<SelectValue placeholder="Sort by" />
 							</SelectTrigger>
 							<SelectContent>
-								{sortOptions.map((option) => (
+								{organizersSortOptions.map((option) => (
 									<SelectItem key={option.value} value={option.value}>
 										{option.label}
 									</SelectItem>
@@ -107,7 +97,7 @@ const SortAndFilterOrganizers = ({ updateURL, organizerSearch }: SortAndFilterOr
 							className="h-11 hover:bg-accent hover:text-accent-foreground"
 						>
 							<X className="h-4 w-4 " />
-							Clear
+							{t('Clear')}
 						</Button>
 					</div>
 				</div>
