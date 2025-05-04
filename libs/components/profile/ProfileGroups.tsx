@@ -1,20 +1,17 @@
 import Link from 'next/link';
 import { formatDistanceToNow } from 'date-fns';
 import { useTranslation } from 'react-i18next';
-import { useReactiveVar } from '@apollo/client';
 import { Users, Heart, LogIn, LogOut, Calendar, Clock, Link as LinkIcon } from 'lucide-react';
 
 import { Avatar, AvatarImage, AvatarFallback } from '@/libs/components/ui/avatar';
 import { Button } from '@/libs/components/ui/button';
 import { Badge } from '@/libs/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/libs/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/libs/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/libs/components/ui/table';
 
-import { userVar } from '@/apollo/store';
 import { REACT_APP_API_URL } from '@/libs/config';
 
 import { Group } from '@/libs/types/group/group';
-import { MemberType } from '@/libs/enums/member.enum';
 
 interface ProfileGroupsProps {
 	groups: Group[];
@@ -24,15 +21,12 @@ interface ProfileGroupsProps {
 }
 
 export const ProfileGroups = ({ groups, likeGroupHandler, handleJoinGroup, handleLeaveGroup }: ProfileGroupsProps) => {
-	const user = useReactiveVar(userVar);
 	const { t } = useTranslation('common');
 
 	return (
 		<Card className="w-full">
 			<CardHeader>
-				<CardTitle className="text-lg font-medium text-card-foreground">
-					{user.memberType === MemberType.ORGANIZER ? t('Groups Organized') : t('Groups Joined')}
-				</CardTitle>
+				<h2 className="text-lg font-medium text-card-foreground">{t('Groups Joined')}</h2>
 			</CardHeader>
 			<CardContent>
 				{groups.length === 0 ? (

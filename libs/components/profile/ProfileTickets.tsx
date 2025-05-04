@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 // Internal Components
 import { Badge } from '@/libs/components/ui/badge';
 import { Button } from '@/libs/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/libs/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/libs/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/libs/components/ui/table';
 
 // Types and Enums
@@ -38,7 +38,7 @@ export const ProfileTickets = ({ tickets, cancelTicketHandler }: ProfileTicketsP
 	return (
 		<Card className="w-full">
 			<CardHeader>
-				<CardTitle className="text-lg font-medium text-card-foreground">{t('My Tickets')}</CardTitle>
+				<h2 className="text-lg font-medium text-card-foreground">{t('My Tickets')}</h2>
 			</CardHeader>
 			<CardContent>
 				{tickets.length === 0 ? (

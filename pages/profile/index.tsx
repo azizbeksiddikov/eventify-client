@@ -23,7 +23,7 @@ import {
 	UNSUBSCRIBE,
 	UPDATE_MEMBER,
 } from '@/apollo/user/mutation';
-import { updateStorage, updateUserInfo } from '@/libs/auth';
+import { getJwtToken, updateStorage, updateUserInfo } from '@/libs/auth';
 import { smallError, smallSuccess } from '@/libs/alert';
 import withBasicLayout from '@/libs/components/layout/LayoutBasic';
 import { ProfileHeader } from '@/libs/components/profile/ProfileHeader';
@@ -110,6 +110,15 @@ const ProfilePage = () => {
 
 	/** LIFECYCLE */
 	useEffect(() => {
+		const jwt = getJwtToken();
+		if (!jwt) {
+			router.push('/auth/login');
+			return;
+		}
+		updateUserInfo(jwt);
+	}, [router]);
+
+	useEffect(() => {
 		if (getMemberData?.getMember) {
 			setMember(getMemberData.getMember);
 			setMemberUpdateInput({
@@ -146,12 +155,6 @@ const ProfilePage = () => {
 			setTickets(getTicketsData.getTickets);
 		}
 	}, [getTicketsData]);
-
-	useEffect(() => {
-		if (!user?._id) {
-			router.push('/');
-		}
-	}, [user?._id, router]);
 
 	/** HANDLERS */
 	const likeMemberHandler = async (memberId: string) => {
