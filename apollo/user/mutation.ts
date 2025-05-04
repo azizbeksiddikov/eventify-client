@@ -263,6 +263,7 @@ export const LEAVE_GROUP = gql`
 		}
 	}
 `;
+
 export const UPDATE_GROUP_MEMBER_ROLE = gql`
 	mutation UpdateGroupMemberRole($input: GroupMemberUpdateInput!) {
 		updateGroupMemberRole(input: $input) {
@@ -395,58 +396,6 @@ export const UPDATE_EVENT = gql`
 	}
 `;
 
-export const ATTEND_EVENT = gql`
-	mutation AttendEvent($input: String!) {
-		attendEvent(eventId: $input) {
-			_id
-			eventName
-			eventDesc
-			eventImage
-			eventDate
-			eventStartTime
-			eventEndTime
-			eventAddress
-			eventCapacity
-			eventPrice
-			eventStatus
-			eventCategories
-			attendeeCount
-			eventLikes
-			eventViews
-			groupId
-			memberId
-			createdAt
-			updatedAt
-		}
-	}
-`;
-
-export const WITHDRAW_EVENT = gql`
-	mutation WithdrawEvent($input: String!) {
-		withdrawEvent(eventId: $input) {
-			_id
-			eventName
-			eventDesc
-			eventImage
-			eventDate
-			eventStartTime
-			eventEndTime
-			eventAddress
-			eventCapacity
-			eventPrice
-			eventStatus
-			eventCategories
-			attendeeCount
-			eventLikes
-			eventViews
-			groupId
-			memberId
-			createdAt
-			updatedAt
-		}
-	}
-`;
-
 export const LIKE_TARGET_EVENT = gql`
 	mutation LikeTargetEvent($input: String!) {
 		likeTargetEvent(eventId: $input) {
@@ -494,6 +443,42 @@ export const LIKE_TARGET_EVENT = gql`
 				likeRefId
 				myFavorite
 			}
+		}
+	}
+`;
+
+/**************************
+ *         TICKET          *
+ *************************/
+
+export const CREATE_TICKET = gql`
+	mutation CreateTicket($input: TicketInput!) {
+		createTicket(input: $input) {
+			_id
+			eventId
+			memberId
+			ticketStatus
+			ticketPrice
+			ticketQuantity
+			totalPrice
+			createdAt
+			updatedAt
+		}
+	}
+`;
+
+export const CANCEL_TICKET = gql`
+	mutation CancelTicket($input: String!) {
+		cancelTicket(input: $input) {
+			_id
+			eventId
+			memberId
+			ticketStatus
+			ticketPrice
+			ticketQuantity
+			totalPrice
+			createdAt
+			updatedAt
 		}
 	}
 `;

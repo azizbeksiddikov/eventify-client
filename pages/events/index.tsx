@@ -55,7 +55,6 @@ const EventsPage = ({
 
 	const readUrl = (): EventsInquiry => {
 		if (router?.query) {
-			console.log('router.query:', router.query);
 			const categories =
 				(router.query.categories as string)
 					?.split('-')

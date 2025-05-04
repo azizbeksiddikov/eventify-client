@@ -84,8 +84,6 @@ function SortAndFilter({ updateURL, eventsSearchFilters, initialSearch }: SortAn
 		// check if the value is in the sortOptions array
 		const sortOption = sortOptions.find((option) => option.value === value);
 
-		console.log('sortOption', sortOption);
-
 		if (!sortOption) smallError(t('Invalid sort option'));
 
 		updateURL({

@@ -22,6 +22,7 @@ export enum Message {
 	NOT_AUTHENTICATED = 'You are not authenticated',
 
 	// ===== Event Related Messages =====
+	EVENT_NOT_FOUND = 'Event not found',
 
 	// ===== Group Related Messages =====
 

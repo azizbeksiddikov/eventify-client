@@ -1,13 +1,14 @@
-import { TicketStatus } from '../../enums/ticket.enum';
-import { TotalCounter } from '../member/member';
-import { Event } from '../event/event';
+import { TicketStatus } from '@/libs/enums/ticket.enum';
+import { TotalCounter } from '@/libs/types/member/member';
+import { Event } from '@/libs/types/event/event';
 
 export interface Ticket {
 	_id: string;
-	eventId: string;
 	memberId: string;
 	ticketStatus: TicketStatus;
 	ticketPrice: number;
+	ticketQuantity: number;
+	totalPrice: number;
 	createdAt: Date;
 	updatedAt: Date;
 	event?: Event;

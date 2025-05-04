@@ -1,8 +1,10 @@
 import { NextPage } from 'next';
 import React from 'react';
-import Header from './Header';
-import Footer from './Footer';
-import useDeviceDetect from '../../hooks/useDeviceDetect';
+import { Toaster } from 'sonner';
+
+import Header from '@/libs/components/layout/Header';
+import Footer from '@/libs/components/layout/Footer';
+import useDeviceDetect from '@/libs/hooks/useDeviceDetect';
 
 const withHomeLayout = (Page: NextPage) => {
 	const WrappedComponent = (props: Record<string, unknown>) => {
@@ -17,6 +19,7 @@ const withHomeLayout = (Page: NextPage) => {
 					<Page {...props} />
 				</main>
 				<Footer />
+				<Toaster position="top-right" richColors />
 			</div>
 		);
 	};

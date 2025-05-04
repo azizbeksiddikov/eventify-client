@@ -510,6 +510,53 @@ export const GET_VISITED = gql`
 `;
 
 /**************************
+ *         TICKET          *
+ *************************/
+
+export const GET_TICKETS = gql`
+	query GetTickets($input: TicketInquiry!) {
+		getTickets(input: $input) {
+			list {
+				_id
+				eventId
+				memberId
+				ticketStatus
+				ticketPrice
+				ticketQuantity
+				totalPrice
+				createdAt
+				updatedAt
+				event {
+					_id
+					eventName
+					eventDesc
+					eventImage
+					eventDate
+					eventStartTime
+					eventEndTime
+					eventCity
+					eventAddress
+					eventCapacity
+					eventPrice
+					eventStatus
+					eventCategories
+					groupId
+					memberId
+					attendeeCount
+					eventLikes
+					eventViews
+					createdAt
+					updatedAt
+				}
+			}
+			metaCounter {
+				total
+			}
+		}
+	}
+`;
+
+/**************************
  *         COMMENT         *
  *************************/
 

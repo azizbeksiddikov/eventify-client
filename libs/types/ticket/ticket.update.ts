@@ -1,9 +1,6 @@
-import { TicketStatus } from '../../enums/ticket.enum';
+import { TicketStatus } from '@/libs/enums/ticket.enum';
 
 export interface UpdateTicketInput {
 	_id: string;
-	eventId?: string;
-	memberId?: string;
-	ticketPrice?: number;
-	ticketStatus?: TicketStatus;
+	ticketStatus: TicketStatus;
 }

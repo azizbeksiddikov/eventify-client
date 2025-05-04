@@ -1,15 +1,16 @@
-import { TicketStatus } from '../../enums/ticket.enum';
-import { Direction } from '../../enums/common.enum';
+import { TicketStatus } from '@/libs/enums/ticket.enum';
+import { Direction } from '@/libs/enums/common.enum';
 
 export interface TicketInput {
 	eventId: string;
-	memberId: string;
 	ticketPrice: number;
-	ticketStatus: TicketStatus;
+	ticketQuantity: number;
+	totalPrice: number;
 }
 
 export interface TISearch {
 	ticketStatus?: TicketStatus;
+	eventId?: string;
 }
 
 export interface TicketInquiry {

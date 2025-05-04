@@ -1,8 +1,10 @@
 import { NextPage } from 'next';
 import React from 'react';
-import Header from './Header';
-import AuthFooter from './AuthFooter';
-import useDeviceDetect from '../../hooks/useDeviceDetect';
+import { Toaster } from 'sonner';
+
+import Header from '@/libs/components/layout/Header';
+import AuthFooter from '@/libs/components/layout/AuthFooter';
+import useDeviceDetect from '@/libs/hooks/useDeviceDetect';
 
 const withAuthLayout = (Page: NextPage) => {
 	const WrappedComponent = (props: Record<string, unknown>) => {
@@ -17,6 +19,7 @@ const withAuthLayout = (Page: NextPage) => {
 					<Page {...props} />
 				</main>
 				<AuthFooter />
+				<Toaster position="top-right" richColors />
 			</div>
 		);
 	};

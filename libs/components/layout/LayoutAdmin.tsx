@@ -1,9 +1,11 @@
 import { NextPage } from 'next';
 import React from 'react';
-import AdminHeader from './AdminHeader';
-import Footer from './Footer';
-import useDeviceDetect from '../../hooks/useDeviceDetect';
-import AdminMenuList from '../admin/AdminMenuList';
+import { Toaster } from 'sonner';
+
+import AdminHeader from '@/libs/components/layout/AdminHeader';
+import Footer from '@/libs/components/layout/Footer';
+import useDeviceDetect from '@/libs/hooks/useDeviceDetect';
+import AdminMenuList from '@/libs/components/admin/AdminMenuList';
 
 const withAdminLayout = (Page: NextPage) => {
 	const WrappedComponent = (props: Record<string, unknown>) => {
@@ -23,6 +25,7 @@ const withAdminLayout = (Page: NextPage) => {
 					</main>
 				</div>
 				<Footer />
+				<Toaster position="top-right" richColors />
 			</div>
 		);
 	};

@@ -1,24 +1,42 @@
-import { Button } from '../ui/button';
-import { Event } from '@/libs/types/event/event';
 import Image from 'next/image';
-import { Badge } from '../ui/badge';
-import { Heart, Eye, Calendar, Clock, MapPin, Users } from 'lucide-react';
-import { cn } from '@/libs/utils';
 import { useTranslation } from 'react-i18next';
+import { Button } from '@/libs/components/ui/button';
+import { Event } from '@/libs/types/event/event';
+import { Badge } from '@/libs/components/ui/badge';
+import { Heart, Eye, Calendar, Clock, MapPin, Users, Plus, Minus, Ticket } from 'lucide-react';
+import { cn } from '@/libs/utils';
+import { Card, CardContent, CardHeader, CardTitle } from '@/libs/components/ui/card';
+import { Separator } from '@/libs/components/ui/separator';
+
+import { TicketInput } from '@/libs/types/ticket/ticket.input';
 
 interface ChosenEventDataProps {
 	event: Event | null;
 	purchaseTicketHandler: () => void;
 	likeEventHandler: (eventId: string) => void;
+	setTicketInput: (ticketInput: TicketInput) => void;
+	ticketInput: TicketInput | null;
 }
 
-const ChosenEventData = ({ event, purchaseTicketHandler, likeEventHandler }: ChosenEventDataProps) => {
+const ChosenEventData = ({
+	event,
+	purchaseTicketHandler,
+	likeEventHandler,
+	setTicketInput,
+	ticketInput,
+}: ChosenEventDataProps) => {
 	const { t } = useTranslation('common');
 
 	if (!event) return null;
 
+	const handleQuantityChange = (newQuantity: number) => {
+		if (newQuantity < 1 || newQuantity > event.eventCapacity) return;
+		// @ts-expect-error
+		setTicketInput({ ...ticketInput, ticketQuantity: newQuantity });
+	};
+
 	return (
-		<article className="bg-card rounded-xl shadow-sm overflow-hidden border border-border/50">
+		<Card className="overflow-hidden">
 			<div className="relative aspect-[3/2] w-full">
 				<Image
 					src={event?.eventImage}
@@ -29,10 +47,10 @@ const ChosenEventData = ({ event, purchaseTicketHandler, likeEventHandler }: Cho
 					sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
 				/>
 			</div>
-			<div className="p-6 space-y-6">
-				<header className="flex justify-between items-start gap-4">
+			<CardHeader className="space-y-4">
+				<div className="flex justify-between items-start gap-4">
 					<div className="space-y-2">
-						<h1 className="text-3xl font-semibold text-foreground tracking-tight">{event.eventName}</h1>
+						<CardTitle className="text-3xl font-semibold tracking-tight">{event.eventName}</CardTitle>
 						<div className="flex flex-wrap gap-2">
 							<Badge variant="secondary" className="bg-muted/50 text-muted-foreground">
 								{event.eventStatus}
@@ -48,7 +66,7 @@ const ChosenEventData = ({ event, purchaseTicketHandler, likeEventHandler }: Cho
 						<div className="text-2xl font-bold text-primary">${event.eventPrice}</div>
 						<div className="text-sm text-muted-foreground">{t('per ticket')}</div>
 					</div>
-				</header>
+				</div>
 
 				<div className="flex items-center gap-6">
 					<button
@@ -77,7 +95,9 @@ const ChosenEventData = ({ event, purchaseTicketHandler, likeEventHandler }: Cho
 						</span>
 					</div>
 				</div>
+			</CardHeader>
 
+			<CardContent className="space-y-6">
 				<div className="grid gap-6 sm:grid-cols-2">
 					<div className="space-y-4">
 						<div className="flex items-center gap-3">
@@ -116,20 +136,52 @@ const ChosenEventData = ({ event, purchaseTicketHandler, likeEventHandler }: Cho
 					</div>
 				</div>
 
-				<div className="pt-6 border-t border-border/50 flex items-center justify-between gap-4">
-					<div className="text-sm text-muted-foreground">
-						{event.eventCapacity} {t('places available')}
+				<Separator className="my-6" />
+
+				<div className="flex items-center justify-between gap-4">
+					<div className="flex items-center gap-2 text-muted-foreground">
+						<Ticket className="h-4 w-4" />
+						<span className="text-sm">
+							{event.eventCapacity - event.attendeeCount} {t('places available')}
+						</span>
 					</div>
-					<Button
-						onClick={purchaseTicketHandler}
-						size="lg"
-						className="bg-primary/90 hover:bg-primary text-primary-foreground px-8"
-					>
-						{t('Buy Ticket')}
-					</Button>
+					<div className="flex items-center gap-6">
+						<div className="flex items-center gap-2">
+							<Button
+								variant="outline"
+								size="icon"
+								className="h-8 w-8"
+								onClick={() => handleQuantityChange(ticketInput!.ticketQuantity - 1)}
+							>
+								<Minus className="h-4 w-4" />
+							</Button>
+							<div className="w-12 text-center font-medium">{ticketInput!.ticketQuantity}</div>
+							<Button
+								variant="outline"
+								size="icon"
+								className="h-8 w-8"
+								onClick={() => handleQuantityChange(ticketInput!.ticketQuantity + 1)}
+							>
+								<Plus className="h-4 w-4" />
+							</Button>
+						</div>
+						<div className="text-right">
+							<div className="text-sm text-muted-foreground">{t('Total')}</div>
+							<div className="text-xl font-bold text-primary">
+								${(event.eventPrice * ticketInput!.ticketQuantity).toFixed(2)}
+							</div>
+						</div>
+						<Button
+							onClick={purchaseTicketHandler}
+							size="lg"
+							className="bg-primary/90 hover:bg-primary text-primary-foreground px-8"
+						>
+							{t('Buy Ticket')}
+						</Button>
+					</div>
 				</div>
-			</div>
-		</article>
+			</CardContent>
+		</Card>
 	);
 };
 
