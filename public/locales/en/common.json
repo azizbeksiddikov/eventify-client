@@ -97,5 +97,19 @@
 	"Delete": "Delete",
 	"Be the first to comment": "Be the first to comment",
 	"No comments yet": "No comments yet",
-	"No groups yet": "No groups yet"
+	"No groups yet": "No groups yet",
+	"Create New Group": "Create New Group",
+	"Group Name": "Group Name",
+	"Description": "Description",
+	"Categories (Select up to 3)": "Categories (Select up to 3)",
+	"Group Image": "Group Image",
+	"Reset Image": "Reset Image",
+	"Only JPG, JPEG, and PNG files are allowed": "Only JPG, JPEG, and PNG files are allowed",
+	"Enter group name": "Enter group name",
+	"Describe your group": "Describe your group",
+	"Click to upload image": "Click to upload image",
+	"Creating...": "Creating...",
+	"Create Group": "Create Group",
+	"Group created successfully": "Group created successfully",
+	"Back to Groups": "Back to Groups"
 }

@@ -1,14 +1,11 @@
-import { GroupCategory } from '../../enums/group.enum';
-import { Direction } from '../../enums/common.enum';
+import { GroupCategory } from '@/libs/enums/group.enum';
+import { Direction } from '@/libs/enums/common.enum';
 
 export interface GroupInput {
-	name: string;
-	description: string;
-	image: string;
-	category: GroupCategory;
-	organizerId: string;
-	membersCount: number;
-	eventsCount: number;
+	groupName: string;
+	groupDesc: string;
+	groupImage: string;
+	groupCategories: GroupCategory[];
 }
 
 export interface GroupsSearch {

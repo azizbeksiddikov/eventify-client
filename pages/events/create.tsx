@@ -195,8 +195,6 @@ const EventCreatePage = () => {
 
 	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
 		const { name, value } = e.target;
-		console.log('=name: ', name);
-		console.log('value:', name === 'eventCapacity' || name === 'eventPrice' ? Number(value) : value);
 
 		setFormData((prev) => ({
 			...prev,

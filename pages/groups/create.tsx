@@ -1,21 +1,26 @@
-import { useState } from 'react';
 import { useRouter } from 'next/router';
+import { useState } from 'react';
+
 import { Button } from '@/libs/components/ui/button';
 import { Input } from '@/libs/components/ui/input';
 import { Textarea } from '@/libs/components/ui/textarea';
 import { Card } from '@/libs/components/ui/card';
 import { ImageIcon, RefreshCw } from 'lucide-react';
 import withBasicLayout from '@/libs/components/layout/LayoutBasic';
+import { GroupCategory } from '@/libs/enums/group.enum';
 import { GroupInput } from '@/libs/types/group/group.input';
-import { useMutation } from '@apollo/client';
+
+import { useMutation, useReactiveVar } from '@apollo/client';
+import { userVar } from '@/apollo/store';
 import { CREATE_GROUP } from '@/apollo/user/mutation';
 import { smallError, smallSuccess } from '@/libs/alert';
 import { useTranslation } from 'react-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { Message } from '@/libs/enums/common.enum';
 import axios from 'axios';
 import { getJwtToken } from '@/libs/auth';
-import { REACT_APP_API_URL, REACT_APP_API_GRAPHQL_URL } from '@/libs/config';
-import { GroupCategory } from '@/libs/enums/group.enum';
+import { REACT_APP_API_URL } from '@/libs/config';
+import { REACT_APP_API_GRAPHQL_URL } from '@/libs/config';
 
 export const getStaticProps = async ({ locale }: { locale: string }) => ({
 	props: {
@@ -26,24 +31,24 @@ export const getStaticProps = async ({ locale }: { locale: string }) => ({
 const GroupCreatePage = () => {
 	const router = useRouter();
 	const { t } = useTranslation('common');
+	const user = useReactiveVar(userVar);
 	const token = getJwtToken();
 
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [imagePreview, setImagePreview] = useState<string | null>(null);
+	const [selectedCategories, setSelectedCategories] = useState<GroupCategory[]>([]);
 
 	const [formData, setFormData] = useState<GroupInput>({
-		name: '',
-		description: '',
-		image: '',
-		category: GroupCategory.OTHER,
-		organizerId: '', // This will be set from the current user
-		membersCount: 1,
-		eventsCount: 0,
+		groupName: '',
+		groupDesc: '',
+		groupImage: '',
+		groupCategories: [],
 	});
 
 	/** APOLLO REQUESTS **/
 	const [createGroup] = useMutation(CREATE_GROUP);
 
+	/** HANDLERS */
 	const uploadImage = async (image: File) => {
 		try {
 			const formData = new FormData();
@@ -77,8 +82,10 @@ const GroupCreatePage = () => {
 
 			const responseImage = response.data.data.imageUploader;
 			const imageUrl = `${REACT_APP_API_URL}/${responseImage}`;
+			console.log('=: ', imageUrl);
 
-			setFormData((prev) => ({ ...prev, image: responseImage }));
+			// Update form data and preview
+			setFormData((prev) => ({ ...prev, groupImage: responseImage }));
 			setImagePreview(imageUrl);
 
 			return imageUrl;
@@ -96,22 +103,24 @@ const GroupCreatePage = () => {
 		}
 	};
 
-	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-		const { name, value } = e.target;
-		setFormData((prev) => ({ ...prev, [name]: value }));
-	};
-
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 		setIsSubmitting(true);
 
 		try {
-			if (!formData.name) throw new Error(t('Group name is required'));
-			if (!formData.description) throw new Error(t('Group description is required'));
-			if (!formData.image) throw new Error(t('Group image is required'));
+			if (!user._id) throw new Error(Message.NOT_AUTHENTICATED);
+			if (!formData.groupName) throw new Error(t('Group name is required'));
+			if (!formData.groupDesc) throw new Error(t('Group description is required'));
+			if (selectedCategories.length === 0) throw new Error(Message.CATEGORY_NOT_FOUND);
+			if (!formData.groupImage) throw new Error(t('Group image is required'));
+
+			const updatedFormData = {
+				...formData,
+				groupCategories: selectedCategories,
+			};
 
 			await createGroup({
-				variables: { input: formData },
+				variables: { input: updatedFormData },
 			});
 
 			await smallSuccess(t('Group created successfully'));
@@ -124,6 +133,25 @@ const GroupCreatePage = () => {
 			}
 		} finally {
 			setIsSubmitting(false);
+		}
+	};
+
+	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+		const { name, value } = e.target;
+
+		setFormData((prev) => ({
+			...prev,
+			[name]: value,
+		}));
+	};
+
+	const handleCategorySelect = (category: GroupCategory) => {
+		if (selectedCategories.includes(category)) {
+			// If category is already selected, remove it
+			setSelectedCategories((prev) => prev.filter((c) => c !== category));
+		} else if (selectedCategories.length < 3) {
+			// If category is not selected and we haven't reached the limit, add it
+			setSelectedCategories((prev) => [...prev, category]);
 		}
 	};
 
@@ -160,52 +188,57 @@ const GroupCreatePage = () => {
 					<form onSubmit={handleSubmit} className="space-y-6">
 						{/* Group Name */}
 						<div className="space-y-2">
-							<label htmlFor="name" className="text-sm font-medium text-foreground">
+							<label htmlFor="groupName" className="text-sm font-medium text-foreground">
 								{t('Group Name')}
 							</label>
 							<Input
-								id="name"
-								name="name"
-								value={formData.name}
+								id="groupName"
+								name="groupName"
+								value={formData.groupName}
 								onChange={handleInputChange}
 								placeholder={t('Enter group name')}
 								className="bg-input text-input-foreground border-input"
+								required
 							/>
 						</div>
 
 						{/* Group Description */}
 						<div className="space-y-2">
-							<label htmlFor="description" className="text-sm font-medium text-foreground">
+							<label htmlFor="groupDesc" className="text-sm font-medium text-foreground">
 								{t('Description')}
 							</label>
 							<Textarea
-								id="description"
-								name="description"
-								value={formData.description}
+								id="groupDesc"
+								name="groupDesc"
+								value={formData.groupDesc}
 								onChange={handleInputChange}
 								placeholder={t('Describe your group')}
 								className="min-h-[120px] bg-input text-input-foreground border-input"
+								required
 							/>
 						</div>
 
-						{/* Group Category */}
+						{/* Categories */}
 						<div className="space-y-2">
-							<label htmlFor="category" className="text-sm font-medium text-foreground">
-								{t('Group Category')}
-							</label>
-							<select
-								id="category"
-								name="category"
-								value={formData.category}
-								onChange={handleInputChange}
-								className="w-full bg-input text-input-foreground border-input rounded-md px-3 py-2"
-							>
+							<label className="text-sm font-medium text-foreground">{t('Categories (Select up to 3)')}</label>
+							<div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
 								{Object.values(GroupCategory).map((category) => (
-									<option key={category} value={category}>
-										{t(category)}
-									</option>
+									<Button
+										key={category}
+										type="button"
+										variant={selectedCategories.includes(category) ? 'default' : 'outline'}
+										onClick={() => handleCategorySelect(category)}
+										disabled={selectedCategories.length >= 3 && !selectedCategories.includes(category)}
+										className={`h-10 transition-all duration-200 ${
+											selectedCategories.includes(category)
+												? 'bg-primary text-primary-foreground font-semibold shadow-sm hover:bg-primary/90'
+												: 'bg-transparent text-foreground hover:bg-accent hover:text-accent-foreground'
+										} disabled:opacity-50 disabled:cursor-not-allowed`}
+									>
+										{category.charAt(0) + category.slice(1).toLowerCase().replace('_', ' ')}
+									</Button>
 								))}
-							</select>
+							</div>
 						</div>
 
 						{/* Image Section */}
@@ -241,6 +274,7 @@ const GroupCreatePage = () => {
 									accept=".jpg,.jpeg,.png,image/jpeg,image/png"
 									onChange={handleImageChange}
 									className="hidden"
+									required
 								/>
 								<p className="text-sm text-muted-foreground mt-1">{t('Only JPG, JPEG, and PNG files are allowed')}</p>
 							</div>
@@ -251,7 +285,7 @@ const GroupCreatePage = () => {
 							<Button
 								type="submit"
 								size="lg"
-								disabled={isSubmitting || !formData.name || !formData.description || !formData.image}
+								disabled={isSubmitting || selectedCategories.length === 0}
 								className="bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed px-8"
 							>
 								{isSubmitting ? t('Creating...') : t('Create Group')}

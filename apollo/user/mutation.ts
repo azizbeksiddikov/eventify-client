@@ -180,7 +180,6 @@ export const CREATE_GROUP = gql`
 	mutation CreateGroup($input: GroupInput!) {
 		createGroup(input: $input) {
 			_id
-
 			groupName
 			groupDesc
 			groupImage
@@ -191,6 +190,14 @@ export const CREATE_GROUP = gql`
 			memberCount
 			createdAt
 			updatedAt
+			meJoined {
+				memberId
+				groupId
+				groupMemberRole
+				joinDate
+				meJoined
+			}
+			meOwner
 		}
 	}
 `;
