@@ -142,14 +142,13 @@ export const GET_MY_GROUPS = gql`
 	query GetMyGroups {
 		getMyGroups {
 			_id
-
 			groupName
 			groupDesc
-			groupmemberId
 			groupImage
+			memberId
+			groupCategories
 			groupViews
 			groupLikes
-			groupCategories
 			memberCount
 			createdAt
 			updatedAt

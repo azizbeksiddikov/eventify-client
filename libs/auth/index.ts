@@ -142,15 +142,15 @@ export const updateUserInfo = (jwtToken: string) => {
 		memberStatus: claims.memberStatus ?? '',
 		emailVerified: claims.emailVerified ?? false,
 		memberDesc: claims.memberDesc ?? '',
-		memberImage:
-			claims.memberImage === null || claims.memberImage === undefined
-				? '/img/profile/defaultUser.svg'
-				: `${claims.memberImage}`,
+		memberImage: claims.memberImage ?? '',
 		memberPoints: claims.memberPoints ?? 0,
 		memberLikes: claims.memberLikes ?? 0,
 		memberFollowings: claims.memberFollowings ?? 0,
 		memberFollowers: claims.memberFollowers ?? 0,
 		memberViews: claims.memberViews ?? 0,
+		eventOrganizedCount: claims.eventOrganizedCount ?? 0,
+		createdAt: claims.createdAt ?? new Date(),
+		updatedAt: claims.updatedAt ?? new Date(),
 	});
 };
 
@@ -182,5 +182,8 @@ const deleteUserInfo = () => {
 		memberFollowings: 0,
 		memberFollowers: 0,
 		memberViews: 0,
+		eventOrganizedCount: 0,
+		createdAt: new Date(),
+		updatedAt: new Date(),
 	});
 };

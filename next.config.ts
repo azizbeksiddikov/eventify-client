@@ -16,6 +16,7 @@ const nextConfig: NextConfig = {
 			'www.fourseasons.com',
 			'www.rrc.ca',
 			'blogs.nvidia.com',
+			'localhost',
 		],
 	},
 	env: {

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { EventCategory, EventStatus } from '@/libs/enums/event.enum';
 import { Button } from '@/libs/components/ui/button';
@@ -15,23 +15,35 @@ import { format } from 'date-fns';
 import withBasicLayout from '@/libs/components/layout/LayoutBasic';
 import { EventInput } from '@/libs/types/event/event.input';
 import { Group } from '@/libs/types/group/group';
+import { useMutation, useQuery, useReactiveVar } from '@apollo/client';
+import { userVar } from '@/apollo/store';
+import { GET_MY_GROUPS } from '@/apollo/user/query';
+import { CREATE_EVENT } from '@/apollo/user/mutation';
+import { smallError, smallSuccess } from '@/libs/alert';
+import { useTranslation } from 'react-i18next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { Message } from '@/libs/enums/common.enum';
+import axios from 'axios';
+import { getJwtToken } from '@/libs/auth';
+import { REACT_APP_API_URL } from '@/libs/config';
+import { REACT_APP_API_GRAPHQL_URL } from '@/libs/config';
 
-export const getStaticProps = async ({ locale }: any) => ({
+export const getStaticProps = async ({ locale }: { locale: string }) => ({
 	props: {
 		...(await serverSideTranslations(locale, ['common'])),
 	},
 });
 
-// Mock data for user's groups
-import { groupList as userGroups } from '@/data';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-
 const EventCreatePage = () => {
 	const router = useRouter();
+	const { t } = useTranslation('common');
+	const user = useReactiveVar(userVar);
+	const token = getJwtToken();
+
+	const [groups, setGroups] = useState<Group[]>([]);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [imagePreview, setImagePreview] = useState<string | null>(null);
 	const [selectedCategories, setSelectedCategories] = useState<EventCategory[]>([]);
-	const [timeError, setTimeError] = useState<string | null>(null);
 
 	const [formData, setFormData] = useState<EventInput>({
 		eventName: '',
@@ -39,7 +51,7 @@ const EventCreatePage = () => {
 		eventImage: '',
 		eventDate: new Date(),
 		eventStartTime: '00:00',
-		eventEndTime: '00:15',
+		eventEndTime: '00:00',
 		eventAddress: '',
 		eventCity: '',
 		eventCapacity: 0,
@@ -49,62 +61,133 @@ const EventCreatePage = () => {
 		groupId: '',
 	});
 
+	/** APOLLO REQUESTS **/
+	const [createEvent] = useMutation(CREATE_EVENT);
+
+	const { data: groupsData } = useQuery(GET_MY_GROUPS, {
+		fetchPolicy: 'cache-and-network',
+		skip: !user._id,
+		notifyOnNetworkStatusChange: true,
+	});
+
+	useEffect(() => {
+		if (groupsData?.getMyGroups) setGroups(groupsData.getMyGroups);
+	}, [groupsData]);
+
+	/** HANDLERS */
 	const validateTime = (startTime: string, endTime: string) => {
 		const [startHour, startMinute] = startTime.split(':').map(Number);
 		const [endHour, endMinute] = endTime.split(':').map(Number);
 
 		if (endHour < startHour || (endHour === startHour && endMinute <= startMinute)) {
-			setTimeError('End time must be later than start time');
 			return false;
 		}
-		setTimeError(null);
 		return true;
 	};
 
 	const handleStartTimeChange = (hour: string, minute: string) => {
 		const newStartTime = `${hour}:${minute}`;
-		setFormData((prev) => {
-			const newData = { ...prev, eventStartTime: newStartTime };
-			validateTime(newStartTime, newData.eventEndTime);
-			return newData;
-		});
+		setFormData((prev) => ({ ...prev, eventStartTime: newStartTime }));
 	};
 
 	const handleEndTimeChange = (hour: string, minute: string) => {
 		const newEndTime = `${hour}:${minute}`;
-		setFormData((prev) => {
-			const newData = { ...prev, eventEndTime: newEndTime };
-			validateTime(newData.eventStartTime, newEndTime);
-			return newData;
-		});
+		setFormData((prev) => ({ ...prev, eventEndTime: newEndTime }));
 	};
 
-	const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+	const uploadImage = async (image: File) => {
+		try {
+			const formData = new FormData();
+			formData.append(
+				'operations',
+				JSON.stringify({
+					query: `mutation ImageUploader($file: Upload!, $target: String!) {
+						imageUploader(file: $file, target: $target) 
+				  }`,
+					variables: {
+						file: null,
+						target: 'event',
+					},
+				}),
+			);
+			formData.append(
+				'map',
+				JSON.stringify({
+					'0': ['variables.file'],
+				}),
+			);
+			formData.append('0', image);
+
+			const response = await axios.post(`${REACT_APP_API_GRAPHQL_URL}`, formData, {
+				headers: {
+					'Content-Type': 'multipart/form-data',
+					'apollo-require-preflight': true,
+					Authorization: `Bearer ${token}`,
+				},
+			});
+
+			const responseImage = response.data.data.imageUploader;
+			const imageUrl = `${REACT_APP_API_URL}/${responseImage}`;
+			console.log('=imageUrl: ', imageUrl);
+
+			// Update form data and preview
+			setFormData((prev) => ({ ...prev, eventImage: responseImage }));
+			setImagePreview(imageUrl);
+
+			return imageUrl;
+		} catch (err) {
+			console.error('Error uploading image:', err);
+			smallError(t('Failed to upload image'));
+			return null;
+		}
+	};
+
+	const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
 		const file = e.target.files?.[0];
 		if (file) {
-			const reader = new FileReader();
-			reader.onloadend = () => {
-				const result = reader.result as string;
-				setImagePreview(result);
-				setFormData((prev) => ({ ...prev, eventImage: result }));
-			};
-			reader.readAsDataURL(file);
+			await uploadImage(file);
 		}
 	};
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 		setIsSubmitting(true);
+
 		try {
-			// Update formData with selected categories before submission
+			if (!user._id) throw new Error(Message.NOT_AUTHENTICATED);
+			if (!formData.groupId) throw new Error(Message.GROUP_NOT_FOUND);
+			if (!formData.eventName) throw new Error(t('Event name is required'));
+			if (!formData.eventDesc) throw new Error(t('Event description is required'));
+			if (selectedCategories.length === 0) throw new Error(Message.CATEGORY_NOT_FOUND);
+			if (!formData.eventDate) throw new Error(t('Event date is required'));
+			if (!formData.eventStartTime) throw new Error(t('Start time is required'));
+			if (!formData.eventEndTime) throw new Error(t('End time is required'));
+			if (!validateTime(formData.eventStartTime, formData.eventEndTime)) {
+				throw new Error(Message.INVALID_TIME_SELECTION);
+			}
+			if (!formData.eventCity) throw new Error(t('City is required'));
+			if (!formData.eventAddress) throw new Error(t('Address is required'));
+			if (!formData.eventCapacity) throw new Error(t('Capacity is required'));
+			if (formData.eventCapacity < 1) throw new Error(t('Capacity must be at least 1'));
+			if (!formData.eventImage) throw new Error(t('Event image is required'));
+
 			const updatedFormData = {
 				...formData,
 				eventCategories: selectedCategories,
 			};
-			console.log('Creating event:', updatedFormData);
+
+			await createEvent({
+				variables: { input: updatedFormData },
+			});
+
+			await smallSuccess(t('Event created successfully'));
 			router.push('/events');
-		} catch (error) {
-			console.error('Error creating event:', error);
+		} catch (error: unknown) {
+			if (error instanceof Error) {
+				smallError(error.message);
+			} else {
+				smallError(t('An unexpected error occurred'));
+			}
 		} finally {
 			setIsSubmitting(false);
 		}
@@ -112,7 +195,13 @@ const EventCreatePage = () => {
 
 	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
 		const { name, value } = e.target;
-		setFormData((prev) => ({ ...prev, [name]: value }));
+		console.log('=name: ', name);
+		console.log('value:', name === 'eventCapacity' || name === 'eventPrice' ? Number(value) : value);
+
+		setFormData((prev) => ({
+			...prev,
+			[name]: name === 'eventCapacity' || name === 'eventPrice' ? Number(value) : value,
+		}));
 	};
 
 	const handleCategorySelect = (category: EventCategory) => {
@@ -148,18 +237,18 @@ const EventCreatePage = () => {
 						>
 							<path d="m15 18-6-6 6-6" />
 						</svg>
-						Back to Events
+						{t('Back to Events')}
 					</Button>
 				</div>
 
 				<Card className="p-6 bg-card text-card-foreground">
-					<h1 className="text-3xl font-semibold text-foreground mb-6">Create New Event</h1>
+					<h1 className="text-3xl font-semibold text-foreground mb-6">{t('Create New Event')}</h1>
 
 					<form onSubmit={handleSubmit} className="space-y-6">
 						{/* Group Selection */}
 						<div className="space-y-2">
 							<label htmlFor="groupId" className="text-sm font-medium text-foreground">
-								Select Group
+								{t('Select Group')}
 							</label>
 							<Select
 								value={formData.groupId}
@@ -171,20 +260,20 @@ const EventCreatePage = () => {
 											<div className="flex items-center space-x-3">
 												<div className="relative h-8 w-8 rounded-full overflow-hidden">
 													<img
-														src={userGroups.find((group) => group._id === formData.groupId)?.groupImage}
+														src={groups.find((group) => group._id === formData.groupId)?.groupImage}
 														alt="Group preview"
 														className="object-cover w-full h-full"
 													/>
 												</div>
 												<span className="text-foreground">
-													{userGroups.find((g) => g._id === formData.groupId)?.groupName}
+													{groups.find((g) => g._id === formData.groupId)?.groupName}
 												</span>
 											</div>
 										)}
 									</SelectValue>
 								</SelectTrigger>
 								<SelectContent className="bg-popover text-popover-foreground border-border">
-									{userGroups.map((group: Group) => (
+									{groups.map((group: Group) => (
 										<SelectItem
 											key={group._id}
 											value={group._id}
@@ -196,7 +285,9 @@ const EventCreatePage = () => {
 												</div>
 												<div>
 													<div className="font-medium text-foreground">{group.groupName}</div>
-													<div className="text-xs text-muted-foreground">{group.memberCount} members</div>
+													<div className="text-xs text-muted-foreground">
+														{group.memberCount} {t('members')}
+													</div>
 												</div>
 											</div>
 										</SelectItem>
@@ -208,38 +299,36 @@ const EventCreatePage = () => {
 						{/* Event Name */}
 						<div className="space-y-2">
 							<label htmlFor="eventName" className="text-sm font-medium text-foreground">
-								Event Name
+								{t('Event Name')}
 							</label>
 							<Input
 								id="eventName"
 								name="eventName"
 								value={formData.eventName}
 								onChange={handleInputChange}
-								placeholder="Enter event name"
+								placeholder={t('Enter event name')}
 								className="bg-input text-input-foreground border-input"
-								required
 							/>
 						</div>
 
 						{/* Event Description */}
 						<div className="space-y-2">
 							<label htmlFor="eventDesc" className="text-sm font-medium text-foreground">
-								Description
+								{t('Description')}
 							</label>
 							<Textarea
 								id="eventDesc"
 								name="eventDesc"
 								value={formData.eventDesc}
 								onChange={handleInputChange}
-								placeholder="Describe your event"
+								placeholder={t('Describe your event')}
 								className="min-h-[120px] bg-input text-input-foreground border-input"
-								required
 							/>
 						</div>
 
 						{/* Categories */}
 						<div className="space-y-2">
-							<label className="text-sm font-medium text-foreground">Categories (Select up to 3)</label>
+							<label className="text-sm font-medium text-foreground">{t('Categories (Select up to 3)')}</label>
 							<div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
 								{Object.values(EventCategory).map((category) => (
 									<Button
@@ -264,7 +353,7 @@ const EventCreatePage = () => {
 						<div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
 							<div className="space-y-2">
 								<label htmlFor="eventDate" className="text-sm font-medium text-foreground">
-									Event Date
+									{t('Event Date')}
 								</label>
 								<Popover>
 									<PopoverTrigger asChild>
@@ -276,7 +365,7 @@ const EventCreatePage = () => {
 											)}
 										>
 											<CalendarIcon className="mr-2 h-4 w-4" />
-											{formData.eventDate ? format(formData.eventDate, 'PPP') : <span>Pick a date</span>}
+											{formData.eventDate ? format(formData.eventDate, 'PPP') : <span>{t('Pick a date')}</span>}
 										</Button>
 									</PopoverTrigger>
 									<PopoverContent className="w-auto p-0 bg-popover text-popover-foreground border-border">
@@ -293,7 +382,7 @@ const EventCreatePage = () => {
 							</div>
 							<div className="space-y-2">
 								<label htmlFor="eventStartTime" className="text-sm font-medium text-foreground">
-									Start Time
+									{t('Start Time')}
 								</label>
 								<div className="flex gap-2">
 									<Select
@@ -351,7 +440,7 @@ const EventCreatePage = () => {
 							</div>
 							<div className="space-y-2">
 								<label htmlFor="eventEndTime" className="text-sm font-medium text-foreground">
-									End Time
+									{t('End Time')}
 								</label>
 								<div className="flex gap-2">
 									<Select
@@ -406,7 +495,6 @@ const EventCreatePage = () => {
 										</SelectContent>
 									</Select>
 								</div>
-								{timeError && <p className="text-sm text-destructive mt-1">{timeError}</p>}
 							</div>
 						</div>
 
@@ -414,30 +502,28 @@ const EventCreatePage = () => {
 						<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 							<div className="space-y-2">
 								<label htmlFor="eventCity" className="text-sm font-medium text-foreground">
-									City
+									{t('City')}
 								</label>
 								<Input
 									id="eventCity"
 									name="eventCity"
 									value={formData.eventCity}
 									onChange={handleInputChange}
-									placeholder="Enter city"
+									placeholder={t('Enter city')}
 									className="bg-input text-input-foreground border-input"
-									required
 								/>
 							</div>
 							<div className="space-y-2">
 								<label htmlFor="eventAddress" className="text-sm font-medium text-foreground">
-									Address
+									{t('Address')}
 								</label>
 								<Input
 									id="eventAddress"
 									name="eventAddress"
 									value={formData.eventAddress}
 									onChange={handleInputChange}
-									placeholder="Enter address"
+									placeholder={t('Enter address')}
 									className="bg-input text-input-foreground border-input"
-									required
 								/>
 							</div>
 						</div>
@@ -446,42 +532,38 @@ const EventCreatePage = () => {
 						<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 							<div className="space-y-2">
 								<label htmlFor="eventCapacity" className="text-sm font-medium text-foreground">
-									Capacity
+									{t('Capacity')}
 								</label>
 								<Input
 									id="eventCapacity"
 									name="eventCapacity"
 									type="number"
-									min="1"
 									value={formData.eventCapacity}
 									onChange={handleInputChange}
-									placeholder="Enter event capacity"
+									placeholder={t('Enter event capacity')}
 									className="bg-input text-input-foreground border-input"
-									required
 								/>
 							</div>
 							<div className="space-y-2">
 								<label htmlFor="eventPrice" className="text-sm font-medium text-foreground">
-									Price
+									{t('Price')}
 								</label>
 								<Input
 									id="eventPrice"
 									name="eventPrice"
 									type="number"
 									min="0"
-									step="0.01"
 									value={formData.eventPrice}
 									onChange={handleInputChange}
-									placeholder="Enter event price"
+									placeholder={t('Enter event price')}
 									className="bg-input text-input-foreground border-input"
-									required
 								/>
 							</div>
 						</div>
 
 						{/* Image Section */}
 						<div className="space-y-4">
-							<label className="text-sm font-medium text-foreground">Event Image</label>
+							<label className="text-sm font-medium text-foreground">{t('Event Image')}</label>
 							<div className="relative aspect-video w-full max-w-2xl mx-auto rounded-xl overflow-hidden bg-muted/50">
 								{imagePreview ? (
 									<>
@@ -492,7 +574,7 @@ const EventCreatePage = () => {
 										>
 											<div className="flex items-center gap-2 bg-white/90 text-foreground px-4 py-2 rounded-lg opacity-0 hover:opacity-100 transition-opacity duration-200">
 												<RefreshCw className="h-4 w-4" />
-												<span className="font-medium">Reset Image</span>
+												<span className="font-medium">{t('Reset Image')}</span>
 											</div>
 										</label>
 									</>
@@ -502,7 +584,7 @@ const EventCreatePage = () => {
 										className="absolute inset-0 flex flex-col items-center justify-center bg-muted/50 hover:bg-muted/60 transition-colors duration-200 cursor-pointer"
 									>
 										<ImageIcon className="h-12 w-12 text-muted-foreground mb-2" />
-										<span className="text-muted-foreground font-medium">Click to upload image</span>
+										<span className="text-muted-foreground font-medium">{t('Click to upload image')}</span>
 									</label>
 								)}
 								<input
@@ -512,9 +594,8 @@ const EventCreatePage = () => {
 									accept=".jpg,.jpeg,.png,image/jpeg,image/png"
 									onChange={handleImageChange}
 									className="hidden"
-									required
 								/>
-								<p className="text-sm text-muted-foreground mt-1">Only JPG, JPEG, and PNG files are allowed</p>
+								<p className="text-sm text-muted-foreground mt-1">{t('Only JPG, JPEG, and PNG files are allowed')}</p>
 							</div>
 						</div>
 
@@ -523,10 +604,19 @@ const EventCreatePage = () => {
 							<Button
 								type="submit"
 								size="lg"
-								disabled={isSubmitting || selectedCategories.length === 0}
+								disabled={
+									isSubmitting ||
+									selectedCategories.length === 0 ||
+									!formData.groupId ||
+									!formData.eventDate ||
+									!formData.eventCity ||
+									!formData.eventAddress ||
+									!formData.eventCapacity ||
+									!formData.eventImage
+								}
 								className="bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed px-8"
 							>
-								{isSubmitting ? 'Creating...' : 'Create Event'}
+								{isSubmitting ? t('Creating...') : t('Create Event')}
 							</Button>
 						</div>
 					</form>

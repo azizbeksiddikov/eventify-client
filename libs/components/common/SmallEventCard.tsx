@@ -1,4 +1,6 @@
 import Link from 'next/link';
+import Image from 'next/image';
+import { REACT_APP_API_URL } from '@/libs/config';
 import { MapPin, Calendar, Heart, Eye } from 'lucide-react';
 import { Button } from '@/libs/components/ui/button';
 import { Event } from '@/libs/types/event/event';
@@ -17,10 +19,12 @@ const SmallEventCard = ({ event, likeEventHandler }: EventCardProps) => {
 					{/* Image */}
 					<div className="flex-shrink-0">
 						<div className="w-20 h-20 rounded-xl overflow-hidden relative">
-							<img
-								src={event.eventImage}
+							<Image
+								src={`${REACT_APP_API_URL}/${event.eventImage}`}
 								alt={event.eventName}
 								className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
+								width={80}
+								height={80}
 							/>
 							<div className="absolute inset-0 bg-gradient-to-t from-background/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
 						</div>

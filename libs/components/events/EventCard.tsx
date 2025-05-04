@@ -2,6 +2,7 @@ import { format } from 'date-fns';
 import Image from 'next/image';
 import Link from 'next/link';
 
+import { REACT_APP_API_URL } from '@/libs/config';
 import { Button } from '@/libs/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader } from '@/libs/components/ui/card';
 import { Heart, Calendar, Users, ExternalLink, MapPin, Eye, Clock } from 'lucide-react';
@@ -27,7 +28,7 @@ const EventCard = ({ event, likeEventHandler }: EventCardProps) => {
 				<div className="relative aspect-[16/9] w-full overflow-hidden rounded-t-xl ">
 					<Link href={`/events/detail?id=${event._id}`}>
 						<Image
-							src={event.eventImage}
+							src={`${REACT_APP_API_URL}/${event.eventImage}`}
 							alt={event.eventName}
 							fill
 							className="object-cover transition-transform duration-300 "

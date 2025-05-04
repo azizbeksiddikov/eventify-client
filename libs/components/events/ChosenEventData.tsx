@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import { useTranslation } from 'react-i18next';
+import { REACT_APP_API_URL } from '@/libs/config';
 import { Button } from '@/libs/components/ui/button';
 import { Event } from '@/libs/types/event/event';
 import { Badge } from '@/libs/components/ui/badge';
@@ -39,7 +40,7 @@ const ChosenEventData = ({
 		<Card className="overflow-hidden">
 			<div className="relative aspect-[3/2] w-full">
 				<Image
-					src={event?.eventImage}
+					src={`${REACT_APP_API_URL}/${event.eventImage}`}
 					alt={event.eventName}
 					fill
 					className="object-cover"

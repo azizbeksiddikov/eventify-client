@@ -1,10 +1,24 @@
-import { Button } from '../ui/button';
-import { ArrowRight, ArrowLeft } from 'lucide-react';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
+import { Button } from '@/libs/components/ui/button';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { useReactiveVar } from '@apollo/client';
+import { userVar } from '@/apollo/store';
+import { MemberType } from '@/libs/enums/member.enum';
+import { smallError } from '@/libs/alert';
+
 const ChosenEventHeader = () => {
 	const router = useRouter();
 	const { t } = useTranslation('common');
+	const user = useReactiveVar(userVar);
+
+	const handleCreateEvent = () => {
+		if (user.memberType !== MemberType.ORGANIZER) {
+			smallError(t('Only organizers can create events'));
+			return;
+		}
+		router.push('/events/create');
+	};
 
 	return (
 		<section className="bg-gradient-to-b from-secondary/40 to-background py-10">
@@ -22,8 +36,12 @@ const ChosenEventHeader = () => {
 
 				<Button
 					type="button"
-					onClick={() => router.push('/events/create')}
-					className="h-14 px-8 bg-primary text-primary-foreground hover:bg-primary/90 transition-colors duration-200"
+					onClick={handleCreateEvent}
+					className={`h-14 px-8 transition-colors duration-200 ${
+						user.memberType === MemberType.ORGANIZER
+							? 'bg-primary text-primary-foreground hover:bg-primary/90'
+							: 'bg-muted text-muted-foreground cursor-not-allowed'
+					}`}
 				>
 					<div className="flex items-center gap-2">
 						{t('Create Event')}

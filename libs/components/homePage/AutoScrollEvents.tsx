@@ -9,6 +9,7 @@ import { GET_EVENTS } from '@/apollo/user/query';
 import { Direction } from '@/libs/enums/common.enum';
 import { EventStatus } from '@/libs/enums/event.enum';
 import { Event } from '@/libs/types/event/event';
+import { REACT_APP_API_URL } from '@/libs/config';
 
 interface AutoScrollEventsProps {
 	initialInput?: EventsInquiry;
@@ -160,7 +161,7 @@ const AutoScrollEvents = ({
 					>
 						<div
 							className="absolute inset-0 bg-cover bg-center transition-transform duration-1000 ease-in-out"
-							style={{ backgroundImage: `url(${event.eventImage})` }}
+							style={{ backgroundImage: `url(${REACT_APP_API_URL}/${event.eventImage})` }}
 							aria-hidden="true"
 						>
 							{/* Gradient overlays for navigation */}

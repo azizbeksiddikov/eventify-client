@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import { REACT_APP_API_URL } from '@/libs/config';
 import { Badge } from '@/libs/components/ui/badge';
 import { Card, CardContent, CardFooter } from '@/libs/components/ui/card';
 import { Button } from '@/libs/components/ui/button';
@@ -22,7 +23,7 @@ const EventCardInGroup = ({ event }: EventCardInGroupProps) => {
 			<div className="relative aspect-[16/9] w-full overflow-hidden rounded-t-xl">
 				<Link href={`/events/detail?id=${event._id}`}>
 					<Image
-						src={event.eventImage}
+						src={`${REACT_APP_API_URL}/${event.eventImage}`}
 						alt={event.eventName}
 						fill
 						className="object-cover transition-transform duration-300"

@@ -23,8 +23,11 @@ export enum Message {
 
 	// ===== Event Related Messages =====
 	EVENT_NOT_FOUND = 'Event not found',
+	INVALID_TIME_SELECTION = 'Invalid time selection',
 
 	// ===== Group Related Messages =====
+	GROUP_NOT_FOUND = 'Group not found',
+	CATEGORY_NOT_FOUND = 'Category not found',
 
 	// ===== Ticket Related Messages =====
 

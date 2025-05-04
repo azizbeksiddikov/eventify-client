@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { REACT_APP_API_URL } from '@/libs/config';
 import { Event } from '@/libs/types/event/event';
 import { EventStatus, EventCategory } from '@/libs/enums/event.enum';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/libs/components/ui/table';
@@ -131,7 +132,7 @@ export const EventPanelList = ({ events, updateEventHandler, deleteEventHandler 
 									<TableCell>
 										<div className="flex items-center gap-3">
 											<Avatar className="h-8 w-8">
-												<AvatarImage src={event.eventImage} alt={event.eventName} />
+												<AvatarImage src={`${REACT_APP_API_URL}/${event.eventImage}`} alt={event.eventName} />
 												<AvatarFallback>{event.eventName.slice(0, 2).toUpperCase()}</AvatarFallback>
 											</Avatar>
 											{isEditing ? (
