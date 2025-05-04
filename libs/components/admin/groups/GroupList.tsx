@@ -7,6 +7,7 @@ import { Avatar, AvatarImage, AvatarFallback } from '@/libs/components/ui/avatar
 import { Input } from '@/libs/components/ui/input';
 import { Edit, Save, X, Trash2 } from 'lucide-react';
 import { Badge } from '@/libs/components/ui/badge';
+import { REACT_APP_API_URL } from '@/libs/config';
 
 interface GroupPanelListType {
 	groups: Group[];
@@ -109,7 +110,7 @@ export const GroupPanelList = ({ groups, updateGroupHandler, deleteGroupHandler 
 									<TableCell>
 										<div className="flex items-center gap-2">
 											<Avatar className="h-8 w-8 border border-input">
-												<AvatarImage src={group.groupImage} alt={group.groupName} />
+												<AvatarImage src={`${REACT_APP_API_URL}/${group.groupImage}`} alt={group.groupName} />
 												<AvatarFallback className="bg-muted text-muted-foreground">{group.groupName[0]}</AvatarFallback>
 											</Avatar>
 											{isEditing ? (

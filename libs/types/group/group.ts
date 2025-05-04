@@ -1,6 +1,8 @@
 import { GroupCategory } from '@/libs/enums/group.enum';
-import { TotalCounter } from '../member/member';
-import { MeLiked } from '../like/like';
+import { Member, TotalCounter } from '@/libs/types/member/member';
+import { MeLiked } from '@/libs/types/like/like';
+import { GroupMember } from '@/libs/types/groupMembers/groupMember';
+import { Event } from '@/libs/types/event/event';
 
 export interface MeJoined {
 	memberId: string;
@@ -24,6 +26,11 @@ export interface Group {
 	updatedAt: Date;
 
 	// from aggregate
+	memberData?: Member;
+	groupModerators?: GroupMember[];
+	similarGroups?: Group[];
+	groupUpcomingEvents?: Event[];
+
 	meOwner?: boolean;
 	meLiked?: MeLiked[];
 	meJoined?: MeJoined[];

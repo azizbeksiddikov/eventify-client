@@ -44,7 +44,7 @@ const EventCardInGroup = ({ event }: EventCardInGroupProps) => {
 					<div className="flex items-center gap-2 p-2 rounded-md bg-card/70 hover:bg-card transition-colors">
 						<Calendar className="h-4 w-4 text-primary" />
 						<p className="text-sm">
-							{event.eventDate.toLocaleDateString('en-GB', {
+							{new Date(event.eventDate).toLocaleDateString('en-GB', {
 								day: '2-digit',
 								month: '2-digit',
 								year: 'numeric',

@@ -1,3 +1,7 @@
+import { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+
+import { Calendar } from 'lucide-react';
 import {
 	Carousel,
 	CarouselContent,
@@ -7,17 +11,17 @@ import {
 	type CarouselApi,
 } from '@/libs/components/ui/carousel';
 import { Card } from '@/libs/components/ui/card';
+
 import { Event } from '@/libs/types/event/event';
-import EventCardInGroup from '../group/EventCardInGroup';
-import { Calendar } from 'lucide-react';
-import { useCallback, useEffect, useState } from 'react';
+import EventCardInGroup from '@/libs/components/group/EventCardInGroup';
 
 interface UpcomingEventsProps {
 	events: Event[];
-	memberName?: string;
+	organizerName?: string;
 }
 
-const UpcomingEvents = ({ events, memberName }: UpcomingEventsProps) => {
+const UpcomingEvents = ({ events, organizerName }: UpcomingEventsProps) => {
+	const { t } = useTranslation('common');
 	const [api, setApi] = useState<CarouselApi>();
 	const [selectedIndex, setSelectedIndex] = useState(0);
 
@@ -40,12 +44,17 @@ const UpcomingEvents = ({ events, memberName }: UpcomingEventsProps) => {
 		<Card className="mt-10 p-8 bg-card hover:bg-accent/5 transition-all duration-300 shadow-sm hover:shadow-md border border-border/50">
 			<h2 className="text-2xl font-semibold mb-6 text-card-foreground flex items-center gap-2">
 				<Calendar className="w-5 h-5 text-card-foreground" />
-				Upcoming Events {memberName ? ` by ${memberName}` : ''}
+				{t('Upcoming Events')} {organizerName ? ` ${t('by')} ${organizerName}` : ''}{' '}
+				{events.length > 0 ? ` (${events.length})` : ''}
 			</h2>
 			<Carousel
 				opts={{
 					align: 'start',
 					loop: true,
+					inViewThreshold: 0.5,
+					skipSnaps: false,
+					dragFree: true,
+					containScroll: 'trimSnaps',
 				}}
 				setApi={setApi}
 				className="w-full flex items-center justify-center gap-2"
@@ -63,13 +72,13 @@ const UpcomingEvents = ({ events, memberName }: UpcomingEventsProps) => {
 				<CarouselNext className="static translate-y-0 hover:bg-accent/10 transition-colors duration-200" />
 			</Carousel>
 			<div className="flex justify-center gap-2 mt-4">
-				{events.map((_, index) => (
+				{Array.from({ length: Math.max(1, events.length - 2) }).map((_, idx) => (
 					<button
-						key={index}
+						key={idx}
 						className={`w-2 h-2 rounded-full transition-all duration-300 ${
-							index === selectedIndex ? 'bg-primary w-4' : 'bg-muted-foreground/20'
+							idx === selectedIndex ? 'bg-primary w-4' : 'bg-muted-foreground/20'
 						}`}
-						onClick={() => api?.scrollTo(index)}
+						onClick={() => api?.scrollTo(idx)}
 					/>
 				))}
 			</div>

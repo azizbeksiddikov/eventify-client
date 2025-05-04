@@ -1,31 +1,51 @@
-import { Button } from '../ui/button';
-import { ArrowRight, ArrowLeft } from 'lucide-react';
 import { useRouter } from 'next/router';
+import { useTranslation } from 'react-i18next';
+import { useReactiveVar } from '@apollo/client';
+
+import { userVar } from '@/apollo/store';
+import { Button } from '@/libs/components/ui/button';
+import { ArrowRight, ArrowLeft } from 'lucide-react';
+import { smallError } from '@/libs/alert';
+import { MemberType } from '@/libs/enums/member.enum';
 
 const ChosenGroupHeader = () => {
 	const router = useRouter();
+	const { t } = useTranslation('common');
+	const user = useReactiveVar(userVar);
+
+	const handleCreateGroup = () => {
+		if (user.memberType !== MemberType.ORGANIZER) {
+			smallError(t('Only organizers can create groups'));
+			return;
+		}
+		router.push('/groups/create');
+	};
 
 	return (
 		<section className="bg-gradient-to-b from-secondary/40 to-background py-10">
 			<div className="flex items-center justify-between mb-8 w-[90%] mx-auto">
 				<Button
 					type="button"
-					onClick={() => router.push('/groups')}
+					onClick={() => router.push('/events')}
 					className="h-14 px-8 bg-primary text-primary-foreground hover:bg-primary/90 transition-colors duration-200"
 				>
 					<div className="flex items-center gap-2">
 						<ArrowLeft className="w-4 h-4 mr-2" />
-						Back to Groups
+						{t('Back to Events')}
 					</div>
 				</Button>
 
 				<Button
 					type="button"
-					onClick={() => router.push('/groups/create')}
-					className="h-14 px-8 bg-primary text-primary-foreground hover:bg-primary/90 transition-colors duration-200"
+					onClick={handleCreateGroup}
+					className={`h-14 px-8 transition-colors duration-200 ${
+						user.memberType === MemberType.ORGANIZER
+							? 'bg-primary text-primary-foreground hover:bg-primary/90'
+							: 'bg-muted text-muted-foreground cursor-not-allowed'
+					}`}
 				>
 					<div className="flex items-center gap-2">
-						Create Group
+						{t('Create Group')}
 						<ArrowRight className="w-4 h-4" />
 					</div>
 				</Button>

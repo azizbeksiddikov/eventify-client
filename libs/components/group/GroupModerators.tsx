@@ -1,29 +1,34 @@
-import { GroupMember } from '@/libs/types/groupMembers/groupMember';
-import { Card } from '../ui/card';
-import { GroupMemberRole } from '@/libs/enums/group.enum';
 import Image from 'next/image';
-import { Shield, Users } from 'lucide-react';
-import { Badge } from '../ui/badge';
 import Link from 'next/link';
+import { useTranslation } from 'react-i18next';
+import { Shield, Users } from 'lucide-react';
+
+import { Card } from '@/libs/components/ui/card';
+import { Badge } from '@/libs/components/ui/badge';
+
+import { GroupMember } from '@/libs/types/groupMembers/groupMember';
+import { GroupMemberRole } from '@/libs/enums/group.enum';
 
 interface GroupModeratorsProps {
-	groupAdmins: GroupMember[];
+	groupModerators: GroupMember[];
 }
 
-const GroupModerators = ({ groupAdmins }: GroupModeratorsProps) => {
+const GroupModerators = ({ groupModerators }: GroupModeratorsProps) => {
+	const { t } = useTranslation('common');
+
 	return (
 		<Card className="p-8 bg-card hover:bg-secondary/15 transition-all duration-300 shadow-sm hover:shadow-md border border-border/50">
 			<h2 className="text-2xl font-semibold mb-6 text-card-foreground flex items-center gap-2">
 				<Users className="w-5 h-5 text-card-foreground" />
-				Moderators
+				{t('Moderators')}
 			</h2>
 			<div className="space-y-6">
-				{groupAdmins
+				{groupModerators
 					.filter((member) => member.groupMemberRole === GroupMemberRole.MODERATOR)
 					.map((moderator: GroupMember) => (
 						<Link
 							key={moderator._id}
-							href={`/organizer/${moderator.memberData?._id}`}
+							href={`/organizer/detail?id=${moderator.memberData?._id}`}
 							className="block group hover:scale-[1.02] transition-all duration-300 p-4 rounded-lg hover:bg-secondary/20 hover:border-l-4 hover:border-l-primary"
 						>
 							<div className="flex items-center space-x-6">
@@ -45,13 +50,12 @@ const GroupModerators = ({ groupAdmins }: GroupModeratorsProps) => {
 										</h3>
 										<Badge variant="secondary" className="bg-blue-100 text-blue-800">
 											<Shield className="h-3 w-3 mr-1" />
-											Moderator
+											{t('Moderator')}
 										</Badge>
 									</div>
 									<p className="text-base text-card-foreground leading-relaxed group-hover:text-card-foreground/80 transition-colors duration-200">
 										{moderator.memberData?.memberDesc ?? 'No Description'}
 									</p>
-									<p className="text-sm text-card-foreground/70">Joined {moderator.joinDate.toLocaleDateString()}</p>
 								</div>
 							</div>
 						</Link>

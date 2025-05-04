@@ -186,9 +186,9 @@ export const GET_GROUP = gql`
 				memberFollowings
 				memberFollowers
 				memberViews
+				memberRank
 				createdAt
 				updatedAt
-				accessToken
 			}
 			meLiked {
 				memberId
@@ -201,6 +201,57 @@ export const GET_GROUP = gql`
 				groupMemberRole
 				joinDate
 				meJoined
+			}
+			similarGroups {
+				_id
+				groupName
+				groupDesc
+				groupImage
+				memberId
+				groupCategories
+				groupViews
+				groupLikes
+				memberCount
+				createdAt
+				updatedAt
+				meOwner
+			}
+			groupUpcomingEvents {
+				_id
+				eventName
+				eventDesc
+				eventImage
+				eventDate
+				eventStartTime
+				eventEndTime
+				eventCity
+				eventAddress
+				eventCapacity
+				eventPrice
+				eventStatus
+				eventCategories
+				groupId
+				memberId
+				attendeeCount
+				eventLikes
+				eventViews
+				createdAt
+				updatedAt
+				meLiked {
+					memberId
+					likeRefId
+					myFavorite
+				}
+			}
+			meOwner
+			groupModerators {
+				_id
+				groupId
+				memberId
+				groupMemberRole
+				joinDate
+				createdAt
+				updatedAt
 			}
 		}
 	}

@@ -8,6 +8,7 @@ export enum Message {
 	REMOVE_FAILED = 'Failed to remove the record. Please try again.',
 	UPLOAD_FAILED = 'Failed to upload the file. Please try again.',
 	BAD_REQUEST = 'Invalid request. Please check your input.',
+	INVALID_SORT_OPTION = 'Invalid sort option',
 
 	// ===== Member Related Messages =====
 	USERNAME_REQUIRED = 'Username is required',

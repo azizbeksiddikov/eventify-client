@@ -1,15 +1,17 @@
 import { format } from 'date-fns';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useTranslation } from 'react-i18next';
+import { Heart, Calendar, Users, ExternalLink, MapPin, Eye, Clock } from 'lucide-react';
 
-import { REACT_APP_API_URL } from '@/libs/config';
 import { Button } from '@/libs/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader } from '@/libs/components/ui/card';
-import { Heart, Calendar, Users, ExternalLink, MapPin, Eye, Clock } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/libs/components/ui/tooltip';
-import { Event } from '@/libs/types/event/event';
 import { Badge } from '@/libs/components/ui/badge';
-import { useTranslation } from 'react-i18next';
+
+import { Event } from '@/libs/types/event/event';
+
+import { REACT_APP_API_URL } from '@/libs/config';
 
 interface EventCardProps {
 	event: Event;

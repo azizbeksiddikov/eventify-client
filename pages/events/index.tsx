@@ -1,12 +1,13 @@
+import { GetStaticProps } from 'next';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { EventCategory, EventStatus } from '../../libs/enums/event.enum';
-import withBasicLayout from '../../libs/components/layout/LayoutBasic';
-import { Event } from '../../libs/types/event/event';
-import { EventsInquiry } from '../../libs/types/event/event.input';
-import { Direction } from '../../libs/enums/common.enum';
-import 'react-date-range/dist/styles.css';
-import 'react-date-range/dist/theme/default.css';
+import { userVar } from '@/apollo/store';
+
+import { EventCategory, EventStatus } from '@/libs/enums/event.enum';
+import withBasicLayout from '@/libs/components/layout/LayoutBasic';
+import { Event } from '@/libs/types/event/event';
+import { EventsInquiry } from '@/libs/types/event/event.input';
+import { Direction } from '@/libs/enums/common.enum';
 import EventCard from '@/libs/components/events/EventCard';
 import SortAndFilter from '@/libs/components/events/SortAndFilter';
 import EventsHeader from '@/libs/components/events/EventsHeader';
@@ -16,10 +17,8 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useMutation, useReactiveVar } from '@apollo/client';
 import { useQuery } from '@apollo/client';
 import { GET_EVENTS } from '@/apollo/user/query';
-import { userVar } from '@/apollo/store';
 import { LIKE_TARGET_EVENT } from '@/apollo/user/mutation';
 import PaginationComponent from '@/libs/components/common/PaginationComponent';
-import { GetStaticProps } from 'next';
 import { likeHandler } from '@/libs/utils';
 
 export const getStaticProps: GetStaticProps = async ({ locale }) => ({
@@ -119,7 +118,7 @@ const EventsPage = ({
 	const [likeTargetEvent] = useMutation(LIKE_TARGET_EVENT);
 
 	const { data: getEventsData, refetch: getEventsRefetch } = useQuery(GET_EVENTS, {
-		fetchPolicy: 'network-only',
+		fetchPolicy: 'cache-and-network',
 		variables: {
 			input: eventsSearchFilters,
 		},

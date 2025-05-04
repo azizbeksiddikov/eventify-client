@@ -9,6 +9,7 @@ import { Input } from '@/libs/components/ui/input';
 import { Edit, Save, X, Trash2 } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/libs/components/ui/select';
 import { Badge } from '@/libs/components/ui/badge';
+import { REACT_APP_API_URL } from '@/libs/config';
 
 interface MemberPanelListType {
 	members: Member[];
@@ -122,7 +123,7 @@ export const MemberPanelList = ({ members, updateMemberHandler, deleteMemberHand
 									<TableCell>
 										<div className="flex items-center gap-2">
 											<Avatar className="h-8 w-8 border border-input">
-												<AvatarImage src={member.memberImage} alt={member.username} />
+												<AvatarImage src={`${REACT_APP_API_URL}/${member?.memberImage}`} alt={member.username} />
 												<AvatarFallback className="bg-muted text-muted-foreground">{member.username[0]}</AvatarFallback>
 											</Avatar>
 											{member.memberType === MemberType.ORGANIZER ? (

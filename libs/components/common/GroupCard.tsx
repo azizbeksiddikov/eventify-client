@@ -1,22 +1,80 @@
-import { Button } from '@/libs/components/ui/button';
-import { Card, CardContent, CardFooter, CardHeader } from '@/libs/components/ui/card';
-import { Heart, Calendar, Users, ExternalLink, Hash, Eye } from 'lucide-react';
-import { Group } from '@/libs/types/group/group';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/libs/components/ui/tooltip';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Badge } from '@/libs/components/ui/badge';
 import { useTranslation } from 'react-i18next';
+import { useReactiveVar } from '@apollo/client';
+import { Heart, Calendar, Users, ExternalLink, Hash, Eye } from 'lucide-react';
+import { useMutation } from '@apollo/client';
+import { userVar } from '@/apollo/store';
 
+import { Button } from '@/libs/components/ui/button';
+import { Card, CardContent, CardFooter, CardHeader } from '@/libs/components/ui/card';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/libs/components/ui/tooltip';
+import { Badge } from '@/libs/components/ui/badge';
+
+import { REACT_APP_API_URL } from '@/libs/config';
+import { smallError, smallSuccess } from '@/libs/alert';
+import { Message } from '@/libs/enums/common.enum';
+
+import { JOIN_GROUP, LEAVE_GROUP, LIKE_TARGET_GROUP } from '@/apollo/user/mutation';
+import { Group } from '@/libs/types/group/group';
 interface GroupCardProps {
 	group: Group;
-	likeGroupHandler: (groupId: string) => void;
-	handleJoinGroup: (groupId: string) => void;
-	handleLeaveGroup: (groupId: string) => void;
 }
 
-const GroupCard = ({ group, likeGroupHandler, handleJoinGroup, handleLeaveGroup }: GroupCardProps) => {
+const GroupCard = ({ group }: GroupCardProps) => {
 	const { t } = useTranslation('common');
+	const user = useReactiveVar(userVar);
+
+	/** APOLLO */
+	const [likeTargetGroup] = useMutation(LIKE_TARGET_GROUP);
+	const [joinGroup] = useMutation(JOIN_GROUP);
+	const [leaveGroup] = useMutation(LEAVE_GROUP);
+
+	/** HANDLERS **/
+	const likeGroupHandler = async (groupId: string) => {
+		try {
+			if (!groupId) return;
+			if (!user._id || user._id === '') throw new Error(Message.NOT_AUTHENTICATED);
+
+			await likeTargetGroup({
+				variables: { input: groupId },
+			});
+
+			await smallSuccess(t('Group liked successfully'));
+		} catch (err: any) {
+			console.log('ERROR, likeGroupHandler:', err.message);
+			smallError(err.message);
+		}
+	};
+
+	const handleJoinGroup = async (groupId: string) => {
+		try {
+			if (!groupId) return;
+			if (!user._id || user._id === '') throw new Error(Message.NOT_AUTHENTICATED);
+
+			await joinGroup({
+				variables: { input: groupId },
+			});
+
+			await smallSuccess(t('Group joined successfully'));
+		} catch (err: any) {
+			console.log('ERROR, handleJoinGroup:', err.message);
+			smallError(err.message);
+		}
+	};
+
+	const handleLeaveGroup = async (groupId: string) => {
+		try {
+			if (!groupId) return;
+			if (!user._id || user._id === '') throw new Error(Message.NOT_AUTHENTICATED);
+
+			await leaveGroup({
+				variables: { input: groupId },
+			});
+		} catch (err: any) {
+			console.log('ERROR, handleLeaveGroup:', err.message);
+		}
+	};
 
 	return (
 		<Card className="pt-0 w-full mx-auto shadow-md hover:shadow-lg transition-all duration-300 bg-card/60 flex flex-col h-full group hover:scale-105 overflow-hidden">
@@ -24,7 +82,7 @@ const GroupCard = ({ group, likeGroupHandler, handleJoinGroup, handleLeaveGroup 
 				<div className="relative aspect-[16/9] w-full overflow-hidden rounded-t-xl">
 					<Link href={`/groups/${group._id}`}>
 						<Image
-							src={group.groupImage}
+							src={`${REACT_APP_API_URL}/${group.groupImage}`}
 							alt={group.groupName}
 							fill
 							className="object-cover transition-transform duration-300"
@@ -125,7 +183,7 @@ const GroupCard = ({ group, likeGroupHandler, handleJoinGroup, handleLeaveGroup 
 					{group?.meJoined?.[0]?.meJoined ? t('Leave') : t('Join')}
 				</Button>
 
-				<Link href={`/groups/${group._id}`} className="w-full sm:w-auto">
+				<Link href={`/groups/detail?groupId=${group._id}`} className="w-full sm:w-auto">
 					<Button
 						variant="outline"
 						size="sm"

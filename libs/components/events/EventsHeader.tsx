@@ -6,6 +6,7 @@ import { useReactiveVar } from '@apollo/client';
 import { MemberType } from '@/libs/enums/member.enum';
 import { smallError } from '@/libs/alert';
 import { userVar } from '@/apollo/store';
+
 const EventsHeader = () => {
 	const router = useRouter();
 	const { t } = useTranslation('common');

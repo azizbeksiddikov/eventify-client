@@ -1,11 +1,12 @@
+import { useRouter } from 'next/navigation';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/libs/components/ui/button';
+import { REACT_APP_API_URL } from '@/libs/config';
 import { Avatar, AvatarFallback, AvatarImage } from '@/libs/components/ui/avatar';
 import { Card, CardContent, CardFooter, CardHeader } from '@/libs/components/ui/card';
 import { Heart, Calendar, Users, ExternalLink, Mail, User } from 'lucide-react';
 import { Member } from '@/libs/types/member/member';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/libs/components/ui/tooltip';
-import { useRouter } from 'next/navigation';
-import { useTranslation } from 'react-i18next';
 
 interface OrganizerCardProps {
 	organizer: Member;
@@ -27,7 +28,7 @@ const OrganizerCard = ({ organizer, likeHandler, subscribeHandler, unsubscribeHa
 			<CardHeader className="py-4 flex-shrink-0">
 				<div className="flex flex-col sm:flex-row gap-4 items-center sm:items-start">
 					<Avatar className="h-16 w-16 sm:h-20 sm:w-20 border-4 border-card shadow-lg ring-2 ring-primary/20">
-						<AvatarImage src={organizer?.memberImage} alt={organizer.memberFullName} />
+						<AvatarImage src={`${REACT_APP_API_URL}/${organizer?.memberImage}`} alt={organizer.memberFullName} />
 						<AvatarFallback className="bg-primary/10 text-primary">
 							<User className="h-8 w-8 sm:h-10 sm:w-10" />
 						</AvatarFallback>

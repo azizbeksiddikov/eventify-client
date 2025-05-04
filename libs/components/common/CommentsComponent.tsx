@@ -23,6 +23,7 @@ import { GET_COMMENTS } from '@/apollo/user/query';
 import { smallError, smallSuccess } from '@/libs/alert';
 import { Message, Direction } from '@/libs/enums/common.enum';
 import PaginationComponent from './PaginationComponent';
+import { REACT_APP_API_URL } from '@/libs/config';
 
 const LIMIT_OPTIONS = [5, 10, 20, 50];
 
@@ -276,7 +277,9 @@ const CommentsComponent = ({ commentRefId, commentGroup, initialCommentsInquiry 
 							comments.list
 								.filter((comment) => comment._id !== editingCommentId)
 								.map((comment, index) => {
-									const memberImage = !!comment.memberData?.memberImage ? comment.memberData?.memberImage : null;
+									const memberImage = !!comment.memberData?.memberImage
+										? `${REACT_APP_API_URL}/${comment.memberData?.memberImage}`
+										: null;
 									const memberName = !!comment.memberData?.memberFullName
 										? comment.memberData?.memberFullName
 										: t('No Name');

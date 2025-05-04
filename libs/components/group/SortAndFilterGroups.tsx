@@ -1,66 +1,63 @@
+import { useTranslation } from 'react-i18next';
+
+import { groupsSortOptions } from '@/libs/config';
+import { cn } from '@/libs/utils';
+import { smallError } from '@/libs/alert';
 import { Button, buttonVariants } from '@/libs/components/ui/button';
 import { Input } from '@/libs/components/ui/input';
-import { Direction } from '@/libs/enums/common.enum';
-import { ArrowUpDown, X } from 'lucide-react';
-import { cn } from '@/libs/utils';
+import { Direction, Message } from '@/libs/enums/common.enum';
 import { GroupsInquiry } from '@/libs/types/group/group.input';
 import { Group } from '@/libs/types/group/group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/libs/components/ui/select';
-
-const sortOptions = [
-	{ value: 'createdAt', label: 'Newest' },
-	{ value: 'memberCount', label: 'Members' },
-	{ value: 'groupViews', label: 'Views' },
-	{ value: 'groupLikes', label: 'Likes' },
-];
+import { ArrowUpDown, X } from 'lucide-react';
 
 interface SortAndFilterProps {
 	updateURL: (search: GroupsInquiry) => void;
-	groupSearch: GroupsInquiry;
+	groupsSearchFilters: GroupsInquiry;
+	initialSearch: GroupsInquiry;
 }
 
-function SortAndFilterGroups({ updateURL, groupSearch }: SortAndFilterProps) {
+function SortAndFilterGroups({ updateURL, groupsSearchFilters, initialSearch }: SortAndFilterProps) {
+	const { t } = useTranslation('common');
+
 	const handleSearch = (text: string) => {
 		updateURL({
-			...groupSearch,
+			...groupsSearchFilters,
 			search: {
+				...groupsSearchFilters.search,
 				text: text,
 			},
 		});
 	};
 
 	const handleSortChange = (value: string) => {
+		const sortOption = groupsSortOptions.find((option) => option.value === value);
+
+		if (!sortOption) smallError(t(Message.INVALID_SORT_OPTION));
+
 		updateURL({
-			...groupSearch,
-			sort: value as keyof Group,
+			...groupsSearchFilters,
+			sort: sortOption?.value as keyof Group,
 		});
 	};
 
 	const toggleDirection = () => {
 		updateURL({
-			...groupSearch,
-			direction: groupSearch.direction === Direction.ASC ? Direction.DESC : Direction.ASC,
+			...groupsSearchFilters,
+			direction: groupsSearchFilters.direction === Direction.ASC ? Direction.DESC : Direction.ASC,
 		});
 	};
 
 	const clearAllFilters = () => {
-		updateURL({
-			search: {
-				text: '',
-			},
-			sort: 'createdAt',
-			direction: Direction.DESC,
-			page: 1,
-			limit: 10,
-		});
+		updateURL(initialSearch);
 	};
 
 	return (
 		<div className="rounded-2xl shadow-lg p-6 mb-8 relative  border-border/80 border-2 w-[75%] mx-auto">
 			<div className="flex flex-row items-center justify-between gap-12">
 				<Input
-					placeholder="Search groups..."
-					value={groupSearch.search?.text}
+					placeholder={t('Search groups...')}
+					value={groupsSearchFilters.search?.text}
 					onChange={(e) => handleSearch(e.target.value)}
 					className={cn(
 						buttonVariants({ variant: 'ghost', size: 'icon' }),
@@ -69,15 +66,15 @@ function SortAndFilterGroups({ updateURL, groupSearch }: SortAndFilterProps) {
 				/>
 
 				<div className="flex items-center gap-4">
-					<Select value={groupSearch.sort} onValueChange={handleSortChange}>
+					<Select value={groupsSearchFilters.sort} onValueChange={handleSortChange}>
 						<SelectTrigger className="w-[180px] h-11">
 							<ArrowUpDown className="text-muted-foreground" />
-							<SelectValue placeholder="Sort by" />
+							<SelectValue placeholder={t('Sort by')} />
 						</SelectTrigger>
 						<SelectContent>
-							{sortOptions.map((option) => (
+							{groupsSortOptions.map((option) => (
 								<SelectItem key={option.value} value={option.value}>
-									{option.label}
+									{t(option.label)}
 								</SelectItem>
 							))}
 						</SelectContent>
@@ -90,12 +87,12 @@ function SortAndFilterGroups({ updateURL, groupSearch }: SortAndFilterProps) {
 						className="w-16 h-9 bg-background/80 backdrop-blur-sm border-border/50 hover:bg-accent/50 transition-colors flex items-center justify-center gap-1"
 					>
 						<span
-							className={`${groupSearch.direction === Direction.ASC ? 'text-lg font-bold text-primary' : 'text-sm text-muted-foreground'}`}
+							className={`${groupsSearchFilters.direction === Direction.ASC ? 'text-lg font-bold text-primary' : 'text-sm text-muted-foreground'}`}
 						>
 							↑
 						</span>
 						<span
-							className={`${groupSearch.direction === Direction.DESC ? 'text-lg font-bold text-primary' : 'text-sm text-muted-foreground'}`}
+							className={`${groupsSearchFilters.direction === Direction.DESC ? 'text-lg font-bold text-primary' : 'text-sm text-muted-foreground'}`}
 						>
 							↓
 						</span>
@@ -107,7 +104,7 @@ function SortAndFilterGroups({ updateURL, groupSearch }: SortAndFilterProps) {
 						className="h-11 hover:bg-accent hover:text-accent-foreground"
 					>
 						<X className="h-4 w-4 " />
-						Clear
+						{t('Clear')}
 					</Button>
 				</div>
 			</div>

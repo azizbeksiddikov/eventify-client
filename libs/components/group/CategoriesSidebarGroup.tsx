@@ -1,42 +1,43 @@
-import { Button } from '../ui/button';
-import { Checkbox } from '../ui/checkbox';
-import { Label } from '../ui/label';
+import { useTranslation } from 'react-i18next';
 import { X } from 'lucide-react';
+import { Button } from '@/libs/components/ui/button';
+import { Checkbox } from '@/libs/components/ui/checkbox';
+import { Label } from '@/libs/components/ui/label';
 import { GroupsInquiry } from '@/libs/types/group/group.input';
 import { GroupCategory } from '@/libs/enums/group.enum';
 
 interface CategoriesSidebarProps {
-	groupSearch: GroupsInquiry;
+	groupsSearchFilters: GroupsInquiry;
 	updateURL: (search: GroupsInquiry) => void;
 	initialSearch: GroupsInquiry;
 }
 
-const CategoriesSidebarGroup = ({ groupSearch, updateURL, initialSearch }: CategoriesSidebarProps) => {
+const CategoriesSidebarGroup = ({ groupsSearchFilters, updateURL, initialSearch }: CategoriesSidebarProps) => {
+	const { t } = useTranslation('common');
 	const handleClearAll = () => {
 		updateURL(initialSearch);
 	};
 
 	const handleCategoryChange = (category: GroupCategory) => {
-		const currentCategories = groupSearch.search?.groupCategories || [];
+		const currentCategories = groupsSearchFilters.search?.groupCategories || [];
 		const newCategories = currentCategories.includes(category)
 			? currentCategories.filter((cat) => cat !== category)
 			: [...currentCategories, category];
 
 		updateURL({
-			...groupSearch,
-			search: { ...groupSearch.search, groupCategories: newCategories },
+			...groupsSearchFilters,
+			search: { ...groupsSearchFilters.search, groupCategories: newCategories },
 		});
 	};
-
 	return (
 		<div className="w-full md:w-72 shrink-0">
 			<div className="bg-primary/5 backdrop-blur-sm rounded-2xl shadow-sm border border-primary/20 p-6">
 				<div className="flex items-center justify-between mb-6">
-					<h3 className="text-lg font-semibold text-primary">Categories</h3>
+					<h3 className="text-lg font-semibold text-primary">{t('Categories')}</h3>
 					<Button type="submit" onClick={handleClearAll} className="h-10 px-6 bg-secondary/50 text-card-foreground">
 						<div className="flex items-center gap-1">
 							<X className="w-4 h-4" />
-							Clear All
+							{t('Clear All')}
 						</div>
 					</Button>
 				</div>
@@ -49,14 +50,14 @@ const CategoriesSidebarGroup = ({ groupSearch, updateURL, initialSearch }: Categ
 						>
 							<Checkbox
 								id={`sidebar-${category}`}
-								checked={groupSearch.search?.groupCategories?.includes(category)}
+								checked={groupsSearchFilters.search?.groupCategories?.includes(category)}
 								className="border-primary/50 data-[state=checked]:bg-primary data-[state=checked]:border-primary pointer-events-none"
 							/>
 							<Label
 								htmlFor={`sidebar-${category}`}
 								className="text-sm cursor-pointer text-foreground/90 hover:text-primary transition-colors duration-200 pointer-events-none"
 							>
-								{category.charAt(0) + category.slice(1).toLowerCase().replace('_', ' ')}
+								{t(category).charAt(0).toUpperCase() + t(category).slice(1).toLowerCase().replace('_', ' ')}
 							</Label>
 						</div>
 					))}

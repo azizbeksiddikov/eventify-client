@@ -11,13 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Calendar, ArrowUpDown, X } from 'lucide-react';
 import { cn } from '@/libs/utils';
 import { smallError } from '@/libs/alert';
-
-const sortOptions = [
-	{ value: 'createdAt', label: 'Newest' },
-	{ value: 'eventDate', label: 'Event Date' },
-	{ value: 'eventPrice', label: 'Price' },
-	{ value: 'attendeeCount', label: 'Popularity' },
-];
+import { eventsSortOptions } from '@/libs/config';
 
 interface SortAndFilterProps {
 	updateURL: (search: EventsInquiry) => void;
@@ -32,6 +26,7 @@ function SortAndFilter({ updateURL, eventsSearchFilters, initialSearch }: SortAn
 		updateURL({
 			...eventsSearchFilters,
 			search: {
+				...eventsSearchFilters.search,
 				text: text,
 			},
 		});
@@ -81,8 +76,8 @@ function SortAndFilter({ updateURL, eventsSearchFilters, initialSearch }: SortAn
 	};
 
 	const handleSortChange = (value: string) => {
-		// check if the value is in the sortOptions array
-		const sortOption = sortOptions.find((option) => option.value === value);
+		// check if the value is in the eventsSortOptions array
+		const sortOption = eventsSortOptions.find((option) => option.value === value);
 
 		if (!sortOption) smallError(t('Invalid sort option'));
 
@@ -107,7 +102,7 @@ function SortAndFilter({ updateURL, eventsSearchFilters, initialSearch }: SortAn
 		<div className="rounded-2xl shadow-lg p-6 mb-8 relative  border-border/80 border-2 w-[75%] mx-auto">
 			<div className="flex flex-row items-center justify-between gap-12">
 				<Input
-					placeholder="Search events..."
+					placeholder={t('Search events...')}
 					value={eventsSearchFilters.search?.text}
 					onChange={(e) => handleSearch(e.target.value)}
 					className={cn(
@@ -226,10 +221,10 @@ function SortAndFilter({ updateURL, eventsSearchFilters, initialSearch }: SortAn
 					<Select value={eventsSearchFilters.sort} onValueChange={handleSortChange}>
 						<SelectTrigger className="w-[180px] h-11">
 							<ArrowUpDown className="text-muted-foreground" />
-							<SelectValue placeholder="Sort by" />
+							<SelectValue placeholder={t('Sort by')} />
 						</SelectTrigger>
 						<SelectContent>
-							{sortOptions.map((option) => (
+							{eventsSortOptions.map((option) => (
 								<SelectItem key={option.value} value={option.value}>
 									{t(option.label)}
 								</SelectItem>
