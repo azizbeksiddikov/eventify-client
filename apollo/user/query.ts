@@ -79,6 +79,84 @@ export const GET_ORGANIZERS = gql`
 	}
 `;
 
+export const GET_ORGANIZER = gql`
+	query GetOrganizer($input: String!) {
+		getOrganizer(input: $input) {
+			_id
+			username
+			memberEmail
+			memberPhone
+			memberFullName
+			memberType
+			memberStatus
+			emailVerified
+			memberDesc
+			memberImage
+			memberPoints
+			memberLikes
+			memberFollowings
+			memberFollowers
+			memberViews
+			memberRank
+			memberGroups
+			memberEvents
+			createdAt
+			updatedAt
+			accessToken
+			meLiked {
+				memberId
+				likeRefId
+				myFavorite
+			}
+			meFollowed {
+				followingId
+				followerId
+				myFollowing
+			}
+			organizedEvents {
+				_id
+				eventName
+				eventDesc
+				eventImage
+				eventDate
+				eventStartTime
+				eventEndTime
+				eventCity
+				eventAddress
+				eventCapacity
+				eventPrice
+				eventStatus
+				eventCategories
+				groupId
+				memberId
+				attendeeCount
+				eventLikes
+				eventViews
+				createdAt
+				updatedAt
+				meLiked {
+					memberId
+					likeRefId
+					myFavorite
+				}
+			}
+			organizedGroups {
+				_id
+				groupName
+				groupDesc
+				groupImage
+				memberId
+				groupCategories
+				groupViews
+				groupLikes
+				memberCount
+				createdAt
+				updatedAt
+			}
+		}
+	}
+`;
+
 /**************************
  *         GROUP          *
  *************************/

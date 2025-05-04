@@ -1,44 +1,115 @@
-import { useState } from 'react';
-import withBasicLayout from '@/libs/components/layout/LayoutBasic';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
+import { useTranslation } from 'react-i18next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+
+import { useMutation, useQuery, useReactiveVar } from '@apollo/client';
+import { GET_ORGANIZER } from '@/apollo/user/query';
+import { LIKE_TARGET_MEMBER, SUBSCRIBE, UNSUBSCRIBE } from '@/apollo/user/mutation';
+import { userVar } from '@/apollo/store';
+
 import { Member } from '@/libs/types/member/member';
-import { Event } from '@/libs/types/event/event';
-import { Group } from '@/libs/types/group/group';
 import { CommentGroup } from '@/libs/enums/comment.enum';
+import { Message } from '@/libs/enums/common.enum';
+
+import withBasicLayout from '@/libs/components/layout/LayoutBasic';
 import CommentsComponent from '@/libs/components/common/CommentsComponent';
-import { comments, eventList, groupList, organizers } from '@/data';
 import UpcomingEvents from '@/libs/components/common/UpcomingEvents';
 import OrganizerHeader from '@/libs/components/organizer/OrganizerHeader';
 import OrganizerProfile from '@/libs/components/organizer/OrganizerProfile';
 import SimilarGroups from '@/libs/components/common/SimilarGroups';
 
+import { smallError, smallSuccess } from '@/libs/alert';
+
+export const getStaticProps = async ({ locale }: { locale: string }) => ({
+	props: {
+		...(await serverSideTranslations(locale, ['common'])),
+	},
+});
+
 const OrganizerDetailPage = () => {
-	const [isLiked, setIsLiked] = useState(false);
-	const [isFollowing, setIsFollowing] = useState(false);
+	const router = useRouter();
+	const user = useReactiveVar(userVar);
+	const { t } = useTranslation('common');
 
-	const handleLike = async () => {
+	const [organizerId, setOrganizerId] = useState<string | null>(null);
+	const [organizer, setOrganizer] = useState<Member | null>(null);
+
+	/** APOLLO */
+	const [likeTargetMember] = useMutation(LIKE_TARGET_MEMBER);
+	const [subscribe] = useMutation(SUBSCRIBE);
+	const [unsubscribe] = useMutation(UNSUBSCRIBE);
+
+	const { data: getOrganizerData, refetch: refetchOrganizer } = useQuery(GET_ORGANIZER, {
+		fetchPolicy: 'cache-and-network',
+		skip: !organizerId,
+		variables: { input: organizerId },
+		notifyOnNetworkStatusChange: true,
+	});
+
+	/** LIFECYCLE */
+	useEffect(() => {
+		if (router.query.organizerId) {
+			setOrganizerId(router.query.organizerId as string);
+		}
+	}, [router]);
+
+	useEffect(() => {
+		if (getOrganizerData?.getOrganizer) {
+			setOrganizer(getOrganizerData.getOrganizer);
+		}
+	}, [getOrganizerData]);
+
+	/** HANDLERS */
+	const likeMemberHandler = async (memberId: string) => {
 		try {
-			setIsLiked(!isLiked);
-			// TODO: Implement like/unlike API call
-		} catch (error) {
-			console.error('Error updating like:', error);
-			setIsLiked(!isLiked);
+			if (!memberId) return;
+			if (!user._id || user._id === '') throw new Error(Message.NOT_AUTHENTICATED);
+
+			await likeTargetMember({
+				variables: { input: memberId },
+			});
+
+			await smallSuccess(t('Member liked successfully'));
+		} catch (err: any) {
+			console.log('ERROR, likeMemberHandler:', err.message);
+			smallError(err.message);
 		}
 	};
 
-	const handleFollow = async () => {
+	const subscribeHandler = async (memberId: string) => {
 		try {
-			setIsFollowing(!isFollowing);
-			// TODO: Implement follow/unfollow API call
-		} catch (error) {
-			console.error('Error updating follow status:', error);
-			setIsFollowing(!isFollowing);
+			if (!memberId) return;
+			if (!user._id || user._id === '') throw new Error(Message.NOT_AUTHENTICATED);
+
+			await subscribe({
+				variables: { input: memberId },
+			});
+
+			await smallSuccess(t('Member subscribed successfully'));
+		} catch (err: any) {
+			console.log('ERROR, subscribeHandler:', err.message);
+			smallError(err.message);
 		}
 	};
 
-	const organizer: Member = organizers[0];
-	const organizerEvents: Event[] = eventList;
-	const organizerGroups: Group[] = groupList;
+	const unsubscribeHandler = async (memberId: string) => {
+		try {
+			if (!memberId) return;
+			if (!user._id || user._id === '') throw new Error(Message.NOT_AUTHENTICATED);
 
+			await unsubscribe({
+				variables: { input: memberId },
+			});
+
+			await smallSuccess(t('Member unsubscribed successfully'));
+		} catch (err: any) {
+			console.log('ERROR, unsubscribeHandler:', err.message);
+			smallError(err.message);
+		}
+	};
+
+	if (!organizer) return null;
 	return (
 		<div>
 			<OrganizerHeader />
@@ -47,21 +118,24 @@ const OrganizerDetailPage = () => {
 				<div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 					<OrganizerProfile
 						organizer={organizer}
-						isLiked={isLiked}
-						isFollowing={isFollowing}
-						onLike={handleLike}
-						onFollow={handleFollow}
+						likeMemberHandler={likeMemberHandler}
+						subscribeHandler={subscribeHandler}
+						unsubscribeHandler={unsubscribeHandler}
 					/>
 					<div className="space-y-6">
-						<SimilarGroups groups={organizerGroups} text="Organizer Groups" />
+						{organizer?.organizedGroups && organizer.organizedGroups.length > 0 && (
+							<SimilarGroups groups={organizer.organizedGroups} text={t('Organizer Groups')} />
+						)}
 					</div>
 				</div>
 
 				{/* Events Section */}
-				<UpcomingEvents events={organizerEvents} memberName={organizer.memberFullName} />
+				{organizer?.organizedEvents && organizer.organizedEvents.length > 0 && (
+					<UpcomingEvents events={organizer.organizedEvents} organizerName={organizer.memberFullName} />
+				)}
 
 				{/* Comments Section */}
-				<CommentsComponent comments={comments} commentGroup={CommentGroup.MEMBER} commentRefId={organizer._id} />
+				<CommentsComponent commentRefId={organizer._id} commentGroup={CommentGroup.MEMBER} />
 			</div>
 		</div>
 	);

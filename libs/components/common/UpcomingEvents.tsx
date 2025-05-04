@@ -23,11 +23,9 @@ interface UpcomingEventsProps {
 const UpcomingEvents = ({ events, organizerName }: UpcomingEventsProps) => {
 	const { t } = useTranslation('common');
 	const [api, setApi] = useState<CarouselApi>();
-	const [selectedIndex, setSelectedIndex] = useState(0);
 
 	const onSelect = useCallback(() => {
 		if (!api) return;
-		setSelectedIndex(api.selectedScrollSnap());
 	}, [api]);
 
 	useEffect(() => {
@@ -62,7 +60,12 @@ const UpcomingEvents = ({ events, organizerName }: UpcomingEventsProps) => {
 				<CarouselPrevious className="static translate-y-0 hover:bg-accent/10 transition-colors duration-200" />
 				<CarouselContent className="-ml-2 md:-ml-4">
 					{events.map((event) => (
-						<CarouselItem key={event._id} className="pl-2 md:pl-4 md:basis-1/2 lg:basis-1/3">
+						<CarouselItem
+							key={event._id}
+							className={`pl-2 md:pl-4 ${
+								events.length <= 2 ? 'md:basis-full lg:basis-1/2' : 'md:basis-1/2 lg:basis-1/3'
+							}`}
+						>
 							<div className="p-1">
 								<EventCardInGroup event={event} />
 							</div>
@@ -71,17 +74,6 @@ const UpcomingEvents = ({ events, organizerName }: UpcomingEventsProps) => {
 				</CarouselContent>
 				<CarouselNext className="static translate-y-0 hover:bg-accent/10 transition-colors duration-200" />
 			</Carousel>
-			<div className="flex justify-center gap-2 mt-4">
-				{Array.from({ length: Math.max(1, events.length - 2) }).map((_, idx) => (
-					<button
-						key={idx}
-						className={`w-2 h-2 rounded-full transition-all duration-300 ${
-							idx === selectedIndex ? 'bg-primary w-4' : 'bg-muted-foreground/20'
-						}`}
-						onClick={() => api?.scrollTo(idx)}
-					/>
-				))}
-			</div>
 		</Card>
 	);
 };

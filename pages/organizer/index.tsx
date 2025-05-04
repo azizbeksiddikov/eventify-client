@@ -17,6 +17,13 @@ import { Member } from '@/libs/types/member/member';
 import { userVar } from '@/apollo/store';
 import { smallSuccess } from '@/libs/alert';
 import { useTranslation } from 'react-i18next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+
+export const getStaticProps = async ({ locale }: { locale: string }) => ({
+	props: {
+		...(await serverSideTranslations(locale, ['common'])),
+	},
+});
 
 interface OrganizersPageProps {
 	initialSearch?: OrganizersInquiry;

@@ -29,7 +29,6 @@ const GroupDetailPage = () => {
 	const router = useRouter();
 	const user = useReactiveVar(userVar);
 	const { t } = useTranslation('common');
-	// const { groupId } = router.query;
 
 	const [groupId, setGroupId] = useState<string | null>(null);
 	const [group, setGroup] = useState<Group | null>(null);
