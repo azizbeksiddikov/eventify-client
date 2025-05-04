@@ -673,6 +673,28 @@ export const GET_TICKETS = gql`
 			totalPrice
 			createdAt
 			updatedAt
+			event {
+				_id
+				eventName
+				eventDesc
+				eventImage
+				eventDate
+				eventStartTime
+				eventEndTime
+				eventCity
+				eventAddress
+				eventCapacity
+				eventPrice
+				eventStatus
+				eventCategories
+				groupId
+				memberId
+				attendeeCount
+				eventLikes
+				eventViews
+				createdAt
+				updatedAt
+			}
 		}
 	}
 `;

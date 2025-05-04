@@ -1,138 +1,188 @@
-import { useState } from 'react';
-import { Member } from '@/libs/types/member/member';
-import { MemberUpdateInput } from '@/libs/types/member/member.update';
+import { useTranslation } from 'react-i18next';
+import { ImageIcon } from 'lucide-react';
+
 import { Button } from '@/libs/components/ui/button';
 import { Input } from '@/libs/components/ui/input';
 import { Label } from '@/libs/components/ui/label';
 import { Textarea } from '@/libs/components/ui/textarea';
-import { ImageIcon } from 'lucide-react';
+
+import { MemberUpdateInput } from '@/libs/types/member/member.update';
+import { REACT_APP_API_URL } from '@/libs/config';
+import { imageTypes } from '@/libs/config';
+import axios from 'axios';
+import { getJwtToken } from '@/libs/auth';
+import { smallError } from '@/libs/alert';
+import { Message } from '@/libs/enums/common.enum';
 
 interface ProfileSettingsProps {
-	member: Member;
 	handleUpdateMember: (data: MemberUpdateInput) => void;
+	memberUpdateInput: MemberUpdateInput;
+	setMemberUpdateInput: (data: MemberUpdateInput) => void;
 }
 
-export const ProfileSettings = ({ member, handleUpdateMember }: ProfileSettingsProps) => {
-	const [formData, setFormData] = useState<MemberUpdateInput>({
-		username: member.username,
-		memberEmail: member.memberEmail,
-		memberPhone: member.memberPhone || '',
-		memberFullName: member.memberFullName,
-		memberDesc: member.memberDesc || '',
-		memberImage: member.memberImage || '',
-	});
-	const [imagePreview, setImagePreview] = useState<string>(member.memberImage || '');
+export const ProfileSettings = ({
+	handleUpdateMember,
+	memberUpdateInput,
+	setMemberUpdateInput,
+}: ProfileSettingsProps) => {
+	const { t } = useTranslation('common');
+	const token = getJwtToken();
 
-	const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const file = e.target.files?.[0];
-		if (file) {
-			const reader = new FileReader();
-			reader.onloadend = () => {
-				const imageUrl = reader.result as string;
-				setImagePreview(imageUrl);
-				setFormData((prev) => ({ ...prev, memberImage: imageUrl }));
-			};
-			reader.readAsDataURL(file);
+	/** HANDLERS */
+	const uploadImage = async (e: any) => {
+		try {
+			const image = e.target.files[0];
+
+			const formData = new FormData();
+			formData.append(
+				'operations',
+				JSON.stringify({
+					query: `mutation ImageUploader($file: Upload!, $target: String!) {
+						imageUploader(file: $file, target: $target) 
+				  }`,
+					variables: {
+						file: null,
+						target: 'member',
+					},
+				}),
+			);
+			formData.append(
+				'map',
+				JSON.stringify({
+					'0': ['variables.file'],
+				}),
+			);
+			formData.append('0', image);
+
+			const response = await axios.post(`${process.env.REACT_APP_API_GRAPHQL_URL}`, formData, {
+				headers: {
+					'Content-Type': 'multipart/form-data',
+					'apollo-require-preflight': true,
+					Authorization: `Bearer ${token}`,
+				},
+			});
+
+			const responseImage = response.data.data.imageUploader;
+			setMemberUpdateInput({ ...memberUpdateInput, memberImage: responseImage });
+		} catch (err) {
+			console.log('Error, uploadImage:', err);
 		}
 	};
 
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
-		handleUpdateMember(formData);
+
+		// Validate email if it's being updated
+		if (memberUpdateInput.memberEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(memberUpdateInput.memberEmail)) {
+			smallError(Message.INVALID_EMAIL);
+			return;
+		}
+
+		handleUpdateMember(memberUpdateInput);
 	};
 
 	return (
-		<div className="bg-white rounded-lg shadow">
-			<div className="px-6 py-4 border-b border-gray-200">
-				<h2 className="text-lg font-medium text-gray-900">Profile Settings</h2>
+		<div className="bg-card rounded-xl shadow-sm">
+			<div className="px-6 py-4 border-b border-border">
+				<h2 className="text-lg font-medium text-card-foreground">{t('Profile Settings')}</h2>
 			</div>
 			<form onSubmit={handleSubmit} className="p-6 space-y-6">
 				{/* Image Upload Section */}
 				<div className="space-y-4">
-					<label className="text-sm font-medium text-gray-700">Profile Image</label>
-					<div className="relative aspect-square w-32 mx-auto rounded-full overflow-hidden border border-gray-200">
-						{imagePreview ? (
+					<Label className="text-sm font-medium text-card-foreground">{t('Profile Image')}</Label>
+					<div className="relative aspect-square w-32 mx-auto rounded-full overflow-hidden border border-border">
+						{memberUpdateInput.memberImage ? (
 							<>
-								<img src={imagePreview} alt="Profile preview" className="object-cover w-full h-full" />
+								<img
+									src={`${REACT_APP_API_URL}/${memberUpdateInput.memberImage}`}
+									alt="Profile preview"
+									className="object-cover w-full h-full"
+								/>
 								<label
 									htmlFor="image"
 									className="absolute inset-0 flex items-center justify-center bg-black/0 hover:bg-black/50 transition-colors duration-200 cursor-pointer"
 								>
 									<span className="text-white font-medium opacity-0 hover:opacity-100 transition-opacity duration-200">
-										Change Image
+										{t('Change Image')}
 									</span>
 								</label>
 							</>
 						) : (
 							<label
 								htmlFor="image"
-								className="absolute inset-0 flex flex-col items-center justify-center bg-gray-50 hover:bg-gray-100 transition-colors duration-200 cursor-pointer"
+								className="absolute inset-0 flex flex-col items-center justify-center bg-muted hover:bg-muted/80 transition-colors duration-200 cursor-pointer"
 							>
-								<ImageIcon className="h-8 w-8 text-gray-400 mb-2" />
-								<span className="text-sm text-gray-500">Upload image</span>
+								<ImageIcon className="h-8 w-8 text-muted-foreground mb-2" />
+								<span className="text-sm text-muted-foreground">{t('Upload image')}</span>
 							</label>
 						)}
 						<input
 							id="image"
 							name="image"
 							type="file"
-							accept="image/*"
-							onChange={handleImageChange}
+							accept={imageTypes}
+							onChange={(e) => {
+								uploadImage(e);
+							}}
 							className="hidden"
 						/>
 					</div>
 				</div>
 
-				<div>
-					<Label htmlFor="username">Username</Label>
+				<div className="space-y-2">
+					<Label htmlFor="username">{t('Username')}</Label>
 					<Input
 						id="username"
-						value={formData.username}
-						onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+						value={memberUpdateInput.username}
+						onChange={(e) => setMemberUpdateInput({ ...memberUpdateInput, username: e.target.value })}
+						className="bg-background"
 					/>
 				</div>
 
-				<div>
-					<Label htmlFor="fullName">Full Name</Label>
+				<div className="space-y-2">
+					<Label htmlFor="fullName">{t('Full Name')}</Label>
 					<Input
 						id="fullName"
-						value={formData.memberFullName}
-						onChange={(e) => setFormData({ ...formData, memberFullName: e.target.value })}
+						value={memberUpdateInput.memberFullName}
+						onChange={(e) => setMemberUpdateInput({ ...memberUpdateInput, memberFullName: e.target.value })}
+						className="bg-background"
 					/>
 				</div>
 
-				<div>
-					<Label htmlFor="email">Email</Label>
+				<div className="space-y-2">
+					<Label htmlFor="email">{t('Email')}</Label>
 					<Input
 						id="email"
-						type="email"
-						value={formData.memberEmail}
-						onChange={(e) => setFormData({ ...formData, memberEmail: e.target.value })}
+						value={memberUpdateInput.memberEmail}
+						onChange={(e) => setMemberUpdateInput({ ...memberUpdateInput, memberEmail: e.target.value })}
+						className="bg-background"
 					/>
 				</div>
 
-				<div>
-					<Label htmlFor="phone">Phone</Label>
+				<div className="space-y-2">
+					<Label htmlFor="phone">{t('Phone')}</Label>
 					<Input
 						id="phone"
 						type="tel"
-						value={formData.memberPhone}
-						onChange={(e) => setFormData({ ...formData, memberPhone: e.target.value })}
+						value={memberUpdateInput.memberPhone}
+						onChange={(e) => setMemberUpdateInput({ ...memberUpdateInput, memberPhone: e.target.value })}
+						className="bg-background"
 					/>
 				</div>
 
-				<div>
-					<Label htmlFor="description">Description</Label>
+				<div className="space-y-2">
+					<Label htmlFor="description">{t('Description')}</Label>
 					<Textarea
 						id="description"
-						value={formData.memberDesc}
-						onChange={(e) => setFormData({ ...formData, memberDesc: e.target.value })}
+						value={memberUpdateInput.memberDesc}
+						onChange={(e) => setMemberUpdateInput({ ...memberUpdateInput, memberDesc: e.target.value })}
 						rows={4}
+						className="bg-background"
 					/>
 				</div>
 
 				<div className="flex justify-end">
-					<Button type="submit">Save Changes</Button>
+					<Button type="submit">{t('Save Changes')}</Button>
 				</div>
 			</form>
 		</div>

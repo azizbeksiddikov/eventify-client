@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useMutation, useQuery, useReactiveVar } from '@apollo/client';
-import axios from 'axios';
 import { Users, Ticket as TicketIcon, Settings, UserPlus, UserCheck } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 import { userVar } from '@/apollo/store';
 import {
@@ -14,6 +14,7 @@ import {
 	GET_TICKETS,
 } from '@/apollo/user/query';
 import {
+	CANCEL_TICKET,
 	JOIN_GROUP,
 	LEAVE_GROUP,
 	LIKE_TARGET_GROUP,
@@ -22,9 +23,8 @@ import {
 	UNSUBSCRIBE,
 	UPDATE_MEMBER,
 } from '@/apollo/user/mutation';
-import { getJwtToken, updateStorage, updateUserInfo } from '@/libs/auth';
+import { updateStorage, updateUserInfo } from '@/libs/auth';
 import { smallError, smallSuccess } from '@/libs/alert';
-import { REACT_APP_API_URL } from '@/libs/config';
 import withBasicLayout from '@/libs/components/layout/LayoutBasic';
 import { ProfileHeader } from '@/libs/components/profile/ProfileHeader';
 import { ProfileTabs } from '@/libs/components/profile/ProfileTabs';
@@ -35,7 +35,6 @@ import { Group } from '@/libs/types/group/group';
 import { Ticket } from '@/libs/types/ticket/ticket';
 import { MemberUpdateInput } from '@/libs/types/member/member.update';
 import { Message } from '@/libs/enums/common.enum';
-import { readFile } from 'fs';
 
 export const getStaticProps = async ({ locale }: { locale: string }) => ({
 	props: {
@@ -46,8 +45,7 @@ export const getStaticProps = async ({ locale }: { locale: string }) => ({
 const ProfilePage = () => {
 	const user = useReactiveVar(userVar);
 	const { t } = useTranslation('common');
-	const token = getJwtToken();
-	const memberId = user?._id;
+	const router = useRouter();
 
 	const tabs = [
 		{ id: 'groups', label: t('Groups'), icon: Users },
@@ -64,6 +62,15 @@ const ProfilePage = () => {
 	const [followings, setFollowings] = useState<Member[]>([]);
 	const [followers, setFollowers] = useState<Member[]>([]);
 
+	const [memberUpdateInput, setMemberUpdateInput] = useState<MemberUpdateInput>({
+		username: member?.username || '',
+		memberEmail: member?.memberEmail || '',
+		memberPhone: member?.memberPhone || '',
+		memberFullName: member?.memberFullName || '',
+		memberDesc: member?.memberDesc || '',
+		memberImage: member?.memberImage || '',
+	});
+
 	/** APOLLO */
 	const [updateMember] = useMutation(UPDATE_MEMBER);
 	const [likeTargetMember] = useMutation(LIKE_TARGET_MEMBER);
@@ -72,38 +79,47 @@ const ProfilePage = () => {
 	const [likeTargetGroup] = useMutation(LIKE_TARGET_GROUP);
 	const [joinGroup] = useMutation(JOIN_GROUP);
 	const [leaveGroup] = useMutation(LEAVE_GROUP);
+	const [cancelTicket] = useMutation(CANCEL_TICKET);
 
 	const { data: getMemberData, refetch: refetchMember } = useQuery(GET_MEMBER, {
 		fetchPolicy: 'cache-and-network',
-		skip: !memberId,
-		variables: { input: memberId },
+		skip: !user?._id,
+		variables: { input: user?._id },
 		notifyOnNetworkStatusChange: true,
 	});
 
 	const { data: getJoinedGroupsData, refetch: refetchJoinedGroups } = useQuery(GET_JOINED_GROUPS, {
 		fetchPolicy: 'cache-and-network',
-		skip: !memberId,
+		skip: !user?._id,
 	});
 
 	const { data: getTicketsData, refetch: refetchTickets } = useQuery(GET_TICKETS, {
 		fetchPolicy: 'cache-and-network',
-		skip: !memberId,
+		skip: !user?._id,
 	});
 
 	const { data: getFollowingsData, refetch: refetchFollowings } = useQuery(GET_MEMBER_FOLLOWINGS_LIST, {
 		fetchPolicy: 'cache-and-network',
-		skip: !memberId,
+		skip: !user?._id,
 	});
 
 	const { data: getFollowersData, refetch: refetchFollowers } = useQuery(GET_MEMBER_FOLLOWERS_LIST, {
 		fetchPolicy: 'cache-and-network',
-		skip: !memberId,
+		skip: !user?._id,
 	});
 
 	/** LIFECYCLE */
 	useEffect(() => {
 		if (getMemberData?.getMember) {
 			setMember(getMemberData.getMember);
+			setMemberUpdateInput({
+				username: getMemberData.getMember.username,
+				memberFullName: getMemberData.getMember.memberFullName,
+				memberEmail: getMemberData.getMember.memberEmail,
+				memberPhone: getMemberData.getMember.memberPhone,
+				memberDesc: getMemberData.getMember.memberDesc,
+				memberImage: getMemberData.getMember.memberImage,
+			});
 		}
 	}, [getMemberData]);
 
@@ -131,11 +147,17 @@ const ProfilePage = () => {
 		}
 	}, [getTicketsData]);
 
+	useEffect(() => {
+		if (!user?._id) {
+			router.push('/');
+		}
+	}, [user?._id, router]);
+
 	/** HANDLERS */
 	const likeMemberHandler = async (memberId: string) => {
 		try {
 			if (!memberId) return;
-			if (!user._id || user._id === '') throw new Error(Message.NOT_AUTHENTICATED);
+			if (!user?._id) throw new Error(Message.NOT_AUTHENTICATED);
 
 			await likeTargetMember({
 				variables: { input: memberId },
@@ -151,7 +173,7 @@ const ProfilePage = () => {
 	const subscribeHandler = async (memberId: string) => {
 		try {
 			if (!memberId) return;
-			if (!user._id || user._id === '') throw new Error(Message.NOT_AUTHENTICATED);
+			if (!user?._id) throw new Error(Message.NOT_AUTHENTICATED);
 
 			await subscribe({
 				variables: { input: memberId },
@@ -167,11 +189,12 @@ const ProfilePage = () => {
 	const unsubscribeHandler = async (memberId: string) => {
 		try {
 			if (!memberId) return;
-			if (!user._id || user._id === '') throw new Error(Message.NOT_AUTHENTICATED);
+			if (!user?._id) throw new Error(Message.NOT_AUTHENTICATED);
 
 			await unsubscribe({
 				variables: { input: memberId },
 			});
+			refetchFollowings();
 
 			await smallSuccess(t('Member unsubscribed successfully'));
 		} catch (err: any) {
@@ -201,60 +224,14 @@ const ProfilePage = () => {
 		}
 	};
 
-	const uploadImage = async (e: any) => {
-		try {
-			const image = e.target.files[0];
-			console.log('+image:', image);
-
-			const formData = new FormData();
-			formData.append(
-				'operations',
-				JSON.stringify({
-					query: `mutation ImageUploader($file: Upload!, $target: String!) {
-						imageUploader(file: $file, target: $target) 
-				  }`,
-					variables: {
-						file: null,
-						target: 'member',
-					},
-				}),
-			);
-			formData.append(
-				'map',
-				JSON.stringify({
-					'0': ['variables.file'],
-				}),
-			);
-			formData.append('0', image);
-
-			const response = await axios.post(`${process.env.REACT_APP_API_GRAPHQL_URL}`, formData, {
-				headers: {
-					'Content-Type': 'multipart/form-data',
-					'apollo-require-preflight': true,
-					Authorization: `Bearer ${token}`,
-				},
-			});
-
-			const responseImage = response.data.data.imageUploader;
-			console.log('+responseImage: ', responseImage);
-			updateMemberHandler({ ...member, memberImage: responseImage });
-
-			return `${REACT_APP_API_URL}/${responseImage}`;
-		} catch (err) {
-			console.log('Error, uploadImage:', err);
-		}
-	};
-
 	const likeGroupHandler = async (groupId: string) => {
 		try {
 			if (!groupId) return;
-			if (!user._id || user._id === '') throw new Error(Message.NOT_AUTHENTICATED);
+			if (!user?._id) throw new Error(Message.NOT_AUTHENTICATED);
 
-			const res = await likeTargetGroup({
+			await likeTargetGroup({
 				variables: { input: groupId },
 			});
-
-			console.log('+res:', res);
 
 			await smallSuccess(t('Group liked successfully'));
 		} catch (err: any) {
@@ -266,7 +243,7 @@ const ProfilePage = () => {
 	const handleJoinGroup = async (groupId: string) => {
 		try {
 			if (!groupId) return;
-			if (!user._id || user._id === '') throw new Error(Message.NOT_AUTHENTICATED);
+			if (!user?._id) throw new Error(Message.NOT_AUTHENTICATED);
 
 			await joinGroup({
 				variables: { input: groupId },
@@ -282,7 +259,7 @@ const ProfilePage = () => {
 	const handleLeaveGroup = async (groupId: string) => {
 		try {
 			if (!groupId) return;
-			if (!user._id || user._id === '') throw new Error(Message.NOT_AUTHENTICATED);
+			if (!user?._id) throw new Error(Message.NOT_AUTHENTICATED);
 
 			await leaveGroup({
 				variables: { input: groupId },
@@ -293,6 +270,22 @@ const ProfilePage = () => {
 			await smallSuccess(t('Group left successfully'));
 		} catch (err: any) {
 			console.log('ERROR, handleLeaveGroup:', err.message);
+		}
+	};
+
+	const cancelTicketHandler = async (ticketId: string) => {
+		try {
+			if (!user?._id) throw new Error(Message.NOT_AUTHENTICATED);
+
+			await cancelTicket({
+				variables: { input: ticketId },
+			});
+
+			await smallSuccess(t('Ticket cancelled successfully'));
+			refetchTickets();
+		} catch (err: any) {
+			console.log('ERROR, cancelTicketHandler:', err.message);
+			smallError(err.message);
 		}
 	};
 
@@ -307,7 +300,6 @@ const ProfilePage = () => {
 					activeTab={activeTab}
 					setActiveTab={setActiveTab}
 					tabs={tabs}
-					member={member}
 					groups={groups}
 					tickets={tickets}
 					followings={followings}
@@ -316,10 +308,12 @@ const ProfilePage = () => {
 					likeMemberHandler={likeMemberHandler}
 					subscribeHandler={subscribeHandler}
 					unsubscribeHandler={unsubscribeHandler}
-					uploadImage={uploadImage}
 					likeGroupHandler={likeGroupHandler}
 					handleJoinGroup={handleJoinGroup}
 					handleLeaveGroup={handleLeaveGroup}
+					cancelTicketHandler={cancelTicketHandler}
+					memberUpdateInput={memberUpdateInput}
+					setMemberUpdateInput={setMemberUpdateInput}
 				/>
 			</div>
 		</div>

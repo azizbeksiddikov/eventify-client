@@ -25,7 +25,7 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { Message } from '@/libs/enums/common.enum';
 import axios from 'axios';
 import { getJwtToken } from '@/libs/auth';
-import { REACT_APP_API_URL } from '@/libs/config';
+import { imageTypes, REACT_APP_API_URL } from '@/libs/config';
 import { REACT_APP_API_GRAPHQL_URL } from '@/libs/config';
 
 export const getStaticProps = async ({ locale }: { locale: string }) => ({
@@ -128,7 +128,6 @@ const EventCreatePage = () => {
 
 			const responseImage = response.data.data.imageUploader;
 			const imageUrl = `${REACT_APP_API_URL}/${responseImage}`;
-			console.log('=imageUrl: ', imageUrl);
 
 			// Update form data and preview
 			setFormData((prev) => ({ ...prev, eventImage: responseImage }));
@@ -589,7 +588,7 @@ const EventCreatePage = () => {
 									id="image"
 									name="image"
 									type="file"
-									accept=".jpg,.jpeg,.png,image/jpeg,image/png"
+									accept={imageTypes}
 									onChange={handleImageChange}
 									className="hidden"
 								/>

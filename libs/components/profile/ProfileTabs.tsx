@@ -13,7 +13,6 @@ interface ProfileTabsProps {
 	activeTab: string;
 	setActiveTab: (tab: string) => void;
 	tabs: { id: string; label: string; icon: React.ElementType }[];
-	member: Member;
 	groups: Group[];
 	tickets: Ticket[];
 	followings: Member[];
@@ -22,14 +21,15 @@ interface ProfileTabsProps {
 	likeMemberHandler: (memberId: string) => void;
 	subscribeHandler: (memberId: string) => void;
 	unsubscribeHandler: (memberId: string) => void;
-	uploadImage: (e: any) => void;
 	likeGroupHandler: (groupId: string) => void;
 	handleJoinGroup: (groupId: string) => void;
 	handleLeaveGroup: (groupId: string) => void;
+	cancelTicketHandler: (ticketId: string) => void;
+	memberUpdateInput: MemberUpdateInput;
+	setMemberUpdateInput: (data: MemberUpdateInput) => void;
 }
 
 export const ProfileTabs = ({
-	member,
 	groups,
 	tickets,
 	followings,
@@ -38,10 +38,12 @@ export const ProfileTabs = ({
 	likeMemberHandler,
 	subscribeHandler,
 	unsubscribeHandler,
-	uploadImage,
 	likeGroupHandler,
 	handleJoinGroup,
 	handleLeaveGroup,
+	cancelTicketHandler,
+	memberUpdateInput,
+	setMemberUpdateInput,
 	tabs,
 	activeTab,
 	setActiveTab,
@@ -71,19 +73,32 @@ export const ProfileTabs = ({
 			</TabsContent>
 
 			<TabsContent value="tickets" className="mt-0">
-				<ProfileTickets tickets={tickets} />
-			</TabsContent>
-
-			<TabsContent value="followings" className="mt-0">
-				<ProfileFollowings followings={followings} />
+				<ProfileTickets tickets={tickets} cancelTicketHandler={cancelTicketHandler} />
 			</TabsContent>
 
 			<TabsContent value="followers" className="mt-0">
-				<ProfileFollowers followers={followers} />
+				<ProfileFollowers
+					followers={followers}
+					likeMemberHandler={likeMemberHandler}
+					unsubscribeHandler={unsubscribeHandler}
+					subscribeHandler={subscribeHandler}
+				/>
+			</TabsContent>
+
+			<TabsContent value="followings" className="mt-0">
+				<ProfileFollowings
+					followings={followings}
+					likeMemberHandler={likeMemberHandler}
+					unsubscribeHandler={unsubscribeHandler}
+				/>
 			</TabsContent>
 
 			<TabsContent value="settings" className="mt-0">
-				<ProfileSettings member={member} handleUpdateMember={handleUpdateMember} />
+				<ProfileSettings
+					handleUpdateMember={handleUpdateMember}
+					memberUpdateInput={memberUpdateInput}
+					setMemberUpdateInput={setMemberUpdateInput}
+				/>
 			</TabsContent>
 		</Tabs>
 	);

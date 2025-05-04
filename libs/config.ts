@@ -22,3 +22,5 @@ export const organizersSortOptions = [
 	{ value: 'memberGroups', label: 'Groups' },
 	{ value: 'memberRank', label: 'Rank' },
 ];
+
+export const imageTypes = '.jpg,.jpeg,.png,image/jpeg,image/png,image/jpg,image/webp';
