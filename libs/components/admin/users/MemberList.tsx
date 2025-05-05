@@ -17,7 +17,7 @@ export const MemberPanelList = ({ members, updateMemberHandler, removeMemberHand
 
 	return (
 		<div className="rounded-md border border-input bg-card p-4">
-			<Table className="">
+			<Table>
 				<TableHeader>
 					<TableRow className="bg-card hover:bg-accent/50">
 						<TableHead className="w-[10%] text-muted-foreground">{t('ID')}</TableHead>

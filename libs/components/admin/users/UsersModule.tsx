@@ -1,12 +1,14 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
+
 import { MemberPanelList } from '@/libs/components/admin/users/MemberList';
 import { MemberSearch } from '@/libs/components/admin/users/MemberSearch';
-import { MembersInquiry } from '../../../types/member/member.input';
-import { Members } from '../../../types/member/member';
 import { Separator } from '@/libs/components/ui/separator';
+import PaginationComponent from '@/libs/components/common/PaginationComponent';
+
+import { MembersInquiry } from '@/libs/types/member/member.input';
+import { Members } from '@/libs/types/member/member';
 import { MemberUpdateInput } from '@/libs/types/member/member.update';
-import { useTranslation } from 'react-i18next';
-import PaginationComponent from '../../common/PaginationComponent';
 
 interface UsersModuleProps {
 	members: Members;

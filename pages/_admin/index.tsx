@@ -22,8 +22,14 @@ import { getJwtToken } from '@/libs/auth';
 import { updateUserInfo } from '@/libs/auth';
 import { EventsInquiry } from '@/libs/types/event/event.input';
 import { Events } from '@/libs/types/event/event';
-import { REMOVE_MEMBER_BY_ADMIN, UPDATE_MEMBER_BY_ADMIN } from '@/apollo/admin/mutation';
+import {
+	REMOVE_GROUP_BY_ADMIN,
+	REMOVE_MEMBER_BY_ADMIN,
+	UPDATE_GROUP_BY_ADMIN,
+	UPDATE_MEMBER_BY_ADMIN,
+} from '@/apollo/admin/mutation';
 import { MemberUpdateInput } from '@/libs/types/member/member.update';
+import { GroupUpdateInput } from '@/libs/types/group/group.update';
 
 interface AdminHomeProps {
 	initialMembersInquiry?: MembersInquiry;
@@ -96,8 +102,10 @@ const AdminHome = ({
 	});
 
 	/** APOLLO REQUESTS */
-	const [removeMember] = useMutation(REMOVE_MEMBER_BY_ADMIN);
 	const [updateMember] = useMutation(UPDATE_MEMBER_BY_ADMIN);
+	const [removeMember] = useMutation(REMOVE_MEMBER_BY_ADMIN);
+	const [updateGroup] = useMutation(UPDATE_GROUP_BY_ADMIN);
+	const [removeGroup] = useMutation(REMOVE_GROUP_BY_ADMIN);
 
 	const { data: userData, refetch: refetchMembers } = useQuery(GET_ALL_MEMBERS_BY_ADMIN, {
 		variables: {
@@ -156,6 +164,14 @@ const AdminHome = ({
 	}, [eventsData]);
 
 	/** HANDLERS */
+	const updateMemberHandler = async (member: MemberUpdateInput) => {
+		if (user._id && user.memberType === MemberType.ADMIN) {
+			await updateMember({ variables: { input: member } });
+			// refetchMembers(membersInquiry);
+			smallSuccess('Member updated successfully');
+		}
+	};
+
 	const removeMemberHandler = async (memberId: string) => {
 		if (user._id && user.memberType === MemberType.ADMIN) {
 			await removeMember({ variables: { input: memberId } });
@@ -164,11 +180,17 @@ const AdminHome = ({
 		}
 	};
 
-	const updateMemberHandler = async (member: MemberUpdateInput) => {
+	const updateGroupHandler = async (group: GroupUpdateInput) => {
 		if (user._id && user.memberType === MemberType.ADMIN) {
-			await updateMember({ variables: { input: member } });
-			// refetchMembers(membersInquiry);
-			smallSuccess('Member updated successfully');
+			await updateGroup({ variables: { input: group } });
+			smallSuccess('Group updated successfully');
+		}
+	};
+
+	const removeGroupHandler = async (groupId: string) => {
+		if (user._id && user.memberType === MemberType.ADMIN) {
+			await removeGroup({ variables: { input: groupId } });
+			smallSuccess('Group removed successfully');
 		}
 	};
 
@@ -203,7 +225,14 @@ const AdminHome = ({
 					/>
 				</TabsContent>
 				<TabsContent value="groups" className="mt-0">
-					<GroupsModule />
+					<GroupsModule
+						groups={groups}
+						initialInquiry={defaultGroupsInquiry}
+						groupsInquiry={groupsInquiry}
+						setGroupsInquiry={setGroupsInquiry}
+						updateGroupHandler={updateGroupHandler}
+						removeGroupHandler={removeGroupHandler}
+					/>
 				</TabsContent>
 				<TabsContent value="events" className="mt-0">
 					<EventsModule />

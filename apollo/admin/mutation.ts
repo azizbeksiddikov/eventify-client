@@ -60,3 +60,43 @@ export const UPDATE_MEMBER_BY_ADMIN = gql`
 		}
 	}
 `;
+
+/**************************
+ *         GROUP           *
+ *************************/
+
+export const REMOVE_GROUP_BY_ADMIN = gql`
+	mutation RemoveGroupByAdmin($input: String!) {
+		removeGroupByAdmin(groupId: $input) {
+			_id
+			groupName
+			groupDesc
+			groupImage
+			memberId
+			groupCategories
+			groupViews
+			groupLikes
+			memberCount
+			createdAt
+			updatedAt
+		}
+	}
+`;
+
+export const UPDATE_GROUP_BY_ADMIN = gql`
+	mutation UpdateGroupByAdmin($input: GroupUpdateInput!) {
+		updateGroupByAdmin(input: $input) {
+			_id
+			groupName
+			groupDesc
+			groupImage
+			memberId
+			groupCategories
+			groupViews
+			groupLikes
+			memberCount
+			createdAt
+			updatedAt
+		}
+	}
+`;
