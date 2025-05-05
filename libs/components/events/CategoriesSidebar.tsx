@@ -34,16 +34,18 @@ const CategoriesSidebar = ({ eventsSearchFilters, updateURL, initialSearch }: Ca
 	return (
 		<div className="w-full md:w-72 shrink-0">
 			<div className="bg-primary/5 backdrop-blur-sm rounded-2xl shadow-sm border border-primary/20 p-6">
-				<div className="flex items-center justify-between mb-6">
-					<h3 className="text-lg font-semibold text-primary">{t('Categories')}</h3>
-					<Button type="submit" onClick={handleClearAll} className="h-10 px-6 bg-secondary/50 text-card-foreground">
+				<h3 className=" text-lg font-semibold text-primary">{t('Categories')}</h3>
+				<div className="space-y-2">
+					<Button
+						type="submit"
+						onClick={handleClearAll}
+						className="h-10 px-6 bg-secondary/50 text-card-foreground my-4"
+					>
 						<div className="flex items-center gap-1">
 							<X className="w-4 h-4" />
 							{t('Clear All')}
 						</div>
 					</Button>
-				</div>
-				<div className="space-y-2">
 					{Object.values(EventCategory).map((category) => (
 						<div
 							key={category}

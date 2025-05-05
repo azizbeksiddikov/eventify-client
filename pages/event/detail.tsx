@@ -51,7 +51,6 @@ const ChosenEvent = () => {
 	/** APOLLO REQUESTS **/
 	const [likeTargetEvent] = useMutation(LIKE_TARGET_EVENT);
 	const [createTicket] = useMutation(CREATE_TICKET);
-
 	const { data: getEventData, refetch: refetchEvent } = useQuery(GET_EVENT, {
 		fetchPolicy: 'cache-and-network',
 		skip: !eventId,
@@ -67,13 +66,13 @@ const ChosenEvent = () => {
 
 	/** LIFECYCLES */
 	useEffect(() => {
-		if (router.query.id) {
-			setEventId(router.query.id as string);
+		if (router.query.eventId) {
+			setEventId(router.query.eventId as string);
 			setTicketInquiry({
 				page: 1,
 				limit: 5,
 				search: {
-					eventId: router.query.id as string,
+					eventId: router.query.eventId as string,
 				},
 			});
 		}
@@ -88,6 +87,22 @@ const ChosenEvent = () => {
 				ticketPrice: getEventData.getEvent.eventPrice,
 				ticketQuantity: 1,
 				totalPrice: getEventData.getEvent.eventPrice,
+			});
+
+			setEventUpdateInput({
+				_id: getEventData.getEvent._id,
+				eventName: getEventData.getEvent.eventName,
+				eventDesc: getEventData.getEvent.eventDesc,
+				eventImage: getEventData.getEvent.eventImage,
+				eventDate: getEventData.getEvent.eventDate,
+				eventStartTime: getEventData.getEvent.eventStartTime,
+				eventEndTime: getEventData.getEvent.eventEndTime,
+				eventAddress: getEventData.getEvent.eventAddress,
+				eventCity: getEventData.getEvent.eventCity,
+				eventCapacity: getEventData.getEvent.eventCapacity,
+				eventPrice: getEventData.getEvent.eventPrice,
+				eventStatus: getEventData.getEvent.eventStatus,
+				eventCategories: getEventData.getEvent.eventCategories,
 			});
 		}
 	}, [getEventData]);
@@ -127,17 +142,17 @@ const ChosenEvent = () => {
 					<div className="lg:col-span-3">
 						<ChosenEventData
 							event={event}
+							userId={user._id}
 							purchaseTicketHandler={purchaseTicketHandler}
 							likeEventHandler={likeEventHandler}
 							setTicketInput={setTicketInput}
 							ticketInput={ticketInput}
 						/>
+						{/* My Tickets */}
+						<MyTickets myTickets={myTickets} ticketInquiry={ticketInquiry} setTicketInquiry={setTicketInquiry} />
 					</div>
 					<ChosenEventOther event={event} likeEventHandler={likeEventHandler} />
 				</div>
-
-				{/* My Tickets */}
-				<MyTickets myTickets={myTickets} ticketInquiry={ticketInquiry} setTicketInquiry={setTicketInquiry} />
 
 				{/* Comments Section */}
 				{eventId && <CommentsComponent commentRefId={eventId} commentGroup={CommentGroup.EVENT} />}

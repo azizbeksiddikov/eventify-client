@@ -11,7 +11,7 @@ import {
 	GET_MEMBER,
 	GET_MEMBER_FOLLOWERS_LIST,
 	GET_MEMBER_FOLLOWINGS_LIST,
-	GET_TICKETS,
+	GET_ALL_TICKETS_LIST,
 } from '@/apollo/user/query';
 import {
 	CANCEL_TICKET,
@@ -93,7 +93,7 @@ const ProfilePage = () => {
 		skip: !user?._id,
 	});
 
-	const { data: getTicketsData, refetch: refetchTickets } = useQuery(GET_TICKETS, {
+	const { data: getTicketsData, refetch: refetchTickets } = useQuery(GET_ALL_TICKETS_LIST, {
 		fetchPolicy: 'cache-and-network',
 		skip: !user?._id,
 	});

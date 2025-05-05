@@ -11,16 +11,17 @@ import { Member } from '@/libs/types/member/member';
 
 interface OwnerProps {
 	member: Member;
+	title?: string;
 }
 
-const Owner = ({ member }: OwnerProps) => {
+const Owner = ({ member, title = 'Group Owner' }: OwnerProps) => {
 	const { t } = useTranslation('common');
 
 	return (
 		<Card className="p-8 bg-card hover:bg-secondary/15 transition-all duration-300 shadow-sm hover:shadow-md border border-border/50">
 			<h2 className="text-2xl font-semibold mb-6 text-card-foreground flex items-center gap-2">
 				<Users className="w-5 h-5 text-card-foreground" />
-				{t('Group Owner')}
+				{title}
 			</h2>
 			<Link
 				href={`/organizer/detail?organizerId=${member._id}`}

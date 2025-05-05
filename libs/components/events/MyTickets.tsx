@@ -9,7 +9,7 @@ import {
 	DropdownMenuTrigger,
 } from '@/libs/components/ui/dropdown-menu';
 import { useTranslation } from 'react-i18next';
-import PaginationComponent from '../common/PaginationComponent';
+import PaginationComponent from '@/libs/components/common/PaginationComponent';
 import { TicketInquiry } from '@/libs/types/ticket/ticket.input';
 import { TicketStatus } from '@/libs/enums/ticket.enum';
 import TicketCard from './TicketCard';

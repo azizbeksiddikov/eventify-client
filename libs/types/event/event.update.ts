@@ -1,6 +1,6 @@
-import { EventStatus, EventCategory } from '../../enums/event.enum';
+import { EventStatus, EventCategory } from '@/libs/enums/event.enum';
 
-export interface EditEventInput {
+export interface EventUpdateInput {
 	_id: string;
 	eventName?: string;
 	eventDesc?: string;
@@ -9,6 +9,7 @@ export interface EditEventInput {
 	eventStartTime?: string;
 	eventEndTime?: string;
 	eventAddress?: string;
+	eventCity?: string;
 	eventCapacity?: number;
 	eventPrice?: number;
 	eventStatus?: EventStatus;

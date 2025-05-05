@@ -662,8 +662,29 @@ export const GET_VISITED = gql`
  *************************/
 
 export const GET_TICKETS = gql`
-	query GetTickets {
-		getTickets {
+	query GetTickets($input: TicketInquiry!) {
+		getTickets(input: $input) {
+			list {
+				_id
+				eventId
+				memberId
+				ticketStatus
+				ticketPrice
+				ticketQuantity
+				totalPrice
+				createdAt
+				updatedAt
+			}
+			metaCounter {
+				total
+			}
+		}
+	}
+`;
+
+export const GET_ALL_TICKETS_LIST = gql`
+	query GetAllTicketsList {
+		getAllTicketsList {
 			_id
 			eventId
 			memberId

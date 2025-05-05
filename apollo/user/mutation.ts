@@ -377,9 +377,9 @@ export const CREATE_EVENT = gql`
 	}
 `;
 
-export const UPDATE_EVENT = gql`
-	mutation UpdateEvent($input: EventUpdateInput!) {
-		updateEvent(input: $input) {
+export const UPDATE_EVENT_BY_ORGANIZER = gql`
+	mutation UpdateEventByOrganizer($input: EventUpdateInput!) {
+		updateEventByOrganizer(input: $input) {
 			_id
 			eventName
 			eventDesc
@@ -387,6 +387,7 @@ export const UPDATE_EVENT = gql`
 			eventDate
 			eventStartTime
 			eventEndTime
+			eventCity
 			eventAddress
 			eventCapacity
 			eventPrice

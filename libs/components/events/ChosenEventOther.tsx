@@ -20,7 +20,7 @@ const ChosenEventOther = ({ event, likeEventHandler }: ChosenEventOtherProps) =>
 	return (
 		<div className="space-y-8">
 			{/* Owner's Info */}
-			{event?.memberData && <Owner member={event.memberData} />}
+			{event?.memberData && <Owner member={event.memberData} title={t('Event Organizer')} />}
 
 			{/* Hosting Group */}
 			{event?.hostingGroup && (
