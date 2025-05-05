@@ -5,6 +5,7 @@ import { Separator } from '@/libs/components/ui/separator';
 import { Card, CardContent } from '@/libs/components/ui/card';
 import { Badge } from '@/libs/components/ui/badge';
 import { useTranslation } from 'react-i18next';
+import { formatDateHandler } from '@/libs/utils';
 
 interface TicketCardProps {
 	ticket: Ticket;
@@ -25,12 +26,6 @@ const TicketCard = ({ ticket, showSeparator = true }: TicketCardProps) => {
 			default:
 				return 'secondary';
 		}
-	};
-
-	const formatDateHandler = (dateString: string | Date) => {
-		const d = new Date(dateString);
-		const pad = (n: number) => n.toString().padStart(2, '0');
-		return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
 	};
 
 	return (
@@ -80,7 +75,7 @@ const TicketCard = ({ ticket, showSeparator = true }: TicketCardProps) => {
 						<Separator orientation="vertical" className="h-12 mx-6" />
 						<div className="min-w-[140px] text-right">
 							<div className="text-xs text-muted-foreground/60">{t('Last change')}</div>
-							<div className="text-sm text-muted-foreground/60 mt-1">{formatDateHandler(ticket.createdAt)}</div>
+							<div className="text-sm text-muted-foreground/60 mt-1"> {formatDateHandler(ticket.createdAt)}</div>
 						</div>
 					</div>
 				</CardContent>

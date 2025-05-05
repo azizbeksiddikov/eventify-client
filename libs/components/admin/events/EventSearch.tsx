@@ -1,27 +1,23 @@
+import { useTranslation } from 'react-i18next';
+
 import { Button } from '@/libs/components/ui/button';
 import { Input } from '@/libs/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/libs/components/ui/select';
+
 import { EventCategory, EventStatus } from '@/libs/enums/event.enum';
+import { EventsInquiry } from '@/libs/types/event/event.input';
 import { Direction } from '@/libs/enums/common.enum';
 
-interface EventsInquiry {
-	page: number;
-	limit: number;
-	sort: string;
-	direction: Direction;
-	search: {
-		text: string;
-		category?: EventCategory;
-		status?: EventStatus;
-	};
-}
-
 interface EventSearchProps {
+	initialInquiry: EventsInquiry;
 	eventsInquiry: EventsInquiry;
 	setEventsInquiry: (inquiry: EventsInquiry) => void;
 }
 
-export function EventSearch({ eventsInquiry, setEventsInquiry }: EventSearchProps) {
+export function EventSearch({ initialInquiry, eventsInquiry, setEventsInquiry }: EventSearchProps) {
+	const { t } = useTranslation();
+
+	/**	 HANDLERS */
 	const searchTextHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setEventsInquiry({
 			...eventsInquiry,
@@ -32,102 +28,128 @@ export function EventSearch({ eventsInquiry, setEventsInquiry }: EventSearchProp
 		});
 	};
 
-	const clearSearchHandler = () => {
+	const inputFieldHandler = (field: string, value: number | string) => {
 		setEventsInquiry({
 			...eventsInquiry,
-			search: {
-				text: '',
-				category: undefined,
-				status: undefined,
-			},
+			[field]: value,
 		});
 	};
 
-	const changeCategoryHandler = (value: string) => {
+	const eventCategoryHandler = (value: string) => {
 		setEventsInquiry({
 			...eventsInquiry,
 			search: {
 				...eventsInquiry.search,
-				category: value === 'all' ? undefined : (value as EventCategory),
+				eventCategories: value === 'all' ? [] : [value as EventCategory],
 			},
 		});
 	};
 
-	const changeStatusHandler = (value: string) => {
+	const eventStatusHandler = (value: string) => {
 		setEventsInquiry({
 			...eventsInquiry,
 			search: {
 				...eventsInquiry.search,
-				status: value === 'all' ? undefined : (value as EventStatus),
+				eventStatus: value === 'all' ? undefined : (value as EventStatus),
 			},
 		});
 	};
 
-	const changeSortHandler = (value: string) => {
-		setEventsInquiry({
-			...eventsInquiry,
-			sort: value,
-		});
+	const clearAllHandler = () => {
+		setEventsInquiry(initialInquiry);
 	};
 
 	return (
 		<div className="flex items-center gap-6 p-6 rounded-t-lg bg-card border border-border">
+			{/* SEARCH */}
 			<Input
-				placeholder="Search events..."
+				placeholder={t('Search events...')}
 				value={eventsInquiry?.search?.text ?? ''}
 				onChange={searchTextHandler}
 				className="w-full bg-background text-foreground border-input focus:ring-primary"
 			/>
-			<Select value={eventsInquiry?.sort} onValueChange={changeSortHandler}>
+
+			{/* Category */}
+			<Select
+				value={eventsInquiry?.search?.eventCategories?.length ? eventsInquiry?.search?.eventCategories[0] : 'all'}
+				onValueChange={(value) => {
+					eventCategoryHandler(value);
+				}}
+			>
 				<SelectTrigger className="w-[180px] bg-background text-foreground border-input focus:ring-primary">
-					<SelectValue placeholder="Sort by" />
+					<SelectValue placeholder={t('Filter by category')} />
 				</SelectTrigger>
 				<SelectContent className="bg-card text-foreground border-border">
-					<SelectItem value="createdAt">Created At</SelectItem>
-					<SelectItem value="eventDate">Event Date</SelectItem>
-					<SelectItem value="attendeeCount">Attendees</SelectItem>
-					<SelectItem value="eventPrice">Price</SelectItem>
+					<SelectItem value="all">{t('All Categories')}</SelectItem>
+					{Object.values(EventCategory).map((value) => (
+						<SelectItem key={value} value={value}>
+							{t(value.charAt(0).toUpperCase() + value.slice(1))}
+						</SelectItem>
+					))}
 				</SelectContent>
 			</Select>
-			<Select value={eventsInquiry?.search?.category ?? 'all'} onValueChange={changeCategoryHandler}>
+
+			{/* Status */}
+			<Select
+				value={eventsInquiry?.search?.eventStatus || 'all'}
+				onValueChange={(value) => {
+					eventStatusHandler(value);
+				}}
+			>
 				<SelectTrigger className="w-[180px] bg-background text-foreground border-input focus:ring-primary">
-					<SelectValue placeholder="Filter by category" />
+					<SelectValue placeholder={t('Filter by status')} />
 				</SelectTrigger>
 				<SelectContent className="bg-card text-foreground border-border">
-					<SelectItem value="all">All Categories</SelectItem>
-					<SelectItem value={EventCategory.SPORTS}>Sports</SelectItem>
-					<SelectItem value={EventCategory.ART}>Art</SelectItem>
-					<SelectItem value={EventCategory.TECHNOLOGY}>Technology</SelectItem>
-					<SelectItem value={EventCategory.FOOD}>Food</SelectItem>
-					<SelectItem value={EventCategory.TRAVEL}>Travel</SelectItem>
-					<SelectItem value={EventCategory.EDUCATION}>Education</SelectItem>
-					<SelectItem value={EventCategory.HEALTH}>Health</SelectItem>
-					<SelectItem value={EventCategory.ENTERTAINMENT}>Entertainment</SelectItem>
-					<SelectItem value={EventCategory.BUSINESS}>Business</SelectItem>
-					<SelectItem value={EventCategory.POLITICS}>Politics</SelectItem>
-					<SelectItem value={EventCategory.RELIGION}>Religion</SelectItem>
-					<SelectItem value={EventCategory.OTHER}>Other</SelectItem>
+					<SelectItem value="all">{t('All Statuses')}</SelectItem>
+					{Object.values(EventStatus).map((value) => (
+						<SelectItem key={value} value={value}>
+							{t(value.charAt(0).toUpperCase() + value.slice(1))}
+						</SelectItem>
+					))}
 				</SelectContent>
 			</Select>
-			<Select value={eventsInquiry?.search?.status ?? 'all'} onValueChange={changeStatusHandler}>
+
+			{/* SORT */}
+			<Select
+				value={eventsInquiry?.sort}
+				onValueChange={(value: string) => {
+					inputFieldHandler('sort', value);
+				}}
+			>
 				<SelectTrigger className="w-[180px] bg-background text-foreground border-input focus:ring-primary">
-					<SelectValue placeholder="Filter by status" />
+					<SelectValue placeholder={t('Sort by')} />
 				</SelectTrigger>
 				<SelectContent className="bg-card text-foreground border-border">
-					<SelectItem value="all">All Statuses</SelectItem>
-					<SelectItem value={EventStatus.UPCOMING}>Upcoming</SelectItem>
-					<SelectItem value={EventStatus.ONGOING}>Ongoing</SelectItem>
-					<SelectItem value={EventStatus.COMPLETED}>Completed</SelectItem>
-					<SelectItem value={EventStatus.CANCELLED}>Cancelled</SelectItem>
-					<SelectItem value={EventStatus.DELETED}>Deleted</SelectItem>
+					<SelectItem value="createdAt">{t('Created At')}</SelectItem>
+					<SelectItem value="eventDate">{t('Event Date')}</SelectItem>
+					<SelectItem value="attendeeCount">{t('Attendees')}</SelectItem>
+					<SelectItem value="eventPrice">{t('Price')}</SelectItem>
 				</SelectContent>
 			</Select>
+
+			{/* Direction */}
+			<Select
+				value={eventsInquiry?.direction}
+				onValueChange={(value: Direction) => {
+					inputFieldHandler('direction', value);
+				}}
+			>
+				<SelectTrigger className="w-[180px] bg-background text-foreground border-input focus:ring-primary">
+					<SelectValue placeholder={t('Direction')} />
+				</SelectTrigger>
+				<SelectContent className="bg-card text-foreground border-border">
+					<SelectItem value={Direction.ASC}>{t('Ascending')}</SelectItem>
+					<SelectItem value={Direction.DESC}>{t('Descending')}</SelectItem>
+				</SelectContent>
+			</Select>
+
+			{/* CLEAR ALL */}
 			<Button
 				variant="outline"
-				onClick={clearSearchHandler}
+				onClick={clearAllHandler}
 				className="bg-background text-foreground border-input hover:bg-accent hover:text-accent-foreground"
 			>
-				Clear
+				{t('Clear')}
 			</Button>
 		</div>
 	);

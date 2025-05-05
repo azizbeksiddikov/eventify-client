@@ -100,3 +100,61 @@ export const UPDATE_GROUP_BY_ADMIN = gql`
 		}
 	}
 `;
+
+/**************************
+ *         EVENT           *
+ *************************/
+
+export const REMOVE_EVENT_BY_ADMIN = gql`
+	mutation RemoveEventByAdmin($input: String!) {
+		removeEventByAdmin(eventId: $input) {
+			_id
+			eventName
+			eventDesc
+			eventImage
+			eventDate
+			eventStartTime
+			eventEndTime
+			eventCity
+			eventAddress
+			eventCapacity
+			eventPrice
+			eventStatus
+			eventCategories
+			groupId
+			memberId
+			attendeeCount
+			eventLikes
+			eventViews
+			createdAt
+			updatedAt
+		}
+	}
+`;
+
+export const UPDATE_EVENT_BY_ADMIN = gql`
+	mutation UpdateEventByAdmin($input: EventUpdateInput!) {
+		updateEventByAdmin(input: $input) {
+			_id
+			eventName
+			eventDesc
+			eventImage
+			eventDate
+			eventStartTime
+			eventEndTime
+			eventCity
+			eventAddress
+			eventCapacity
+			eventPrice
+			eventStatus
+			eventCategories
+			groupId
+			memberId
+			attendeeCount
+			eventLikes
+			eventViews
+			createdAt
+			updatedAt
+		}
+	}
+`;

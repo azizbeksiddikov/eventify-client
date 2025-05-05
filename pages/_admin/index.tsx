@@ -23,13 +23,16 @@ import { updateUserInfo } from '@/libs/auth';
 import { EventsInquiry } from '@/libs/types/event/event.input';
 import { Events } from '@/libs/types/event/event';
 import {
+	REMOVE_EVENT_BY_ADMIN,
 	REMOVE_GROUP_BY_ADMIN,
 	REMOVE_MEMBER_BY_ADMIN,
+	UPDATE_EVENT_BY_ADMIN,
 	UPDATE_GROUP_BY_ADMIN,
 	UPDATE_MEMBER_BY_ADMIN,
 } from '@/apollo/admin/mutation';
 import { MemberUpdateInput } from '@/libs/types/member/member.update';
 import { GroupUpdateInput } from '@/libs/types/group/group.update';
+import { EventUpdateInput } from '@/libs/types/event/event.update';
 
 interface AdminHomeProps {
 	initialMembersInquiry?: MembersInquiry;
@@ -106,6 +109,8 @@ const AdminHome = ({
 	const [removeMember] = useMutation(REMOVE_MEMBER_BY_ADMIN);
 	const [updateGroup] = useMutation(UPDATE_GROUP_BY_ADMIN);
 	const [removeGroup] = useMutation(REMOVE_GROUP_BY_ADMIN);
+	const [updateEvent] = useMutation(UPDATE_EVENT_BY_ADMIN);
+	const [removeEvent] = useMutation(REMOVE_EVENT_BY_ADMIN);
 
 	const { data: userData, refetch: refetchMembers } = useQuery(GET_ALL_MEMBERS_BY_ADMIN, {
 		variables: {
@@ -115,7 +120,7 @@ const AdminHome = ({
 		skip: !user._id,
 	});
 
-	const { data: groupsData } = useQuery(GET_ALL_GROUPS_BY_ADMIN, {
+	const { data: groupsData, refetch: refetchGroups } = useQuery(GET_ALL_GROUPS_BY_ADMIN, {
 		variables: {
 			input: groupsInquiry,
 		},
@@ -123,7 +128,7 @@ const AdminHome = ({
 		skip: !user._id,
 	});
 
-	const { data: eventsData } = useQuery(GET_ALL_EVENTS_BY_ADMIN, {
+	const { data: eventsData, refetch: refetchEvents } = useQuery(GET_ALL_EVENTS_BY_ADMIN, {
 		variables: {
 			input: eventsInquiry,
 		},
@@ -190,7 +195,23 @@ const AdminHome = ({
 	const removeGroupHandler = async (groupId: string) => {
 		if (user._id && user.memberType === MemberType.ADMIN) {
 			await removeGroup({ variables: { input: groupId } });
+			refetchGroups(groupsInquiry);
 			smallSuccess('Group removed successfully');
+		}
+	};
+
+	const updateEventHandler = async (event: EventUpdateInput) => {
+		if (user._id && user.memberType === MemberType.ADMIN) {
+			await updateEvent({ variables: { input: event } });
+			smallSuccess('Event updated successfully');
+		}
+	};
+
+	const removeEventHandler = async (eventId: string) => {
+		if (user._id && user.memberType === MemberType.ADMIN) {
+			await removeEvent({ variables: { input: eventId } });
+			refetchEvents(eventsInquiry);
+			smallSuccess('Event removed successfully');
 		}
 	};
 
@@ -235,7 +256,14 @@ const AdminHome = ({
 					/>
 				</TabsContent>
 				<TabsContent value="events" className="mt-0">
-					<EventsModule />
+					<EventsModule
+						events={events}
+						initialInquiry={defaultEventsInquiry}
+						eventsInquiry={eventsInquiry}
+						setEventsInquiry={setEventsInquiry}
+						updateEventHandler={updateEventHandler}
+						removeEventHandler={removeEventHandler}
+					/>
 				</TabsContent>
 			</Tabs>
 		</div>

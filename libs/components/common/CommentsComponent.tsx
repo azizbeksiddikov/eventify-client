@@ -24,6 +24,7 @@ import { smallError, smallSuccess } from '@/libs/alert';
 import { Message, Direction } from '@/libs/enums/common.enum';
 import PaginationComponent from './PaginationComponent';
 import { REACT_APP_API_URL } from '@/libs/config';
+import { formatDateHandler } from '@/libs/utils';
 
 const LIMIT_OPTIONS = [5, 10, 20, 50];
 
@@ -159,12 +160,6 @@ const CommentsComponent = ({ commentRefId, commentGroup, initialCommentsInquiry 
 	const handleLimitChange = (newLimit: number) => {
 		setCurrentPage(1);
 		setCommentInquiry({ ...commentInquiry, limit: newLimit, page: 1 });
-	};
-
-	const formatDateHandler = (dateString: string | Date) => {
-		const d = new Date(dateString);
-		const pad = (n: number) => n.toString().padStart(2, '0');
-		return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
 	};
 
 	return (
