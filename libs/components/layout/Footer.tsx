@@ -1,8 +1,8 @@
 import Link from 'next/link';
-import { Instagram, Linkedin, MapPin, Phone, Clock } from 'lucide-react';
+import { Instagram, Linkedin, MapPin, Phone, Clock, Send } from 'lucide-react';
 import { Logo } from '../ui/logo';
 import { cn } from '@/libs/utils';
-
+import { useTranslation } from 'react-i18next';
 const quickLinks = [
 	{ href: '/event', label: 'Events' },
 	{ href: '/group', label: 'Groups' },
@@ -11,6 +11,8 @@ const quickLinks = [
 ];
 
 const Footer = () => {
+	const { t } = useTranslation();
+
 	return (
 		<footer className="w-full bg-foreground/95 backdrop-blur-sm ">
 			<div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -22,7 +24,7 @@ const Footer = () => {
 							<span className="text-xl font-semibold text-background">Eventify</span>
 						</Link>
 						<p className="text-body text-background leading-relaxed max-w-md">
-							Discover and create amazing events. Connect with people who share your interests and passions.
+							{t('Discover and create amazing events. Connect with people who share your interests and passions.')}
 						</p>
 						<div className="flex items-center gap-4">
 							<Link
@@ -43,12 +45,21 @@ const Footer = () => {
 							>
 								<Linkedin className="w-5 h-5" />
 							</Link>
+							<Link
+								href="https://t.me/siddikov_a"
+								target="_blank"
+								className={cn(
+									'p-3 rounded-full bg-background/50 hover:bg-primary hover:text-background transition-all duration-300 hover:scale-110 border border-border/20',
+								)}
+							>
+								<Send className="w-5 h-5" />
+							</Link>
 						</div>
 					</div>
 
 					{/* Quick Links */}
 					<div className="pt-8">
-						<h3 className="text-h1 font-semibold text-background mb-6">Quick Links</h3>
+						<h3 className="text-h1 font-semibold text-background mb-6">{t('Quick Links')}</h3>
 						<ul className="space-y-4">
 							{quickLinks.map((link, index) => (
 								<li key={index}>
@@ -68,14 +79,14 @@ const Footer = () => {
 
 					{/* Contact Info */}
 					<div className="pt-8">
-						<h3 className="text-h1 font-semibold text-background mb-6">Contact Us</h3>
+						<h3 className="text-h1 font-semibold text-background mb-6">{t('Contact Us')}</h3>
 						<div className="space-y-6">
 							<div className="flex items-start gap-4">
 								<MapPin className="w-5 h-5 text-primary mt-1 flex-shrink-0" />
 								<p className="text-body text-background leading-relaxed">
-									Gangnam-gu, Seoul
+									{t('Gangnam-gu, Seoul')}
 									<br />
-									South Korea
+									{t('South Korea')}
 								</p>
 							</div>
 							<div className="flex items-center gap-4">
@@ -84,7 +95,7 @@ const Footer = () => {
 							</div>
 							<div className="flex items-center gap-4">
 								<Clock className="w-5 h-5 text-primary flex-shrink-0" />
-								<p className="text-body text-background">Mon-Fri: 9:00 AM - 6:00 PM</p>
+								<p className="text-body text-background">{t('Mon-Fri: 9:00 AM - 6:00 PM')}</p>
 							</div>
 						</div>
 					</div>
@@ -93,10 +104,10 @@ const Footer = () => {
 				{/* Bottom Bar */}
 				<div className="mt-16 pt-8 border-t  border-background/20">
 					<div className="flex flex-col md:flex-row justify-between items-center gap-6">
-						<p className="text-sm text-background">© 2025 Eventify. All rights reserved.</p>
+						<p className="text-sm text-background">© {t('2025 Eventify. All rights reserved')}.</p>
 						<div className="flex items-center gap-8">
-							<div className="text-sm text-background transition-colors">Privacy Policy</div>
-							<div className="text-sm text-background transition-colors">Terms of Service</div>
+							<div className="text-sm text-background transition-colors">{t('Privacy Policy')}</div>
+							<div className="text-sm text-background transition-colors">{t('Terms of Service')}</div>
 						</div>
 					</div>
 				</div>
