@@ -45,7 +45,7 @@ const Signup = () => {
 	const handleInput = (name: string, value: string) => {
 		setFormData((prev) => ({
 			...prev,
-			[name]: value,
+			[name]: name === 'username' ? value.toLowerCase() : value,
 		}));
 	};
 
