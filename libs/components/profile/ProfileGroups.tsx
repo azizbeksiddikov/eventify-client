@@ -12,6 +12,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { REACT_APP_API_URL } from '@/libs/config';
 
 import { Group } from '@/libs/types/group/group';
+import { userVar } from '@/apollo/store';
+import { useReactiveVar } from '@apollo/client';
 
 interface ProfileGroupsProps {
 	groups: Group[];
@@ -21,6 +23,7 @@ interface ProfileGroupsProps {
 }
 
 export const ProfileGroups = ({ groups, likeGroupHandler, handleJoinGroup, handleLeaveGroup }: ProfileGroupsProps) => {
+	const user = useReactiveVar(userVar);
 	const { t } = useTranslation('common');
 
 	return (
@@ -67,7 +70,7 @@ export const ProfileGroups = ({ groups, likeGroupHandler, handleJoinGroup, handl
 												<div>
 													<div className="flex items-center gap-2">
 														<h3 className="text-sm font-medium text-card-foreground">{group.groupName}</h3>
-														{group.meOwner && (
+														{group.memberId === user?._id && (
 															<Badge variant="secondary" className="text-xs">
 																{t('Owner')}
 															</Badge>

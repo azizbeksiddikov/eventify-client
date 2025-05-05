@@ -48,6 +48,7 @@ const EventUpdatePage = () => {
 	const [updateEventByOrganizer] = useMutation(UPDATE_EVENT_BY_ORGANIZER);
 	const { data: eventData } = useQuery(GET_EVENT, {
 		variables: { input: router.query.eventId },
+		fetchPolicy: 'cache-and-network',
 		skip: !router.query.eventId,
 	});
 

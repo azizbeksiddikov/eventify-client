@@ -1,6 +1,5 @@
 import { NextPage } from 'next';
 import React from 'react';
-import { Toaster } from 'sonner';
 
 import Header from '@/libs/components/layout/Header';
 import AuthFooter from '@/libs/components/layout/AuthFooter';
@@ -19,7 +18,6 @@ const withAuthLayout = (Page: NextPage) => {
 					<Page {...props} />
 				</main>
 				<AuthFooter />
-				<Toaster position="top-right" richColors />
 			</div>
 		);
 	};

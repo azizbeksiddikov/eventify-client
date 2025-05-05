@@ -312,7 +312,6 @@ export const GET_GROUP = gql`
 				memberCount
 				createdAt
 				updatedAt
-				meOwner
 			}
 			groupUpcomingEvents {
 				_id
@@ -341,7 +340,6 @@ export const GET_GROUP = gql`
 					myFavorite
 				}
 			}
-			meOwner
 			groupModerators {
 				_id
 				groupId

@@ -1,6 +1,5 @@
 import { NextPage } from 'next';
 import React from 'react';
-import { Toaster } from 'sonner';
 
 import AdminHeader from '@/libs/components/layout/AdminHeader';
 import Footer from '@/libs/components/layout/Footer';
@@ -25,7 +24,6 @@ const withAdminLayout = (Page: NextPage) => {
 					</main>
 				</div>
 				<Footer />
-				<Toaster position="top-right" richColors />
 			</div>
 		);
 	};

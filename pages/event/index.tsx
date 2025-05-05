@@ -8,7 +8,7 @@ import withBasicLayout from '@/libs/components/layout/LayoutBasic';
 import { Event } from '@/libs/types/event/event';
 import { EventsInquiry } from '@/libs/types/event/event.input';
 import { Direction } from '@/libs/enums/common.enum';
-import EventCard from '@/libs/components/events/EventCard';
+import EventCard from '@/libs/components/common/EventCard';
 import SortAndFilter from '@/libs/components/events/SortAndFilter';
 import EventsHeader from '@/libs/components/events/EventsHeader';
 import CategoriesSidebar from '@/libs/components/events/CategoriesSidebar';

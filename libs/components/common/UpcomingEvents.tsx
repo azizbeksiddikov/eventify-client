@@ -13,15 +13,17 @@ import {
 import { Card } from '@/libs/components/ui/card';
 
 import { Event } from '@/libs/types/event/event';
-import EventCardInGroup from '@/libs/components/group/EventCardInGroup';
+import EventCard from './EventCard';
 
 interface UpcomingEventsProps {
 	events: Event[];
 	organizerName?: string;
+	likeEventHandler: (eventId: string) => Promise<void>;
 }
 
-const UpcomingEvents = ({ events, organizerName }: UpcomingEventsProps) => {
+const UpcomingEvents = ({ events, organizerName, likeEventHandler }: UpcomingEventsProps) => {
 	const { t } = useTranslation('common');
+
 	const [api, setApi] = useState<CarouselApi>();
 
 	const onSelect = useCallback(() => {
@@ -55,10 +57,10 @@ const UpcomingEvents = ({ events, organizerName }: UpcomingEventsProps) => {
 					containScroll: 'trimSnaps',
 				}}
 				setApi={setApi}
-				className="w-full flex items-center justify-center gap-2"
+				className="w-full flex items-center justify-around gap-2 "
 			>
 				<CarouselPrevious className="static translate-y-0 hover:bg-accent/10 transition-colors duration-200" />
-				<CarouselContent className="-ml-2 md:-ml-4">
+				<CarouselContent className="w-full p-4 ">
 					{events.map((event) => (
 						<CarouselItem
 							key={event._id}
@@ -66,8 +68,8 @@ const UpcomingEvents = ({ events, organizerName }: UpcomingEventsProps) => {
 								events.length <= 2 ? 'md:basis-full lg:basis-1/2' : 'md:basis-1/2 lg:basis-1/3'
 							}`}
 						>
-							<div className="p-1">
-								<EventCardInGroup event={event} />
+							<div className="p-2">
+								<EventCard event={event} likeEventHandler={likeEventHandler} />
 							</div>
 						</CarouselItem>
 					))}

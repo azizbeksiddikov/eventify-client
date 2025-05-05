@@ -3,7 +3,6 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { Eye, EyeOff } from 'lucide-react';
-import { Toaster } from 'sonner';
 
 import { LoginInput } from '@/libs/types/member/member.input';
 import { logIn } from '@/libs/auth';
@@ -70,7 +69,6 @@ const Login = () => {
 
 	return (
 		<>
-			<Toaster position="top-right" richColors visibleToasts={1} />
 			<div className="flex items-center justify-center min-h-[calc(100vh-200px)] px-4 sm:px-6 lg:px-8">
 				<Card className="w-full max-w-md">
 					<CardHeader className="text-center">

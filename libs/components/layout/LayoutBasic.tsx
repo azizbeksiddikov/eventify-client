@@ -1,6 +1,5 @@
 import { NextPage } from 'next';
 import React from 'react';
-import { Toaster } from 'sonner';
 
 import Header from '@/libs/components/layout/Header';
 import Footer from '@/libs/components/layout/Footer';
@@ -19,7 +18,6 @@ const withBasicLayout = (Page: NextPage) => {
 					<Page {...props} />
 				</main>
 				<Footer />
-				<Toaster position="top-right" richColors />
 			</div>
 		);
 	};

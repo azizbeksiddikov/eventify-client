@@ -9,7 +9,7 @@ import { userVar } from '@/apollo/store';
 import { useMutation, useQuery, useReactiveVar } from '@apollo/client';
 
 import { Message } from '@/libs/enums/common.enum';
-import { JOIN_GROUP, LEAVE_GROUP, LIKE_TARGET_GROUP } from '@/apollo/user/mutation';
+import { JOIN_GROUP, LEAVE_GROUP, LIKE_TARGET_EVENT, LIKE_TARGET_GROUP } from '@/apollo/user/mutation';
 import { smallSuccess, smallError } from '@/libs/alert';
 import { Group } from '@/libs/types/group/group';
 import ChosenGroupHeader from '@/libs/components/group/ChosenGroupHeader';
@@ -18,6 +18,7 @@ import { CommentGroup } from '@/libs/enums/comment.enum';
 import CommentsComponent from '@/libs/components/common/CommentsComponent';
 import ChosenGroupOther from '@/libs/components/group/ChosenGroupOther';
 import UpcomingEvents from '@/libs/components/common/UpcomingEvents';
+import { likeHandler } from '@/libs/utils';
 
 export const getStaticProps = async ({ locale }: { locale: string }) => ({
 	props: {
@@ -37,6 +38,7 @@ const GroupDetailPage = () => {
 	const [likeTargetGroup] = useMutation(LIKE_TARGET_GROUP);
 	const [joinGroup] = useMutation(JOIN_GROUP);
 	const [leaveGroup] = useMutation(LEAVE_GROUP);
+	const [likeTargetEvent] = useMutation(LIKE_TARGET_EVENT);
 
 	const { data: getGroupData, refetch: refetchGroup } = useQuery(GET_GROUP, {
 		fetchPolicy: 'cache-and-network',
@@ -104,6 +106,10 @@ const GroupDetailPage = () => {
 		}
 	};
 
+	const likeEventHandler = async (eventId: string) => {
+		await likeHandler(user._id, eventId, likeTargetEvent, t('Event liked successfully'));
+	};
+
 	if (!groupId) return null;
 
 	return (
@@ -113,19 +119,23 @@ const GroupDetailPage = () => {
 				<div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
 					<div className="lg:col-span-3">
 						<ChosenGroupData
+							userId={user._id}
 							group={group}
 							likeGroupHandler={likeGroupHandler}
 							joinGroupHandler={handleJoinGroup}
 							leaveGroupHandler={handleLeaveGroup}
 						/>
+						{/*  Upcoming group Events */}
+						{group?.groupUpcomingEvents && (
+							<UpcomingEvents
+								events={group.groupUpcomingEvents}
+								organizerName={group.groupName}
+								likeEventHandler={likeEventHandler}
+							/>
+						)}
 					</div>
 					<ChosenGroupOther group={group} />
 				</div>
-
-				{/*  Upcoming group Events */}
-				{group?.groupUpcomingEvents && (
-					<UpcomingEvents events={group.groupUpcomingEvents} organizerName={group.groupName} />
-				)}
 
 				{/* Comments Section */}
 				{group && <CommentsComponent commentRefId={groupId} commentGroup={CommentGroup.GROUP} />}

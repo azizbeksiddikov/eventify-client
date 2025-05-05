@@ -31,7 +31,6 @@ export interface Group {
 	similarGroups?: Group[];
 	groupUpcomingEvents?: Event[];
 
-	meOwner?: boolean;
 	meLiked?: MeLiked[];
 	meJoined?: MeJoined[];
 }

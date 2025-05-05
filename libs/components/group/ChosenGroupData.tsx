@@ -1,22 +1,33 @@
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { useTranslation } from 'react-i18next';
-import { Heart, Eye, Calendar, Users, Bookmark } from 'lucide-react';
+import { Heart, Eye, Calendar, Bookmark, Users, Ticket, Pencil } from 'lucide-react';
 
 import { Button } from '@/libs/components/ui/button';
 import { Badge } from '@/libs/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/libs/components/ui/card';
+import { Card } from '@/libs/components/ui/card';
+import { Separator } from '@/libs/components/ui/separator';
 import { Group } from '@/libs/types/group/group';
 import { REACT_APP_API_URL } from '@/libs/config';
+import { cn } from '@/libs/utils';
 
 interface ChosenGroupDataProps {
 	group: Group | null;
+	userId: string;
 	likeGroupHandler: (groupId: string) => void;
 	joinGroupHandler: (groupId: string) => void;
 	leaveGroupHandler: (groupId: string) => void;
 }
 
-const ChosenGroupData = ({ group, likeGroupHandler, joinGroupHandler, leaveGroupHandler }: ChosenGroupDataProps) => {
+const ChosenGroupData = ({
+	userId,
+	group,
+	likeGroupHandler,
+	joinGroupHandler,
+	leaveGroupHandler,
+}: ChosenGroupDataProps) => {
 	const { t } = useTranslation('common');
+	const router = useRouter();
 
 	if (!group) return null;
 
@@ -34,109 +45,163 @@ const ChosenGroupData = ({ group, likeGroupHandler, joinGroupHandler, leaveGroup
 		}
 	};
 
-	const isOwner = group.meOwner ?? false;
+	const isOwner = userId === group.memberId;
+	const isModerator = group.groupModerators?.some((moderator) => moderator.memberId === userId);
 	const isLiked = group.meLiked && group.meLiked.length > 0;
 	const isJoined = group.meJoined && group.meJoined.length > 0;
 	const likesCount = group.groupLikes;
 
 	return (
-		<div className="lg:col-span-2">
-			<Card className="overflow-hidden">
-				<div className="relative h-[400px] w-full group">
-					<Image
-						src={`${REACT_APP_API_URL}/${group.groupImage}`}
-						alt={group.groupName}
-						fill
-						className="object-cover transition-transform duration-300"
-						priority
-					/>
-					<div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent opacity-0 transition-opacity duration-300" />
-				</div>
-				<CardContent className="p-8">
-					<CardHeader className="p-0 mb-8">
-						<CardTitle className="text-4xl font-semibold tracking-tight mb-2">{group.groupName}</CardTitle>
-						<div className="flex items-center space-x-2">
-							{group.groupCategories.map((category) => (
-								<Badge
-									key={category}
-									variant="secondary"
-									className="hover:bg-secondary/70 transition-colors duration-200"
-								>
-									#{category}
-								</Badge>
-							))}
-						</div>
-					</CardHeader>
-					<div className="flex items-center space-x-6 mb-8">
-						<Button
-							variant="ghost"
-							onClick={handleLike}
-							className={`flex items-center space-x-2 transition-all duration-200 group ${
-								isLiked ? 'text-red-500 hover:text-red-600' : 'text-muted-foreground hover:text-primary'
-							}`}
-						>
-							<Heart
-								className={`h-5 w-5 transition-all duration-200 ${
-									isLiked ? 'fill-red-500 text-red-500' : 'text-muted-foreground group-hover:text-primary'
-								}`}
-							/>
-							<span className="text-sm">
-								{likesCount} {t('likes')}
-							</span>
-						</Button>
-						<div className="flex items-center space-x-2 text-muted-foreground">
-							<Eye className="h-5 w-5" />
-							<span className="text-sm">
-								{group.groupViews} {t('views')}
-							</span>
-						</div>
-						<div className="flex items-center space-x-2 text-muted-foreground">
-							<Users className="h-5 w-5" />
-							<span className="text-sm">
+		<Card className="overflow-hidden border-none shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl">
+			{/* Section: Group Data */}
+			<div className="relative">
+				{/* Edit Button */}
+				{(isOwner || isModerator) && (
+					<Button
+						variant="secondary"
+						size="sm"
+						className="absolute top-4 right-4 z-10 h-9 bg-background/80 backdrop-blur-sm shadow-sm hover:bg-background/90 hover:scale-105 transition-all duration-200"
+						onClick={() => router.push(`/group/update?groupId=${group._id}`)}
+					>
+						<Pencil className="h-4 w-4 mr-1.5" />
+						{t('Edit')}
+					</Button>
+				)}
+
+				<div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-6">
+					{/* Group Image */}
+					<div className="relative aspect-square w-full group rounded-xl overflow-hidden">
+						<Image
+							src={`${REACT_APP_API_URL}/${group.groupImage}`}
+							alt={group.groupName}
+							fill
+							className="object-scale-down transition-transform duration-500 group-hover:scale-110"
+							priority
+							sizes="(max-width: 768px) 100vw, 50vw"
+						/>
+						<div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+						<div className="absolute bottom-0 left-0 right-0 h-[25%] bg-gradient-to-t from-black/60 to-transparent rounded-b-xl" />
+						<div className="absolute bottom-4 left-4">
+							<Badge
+								variant="secondary"
+								className="bg-primary text-primary-foreground backdrop-blur-sm shadow-md px-3 py-1 font-medium"
+							>
 								{group.memberCount} {t('members')}
-							</span>
+							</Badge>
 						</div>
-						<div className="flex items-center space-x-2 text-muted-foreground">
-							<Calendar className="h-5 w-5" />
-							<span className="text-sm">
+						<div className="absolute bottom-4 right-4">
+							<Badge
+								variant="secondary"
+								className="bg-primary text-primary-foreground backdrop-blur-sm shadow-md px-3 py-1 font-medium"
+							>
 								{group.eventsCount} {t('events')}
-							</span>
+							</Badge>
 						</div>
 					</div>
-					<div className="space-y-6">
-						<div>
-							<h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
-								<Bookmark className="w-5 h-5 text-muted-foreground" />
-								{t('About')}
-							</h3>
-							<p className="text-muted-foreground leading-relaxed whitespace-pre-line">{group.groupDesc}</p>
+
+					<div className="space-y-6 flex flex-col justify-between">
+						{/* Group Info */}
+						<div className="space-y-5">
+							{/* Group Name and Categories */}
+							<div>
+								<h2 className="text-2xl md:text-3xl font-semibold tracking-tight bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent mb-3">
+									{group.groupName}
+								</h2>
+								<div className="flex flex-wrap gap-2 mt-3">
+									{group.groupCategories.map((category) => (
+										<Badge
+											key={category}
+											variant="outline"
+											className="text-xs font-medium border-primary/30 text-primary bg-primary/5 hover:bg-primary/10 transition-colors px-3 py-1 rounded-full"
+										>
+											{category}
+										</Badge>
+									))}
+								</div>
+							</div>
+
+							{/* Group Stats */}
+							<div className="space-y-3">
+								<div className="flex items-center gap-3 text-sm text-muted-foreground hover:text-foreground transition-colors bg-muted/40 hover:bg-muted/50 p-3 rounded-xl">
+									<Calendar className="h-5 w-5 flex-shrink-0 text-primary" />
+									<span className="font-medium">
+										{t('Created')} {new Date(group.createdAt).toLocaleDateString()}
+									</span>
+								</div>
+								<div className="flex items-center gap-3 text-sm text-muted-foreground hover:text-foreground transition-colors bg-muted/40 hover:bg-muted/50 p-3 rounded-xl">
+									<Users className="h-5 w-5 flex-shrink-0 text-primary" />
+									<span className="font-medium">
+										{group.memberCount} {t('members')}
+									</span>
+								</div>
+								<div className="flex items-center gap-3 text-sm text-muted-foreground hover:text-foreground transition-colors bg-muted/40 hover:bg-muted/50 p-3 rounded-xl">
+									<Ticket className="h-5 w-5 flex-shrink-0 text-primary" />
+									<span className="font-medium">
+										{group.eventsCount} {t('events')}
+									</span>
+								</div>
+							</div>
+
+							{/* Group Likes and Views */}
+							<div className="flex items-center gap-4 pt-2">
+								<button
+									onClick={handleLike}
+									className={cn(
+										'flex items-center gap-2 transition-all duration-200 hover:scale-105 bg-muted/40 hover:bg-muted/50 p-3 rounded-xl',
+										isLiked ? 'text-destructive hover:text-destructive/90' : 'text-muted-foreground hover:text-primary',
+									)}
+								>
+									<Heart
+										className={cn(
+											'h-5 w-5 transition-all duration-200',
+											isLiked ? 'fill-destructive text-destructive' : 'text-primary/70',
+										)}
+									/>
+									<span className="text-sm font-medium">
+										{likesCount} {t('likes')}
+									</span>
+								</button>
+								<div className="flex items-center gap-2 text-muted-foreground bg-muted/40 hover:bg-muted/50 transition-colors p-3 rounded-xl">
+									<Eye className="h-5 w-5 text-primary/70" />
+									<span className="text-sm font-medium">
+										{group.groupViews} {t('views')}
+									</span>
+								</div>
+							</div>
 						</div>
-						<div className="flex items-center space-x-3 text-muted-foreground">
-							<Calendar className="h-5 w-5" />
-							<span>
-								{t('Created')} {new Date(group.createdAt).toLocaleDateString()}
-							</span>
+
+						{/* Join/Leave Button */}
+						<div className="bg-accent/30 p-4 rounded-xl">
+							<Button
+								onClick={handleJoin}
+								size="lg"
+								disabled={isOwner}
+								className={cn(
+									'w-full transition-all duration-200',
+									isOwner
+										? 'bg-muted text-muted-foreground cursor-not-allowed'
+										: isJoined
+											? 'bg-destructive hover:bg-destructive/90 text-white'
+											: 'bg-primary hover:bg-primary/90 text-primary-foreground',
+								)}
+							>
+								{isOwner ? t('Owner cannot leave group') : isJoined ? t('Leave Group') : t('Join Group')}
+							</Button>
 						</div>
 					</div>
-					<div className="mt-8 border-t pt-6">
-						<Button
-							onClick={handleJoin}
-							size="lg"
-							disabled={isOwner}
-							className={`w-full transition-all duration-200 ${
-								isOwner
-									? 'bg-muted text-muted-foreground cursor-not-allowed'
-									: isJoined
-										? 'bg-destructive hover:bg-destructive-foreground text-white'
-										: 'bg-primary/90 hover:bg-primary text-primary-foreground'
-							}`}
-						>
-							{isOwner ? t('Owner cannot leave group') : isJoined ? t('Leave Group') : t('Join Group')}
-						</Button>
-					</div>
-				</CardContent>
-			</Card>
-		</div>
+				</div>
+			</div>
+
+			{/* Section: Description */}
+			<Separator className="my-2" />
+			<div className="px-6 py-4">
+				<h3 className="text-sm font-medium mb-2 text-foreground/90 flex items-center gap-2">
+					<Bookmark className="w-4 h-4" />
+					{t('About')}
+				</h3>
+				<p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">{group.groupDesc}</p>
+			</div>
+		</Card>
 	);
 };
 

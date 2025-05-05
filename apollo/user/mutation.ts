@@ -197,7 +197,6 @@ export const CREATE_GROUP = gql`
 				joinDate
 				meJoined
 			}
-			meOwner
 		}
 	}
 `;
@@ -206,14 +205,13 @@ export const UPDATE_GROUP = gql`
 	mutation UpdateGroup($input: GroupUpdateInput!) {
 		updateGroup(input: $input) {
 			_id
-
 			groupName
 			groupDesc
-			groupmemberId
 			groupImage
+			memberId
+			groupCategories
 			groupViews
 			groupLikes
-			groupCategories
 			memberCount
 			createdAt
 			updatedAt

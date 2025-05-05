@@ -88,22 +88,6 @@ const ChosenEvent = () => {
 				ticketQuantity: 1,
 				totalPrice: getEventData.getEvent.eventPrice,
 			});
-
-			setEventUpdateInput({
-				_id: getEventData.getEvent._id,
-				eventName: getEventData.getEvent.eventName,
-				eventDesc: getEventData.getEvent.eventDesc,
-				eventImage: getEventData.getEvent.eventImage,
-				eventDate: getEventData.getEvent.eventDate,
-				eventStartTime: getEventData.getEvent.eventStartTime,
-				eventEndTime: getEventData.getEvent.eventEndTime,
-				eventAddress: getEventData.getEvent.eventAddress,
-				eventCity: getEventData.getEvent.eventCity,
-				eventCapacity: getEventData.getEvent.eventCapacity,
-				eventPrice: getEventData.getEvent.eventPrice,
-				eventStatus: getEventData.getEvent.eventStatus,
-				eventCategories: getEventData.getEvent.eventCategories,
-			});
 		}
 	}, [getEventData]);
 

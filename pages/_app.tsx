@@ -7,6 +7,7 @@ import { ThemeProvider } from 'next-themes';
 
 import { JetBrains_Mono as FontMono, Inter as FontSans } from 'next/font/google';
 import type { AppProps } from 'next/app';
+import { Toaster } from 'sonner';
 
 const fontSans = FontSans({
 	subsets: ['latin'],
@@ -25,6 +26,7 @@ const App = ({ Component, pageProps }: AppProps) => {
 		<ApolloProvider client={client}>
 			<main className={`${fontSans.variable} ${fontMono.variable}`} suppressHydrationWarning>
 				<ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+					<Toaster position="top-right" richColors />
 					<Component {...pageProps} />
 				</ThemeProvider>
 			</main>
