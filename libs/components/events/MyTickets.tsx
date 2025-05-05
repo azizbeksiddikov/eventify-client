@@ -1,19 +1,21 @@
+import { useTranslation } from 'react-i18next';
+import { ChevronDown, Ticket as TicketIcon, Filter } from 'lucide-react';
+
 import { Button } from '@/libs/components/ui/button';
 import { Card, CardHeader, CardContent, CardTitle } from '@/libs/components/ui/card';
-import { Tickets } from '@/libs/types/ticket/ticket';
-import { ChevronDown, Ticket as TicketIcon, Filter } from 'lucide-react';
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from '@/libs/components/ui/dropdown-menu';
-import { useTranslation } from 'react-i18next';
-import PaginationComponent from '@/libs/components/common/PaginationComponent';
-import { TicketInquiry } from '@/libs/types/ticket/ticket.input';
-import { TicketStatus } from '@/libs/enums/ticket.enum';
-import TicketCard from './TicketCard';
 import { Badge } from '@/libs/components/ui/badge';
+import PaginationComponent from '@/libs/components/common/PaginationComponent';
+import TicketCard from '@/libs/components/events/TicketCard';
+
+import { Tickets } from '@/libs/types/ticket/ticket';
+import { TicketStatus } from '@/libs/enums/ticket.enum';
+import { TicketInquiry } from '@/libs/types/ticket/ticket.input';
 
 const LIMIT_OPTIONS = [5, 10, 20, 50];
 const CATEGORY_OPTIONS = [...Object.values(TicketStatus), 'ALL'];

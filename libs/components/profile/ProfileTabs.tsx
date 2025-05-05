@@ -1,13 +1,14 @@
+import { ProfileGroups } from '@/libs/components/profile/ProfileGroups';
+import { ProfileTickets } from '@/libs/components/profile/ProfileTickets';
+import { ProfileSettings } from '@/libs/components/profile/ProfileSettings';
+import { ProfileFollowings } from '@/libs/components/profile/ProfileFollowings';
+import { ProfileFollowers } from '@/libs/components/profile/ProfileFollowers';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/libs/components/ui/tabs';
+
 import { Member } from '@/libs/types/member/member';
 import { Group } from '@/libs/types/group/group';
 import { Ticket } from '@/libs/types/ticket/ticket';
 import { MemberUpdateInput } from '@/libs/types/member/member.update';
-import { ProfileGroups } from './ProfileGroups';
-import { ProfileTickets } from './ProfileTickets';
-import { ProfileSettings } from './ProfileSettings';
-import { ProfileFollowings } from './ProfileFollowings';
-import { ProfileFollowers } from './ProfileFollowers';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/libs/components/ui/tabs';
 
 interface ProfileTabsProps {
 	activeTab: string;

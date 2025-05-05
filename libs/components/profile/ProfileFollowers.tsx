@@ -6,8 +6,8 @@ import { Avatar, AvatarImage, AvatarFallback } from '@/libs/components/ui/avatar
 import { Button } from '@/libs/components/ui/button';
 import { Badge } from '@/libs/components/ui/badge';
 
-import { MemberType } from '@/libs/enums/member.enum';
 import { Member } from '@/libs/types/member/member';
+import { getMemberTypeColor } from '@/libs/config';
 
 interface ProfileFollowersProps {
 	followers: Member[];
@@ -23,17 +23,6 @@ export const ProfileFollowers = ({
 	unsubscribeHandler,
 }: ProfileFollowersProps) => {
 	const { t } = useTranslation('common');
-
-	const getMemberTypeColor = (type: MemberType) => {
-		switch (type) {
-			case MemberType.ORGANIZER:
-				return 'bg-purple-100 text-purple-800';
-			case MemberType.ADMIN:
-				return 'bg-red-100 text-red-800';
-			default:
-				return 'bg-blue-100 text-blue-800';
-		}
-	};
 
 	return (
 		<div className="bg-card rounded-xl shadow-sm">

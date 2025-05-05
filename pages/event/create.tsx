@@ -1,32 +1,33 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { EventCategory, EventStatus } from '@/libs/enums/event.enum';
+import axios from 'axios';
+import { ImageIcon, RefreshCw, CalendarIcon } from 'lucide-react';
+import { useMutation, useQuery, useReactiveVar } from '@apollo/client';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { useTranslation } from 'react-i18next';
+import { userVar } from '@/apollo/store';
+import { format } from 'date-fns';
+
 import { Button } from '@/libs/components/ui/button';
 import { Input } from '@/libs/components/ui/input';
 import { Textarea } from '@/libs/components/ui/textarea';
 import { Card } from '@/libs/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/libs/components/ui/select';
-import { ImageIcon, RefreshCw, CalendarIcon } from 'lucide-react';
 import { Calendar } from '@/libs/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/libs/components/ui/popover';
 import { ScrollArea } from '@/libs/components/ui/scroll-area';
-import { cn } from '@/libs/utils';
-import { format } from 'date-fns';
 import withBasicLayout from '@/libs/components/layout/LayoutBasic';
-import { EventInput } from '@/libs/types/event/event.input';
-import { Group } from '@/libs/types/group/group';
-import { useMutation, useQuery, useReactiveVar } from '@apollo/client';
-import { userVar } from '@/apollo/store';
+
+import { EventCategory, EventStatus } from '@/libs/enums/event.enum';
 import { GET_MY_GROUPS } from '@/apollo/user/query';
 import { CREATE_EVENT } from '@/apollo/user/mutation';
+import { cn } from '@/libs/utils';
+import { EventInput } from '@/libs/types/event/event.input';
+import { Group } from '@/libs/types/group/group';
 import { smallError, smallSuccess } from '@/libs/alert';
-import { useTranslation } from 'react-i18next';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { Message } from '@/libs/enums/common.enum';
-import axios from 'axios';
 import { getJwtToken } from '@/libs/auth';
-import { imageTypes, REACT_APP_API_URL } from '@/libs/config';
-import { REACT_APP_API_GRAPHQL_URL } from '@/libs/config';
+import { imageTypes, REACT_APP_API_URL, REACT_APP_API_GRAPHQL_URL } from '@/libs/config';
 
 export const getStaticProps = async ({ locale }: { locale: string }) => ({
 	props: {

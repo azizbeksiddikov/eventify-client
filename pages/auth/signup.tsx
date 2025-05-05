@@ -1,18 +1,19 @@
 import { useCallback, useState } from 'react';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { Eye, EyeOff } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { Eye, EyeOff } from 'lucide-react';
 
-import { MemberInput } from '@/libs/types/member/member.input';
-import { MemberType } from '@/libs/enums/member.enum';
-import withAuthLayout from '@/libs/components/layout/LayoutAuth';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/libs/components/ui/card';
+import { RadioGroup, RadioGroupItem } from '@/libs/components/ui/radio-group';
 import { Button } from '@/libs/components/ui/button';
 import { Input } from '@/libs/components/ui/input';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/libs/components/ui/card';
 import { Label } from '@/libs/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/libs/components/ui/radio-group';
+
+import withAuthLayout from '@/libs/components/layout/LayoutAuth';
+import { MemberInput } from '@/libs/types/member/member.input';
+import { MemberType } from '@/libs/enums/member.enum';
 import { smallError } from '@/libs/alert';
 import { Message } from '@/libs/enums/common.enum';
 import { signUp } from '@/libs/auth';

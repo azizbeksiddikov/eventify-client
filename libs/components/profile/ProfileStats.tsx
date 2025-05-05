@@ -1,6 +1,5 @@
-import { Calendar, Users, Ticket, Heart, Star } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-
+import { Calendar, Users, Ticket, Heart, Star } from 'lucide-react';
 import { Member } from '@/libs/types/member/member';
 
 interface ProfileStatsProps {

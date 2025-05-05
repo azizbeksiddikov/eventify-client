@@ -1,15 +1,16 @@
 import { useTranslation } from 'react-i18next';
+import { ArrowUpDown, X } from 'lucide-react';
+
+import { Button, buttonVariants } from '@/libs/components/ui/button';
+import { Input } from '@/libs/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/libs/components/ui/select';
 
 import { groupsSortOptions } from '@/libs/config';
 import { cn } from '@/libs/utils';
 import { smallError } from '@/libs/alert';
-import { Button, buttonVariants } from '@/libs/components/ui/button';
-import { Input } from '@/libs/components/ui/input';
 import { Direction, Message } from '@/libs/enums/common.enum';
 import { GroupsInquiry } from '@/libs/types/group/group.input';
 import { Group } from '@/libs/types/group/group';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/libs/components/ui/select';
-import { ArrowUpDown, X } from 'lucide-react';
 
 interface SortAndFilterProps {
 	updateURL: (search: GroupsInquiry) => void;

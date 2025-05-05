@@ -1,17 +1,18 @@
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
-import { REACT_APP_API_URL } from '@/libs/config';
+
 import { Button } from '@/libs/components/ui/button';
-import { Event } from '@/libs/types/event/event';
 import { Badge } from '@/libs/components/ui/badge';
 import { Heart, Eye, Calendar, Clock, MapPin, Users, Plus, Minus, Ticket, Pencil } from 'lucide-react';
-import { cn } from '@/libs/utils';
 import { Card } from '@/libs/components/ui/card';
 import { Separator } from '@/libs/components/ui/separator';
-import { EventStatus } from '@/libs/enums/event.enum';
-import { useRouter } from 'next/navigation';
 
+import { REACT_APP_API_URL } from '@/libs/config';
+import { cn } from '@/libs/utils';
 import { TicketInput } from '@/libs/types/ticket/ticket.input';
+import { EventStatus } from '@/libs/enums/event.enum';
+import { Event } from '@/libs/types/event/event';
 
 interface ChosenEventDataProps {
 	event: Event | null;

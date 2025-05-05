@@ -1,8 +1,10 @@
 import { useTranslation } from 'react-i18next';
 import { X } from 'lucide-react';
+
 import { Button } from '@/libs/components/ui/button';
 import { Checkbox } from '@/libs/components/ui/checkbox';
 import { Label } from '@/libs/components/ui/label';
+
 import { GroupsInquiry } from '@/libs/types/group/group.input';
 import { GroupCategory } from '@/libs/enums/group.enum';
 

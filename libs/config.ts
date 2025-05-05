@@ -1,3 +1,5 @@
+import { MemberType } from './enums/member.enum';
+
 export const REACT_APP_API_URL = `${process.env.REACT_APP_API_URL}`;
 export const REACT_APP_API_GRAPHQL_URL = `${process.env.REACT_APP_API_GRAPHQL_URL}`;
 
@@ -24,3 +26,14 @@ export const organizersSortOptions = [
 ];
 
 export const imageTypes = '.jpg,.jpeg,.png,image/jpeg,image/png,image/jpg,image/webp';
+
+export const getMemberTypeColor = (type: MemberType) => {
+	switch (type) {
+		case MemberType.ORGANIZER:
+			return 'bg-purple-100 text-purple-800';
+		case MemberType.ADMIN:
+			return 'bg-red-100 text-red-800';
+		default:
+			return 'bg-blue-100 text-blue-800';
+	}
+};

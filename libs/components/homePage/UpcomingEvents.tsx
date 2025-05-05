@@ -1,13 +1,15 @@
 import { useState } from 'react';
+import { useQuery } from '@apollo/client';
 import Link from 'next/link';
-import { Calendar } from '@/libs/components/ui/calendar';
-import { MapPin, Clock, CalendarIcon, ChevronRight, ArrowRight } from 'lucide-react';
-import { Event } from '@/libs/types/event/event';
-import { Button } from '../ui/button';
 import { useRouter } from 'next/navigation';
 import { useTranslation } from 'next-i18next';
+import { MapPin, Clock, CalendarIcon, ChevronRight, ArrowRight } from 'lucide-react';
+
+import { Calendar } from '@/libs/components/ui/calendar';
+import { Button } from '@/libs/components/ui/button';
 import { GET_EVENTS } from '@/apollo/user/query';
-import { useQuery } from '@apollo/client';
+
+import { Event } from '@/libs/types/event/event';
 import { EventsInquiry } from '@/libs/types/event/event.input';
 import { EventStatus } from '@/libs/enums/event.enum';
 
@@ -26,7 +28,7 @@ export default function UpcomingEvents({
 	const { t } = useTranslation('common');
 
 	/** APOLLO */
-	const { data: upcomingEvents, loading: upcomingEventsLoading } = useQuery(GET_EVENTS, {
+	const { data: upcomingEvents } = useQuery(GET_EVENTS, {
 		fetchPolicy: 'cache-and-network',
 		variables: {
 			input: initialInput,

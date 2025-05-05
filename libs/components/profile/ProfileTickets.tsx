@@ -1,16 +1,13 @@
-// External Libraries
-import { formatDistanceToNow } from 'date-fns';
-import { Calendar, Users, DollarSign, Clock, Link as LinkIcon, Ticket as TicketIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
+import { formatDistanceToNow } from 'date-fns';
+import { Calendar, Users, DollarSign, Clock, Link as LinkIcon, Ticket as TicketIcon } from 'lucide-react';
 
-// Internal Components
 import { Badge } from '@/libs/components/ui/badge';
 import { Button } from '@/libs/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/libs/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/libs/components/ui/table';
 
-// Types and Enums
 import { TicketStatus } from '@/libs/enums/ticket.enum';
 import { Ticket } from '@/libs/types/ticket/ticket';
 

@@ -1,11 +1,13 @@
 import { useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
-import { Button } from '@/libs/components/ui/button';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { useReactiveVar } from '@apollo/client';
 import { userVar } from '@/apollo/store';
-import { MemberType } from '@/libs/enums/member.enum';
+
+import { Button } from '@/libs/components/ui/button';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
+
 import { smallError } from '@/libs/alert';
+import { MemberType } from '@/libs/enums/member.enum';
 
 const ChosenEventHeader = () => {
 	const router = useRouter();

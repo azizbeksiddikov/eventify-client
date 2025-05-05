@@ -1,10 +1,11 @@
 import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
 import { useReactiveVar } from '@apollo/client';
+import { ArrowRight, ArrowLeft } from 'lucide-react';
+
+import { Button } from '@/libs/components/ui/button';
 
 import { userVar } from '@/apollo/store';
-import { Button } from '@/libs/components/ui/button';
-import { ArrowRight, ArrowLeft } from 'lucide-react';
 import { smallError } from '@/libs/alert';
 import { MemberType } from '@/libs/enums/member.enum';
 

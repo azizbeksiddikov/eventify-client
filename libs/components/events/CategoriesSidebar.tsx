@@ -1,11 +1,12 @@
 import { useTranslation } from 'react-i18next';
 
-import { EventCategory } from '@/libs/enums/event.enum';
 import { Button } from '@/libs/components/ui/button';
 import { Checkbox } from '@/libs/components/ui/checkbox';
 import { Label } from '@/libs/components/ui/label';
-import { EventsInquiry } from '@/libs/types/event/event.input';
 import { X } from 'lucide-react';
+
+import { EventsInquiry } from '@/libs/types/event/event.input';
+import { EventCategory } from '@/libs/enums/event.enum';
 
 interface CategoriesSidebarProps {
 	eventsSearchFilters: EventsInquiry;

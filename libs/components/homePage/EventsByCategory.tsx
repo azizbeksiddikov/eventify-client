@@ -1,21 +1,19 @@
 import Link from 'next/link';
-import { ArrowRight } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/navigation';
-import { useMutation, useQuery } from '@apollo/client';
+import { useTranslation } from 'react-i18next';
+import { useMutation, useQuery, useReactiveVar } from '@apollo/client';
+import { userVar } from '@/apollo/store';
+import { ArrowRight } from 'lucide-react';
 
-import { GET_EVENTS_BY_CATEGORY } from '@/apollo/user/query';
 import { Button } from '@/libs/components/ui/button';
 import SmallEventCard from '@/libs/components/common/SmallEventCard';
+
+import { GET_EVENTS_BY_CATEGORY } from '@/apollo/user/query';
+import { LIKE_TARGET_EVENT } from '@/apollo/user/mutation';
+import { likeHandler } from '@/libs/utils';
 import { Event, CategoryEvents } from '@/libs/types/event/event';
 import { EventsByCategoryInquiry } from '@/libs/types/event/event.input';
 import { EventCategory } from '@/libs/enums/event.enum';
-import { LIKE_TARGET_EVENT } from '@/apollo/user/mutation';
-import { Message } from '@/libs/enums/common.enum';
-import { smallError, smallSuccess } from '@/libs/alert';
-import { useReactiveVar } from '@apollo/client';
-import { userVar } from '@/apollo/store';
-import { likeHandler } from '@/libs/utils';
 
 interface EventsByCategoryProps {
 	initialInput?: EventsByCategoryInquiry;

@@ -1,17 +1,18 @@
-import { ArrowRight } from 'lucide-react';
-import OrganizerCard from '@/libs/components/common/OrganizerCard';
-import { Button } from '@/libs/components/ui/button';
-import { useRouter } from 'next/navigation';
-import { useTranslation } from 'react-i18next';
-import { OrganizersInquiry } from '@/libs/types/member/member.input';
-import { useMutation, useQuery, useReactiveVar } from '@apollo/client';
-import { GET_ORGANIZERS } from '@/apollo/user/query';
-import { Member } from '@/libs/types/member/member';
-import { Direction, Message } from '@/libs/enums/common.enum';
-import { LIKE_TARGET_MEMBER, SUBSCRIBE, UNSUBSCRIBE } from '@/apollo/user/mutation';
-import { smallError } from '@/libs/alert';
 import { userVar } from '@/apollo/store';
-import { smallSuccess } from '@/libs/alert';
+import { ArrowRight } from 'lucide-react';
+import { useMutation, useQuery, useReactiveVar } from '@apollo/client';
+import { useTranslation } from 'react-i18next';
+import { useRouter } from 'next/navigation';
+
+import { Button } from '@/libs/components/ui/button';
+import OrganizerCard from '@/libs/components/common/OrganizerCard';
+
+import { GET_ORGANIZERS } from '@/apollo/user/query';
+import { LIKE_TARGET_MEMBER, SUBSCRIBE, UNSUBSCRIBE } from '@/apollo/user/mutation';
+import { smallError, smallSuccess } from '@/libs/alert';
+import { Member } from '@/libs/types/member/member';
+import { OrganizersInquiry } from '@/libs/types/member/member.input';
+import { Direction, Message } from '@/libs/enums/common.enum';
 
 interface TopOrganizersProps {
 	initialInput?: OrganizersInquiry;
@@ -26,7 +27,7 @@ const TopOrganizers = ({
 		search: {},
 	},
 }: TopOrganizersProps) => {
-	const { t } = useTranslation();
+	const { t } = useTranslation('common');
 	const router = useRouter();
 	const user = useReactiveVar(userVar);
 

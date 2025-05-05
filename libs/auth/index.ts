@@ -1,11 +1,11 @@
 import decodeJWT from 'jwt-decode';
 import { initializeApollo } from '@/apollo/client';
 import { userVar } from '@/apollo/store';
-import { CustomJwtPayload } from '@/libs/types/customJwtPayload';
-import { sweetMixinErrorAlert } from '@/libs/sweetAlert';
+
 import { LOGIN, SIGN_UP } from '@/apollo/user/mutation';
-import { smallError } from '../alert';
-import { Message } from '../enums/common.enum';
+import { smallError } from '@/libs/alert';
+import { CustomJwtPayload } from '@/libs/types/customJwtPayload';
+import { Message } from '@/libs/enums/common.enum';
 
 export function getJwtToken(): any {
 	if (typeof window !== 'undefined') {
@@ -113,10 +113,10 @@ const requestSignUpJwtToken = async ({
 		console.log('request token err', err.graphQLErrors);
 		switch (err.graphQLErrors[0].message) {
 			case 'Definer: login and password do not match':
-				await sweetMixinErrorAlert('Please check your password again');
+				await smallError('Please check your password again');
 				break;
 			case 'Definer: user has been blocked!':
-				await sweetMixinErrorAlert('User has been blocked!');
+				await smallError('User has been blocked!');
 				break;
 		}
 		throw new Error('token error');

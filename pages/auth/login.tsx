@@ -1,16 +1,18 @@
 import React, { useCallback, useState } from 'react';
 import Link from 'next/link';
+import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { Eye, EyeOff } from 'lucide-react';
 
-import { LoginInput } from '@/libs/types/member/member.input';
-import { logIn } from '@/libs/auth';
-import { Message } from '@/libs/enums/common.enum';
 import withAuthLayout from '@/libs/components/layout/LayoutAuth';
 import { Button } from '@/libs/components/ui/button';
 import { Input } from '@/libs/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/libs/components/ui/card';
+
+import { LoginInput } from '@/libs/types/member/member.input';
+import { logIn } from '@/libs/auth';
+import { Message } from '@/libs/enums/common.enum';
 import { smallError } from '@/libs/alert';
 
 export const getStaticProps = async ({ locale }: { locale: string }) => ({
@@ -20,6 +22,7 @@ export const getStaticProps = async ({ locale }: { locale: string }) => ({
 });
 
 const Login = () => {
+	const { t } = useTranslation();
 	const router = useRouter();
 	const [loginInput, setLoginInput] = useState<LoginInput>({
 		username: '',
@@ -72,14 +75,14 @@ const Login = () => {
 			<div className="flex items-center justify-center min-h-[calc(100vh-200px)] px-4 sm:px-6 lg:px-8">
 				<Card className="w-full max-w-md">
 					<CardHeader className="text-center">
-						<CardTitle className="text-3xl font-semibold">Login</CardTitle>
+						<CardTitle className="text-3xl font-semibold">{t('Login')}</CardTitle>
 						<CardDescription>
-							Or{' '}
+							{t('Or')}
 							<Link
 								href="/auth/signup"
 								className="font-medium text-primary hover:text-primary/80 transition-colors duration-300 underline"
 							>
-								create a new account
+								{t('create a new account')}
 							</Link>
 						</CardDescription>
 					</CardHeader>
@@ -88,7 +91,7 @@ const Login = () => {
 							<div className="space-y-4">
 								<div className="space-y-2">
 									<label htmlFor="username" className="text-sm font-medium">
-										Username
+										{t('Username')}
 									</label>
 									<Input
 										id="username"
@@ -97,13 +100,13 @@ const Login = () => {
 										autoComplete="username"
 										value={loginInput.username}
 										onChange={(e) => handleInput(e.target.name, e.target.value)}
-										placeholder="Enter your username"
+										placeholder={t('Enter your username')}
 									/>
 								</div>
 
 								<div className="space-y-2">
 									<label htmlFor="memberPassword" className="text-sm font-medium">
-										Password
+										{t('Password')}
 									</label>
 									<div className="relative">
 										<Input
@@ -113,7 +116,7 @@ const Login = () => {
 											autoComplete="current-password"
 											value={loginInput.memberPassword}
 											onChange={(e) => handleInput(e.target.name, e.target.value)}
-											placeholder="Enter your password"
+											placeholder={t('Enter your password')}
 											className="pr-10"
 										/>
 										<Button
@@ -130,7 +133,7 @@ const Login = () => {
 							</div>
 
 							<Button type="submit" className="w-full" disabled={isLoading}>
-								{isLoading ? 'Signing in...' : 'Sign in'}
+								{isLoading ? t('Signing in...') : t('Sign in')}
 							</Button>
 						</form>
 					</CardContent>

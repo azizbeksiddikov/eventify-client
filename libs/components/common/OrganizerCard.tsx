@@ -53,7 +53,7 @@ const OrganizerCard = ({ organizer, likeHandler, subscribeHandler, unsubscribeHa
 						<TooltipTrigger asChild>
 							<div className="flex items-center justify-center gap-1 sm:gap-2 p-1.5 sm:p-2 rounded-md bg-card/70 hover:bg-card transition-colors cursor-help">
 								<Calendar className="h-3 w-3 sm:h-4 sm:w-4 text-primary" />
-								<p className="text-sm sm:text-base font-medium">{organizer.eventOrganizedCount || 0}</p>
+								<p className="text-sm sm:text-base font-medium">{organizer?.eventsOrganizedCount || 0}</p>
 							</div>
 						</TooltipTrigger>
 						<TooltipContent side="bottom">{t('Events organized')}</TooltipContent>

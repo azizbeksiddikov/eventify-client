@@ -1,9 +1,9 @@
+import { useTranslation } from 'react-i18next';
+import Image from 'next/image';
 import { User } from 'lucide-react';
 
+import { getMemberTypeColor, REACT_APP_API_URL } from '@/libs/config';
 import { Member } from '@/libs/types/member/member';
-import { REACT_APP_API_URL } from '@/libs/config';
-import { MemberType } from '@/libs/enums/member.enum';
-import { useTranslation } from 'react-i18next';
 
 interface ProfileHeaderProps {
 	member: Member;
@@ -12,23 +12,12 @@ interface ProfileHeaderProps {
 export const ProfileHeader = ({ member }: ProfileHeaderProps) => {
 	const { t } = useTranslation();
 
-	const getMemberTypeColor = (type: MemberType) => {
-		switch (type) {
-			case MemberType.ORGANIZER:
-				return 'bg-purple-100 text-purple-800';
-			case MemberType.ADMIN:
-				return 'bg-red-100 text-red-800';
-			default:
-				return 'bg-blue-100 text-blue-800';
-		}
-	};
-
 	return (
 		<div className="bg-card rounded-xl shadow-sm p-6 md:p-8 mb-8">
 			<div className="flex flex-col md:flex-row items-center md:items-start gap-6 md:gap-8">
 				<div className="relative">
 					{member.memberImage ? (
-						<img
+						<Image
 							src={`${REACT_APP_API_URL}/${member.memberImage}`}
 							alt={member.memberFullName ?? t('No image')}
 							className="w-24 h-24 md:w-32 md:h-32 rounded-full object-cover ring-2 ring-ring/20"

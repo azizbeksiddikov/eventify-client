@@ -1,8 +1,8 @@
-import { Group } from '@/libs/types/group/group';
-
 import Owner from '@/libs/components/common/Owner';
 import GroupModerators from '@/libs/components/group/GroupModerators';
 import SimilarGroups from '@/libs/components/common/SimilarGroups';
+
+import { Group } from '@/libs/types/group/group';
 
 interface ChosenGroupOtherProps {
 	group: Group | null;

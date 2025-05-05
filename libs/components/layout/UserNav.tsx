@@ -1,4 +1,7 @@
-import { logOut } from '@/libs/auth';
+import { useRouter } from 'next/router';
+import { useTranslation } from 'react-i18next';
+import { User } from 'lucide-react';
+
 import { Avatar, AvatarFallback, AvatarImage } from '@/libs/components/ui/avatar';
 import { Button } from '@/libs/components/ui/button';
 import {
@@ -10,10 +13,9 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from '@/libs/components/ui/dropdown-menu';
+
+import { logOut } from '@/libs/auth';
 import { Member } from '@/libs/types/member/member';
-import { User } from 'lucide-react';
-import { useRouter } from 'next/router';
-import { useTranslation } from 'react-i18next';
 
 export function UserNav({ authMember }: { authMember: Member }) {
 	const router = useRouter();

@@ -7,9 +7,10 @@ import { Button } from '@/libs/components/ui/button';
 import { Badge } from '@/libs/components/ui/badge';
 import { Card } from '@/libs/components/ui/card';
 import { Separator } from '@/libs/components/ui/separator';
-import { Group } from '@/libs/types/group/group';
+
 import { REACT_APP_API_URL } from '@/libs/config';
 import { cn } from '@/libs/utils';
+import { Group } from '@/libs/types/group/group';
 
 interface ChosenGroupDataProps {
 	group: Group | null;

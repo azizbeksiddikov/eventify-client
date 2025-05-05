@@ -1,8 +1,10 @@
 import Link from 'next/link';
-import { Instagram, Linkedin, MapPin, Phone, Clock, Send } from 'lucide-react';
-import { Logo } from '../ui/logo';
-import { cn } from '@/libs/utils';
 import { useTranslation } from 'react-i18next';
+import { Instagram, Linkedin, MapPin, Phone, Clock, Send } from 'lucide-react';
+
+import { Logo } from '@/libs/components/ui/logo';
+import { cn } from '@/libs/utils';
+
 const quickLinks = [
 	{ href: '/event', label: 'Events' },
 	{ href: '/group', label: 'Groups' },

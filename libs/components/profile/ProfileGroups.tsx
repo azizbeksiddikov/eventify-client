@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { formatDistanceToNow } from 'date-fns';
 import { useTranslation } from 'react-i18next';
+import { useReactiveVar } from '@apollo/client';
 import { Users, Heart, LogIn, LogOut, Calendar, Clock, Link as LinkIcon } from 'lucide-react';
 
 import { Avatar, AvatarImage, AvatarFallback } from '@/libs/components/ui/avatar';
@@ -9,11 +10,9 @@ import { Badge } from '@/libs/components/ui/badge';
 import { Card, CardContent, CardHeader } from '@/libs/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/libs/components/ui/table';
 
-import { REACT_APP_API_URL } from '@/libs/config';
-
-import { Group } from '@/libs/types/group/group';
 import { userVar } from '@/apollo/store';
-import { useReactiveVar } from '@apollo/client';
+import { REACT_APP_API_URL } from '@/libs/config';
+import { Group } from '@/libs/types/group/group';
 
 interface ProfileGroupsProps {
 	groups: Group[];

@@ -1,13 +1,14 @@
 import { useState } from 'react';
+import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
+import { format } from 'date-fns';
+import { CalendarIcon } from 'lucide-react';
+
 import { Input } from '@/libs/components/ui/input';
 import { Button } from '@/libs/components/ui/button';
 import { Card } from '@/libs/components/ui/card';
 import { Calendar } from '@/libs/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/libs/components/ui/popover';
-import { format } from 'date-fns';
-import { CalendarIcon } from 'lucide-react';
-import { useTranslation } from 'next-i18next';
 
 const SearchEvents = () => {
 	const router = useRouter();

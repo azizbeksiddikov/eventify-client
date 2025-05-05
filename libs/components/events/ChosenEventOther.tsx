@@ -1,10 +1,12 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
-import { Card } from '@/libs/components/ui/card';
-import SmallEventCard from '@/libs/components/common/SmallEventCard';
 import { Users, Calendar } from 'lucide-react';
+
+import { Card } from '@/libs/components/ui/card';
 import Owner from '@/libs/components/common/Owner';
+import SmallEventCard from '@/libs/components/common/SmallEventCard';
+
 import { Event } from '@/libs/types/event/event';
 
 interface ChosenEventOtherProps {

@@ -4,20 +4,31 @@ export default function Document() {
 	return (
 		<Html lang="en" suppressHydrationWarning>
 			<Head>
+				{/* Basic SEO */}
+				<meta charSet="UTF-8" />
+				<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+				<meta name="theme-color" content="#ffffff" />
 				<meta name="robots" content="index,follow" />
-				<link rel="icon" type="image/png" href="/img/logo/favicon.svg" />
-
-				{/* SEO */}
-				<meta name="keyword" content={'nestar, nestar.uz, devex mern, mern nestjs fullstack'} />
 				<meta
-					name={'description'}
-					content={
-						'Buy and sell properties anywhere anytime in South Korea. Best Properties at Best prices on nestar.uz | ' +
-						'Покупайте и продавайте недвижимость в любой точке Южной Кореи в любое время. Лучшая недвижимость по лучшим ценам на nestar.uz | ' +
-						'대한민국 언제 어디서나 부동산을 사고팔 수 있습니다. Nestar.uz에서 최적의 가격으로 최고의 부동산을 만나보세요'
-					}
+					name="description"
+					content="Eventify – Effortlessly create, manage, and join exciting events across the globe in English, Korean, Russian, and Uzbek."
 				/>
+				<meta
+					name="keywords"
+					content="Eventify, events, event management, create events, join events, community events, ticketing, EN, KO, RU, UZ"
+				/>
+				<meta name="author" content="Eventify Team" />
+				<link rel="icon" type="image/png" href="/images/logo.png" />
+
+				{/* Open Graph */}
+				<meta property="og:title" content="Eventify – Discover and Host Events That Matter" />
+				<meta
+					property="og:description"
+					content="Create, manage, and attend events in your language. Eventify supports English, Korean, Russian, and Uzbek."
+				/>
+				<meta property="og:image" content="/images/logo.png" />
 			</Head>
+
 			<body className={` bg-background antialiased`}>
 				<Main />
 				<NextScript />

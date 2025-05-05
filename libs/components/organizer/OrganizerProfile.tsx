@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import { useTranslation } from 'react-i18next';
-
 import { Users, Heart, Eye, Mail, Phone, Calendar, CheckCircle2, Shield, Star, User } from 'lucide-react';
+
 import { Badge } from '@/libs/components/ui/badge';
 import { Button } from '@/libs/components/ui/button';
 
@@ -144,7 +144,7 @@ const OrganizerProfile = ({
 					<div className="flex items-center space-x-2 text-muted-foreground">
 						<Calendar className="h-5 w-5" />
 						<span className="text-sm">
-							{organizer.eventOrganizedCount} {t('events organized')}
+							{organizer.eventsOrganizedCount} {t('events organized')}
 						</span>
 					</div>
 				</div>

@@ -1,3 +1,5 @@
+import Image from 'next/image';
+import axios from 'axios';
 import { useTranslation } from 'react-i18next';
 import { ImageIcon } from 'lucide-react';
 
@@ -6,12 +8,10 @@ import { Input } from '@/libs/components/ui/input';
 import { Label } from '@/libs/components/ui/label';
 import { Textarea } from '@/libs/components/ui/textarea';
 
-import { MemberUpdateInput } from '@/libs/types/member/member.update';
-import { REACT_APP_API_URL } from '@/libs/config';
-import { imageTypes } from '@/libs/config';
-import axios from 'axios';
+import { REACT_APP_API_URL, imageTypes } from '@/libs/config';
 import { getJwtToken } from '@/libs/auth';
 import { smallError } from '@/libs/alert';
+import { MemberUpdateInput } from '@/libs/types/member/member.update';
 import { Message } from '@/libs/enums/common.enum';
 
 interface ProfileSettingsProps {
@@ -93,7 +93,7 @@ export const ProfileSettings = ({
 					<div className="relative aspect-square w-32 mx-auto rounded-full overflow-hidden border border-border">
 						{memberUpdateInput.memberImage ? (
 							<>
-								<img
+								<Image
 									src={`${REACT_APP_API_URL}/${memberUpdateInput.memberImage}`}
 									alt="Profile preview"
 									className="object-cover w-full h-full"

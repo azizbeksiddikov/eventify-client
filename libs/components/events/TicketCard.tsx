@@ -1,11 +1,13 @@
+import { useTranslation } from 'react-i18next';
+import { Calendar, Ticket as TicketIcon } from 'lucide-react';
+
+import { Badge } from '@/libs/components/ui/badge';
+import { Card, CardContent } from '@/libs/components/ui/card';
+import { Separator } from '@/libs/components/ui/separator';
+
+import { formatDateHandler } from '@/libs/utils';
 import { Ticket } from '@/libs/types/ticket/ticket';
 import { TicketStatus } from '@/libs/enums/ticket.enum';
-import { Calendar, Ticket as TicketIcon } from 'lucide-react';
-import { Separator } from '@/libs/components/ui/separator';
-import { Card, CardContent } from '@/libs/components/ui/card';
-import { Badge } from '@/libs/components/ui/badge';
-import { useTranslation } from 'react-i18next';
-import { formatDateHandler } from '@/libs/utils';
 
 interface TicketCardProps {
 	ticket: Ticket;

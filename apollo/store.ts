@@ -20,6 +20,9 @@ export const userVar = makeVar<CustomJwtPayload>({
 	memberFollowers: 0,
 	memberViews: 0,
 	eventOrganizedCount: 0,
+	memberRank: 0,
+	memberGroups: 0,
+	memberEvents: 0,
 	createdAt: new Date(),
 	updatedAt: new Date(),
 });

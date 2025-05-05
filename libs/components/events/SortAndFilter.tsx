@@ -1,17 +1,18 @@
 import { useTranslation } from 'react-i18next';
 import { format } from 'date-fns';
+import { Calendar, ArrowUpDown, X } from 'lucide-react';
 
 import { Popover, PopoverContent, PopoverTrigger } from '@/libs/components/ui/popover';
 import { Button, buttonVariants } from '@/libs/components/ui/button';
-import { Input } from '@/libs/components/ui/input';
-import { EventsInquiry } from '@/libs/types/event/event.input';
-import { Direction } from '@/libs/enums/common.enum';
 import { Calendar as CalendarComponent } from '@/libs/components/ui/calendar';
+import { Input } from '@/libs/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/libs/components/ui/select';
-import { Calendar, ArrowUpDown, X } from 'lucide-react';
+
 import { cn } from '@/libs/utils';
 import { smallError } from '@/libs/alert';
 import { eventsSortOptions } from '@/libs/config';
+import { EventsInquiry } from '@/libs/types/event/event.input';
+import { Direction } from '@/libs/enums/common.enum';
 
 interface SortAndFilterProps {
 	updateURL: (search: EventsInquiry) => void;

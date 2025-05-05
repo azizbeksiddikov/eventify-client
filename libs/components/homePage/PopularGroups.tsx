@@ -1,15 +1,16 @@
 import React from 'react';
-import { ArrowRight } from 'lucide-react';
-import GroupCard from '@/libs/components/common/GroupCard';
-import { Button } from '../ui/button';
 import { useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
-
 import { useQuery } from '@apollo/client';
-import { GroupsInquiry } from '@/libs/types/group/group.input';
-import { Direction } from '@/libs/enums/common.enum';
+import { ArrowRight } from 'lucide-react';
+
+import { Button } from '@/libs/components/ui/button';
+import GroupCard from '@/libs/components/common/GroupCard';
+
 import { GET_GROUPS } from '@/apollo/user/query';
+import { GroupsInquiry } from '@/libs/types/group/group.input';
 import { Group } from '@/libs/types/group/group';
+import { Direction } from '@/libs/enums/common.enum';
 
 interface PopularGroupsProps {
 	initialInput?: GroupsInquiry;

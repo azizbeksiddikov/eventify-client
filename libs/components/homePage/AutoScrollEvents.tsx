@@ -1,15 +1,15 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import Link from 'next/link';
 import { useQuery } from '@apollo/client';
-
+import Link from 'next/link';
 import { Calendar, MapPin, ChevronLeft, ChevronRight } from 'lucide-react';
+
+import { REACT_APP_API_URL } from '@/libs/config';
 import { cn } from '@/libs/utils';
-import { EventsInquiry } from '@/libs/types/event/event.input';
 import { GET_EVENTS } from '@/apollo/user/query';
-import { Direction } from '@/libs/enums/common.enum';
+import { EventsInquiry } from '@/libs/types/event/event.input';
 import { EventStatus } from '@/libs/enums/event.enum';
 import { Event } from '@/libs/types/event/event';
-import { REACT_APP_API_URL } from '@/libs/config';
+import { Direction } from '@/libs/enums/common.enum';
 
 interface AutoScrollEventsProps {
 	initialInput?: EventsInquiry;

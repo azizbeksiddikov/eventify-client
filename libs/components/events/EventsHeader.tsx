@@ -1,11 +1,13 @@
-import { useTranslation } from 'react-i18next';
-import { useRouter } from 'next/router';
-import { Button } from '@/libs/components/ui/button';
-import { ArrowRight } from 'lucide-react';
-import { useReactiveVar } from '@apollo/client';
-import { MemberType } from '@/libs/enums/member.enum';
-import { smallError } from '@/libs/alert';
 import { userVar } from '@/apollo/store';
+import { useTranslation } from 'react-i18next';
+import { useReactiveVar } from '@apollo/client';
+import { useRouter } from 'next/router';
+import { ArrowRight } from 'lucide-react';
+
+import { Button } from '@/libs/components/ui/button';
+
+import { smallError } from '@/libs/alert';
+import { MemberType } from '@/libs/enums/member.enum';
 
 const EventsHeader = () => {
 	const router = useRouter();

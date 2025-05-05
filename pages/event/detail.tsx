@@ -5,16 +5,17 @@ import { useTranslation } from 'react-i18next';
 import { userVar } from '@/apollo/store';
 import { useMutation, useQuery, useReactiveVar } from '@apollo/client';
 
-import { GET_EVENT, GET_TICKETS } from '@/apollo/user/query';
 import withBasicLayout from '@/libs/components/layout/LayoutBasic';
 import CommentsComponent from '@/libs/components/common/CommentsComponent';
 import { CommentGroup } from '@/libs/enums/comment.enum';
-import { Event } from '@/libs/types/event/event';
 import ChosenEventData from '@/libs/components/events/ChosenEventData';
 import ChosenEventHeader from '@/libs/components/events/ChosenEventHeader';
 import ChosenEventOther from '@/libs/components/events/ChosenEventOther';
-import { Message } from '@/libs/enums/common.enum';
+
+import { GET_EVENT, GET_TICKETS } from '@/apollo/user/query';
 import { CREATE_TICKET, LIKE_TARGET_EVENT } from '@/apollo/user/mutation';
+import { Event } from '@/libs/types/event/event';
+import { Message } from '@/libs/enums/common.enum';
 import { smallSuccess } from '@/libs/alert';
 import { likeHandler } from '@/libs/utils';
 import MyTickets from '@/libs/components/events/MyTickets';

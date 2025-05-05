@@ -1,5 +1,10 @@
 import Link from 'next/link';
 import React, { useState, useCallback, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
+import { useRouter, withRouter } from 'next/router';
+import { useTranslation } from 'next-i18next';
+import { useReactiveVar } from '@apollo/client';
+
 import { Button, buttonVariants } from '@/libs/components/ui/button';
 import {
 	DropdownMenu,
@@ -9,13 +14,9 @@ import {
 } from '@/libs/components/ui/dropdown-menu';
 import { ModeToggle } from '@/libs/components/ui/mode-toggle';
 import { Logo } from '@/libs/components/ui/logo';
-import { usePathname } from 'next/navigation';
-import { useRouter, withRouter } from 'next/router';
+import { UserNav } from '@/libs/components/layout/UserNav';
 
 import { cn } from '@/libs/utils';
-import { UserNav } from './UserNav';
-import { useTranslation } from 'next-i18next';
-import { useReactiveVar } from '@apollo/client';
 import { userVar } from '@/apollo/store';
 import { getJwtToken, updateUserInfo } from '@/libs/auth';
 import { Member } from '@/libs/types/member/member';
@@ -142,11 +143,11 @@ const Header = () => {
 						<div className="flex items-center gap-4">
 							<Link href="/auth/login">
 								<Button variant="outline" className="text-sm  h-9 px-4">
-									Login
+									{t('Login')}
 								</Button>
 							</Link>
 							<Link href="auth/signup">
-								<Button className="text-sm 0 h-9 px-4">Sign Up</Button>
+								<Button className="text-sm h-9 px-4">{t('Sign Up')}</Button>
 							</Link>
 						</div>
 					)}

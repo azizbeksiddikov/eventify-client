@@ -1,11 +1,13 @@
-import { MemberType } from '@/libs/enums/member.enum';
-import { Button } from '../ui/button';
-import { ArrowRight } from 'lucide-react';
 import { useRouter } from 'next/router';
-import { useTranslation } from 'react-i18next';
-import { smallError } from '@/libs/alert';
 import { useReactiveVar } from '@apollo/client';
+import { useTranslation } from 'react-i18next';
+import { ArrowRight } from 'lucide-react';
+
+import { Button } from '@/libs/components/ui/button';
+
 import { userVar } from '@/apollo/store';
+import { smallError } from '@/libs/alert';
+import { MemberType } from '@/libs/enums/member.enum';
 
 const GroupsHeader = () => {
 	const router = useRouter();
