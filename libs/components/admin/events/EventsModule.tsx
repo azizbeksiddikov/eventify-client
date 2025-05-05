@@ -7,7 +7,6 @@ import { Separator } from '@/libs/components/ui/separator';
 import { mockEvents } from '@/data';
 import { Direction } from '@/libs/enums/common.enum';
 import { EventStatus, EventCategory } from '@/libs/enums/event.enum';
-import withAdminLayout from '@/libs/components/layout/LayoutAdmin';
 
 interface EventsInquiry {
 	page: number;
@@ -21,7 +20,7 @@ interface EventsInquiry {
 	};
 }
 
-const EventsPage = () => {
+const EventsModule = () => {
 	const [eventsInquiry, setEventsInquiry] = useState<EventsInquiry>({
 		page: 1,
 		limit: 10,
@@ -95,11 +94,8 @@ const EventsPage = () => {
 		}
 	};
 
-	const changePageHandler = (page: number) => {
-		setEventsInquiry((prev) => ({
-			...prev,
-			page,
-		}));
+	const changePageHandler = (newPage: number) => {
+		setEventsInquiry({ ...eventsInquiry, page: newPage });
 	};
 
 	return (
@@ -138,4 +134,4 @@ const EventsPage = () => {
 	);
 };
 
-export default withAdminLayout(EventsPage);
+export default EventsModule;

@@ -13,9 +13,11 @@ import {
 import { Member } from '@/libs/types/member/member';
 import { User } from 'lucide-react';
 import { useRouter } from 'next/router';
+import { useTranslation } from 'react-i18next';
 
 export function UserNav({ authMember }: { authMember: Member }) {
 	const router = useRouter();
+	const { t } = useTranslation('common');
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
@@ -37,11 +39,10 @@ export function UserNav({ authMember }: { authMember: Member }) {
 				</DropdownMenuLabel>
 				<DropdownMenuSeparator />
 				<DropdownMenuGroup>
-					<DropdownMenuItem onClick={() => router.push('/profile')}>Profile</DropdownMenuItem>
+					<DropdownMenuItem onClick={() => router.push('/profile')}>{t('Profile')}</DropdownMenuItem>
 				</DropdownMenuGroup>
 				<DropdownMenuSeparator />
-
-				<DropdownMenuItem onClick={logOut}>Log out</DropdownMenuItem>
+				<DropdownMenuItem onClick={logOut}>{t('Log out')}</DropdownMenuItem>
 			</DropdownMenuContent>
 		</DropdownMenu>
 	);

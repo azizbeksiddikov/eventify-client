@@ -2,18 +2,7 @@ import { Button } from '@/libs/components/ui/button';
 import { Input } from '@/libs/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/libs/components/ui/select';
 import { GroupCategory } from '@/libs/enums/group.enum';
-import { Direction } from '@/libs/enums/common.enum';
-
-interface GroupsInquiry {
-	page: number;
-	limit: number;
-	sort: string;
-	direction: Direction;
-	search: {
-		text: string;
-		category?: GroupCategory;
-	};
-}
+import { GroupsInquiry } from '@/libs/types/group/group.input';
 
 interface GroupSearchProps {
 	groupsInquiry: GroupsInquiry;
@@ -36,7 +25,7 @@ export function GroupSearch({ groupsInquiry, setGroupsInquiry }: GroupSearchProp
 			...groupsInquiry,
 			search: {
 				text: '',
-				category: undefined,
+				groupCategories: undefined,
 			},
 		});
 	};
@@ -46,7 +35,7 @@ export function GroupSearch({ groupsInquiry, setGroupsInquiry }: GroupSearchProp
 			...groupsInquiry,
 			search: {
 				...groupsInquiry.search,
-				category: value === 'all' ? undefined : (value as GroupCategory),
+				groupCategories: value === 'all' ? undefined : (value as GroupCategory),
 			},
 		});
 	};
@@ -77,7 +66,7 @@ export function GroupSearch({ groupsInquiry, setGroupsInquiry }: GroupSearchProp
 					<SelectItem value="groupViews">Views</SelectItem>
 				</SelectContent>
 			</Select>
-			<Select value={groupsInquiry?.search?.category ?? 'all'} onValueChange={changeCategoryHandler}>
+			<Select value={groupsInquiry?.search?.groupCategories ?? 'all'} onValueChange={changeCategoryHandler}>
 				<SelectTrigger className="w-[180px] bg-background text-foreground border-input focus:ring-primary">
 					<SelectValue placeholder="Filter by category" />
 				</SelectTrigger>

@@ -1,4 +1,4 @@
-import { MemberStatus } from '../../enums/member.enum';
+import { MemberStatus, MemberType } from '../../enums/member.enum';
 
 export interface MemberUpdateInput {
 	_id?: string;
@@ -11,6 +11,8 @@ export interface MemberUpdateInput {
 	memberImage?: string;
 	memberStatus?: MemberStatus;
 	emailVerified?: boolean;
+	memberType?: MemberType;
+	memberPoints?: number;
 }
 
 export interface PasswordUpdateInput {

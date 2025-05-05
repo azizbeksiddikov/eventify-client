@@ -4,35 +4,28 @@ import { GroupPanelList } from '@/libs/components/admin/groups/GroupList';
 import { GroupSearch } from '@/libs/components/admin/groups/GroupSearch';
 import { mockGroups } from '@/data';
 import { sweetMixinSuccessAlert, sweetMixinErrorAlert } from '@/libs/sweetAlert';
-import withAdminLayout from '@/libs/components/layout/LayoutAdmin';
+import withBasicLayout from '@/libs/components/layout/LayoutBasic';
 import { Button } from '@/libs/components/ui/button';
 import { Separator } from '@/libs/components/ui/separator';
 import { Direction } from '@/libs/enums/common.enum';
-import { GroupCategory } from '@/libs/enums/group.enum';
+import { GroupsInquiry } from '@/libs/types/group/group.input';
 
-interface GroupsInquiry {
-	page: number;
-	limit: number;
-	sort: string;
-	direction: Direction;
-	search: {
-		text: string;
-		category?: GroupCategory;
-	};
+interface GroupsInquiryProps {
+	initialInquiry?: GroupsInquiry;
 }
 
-const defaultInquiry: GroupsInquiry = {
-	page: 1,
-	limit: 10,
-	sort: 'createdAt',
-	direction: Direction.DESC,
-	search: {
-		text: '',
+const GroupsModule = ({
+	initialInquiry = {
+		page: 1,
+		limit: 10,
+		sort: 'createdAt',
+		direction: Direction.DESC,
+		search: {
+			text: '',
+		},
 	},
-};
-
-const GroupsPage = () => {
-	const [groupsInquiry, setGroupsInquiry] = useState<GroupsInquiry>(defaultInquiry);
+}: GroupsInquiryProps) => {
+	const [groupsInquiry, setGroupsInquiry] = useState<GroupsInquiry>(initialInquiry);
 	const [groups, setGroups] = useState<Group[]>(mockGroups);
 	const groupsTotal = groups.length;
 
@@ -66,9 +59,8 @@ const GroupsPage = () => {
 		}
 	};
 
-	const changePageHandler = async (_event: unknown, newPage: number) => {
-		groupsInquiry.page = newPage + 1;
-		setGroupsInquiry({ ...groupsInquiry });
+	const changePageHandler = async (newPage: number) => {
+		setGroupsInquiry({ ...groupsInquiry, page: newPage });
 	};
 
 	return (
@@ -78,7 +70,11 @@ const GroupsPage = () => {
 				<GroupSearch groupsInquiry={groupsInquiry} setGroupsInquiry={setGroupsInquiry} />
 				<Separator className="bg-border" />
 				<div className="p-6">
-					<GroupPanelList groups={groups} updateGroupHandler={updateGroupHandler} />
+					<GroupPanelList
+						groups={groups}
+						updateGroupHandler={updateGroupHandler}
+						deleteGroupHandler={deleteGroupHandler}
+					/>
 					<div className="mt-4 flex items-center justify-between">
 						<div className="text-sm text-muted-foreground">
 							Showing {groupsInquiry.limit} of {groupsTotal} results
@@ -110,4 +106,4 @@ const GroupsPage = () => {
 	);
 };
 
-export default withAdminLayout(GroupsPage);
+export default withBasicLayout(GroupsModule);

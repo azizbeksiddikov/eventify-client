@@ -1,15 +1,21 @@
 import { Button } from '@/libs/components/ui/button';
 import { Input } from '@/libs/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/libs/components/ui/select';
+import { Direction } from '@/libs/enums/common.enum';
 import { MemberStatus, MemberType } from '@/libs/enums/member.enum';
 import { MembersInquiry } from '@/libs/types/member/member.input';
+import { useTranslation } from 'react-i18next';
 
 interface MemberSearchProps {
+	initialInquiry: MembersInquiry;
 	membersInquiry: MembersInquiry;
 	setMembersInquiry: (inquiry: MembersInquiry) => void;
 }
 
-export function MemberSearch({ membersInquiry, setMembersInquiry }: MemberSearchProps) {
+export function MemberSearch({ initialInquiry, membersInquiry, setMembersInquiry }: MemberSearchProps) {
+	const { t } = useTranslation();
+
+	/**	 HANDLERS */
 	const searchTextHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setMembersInquiry({
 			...membersInquiry,
@@ -20,14 +26,10 @@ export function MemberSearch({ membersInquiry, setMembersInquiry }: MemberSearch
 		});
 	};
 
-	const clearSearchHandler = () => {
+	const inputFieldHandler = (field: string, value: number | string) => {
 		setMembersInquiry({
 			...membersInquiry,
-			search: {
-				text: '',
-				memberType: undefined,
-				memberStatus: undefined,
-			},
+			[field]: value,
 		});
 	};
 
@@ -51,57 +53,89 @@ export function MemberSearch({ membersInquiry, setMembersInquiry }: MemberSearch
 		});
 	};
 
-	const changeDirectionHandler = (value: string) => {
-		setMembersInquiry({
-			...membersInquiry,
-			sort: value,
-		});
+	const clearAllHandler = () => {
+		setMembersInquiry(initialInquiry);
 	};
 
 	return (
 		<div className="flex items-center gap-6 p-6 rounded-t-lg bg-card border border-border">
+			{/* SEARCH */}
 			<Input
-				placeholder="Search members..."
+				placeholder={t('Search members...')}
 				value={membersInquiry?.search?.text ?? ''}
 				onChange={searchTextHandler}
 				className="w-full bg-background text-foreground border-input focus:ring-primary"
 			/>
-			<Select value={membersInquiry?.sort} onValueChange={changeDirectionHandler}>
+
+			{/* FILTER BY TYPE */}
+			<Select
+				value={membersInquiry?.search?.memberType ?? 'all'}
+				onValueChange={(value) => {
+					changeTypeHandler(value);
+				}}
+			>
 				<SelectTrigger className="w-[180px] bg-background text-foreground border-input focus:ring-primary">
-					<SelectValue placeholder="Sort by" />
+					<SelectValue placeholder={t('Filter by type')} />
 				</SelectTrigger>
 				<SelectContent className="bg-card text-foreground border-border">
-					<SelectItem value="createdAt">Created At</SelectItem>
-					<SelectItem value="memberPoints">Points</SelectItem>
-					<SelectItem value="memberFullName">Full Name</SelectItem>
+					<SelectItem value="all">{t('All Types')}</SelectItem>
+					<SelectItem value={MemberType.ORGANIZER}>{t('Organizer')}</SelectItem>
+					<SelectItem value={MemberType.USER}>{t('User')}</SelectItem>
 				</SelectContent>
 			</Select>
-			<Select value={membersInquiry?.search?.memberType ?? 'all'} onValueChange={changeTypeHandler}>
-				<SelectTrigger className="w-[180px] bg-background text-foreground border-input focus:ring-primary">
-					<SelectValue placeholder="Filter by type" />
-				</SelectTrigger>
-				<SelectContent className="bg-card text-foreground border-border">
-					<SelectItem value="all">All Types</SelectItem>
-					<SelectItem value={MemberType.ORGANIZER}>Organizer</SelectItem>
-					<SelectItem value={MemberType.USER}>User</SelectItem>
-				</SelectContent>
-			</Select>
+
+			{/* FILTER BY STATUS */}
 			<Select value={membersInquiry?.search?.memberStatus ?? 'all'} onValueChange={changeStatusHandler}>
 				<SelectTrigger className="w-[180px] bg-background text-foreground border-input focus:ring-primary">
-					<SelectValue placeholder="Filter by status" />
+					<SelectValue placeholder={t('Filter by status')} />
 				</SelectTrigger>
 				<SelectContent className="bg-card text-foreground border-border">
-					<SelectItem value="all">All Statuses</SelectItem>
-					<SelectItem value={MemberStatus.ACTIVE}>Active</SelectItem>
-					<SelectItem value={MemberStatus.BLOCKED}>Blocked</SelectItem>
+					<SelectItem value="all">{t('All Statuses')}</SelectItem>
+					<SelectItem value={MemberStatus.ACTIVE}>{t('Active')}</SelectItem>
+					<SelectItem value={MemberStatus.BLOCKED}>{t('Blocked')}</SelectItem>
 				</SelectContent>
 			</Select>
+
+			{/* SORT */}
+			<Select
+				value={membersInquiry?.sort}
+				onValueChange={(value: string) => {
+					inputFieldHandler('sort', value);
+				}}
+			>
+				<SelectTrigger className="w-[180px] bg-background text-foreground border-input focus:ring-primary">
+					<SelectValue placeholder={t('Sort by')} />
+				</SelectTrigger>
+				<SelectContent className="bg-card text-foreground border-border">
+					<SelectItem value="createdAt">{t('Created At')}</SelectItem>
+					<SelectItem value="memberPoints">{t('Points')}</SelectItem>
+					<SelectItem value="memberFullName">{t('Full Name')}</SelectItem>
+				</SelectContent>
+			</Select>
+
+			{/* Direction */}
+			<Select
+				value={membersInquiry?.direction}
+				onValueChange={(value: Direction) => {
+					inputFieldHandler('direction', value);
+				}}
+			>
+				<SelectTrigger className="w-[180px] bg-background text-foreground border-input focus:ring-primary">
+					<SelectValue placeholder={t('Direction')} />
+				</SelectTrigger>
+				<SelectContent className="bg-card text-foreground border-border">
+					<SelectItem value={Direction.ASC}>{t('Ascending')}</SelectItem>
+					<SelectItem value={Direction.DESC}>{t('Descending')}</SelectItem>
+				</SelectContent>
+			</Select>
+
+			{/* CLEAR ALL */}
 			<Button
 				variant="outline"
-				onClick={clearSearchHandler}
+				onClick={clearAllHandler}
 				className="bg-background text-foreground border-input hover:bg-accent hover:text-accent-foreground"
 			>
-				Clear
+				{t('Clear')}
 			</Button>
 		</div>
 	);

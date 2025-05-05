@@ -33,3 +33,66 @@ export const GET_ALL_MEMBERS_BY_ADMIN = gql`
 		}
 	}
 `;
+
+/**************************
+ *         GROUP           *
+ *************************/
+
+export const GET_ALL_GROUPS_BY_ADMIN = gql`
+	query GetAllGroupsByAdmin($input: GroupsInquiry!) {
+		getAllGroupsByAdmin(input: $input) {
+			list {
+				_id
+				groupName
+				groupDesc
+				groupImage
+				memberId
+				groupCategories
+				groupViews
+				groupLikes
+				memberCount
+				createdAt
+				updatedAt
+			}
+			metaCounter {
+				total
+			}
+		}
+	}
+`;
+
+/**************************
+ *         EVENT           *
+ *************************/
+
+export const GET_ALL_EVENTS_BY_ADMIN = gql`
+	query GetAllEventsByAdmin($input: EventsInquiry!) {
+		getAllEventsByAdmin(input: $input) {
+			list {
+				_id
+				eventName
+				eventDesc
+				eventImage
+				eventDate
+				eventStartTime
+				eventEndTime
+				eventCity
+				eventAddress
+				eventCapacity
+				eventPrice
+				eventStatus
+				eventCategories
+				groupId
+				memberId
+				attendeeCount
+				eventLikes
+				eventViews
+				createdAt
+				updatedAt
+			}
+			metaCounter {
+				total
+			}
+		}
+	}
+`;

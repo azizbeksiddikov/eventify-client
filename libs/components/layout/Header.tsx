@@ -19,6 +19,7 @@ import { useReactiveVar } from '@apollo/client';
 import { userVar } from '@/apollo/store';
 import { getJwtToken, updateUserInfo } from '@/libs/auth';
 import { Member } from '@/libs/types/member/member';
+import { MemberType } from '@/libs/enums/member.enum';
 
 const navLinks = [
 	{ href: '/', label: 'Home' },
@@ -27,10 +28,11 @@ const navLinks = [
 	{ href: '/organizer', label: 'Organizers' },
 	{ href: '/help', label: 'Help' },
 ];
+const adminLink = { href: '/_admin', label: 'Admin' };
 
 const Header = () => {
 	const pathname = usePathname();
-	const authMember = useReactiveVar(userVar) as Member;
+	const authMember = useReactiveVar(userVar) as unknown as Member;
 	const { t } = useTranslation('common');
 	const router = useRouter();
 	const [currentLanguage, setCurrentLanguage] = useState<string>('en');
@@ -93,6 +95,18 @@ const Header = () => {
 							{t(`${link.label}`)}
 						</Link>
 					))}
+					{authMember.memberType === MemberType.ADMIN && (
+						<Link
+							href={adminLink.href}
+							className={`text-sm font-medium transition-colors duration-300 ${
+								pathname === adminLink.href
+									? 'text-foneground font-semibold underline underline-offset-6'
+									: 'text-muted-foreground hover:text-foreground'
+							}`}
+						>
+							{t(`${adminLink.label}`)}
+						</Link>
+					)}
 				</nav>
 
 				{/* Auth & Lang & Theme */}
