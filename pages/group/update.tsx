@@ -50,6 +50,7 @@ const GroupUpdatePage = () => {
 		skip: !groupId,
 	});
 
+	/** LIFECYCLE */
 	// Handle group data and authorization
 	useEffect(() => {
 		if (groupData?.getGroup) {

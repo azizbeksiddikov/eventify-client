@@ -39,6 +39,7 @@ const EventUpdatePage = () => {
 	const user = useReactiveVar(userVar);
 	const token = getJwtToken();
 
+	const [eventId, setEventId] = useState<string | null>(null);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [imagePreview, setImagePreview] = useState<string | null>(null);
 	const [selectedCategories, setSelectedCategories] = useState<EventCategory[]>([]);
@@ -47,14 +48,23 @@ const EventUpdatePage = () => {
 	/** APOLLO REQUESTS **/
 	const [updateEventByOrganizer] = useMutation(UPDATE_EVENT_BY_ORGANIZER);
 	const { data: eventData } = useQuery(GET_EVENT, {
-		variables: { input: router.query.eventId },
+		variables: { input: eventId },
 		fetchPolicy: 'cache-and-network',
-		skip: !router.query.eventId,
+		skip: !eventId,
 	});
 
+	/** LIFECYCLE */
 	useEffect(() => {
 		if (eventData?.getEvent) {
 			const event = eventData.getEvent;
+
+			// Check if user is authorized to update the event
+			if (event.memberId !== user?._id) {
+				smallError(t('You are not authorized to update this event'));
+				router.push('/event/detail?eventId=' + event._id);
+				return;
+			}
+
 			setFormData({
 				_id: event._id,
 				eventName: event.eventName,
@@ -73,6 +83,13 @@ const EventUpdatePage = () => {
 			setImagePreview(`${REACT_APP_API_URL}/${event.eventImage}`);
 		}
 	}, [eventData]);
+
+	// Handle groupId from URL
+	useEffect(() => {
+		if (router.query.groupId) {
+			setEventId(router.query.eventId as string);
+		}
+	}, [router.query.eventId]);
 
 	/** HANDLERS */
 	const validateTime = (startTime: string, endTime: string) => {
