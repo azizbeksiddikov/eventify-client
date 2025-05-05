@@ -90,6 +90,7 @@ const AdminHome = ({
 	const [membersInquiry, setMembersInquiry] = useState<MembersInquiry>(initialMembersInquiry);
 	const [groupsInquiry, setGroupsInquiry] = useState<GroupsInquiry>(initialGroupsInquiry);
 	const [eventsInquiry, setEventsInquiry] = useState<EventsInquiry>(initialEventsInquiry);
+	const [activeTab, setActiveTab] = useState<string>('users');
 
 	const [members, setMembers] = useState<Members>({
 		list: [],
@@ -140,6 +141,13 @@ const AdminHome = ({
 	useEffect(() => {
 		const jwt = getJwtToken();
 		if (jwt) updateUserInfo(jwt);
+		setLoading(false);
+
+		const savedTab = localStorage.getItem('adminActiveTab');
+		if (savedTab) {
+			setActiveTab(savedTab);
+		}
+
 		setLoading(false);
 	}, []);
 
@@ -215,9 +223,14 @@ const AdminHome = ({
 		}
 	};
 
+	const handleTabChange = (value: string) => {
+		setActiveTab(value);
+		localStorage.setItem('adminActiveTab', value);
+	};
+
 	return (
 		<div className="container mx-auto py-8">
-			<Tabs defaultValue="users" className="w-full">
+			<Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
 				{/* TABS LIST */}
 				<TabsList className="grid w-full grid-cols-3 mb-8">
 					<TabsTrigger value="users" className="flex items-center gap-2">
@@ -233,7 +246,6 @@ const AdminHome = ({
 						{t('Events')}
 					</TabsTrigger>
 				</TabsList>
-
 				{/* TABS CONTENT */}
 				<TabsContent value="users" className="mt-0">
 					<UsersModule
