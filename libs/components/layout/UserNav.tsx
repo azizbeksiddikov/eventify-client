@@ -16,7 +16,7 @@ import {
 
 import { logOut } from '@/libs/auth';
 import { Member } from '@/libs/types/member/member';
-
+import { REACT_APP_API_URL } from '@/libs/config';
 export function UserNav({ authMember }: { authMember: Member }) {
 	const router = useRouter();
 	const { t } = useTranslation('common');
@@ -25,7 +25,7 @@ export function UserNav({ authMember }: { authMember: Member }) {
 			<DropdownMenuTrigger asChild>
 				<Button variant="ghost" className="relative h-10 w-10 rounded-full">
 					<Avatar className="h-8 w-8">
-						<AvatarImage src={authMember?.memberImage} alt={authMember?.memberFullName} />
+						<AvatarImage src={`${REACT_APP_API_URL}/${authMember?.memberImage}`} alt={authMember?.memberFullName} />
 						<AvatarFallback>
 							<User className="h-4 w-4" />
 						</AvatarFallback>

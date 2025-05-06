@@ -1,16 +1,14 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
 import axios from 'axios';
 import { useTranslation } from 'react-i18next';
 import { ImageIcon, RefreshCw } from 'lucide-react';
-import ReactCrop, { type Crop } from 'react-image-crop';
-import 'react-image-crop/dist/ReactCrop.css';
 
 import { Button } from '@/libs/components/ui/button';
 import { Input } from '@/libs/components/ui/input';
 import { Label } from '@/libs/components/ui/label';
 import { Textarea } from '@/libs/components/ui/textarea';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/libs/components/ui/dialog';
+import { ImageCropper } from '@/libs/components/common/ImageCropper';
 
 import { REACT_APP_API_GRAPHQL_URL, REACT_APP_API_URL, imageTypes } from '@/libs/config';
 import { getJwtToken } from '@/libs/auth';
@@ -32,128 +30,14 @@ export const ProfileSettings = ({
 }: ProfileSettingsProps) => {
 	const { t } = useTranslation('common');
 	const token = getJwtToken();
-	const imgRef = useRef<HTMLImageElement>(null);
 
 	const [imagePreview, setImagePreview] = useState<string | null>(
 		memberUpdateInput.memberImage ? `${REACT_APP_API_URL}/${memberUpdateInput.memberImage}` : null,
 	);
 	const [cropModalOpen, setCropModalOpen] = useState(false);
-	const [selectedFile, setSelectedFile] = useState<File | null>(null);
-	const [crop, setCrop] = useState<Crop>({
-		unit: '%',
-		width: 100,
-		height: 100,
-		x: 0,
-		y: 0,
-	});
 	const [tempImageUrl, setTempImageUrl] = useState<string | null>(null);
 
 	/** HANDLERS */
-
-	const handlePhoneChange = (value: string) => {
-		const formattedNumber = formatPhoneNumber(value);
-		setMemberUpdateInput({ ...memberUpdateInput, memberPhone: formattedNumber });
-	};
-
-	const getCroppedImg = async (image: HTMLImageElement, crop: Crop): Promise<Blob> => {
-		const canvas = document.createElement('canvas');
-		const scaleX = image.naturalWidth / image.width;
-		const scaleY = image.naturalHeight / image.height;
-
-		// Set canvas size to match the crop size
-		canvas.width = Math.floor(crop.width * scaleX);
-		canvas.height = Math.floor(crop.height * scaleY);
-
-		const ctx = canvas.getContext('2d');
-		if (!ctx) {
-			throw new Error('No 2d context');
-		}
-
-		// Set image smoothing
-		ctx.imageSmoothingQuality = 'high';
-		ctx.imageSmoothingEnabled = true;
-
-		// Draw the cropped image
-		ctx.drawImage(
-			image,
-			crop.x * scaleX,
-			crop.y * scaleY,
-			crop.width * scaleX,
-			crop.height * scaleY,
-			0,
-			0,
-			crop.width * scaleX,
-			crop.height * scaleY,
-		);
-
-		// Create a new canvas for the circular crop
-		const circleCanvas = document.createElement('canvas');
-		const circleCtx = circleCanvas.getContext('2d');
-		if (!circleCtx) {
-			throw new Error('No 2d context for circle');
-		}
-
-		// Set circle canvas size
-		const size = Math.min(canvas.width, canvas.height);
-		circleCanvas.width = size;
-		circleCanvas.height = size;
-
-		// Create circular path
-		circleCtx.beginPath();
-		circleCtx.arc(size / 2, size / 2, size / 2, 0, Math.PI * 2);
-		circleCtx.closePath();
-		circleCtx.clip();
-
-		// Draw the cropped image centered in the circle
-		circleCtx.drawImage(canvas, (canvas.width - size) / 2, (canvas.height - size) / 2, size, size, 0, 0, size, size);
-
-		// Convert to blob with quality settings
-		return new Promise((resolve) => {
-			circleCanvas.toBlob(
-				(blob) => {
-					if (!blob) {
-						throw new Error('Canvas is empty');
-					}
-					resolve(blob);
-				},
-				'image/jpeg',
-				0.95, // High quality JPEG
-			);
-		});
-	};
-
-	const handleCropComplete = async () => {
-		if (!imgRef.current || !selectedFile) return;
-
-		try {
-			const croppedImageBlob = await getCroppedImg(imgRef.current, crop);
-
-			// Create a new file with proper name and type
-			const croppedFile = new File([croppedImageBlob], `profile_${Date.now()}.jpg`, {
-				type: 'image/jpeg',
-				lastModified: Date.now(),
-			});
-
-			await uploadImage(croppedFile);
-			setCropModalOpen(false);
-			setSelectedFile(null);
-			setTempImageUrl(null);
-		} catch (err) {
-			console.error('Error cropping image:', err);
-			smallError(t('Failed to crop image'));
-		}
-	};
-
-	const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-		const file = e.target.files?.[0];
-		if (file) {
-			setSelectedFile(file);
-			const imageUrl = URL.createObjectURL(file);
-			setTempImageUrl(imageUrl);
-			setCropModalOpen(true);
-		}
-	};
-
 	const uploadImage = async (image: File) => {
 		try {
 			const formData = new FormData();
@@ -186,7 +70,6 @@ export const ProfileSettings = ({
 			});
 
 			const responseImage = response.data.data.imageUploader;
-
 			const imageUrl = `${REACT_APP_API_URL}/${responseImage}`;
 			setImagePreview(imageUrl);
 
@@ -199,6 +82,25 @@ export const ProfileSettings = ({
 			smallError(t('Failed to upload image'));
 			return null;
 		}
+	};
+
+	const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+		const file = e.target.files?.[0];
+		if (file) {
+			const imageUrl = URL.createObjectURL(file);
+			setTempImageUrl(imageUrl);
+			setCropModalOpen(true);
+		}
+	};
+
+	const handleCropComplete = async (croppedFile: File) => {
+		await uploadImage(croppedFile);
+		setTempImageUrl(null);
+	};
+
+	const handlePhoneChange = (value: string) => {
+		const formattedNumber = formatPhoneNumber(value);
+		setMemberUpdateInput({ ...memberUpdateInput, memberPhone: formattedNumber });
 	};
 
 	const handleSubmit = (e: React.FormEvent) => {
@@ -323,29 +225,19 @@ export const ProfileSettings = ({
 					<Button type="submit">{t('Save Changes')}</Button>
 				</div>
 
-				{/* Crop Modal */}
-				<Dialog open={cropModalOpen} onOpenChange={setCropModalOpen}>
-					<DialogContent className="sm:max-w-[600px]">
-						<DialogHeader>
-							<DialogTitle>{t('Crop Image')}</DialogTitle>
-						</DialogHeader>
-						<div className="mt-4">
-							{tempImageUrl && (
-								<div className="relative aspect-square w-full max-h-[400px] overflow-hidden rounded-lg">
-									<ReactCrop crop={crop} onChange={(c) => setCrop(c)} aspect={1} circularCrop>
-										<img ref={imgRef} src={tempImageUrl} alt="Crop preview" className="max-w-full" />
-									</ReactCrop>
-								</div>
-							)}
-							<div className="mt-4 flex justify-end gap-2">
-								<Button variant="outline" onClick={() => setCropModalOpen(false)}>
-									{t('Cancel')}
-								</Button>
-								<Button onClick={handleCropComplete}>{t('Crop & Save')}</Button>
-							</div>
-						</div>
-					</DialogContent>
-				</Dialog>
+				{/* Image Cropper */}
+				{tempImageUrl && (
+					<ImageCropper
+						isOpen={cropModalOpen}
+						onClose={() => {
+							setCropModalOpen(false);
+							setTempImageUrl(null);
+						}}
+						onCropComplete={handleCropComplete}
+						imageUrl={tempImageUrl}
+						circularCrop
+					/>
+				)}
 			</form>
 		</div>
 	);

@@ -9,6 +9,7 @@ import { ImageIcon, RefreshCw } from 'lucide-react';
 import withBasicLayout from '@/libs/components/layout/LayoutBasic';
 import { GroupCategory } from '@/libs/enums/group.enum';
 import { GroupInput } from '@/libs/types/group/group.input';
+import { ImageCropper } from '@/libs/components/common/ImageCropper';
 
 import { useMutation, useReactiveVar } from '@apollo/client';
 import { userVar } from '@/apollo/store';
@@ -37,6 +38,8 @@ const GroupCreatePage = () => {
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [imagePreview, setImagePreview] = useState<string | null>(null);
 	const [selectedCategories, setSelectedCategories] = useState<GroupCategory[]>([]);
+	const [isCropperOpen, setIsCropperOpen] = useState(false);
+	const [tempImageUrl, setTempImageUrl] = useState<string | null>(null);
 
 	const [formData, setFormData] = useState<GroupInput>({
 		groupName: '',
@@ -98,7 +101,22 @@ const GroupCreatePage = () => {
 	const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
 		const file = e.target.files?.[0];
 		if (file) {
-			await uploadImage(file);
+			const imageUrl = URL.createObjectURL(file);
+			setTempImageUrl(imageUrl);
+			setIsCropperOpen(true);
+		}
+	};
+
+	const handleCropComplete = async (croppedFile: File) => {
+		try {
+			const imageUrl = await uploadImage(croppedFile);
+			if (imageUrl) {
+				setImagePreview(imageUrl);
+				setTempImageUrl(null);
+			}
+		} catch (err) {
+			console.error('Error handling cropped image:', err);
+			smallError(t('Failed to process image'));
 		}
 	};
 
@@ -249,11 +267,11 @@ const GroupCreatePage = () => {
 										<img src={imagePreview} alt="Group preview" className="object-contain w-full h-full" />
 										<label
 											htmlFor="image"
-											className="absolute inset-0 flex items-center justify-center bg-black/0 hover:bg-black/20 transition-colors duration-200 cursor-pointer"
+											className="absolute inset-0 flex items-center justify-center bg-black/0 hover:bg-black/20 transition-colors duration-200 cursor-pointer group"
 										>
-											<div className="flex items-center gap-2 bg-white/90 text-foreground px-4 py-2 rounded-lg opacity-0 hover:opacity-100 transition-opacity duration-200">
+											<div className="flex items-center gap-2 bg-white/90 text-foreground px-4 py-2 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200">
 												<RefreshCw className="h-4 w-4" />
-												<span className="font-medium">{t('Reset Image')}</span>
+												<span className="font-medium">{t('Change Image')}</span>
 											</div>
 										</label>
 									</>
@@ -278,6 +296,19 @@ const GroupCreatePage = () => {
 								<p className="text-sm text-muted-foreground mt-1">{t('Only JPG, JPEG, and PNG files are allowed')}</p>
 							</div>
 						</div>
+
+						{/* Image Cropper Modal */}
+						<ImageCropper
+							isOpen={isCropperOpen}
+							onClose={() => {
+								setIsCropperOpen(false);
+								setTempImageUrl(null);
+							}}
+							onCropComplete={handleCropComplete}
+							imageUrl={tempImageUrl || ''}
+							aspectRatio={16 / 9}
+							quality={0.9}
+						/>
 
 						{/* Submit Button */}
 						<div className="flex justify-end">

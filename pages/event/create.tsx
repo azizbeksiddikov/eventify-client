@@ -18,6 +18,7 @@ import { Calendar } from '@/libs/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/libs/components/ui/popover';
 import { ScrollArea } from '@/libs/components/ui/scroll-area';
 import withBasicLayout from '@/libs/components/layout/LayoutBasic';
+import { ImageCropper } from '@/libs/components/common/ImageCropper';
 
 import { EventCategory, EventStatus } from '@/libs/enums/event.enum';
 import { GET_MY_GROUPS } from '@/apollo/user/query';
@@ -47,6 +48,8 @@ const EventCreatePage = () => {
 	const [imagePreview, setImagePreview] = useState<string | null>(null);
 	const [selectedCategories, setSelectedCategories] = useState<EventCategory[]>([]);
 	const [selectedGroup, setSelectedGroup] = useState<Group | null>(null);
+	const [isCropperOpen, setIsCropperOpen] = useState(false);
+	const [tempImageUrl, setTempImageUrl] = useState<string | null>(null);
 
 	const [formData, setFormData] = useState<EventInput>({
 		eventName: '',
@@ -145,7 +148,22 @@ const EventCreatePage = () => {
 	const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
 		const file = e.target.files?.[0];
 		if (file) {
-			await uploadImage(file);
+			const imageUrl = URL.createObjectURL(file);
+			setTempImageUrl(imageUrl);
+			setIsCropperOpen(true);
+		}
+	};
+
+	const handleCropComplete = async (croppedFile: File) => {
+		try {
+			const imageUrl = await uploadImage(croppedFile);
+			if (imageUrl) {
+				setImagePreview(imageUrl);
+				setTempImageUrl(null);
+			}
+		} catch (err) {
+			console.error('Error handling cropped image:', err);
+			smallError(t('Failed to process image'));
 		}
 	};
 
@@ -611,6 +629,19 @@ const EventCreatePage = () => {
 								<p className="text-sm text-muted-foreground mt-1">{t('Only JPG, JPEG, and PNG files are allowed')}</p>
 							</div>
 						</div>
+
+						{/* Image Cropper Modal */}
+						<ImageCropper
+							isOpen={isCropperOpen}
+							onClose={() => {
+								setIsCropperOpen(false);
+								setTempImageUrl(null);
+							}}
+							onCropComplete={handleCropComplete}
+							imageUrl={tempImageUrl || ''}
+							aspectRatio={16 / 9}
+							quality={0.9}
+						/>
 
 						{/* Submit Button */}
 						<div className="flex justify-end">

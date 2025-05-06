@@ -26,6 +26,7 @@ import { getJwtToken } from '@/libs/auth';
 import { imageTypes, REACT_APP_API_URL } from '@/libs/config';
 import { REACT_APP_API_GRAPHQL_URL } from '@/libs/config';
 import { EventUpdateInput } from '@/libs/types/event/event.update';
+import { ImageCropper } from '@/libs/components/common/ImageCropper';
 
 export const getStaticProps = async ({ locale }: { locale: string }) => ({
 	props: {
@@ -44,6 +45,8 @@ const EventUpdatePage = () => {
 	const [imagePreview, setImagePreview] = useState<string | null>(null);
 	const [selectedCategories, setSelectedCategories] = useState<EventCategory[]>([]);
 	const [formData, setFormData] = useState<EventUpdateInput | null>(null);
+	const [isCropperOpen, setIsCropperOpen] = useState(false);
+	const [tempImageUrl, setTempImageUrl] = useState<string | null>(null);
 
 	/** APOLLO REQUESTS **/
 	const [updateEventByOrganizer] = useMutation(UPDATE_EVENT_BY_ORGANIZER);
@@ -161,7 +164,22 @@ const EventUpdatePage = () => {
 	const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
 		const file = e.target.files?.[0];
 		if (file) {
-			await uploadImage(file);
+			const imageUrl = URL.createObjectURL(file);
+			setTempImageUrl(imageUrl);
+			setIsCropperOpen(true);
+		}
+	};
+
+	const handleCropComplete = async (croppedFile: File) => {
+		try {
+			const imageUrl = await uploadImage(croppedFile);
+			if (imageUrl) {
+				setImagePreview(imageUrl);
+				setTempImageUrl(null);
+			}
+		} catch (err) {
+			console.error('Error handling cropped image:', err);
+			smallError(t('Failed to process image'));
 		}
 	};
 
@@ -552,9 +570,9 @@ const EventUpdatePage = () => {
 											htmlFor="image"
 											className="absolute inset-0 flex items-center justify-center bg-black/0 hover:bg-black/20 transition-colors duration-200 cursor-pointer group"
 										>
-											<div className="flex items-center gap- bg-white/90 text-foreground px-4 py-2 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+											<div className="flex items-center gap-2 bg-white/90 text-foreground px-4 py-2 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200">
 												<RefreshCw className="h-4 w-4" />
-												<span className="font-medium">{t('Reset Image')}</span>
+												<span className="font-medium">{t('Change Image')}</span>
 											</div>
 										</label>
 									</>
@@ -578,6 +596,19 @@ const EventUpdatePage = () => {
 								<p className="text-sm text-muted-foreground mt-1">{t('Only JPG, JPEG, and PNG files are allowed')}</p>
 							</div>
 						</div>
+
+						{/* Image Cropper Modal */}
+						<ImageCropper
+							isOpen={isCropperOpen}
+							onClose={() => {
+								setIsCropperOpen(false);
+								setTempImageUrl(null);
+							}}
+							onCropComplete={handleCropComplete}
+							imageUrl={tempImageUrl || ''}
+							aspectRatio={16 / 9}
+							quality={0.9}
+						/>
 
 						{/* Submit Button */}
 						<div className="flex justify-end">
