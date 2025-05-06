@@ -16,7 +16,7 @@ import CategoriesSidebar from '@/libs/components/events/CategoriesSidebar';
 
 import { GET_EVENTS } from '@/apollo/user/query';
 import { LIKE_TARGET_EVENT } from '@/apollo/user/mutation';
-import { likeHandler } from '@/libs/utils';
+import { likeHandler, parseDate } from '@/libs/utils';
 import { EventCategory, EventStatus } from '@/libs/enums/event.enum';
 import { Event } from '@/libs/types/event/event';
 import { EventsInquiry } from '@/libs/types/event/event.input';
@@ -52,6 +52,10 @@ const EventsPage = ({
 	const user = useReactiveVar(userVar);
 	const [events, setEvents] = useState<Event[]>([]);
 
+	const readDate = (date: Date): string => {
+		return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
+	};
+
 	const readUrl = (): EventsInquiry => {
 		if (router?.query) {
 			const categories =
@@ -60,14 +64,6 @@ const EventsPage = ({
 					.filter(Boolean)
 					.map((cat) => cat.toUpperCase() as EventCategory)
 					.filter((cat) => Object.values(EventCategory).includes(cat)) || [];
-
-			// Safely parse dates
-			const parseDate = (dateStr: string | undefined): Date | undefined => {
-				if (!dateStr) return undefined;
-				// Handle both YYYY-MM-DD and ISO string formats
-				const date = new Date(dateStr);
-				return isNaN(date.getTime()) ? undefined : date;
-			};
 
 			return {
 				page: Math.max(1, Number(router.query.page) || 1),
@@ -105,10 +101,10 @@ const EventsPage = ({
 			query.status = newSearch.search.eventStatus;
 		}
 		if (newSearch.search.eventStartDay) {
-			query.startDate = newSearch.search.eventStartDay.toISOString().split('T')[0];
+			query.startDate = `${readDate(newSearch.search.eventStartDay)}`;
 		}
 		if (newSearch.search.eventEndDay) {
-			query.endDate = newSearch.search.eventEndDay.toISOString().split('T')[0];
+			query.endDate = `${readDate(newSearch.search.eventEndDay)}`;
 		}
 
 		router.push({ query }, undefined, { shallow: true });

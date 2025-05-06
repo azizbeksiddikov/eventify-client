@@ -1,8 +1,8 @@
 import numeral from 'numeral';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import { Message } from './enums/common.enum';
-import { smallError, smallSuccess } from './alert';
+import { Message } from '@/libs/enums/common.enum';
+import { smallError, smallSuccess } from '@/libs/alert';
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
@@ -52,4 +52,15 @@ export const formatPhoneNumber = (value: string) => {
 	} else {
 		return `${numbers.slice(0, 3)}-${numbers.slice(3, 7)}-${numbers.slice(7, 11)}`;
 	}
+};
+
+export const readDate = (date: Date): string => {
+	return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
+};
+
+export const parseDate = (dateStr: string | undefined): Date | undefined => {
+	if (!dateStr) return undefined;
+	const date = dateStr.split('-').map(Number);
+	if (isNaN(date[0]) || isNaN(date[1]) || isNaN(date[2])) return undefined;
+	return new Date(date[0], date[1] - 1, date[2]);
 };

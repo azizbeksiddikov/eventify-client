@@ -1,5 +1,5 @@
-import { Direction } from '../../enums/common.enum';
-import { EventStatus, EventCategory } from '../../enums/event.enum';
+import { Direction } from '@/libs/enums/common.enum';
+import { EventStatus, EventCategory } from '@/libs/enums/event.enum';
 
 export interface EventInput {
 	eventName: string;
@@ -23,6 +23,8 @@ export interface EISearch {
 	eventStatus?: EventStatus;
 	eventStartDay?: Date;
 	eventEndDay?: Date;
+	eventAddress?: string;
+	eventCity?: string;
 }
 
 export interface EventsInquiry {

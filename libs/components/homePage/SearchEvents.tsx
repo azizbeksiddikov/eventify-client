@@ -2,38 +2,31 @@ import { useState } from 'react';
 import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
 import { format } from 'date-fns';
-import { CalendarIcon } from 'lucide-react';
+import { CalendarIcon, SearchIcon } from 'lucide-react';
 
 import { Input } from '@/libs/components/ui/input';
 import { Button } from '@/libs/components/ui/button';
 import { Card } from '@/libs/components/ui/card';
 import { Calendar } from '@/libs/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/libs/components/ui/popover';
+import { readDate } from '@/libs/utils';
 
 const SearchEvents = () => {
 	const router = useRouter();
-	const [searchQuery, setSearchQuery] = useState('');
+	const { t } = useTranslation('common');
+
+	const [text, setText] = useState('');
 	const [startDate, setStartDate] = useState<Date | undefined>();
 	const [endDate, setEndDate] = useState<Date | undefined>();
-	const [location, setLocation] = useState('');
-	const { t } = useTranslation('common');
+
 	const handleSearch = (e: React.FormEvent) => {
 		e.preventDefault();
 
 		const query: Record<string, string> = {};
 
-		if (searchQuery.trim()) {
-			query.q = searchQuery.trim();
-		}
-		if (location.trim()) {
-			query.location = location.trim();
-		}
-		if (startDate) {
-			query.startDate = startDate.toISOString().split('T')[0];
-		}
-		if (endDate) {
-			query.endDate = endDate.toISOString().split('T')[0];
-		}
+		if (text.trim()) query.text = text.trim();
+		if (startDate) query.startDate = readDate(startDate);
+		if (endDate) query.endDate = readDate(endDate);
 
 		router.push({
 			pathname: '/event',
@@ -42,31 +35,29 @@ const SearchEvents = () => {
 	};
 
 	return (
-		<div className="bg-secondary/50 py-24">
-			<div className="flex-container">
+		<div className="bg-secondary/70 py-12 md:py-24 shadow-lg">
+			<div className="flex-container px-4 md:px-8">
 				<h2>{t('Find Events')}</h2>
-				<Card className="p-8">
-					<form onSubmit={handleSearch} className="flex items-center gap-4">
-						<div className="flex-1">
+				<Card className="p-6 md:p-8 w-full max-w-5xl mx-auto border-2 border-primary/20 shadow-md">
+					<form onSubmit={handleSearch} className="flex flex-col md:flex-row items-stretch md:items-center gap-4">
+						<div className="flex-1 relative">
 							<Input
 								type="text"
 								placeholder={t('Search Events')}
-								className="w-full h-14 text-lg"
-								value={searchQuery}
-								onChange={(e) => setSearchQuery(e.target.value)}
+								className="w-full h-14 text-lg pl-10 rounded-md focus:ring-2 focus:ring-primary/50 transition-all"
+								value={text}
+								onChange={(e) => setText(e.target.value)}
 							/>
+							<SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
 						</div>
-						<Input
-							type="text"
-							placeholder={t('Location')}
-							className="w-48 h-14"
-							value={location}
-							onChange={(e) => setLocation(e.target.value)}
-						/>
-						<div className="flex items-center gap-2">
+
+						<div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
 							<Popover>
 								<PopoverTrigger asChild>
-									<Button variant="outline" className="w-40 h-14 justify-start text-left font-normal">
+									<Button
+										variant="outline"
+										className="w-full sm:w-40 h-14 justify-start text-left font-normal border border-input hover:bg-accent/50 transition-colors"
+									>
 										<CalendarIcon className="mr-2 h-4 w-4" />
 										{startDate ? format(startDate, 'PPP') : <span>{t('Start date')}</span>}
 									</Button>
@@ -77,7 +68,10 @@ const SearchEvents = () => {
 							</Popover>
 							<Popover>
 								<PopoverTrigger asChild>
-									<Button variant="outline" className="w-40 h-14 justify-start text-left font-normal">
+									<Button
+										variant="outline"
+										className="w-full sm:w-40 h-14 justify-start text-left font-normal border border-input hover:bg-accent/50 transition-colors"
+									>
 										<CalendarIcon className="mr-2 h-4 w-4" />
 										{endDate ? format(endDate, 'PPP') : <span>{t('End date')}</span>}
 									</Button>
@@ -87,7 +81,10 @@ const SearchEvents = () => {
 								</PopoverContent>
 							</Popover>
 						</div>
-						<Button type="submit" className="h-14 px-8">
+						<Button
+							type="submit"
+							className="h-14 px-8 bg-primary text-primary-foreground hover:bg-primary/90 transition-colors font-medium"
+						>
 							{t('Search')}
 						</Button>
 					</form>

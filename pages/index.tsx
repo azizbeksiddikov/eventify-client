@@ -24,7 +24,6 @@ const Home: NextPage = () => {
 		<div className="min-h-screen  flex flex-col">
 			{/* Hero Section */}
 			<AutoScrollEvents />
-
 			<SearchEvents />
 			<UpcomingEvents />
 			<EventsByCategory />
