@@ -111,7 +111,7 @@ const GroupDetailPage = () => {
 	};
 
 	if (!groupId) return null;
-
+	if (!group) return null;
 	return (
 		<div>
 			<ChosenGroupHeader />

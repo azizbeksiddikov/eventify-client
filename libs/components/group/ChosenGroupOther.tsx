@@ -10,7 +10,6 @@ interface ChosenGroupOtherProps {
 
 const ChosenGroupOther = ({ group }: ChosenGroupOtherProps) => {
 	if (!group) return null;
-
 	return (
 		<div className="space-y-8">
 			{/* Owner's Info */}

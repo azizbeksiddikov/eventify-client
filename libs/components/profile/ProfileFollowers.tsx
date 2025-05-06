@@ -53,7 +53,7 @@ export const ProfileFollowers = ({
 								<TableHead className="text-center">
 									<div className="flex items-center justify-center gap-1">
 										<Calendar className="h-4 w-4" />
-										{t('Events')}
+										{t('Tickets')}
 									</div>
 								</TableHead>
 								<TableHead className="text-right">{t('Actions')}</TableHead>

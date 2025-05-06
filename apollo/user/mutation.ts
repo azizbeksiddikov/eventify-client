@@ -83,24 +83,8 @@ export const LIKE_TARGET_MEMBER = gql`
 	mutation LikeTargetMember($input: String!) {
 		likeTargetMember(memberId: $input) {
 			_id
-			username
-			memberEmail
-			memberPhone
-			memberFullName
-			memberType
-			memberStatus
-			emailVerified
-			memberDesc
-			memberImage
-			memberPoints
 			memberLikes
-			memberFollowings
-			memberFollowers
-			memberViews
-			memberRank
-			createdAt
 			updatedAt
-			accessToken
 			meLiked {
 				memberId
 				likeRefId
@@ -225,17 +209,8 @@ export const JOIN_GROUP = gql`
 	mutation JoinGroup($input: String!) {
 		joinGroup(groupId: $input) {
 			_id
-			groupName
-			groupDesc
-			groupImage
-			memberId
-			groupCategories
-			groupViews
-			groupLikes
 			memberCount
-			createdAt
 			updatedAt
-			eventsCount
 			meJoined {
 				memberId
 				groupId
@@ -251,17 +226,8 @@ export const LEAVE_GROUP = gql`
 	mutation LeaveGroup($input: String!) {
 		leaveGroup(groupId: $input) {
 			_id
-			groupName
-			groupDesc
-			groupImage
-			memberId
-			groupCategories
-			groupViews
-			groupLikes
 			memberCount
-			createdAt
 			updatedAt
-			eventsCount
 			meJoined {
 				memberId
 				groupId
@@ -311,37 +277,8 @@ export const LIKE_TARGET_GROUP = gql`
 	mutation LikeTargetGroup($input: String!) {
 		likeTargetGroup(groupId: $input) {
 			_id
-			groupName
-			groupDesc
-			groupImage
-			memberId
-			groupCategories
-			groupViews
 			groupLikes
-			eventsCount
-			memberCount
-			createdAt
 			updatedAt
-			memberData {
-				_id
-				username
-				memberEmail
-				memberPhone
-				memberFullName
-				memberType
-				memberStatus
-				emailVerified
-				memberDesc
-				memberImage
-				memberPoints
-				memberLikes
-				memberFollowings
-				memberFollowers
-				memberViews
-				createdAt
-				updatedAt
-				accessToken
-			}
 			meLiked {
 				memberId
 				likeRefId
@@ -412,44 +349,8 @@ export const LIKE_TARGET_EVENT = gql`
 	mutation LikeTargetEvent($input: String!) {
 		likeTargetEvent(eventId: $input) {
 			_id
-			eventName
-			eventDesc
-			eventImage
-			eventDate
-			eventStartTime
-			eventEndTime
-			eventAddress
-			eventCapacity
-			eventPrice
-			eventStatus
-			eventCategories
-			groupId
-			memberId
-			attendeeCount
 			eventLikes
-			eventViews
-			createdAt
 			updatedAt
-			memberData {
-				_id
-				username
-				memberEmail
-				memberPhone
-				memberFullName
-				memberType
-				memberStatus
-				emailVerified
-				memberDesc
-				memberImage
-				memberPoints
-				memberLikes
-				memberFollowings
-				memberFollowers
-				memberViews
-				createdAt
-				updatedAt
-				accessToken
-			}
 			meLiked {
 				memberId
 				likeRefId
