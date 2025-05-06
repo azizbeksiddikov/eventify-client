@@ -9,8 +9,8 @@ export interface EventInput {
 	eventStartTime: string; // hh:mm
 	eventEndTime: string; // hh:mm
 	eventAddress: string;
-	eventCapacity: number;
-	eventPrice: number;
+	eventCapacity?: number;
+	eventPrice?: number;
 	eventStatus: EventStatus;
 	eventCity: string;
 	eventCategories: EventCategory[];

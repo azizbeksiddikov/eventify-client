@@ -12,10 +12,15 @@ interface PaginationComponentProps {
 	totalItems: number;
 	currentPage?: number;
 	limit?: number;
-	setCurrentPage: (newPage: number) => void;
+	pageChangeHandler: (newPage: number) => void;
 }
 
-const PaginationComponent = ({ totalItems, currentPage = 1, limit = 5, setCurrentPage }: PaginationComponentProps) => {
+const PaginationComponent = ({
+	totalItems,
+	currentPage = 1,
+	limit = 5,
+	pageChangeHandler,
+}: PaginationComponentProps) => {
 	if (totalItems <= 0) return null;
 
 	const totalPages = Math.ceil(totalItems / limit);
@@ -27,7 +32,7 @@ const PaginationComponent = ({ totalItems, currentPage = 1, limit = 5, setCurren
 			<PaginationContent>
 				<PaginationItem>
 					<PaginationPrevious
-						onClick={() => setCurrentPage(currentPage - 1)}
+						onClick={() => pageChangeHandler(currentPage - 1)}
 						className={currentPage === 1 ? 'pointer-events-none opacity-50' : ''}
 					/>
 				</PaginationItem>
@@ -35,7 +40,7 @@ const PaginationComponent = ({ totalItems, currentPage = 1, limit = 5, setCurren
 				{startPage > 1 && (
 					<>
 						<PaginationItem>
-							<PaginationLink onClick={() => setCurrentPage(1)}>1</PaginationLink>
+							<PaginationLink onClick={() => pageChangeHandler(1)}>1</PaginationLink>
 						</PaginationItem>
 						{startPage > 2 && (
 							<PaginationItem>
@@ -47,7 +52,7 @@ const PaginationComponent = ({ totalItems, currentPage = 1, limit = 5, setCurren
 
 				{Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i).map((page) => (
 					<PaginationItem key={page}>
-						<PaginationLink onClick={() => setCurrentPage(page)} isActive={page === currentPage}>
+						<PaginationLink onClick={() => pageChangeHandler(page)} isActive={page === currentPage}>
 							{page}
 						</PaginationLink>
 					</PaginationItem>
@@ -61,14 +66,14 @@ const PaginationComponent = ({ totalItems, currentPage = 1, limit = 5, setCurren
 							</PaginationItem>
 						)}
 						<PaginationItem>
-							<PaginationLink onClick={() => setCurrentPage(totalPages)}>{totalPages}</PaginationLink>
+							<PaginationLink onClick={() => pageChangeHandler(totalPages)}>{totalPages}</PaginationLink>
 						</PaginationItem>
 					</>
 				)}
 
 				<PaginationItem>
 					<PaginationNext
-						onClick={() => setCurrentPage(currentPage + 1)}
+						onClick={() => pageChangeHandler(currentPage + 1)}
 						className={currentPage === totalPages ? 'pointer-events-none opacity-50' : ''}
 					/>
 				</PaginationItem>

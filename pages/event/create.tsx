@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/router';
 import axios from 'axios';
-import { ImageIcon, RefreshCw, CalendarIcon } from 'lucide-react';
 import { useMutation, useQuery, useReactiveVar } from '@apollo/client';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useTranslation } from 'react-i18next';
 import { userVar } from '@/apollo/store';
 import { format } from 'date-fns';
+import { ImageIcon, RefreshCw, CalendarIcon, ArrowLeft } from 'lucide-react';
 
 import { Button } from '@/libs/components/ui/button';
 import { Input } from '@/libs/components/ui/input';
@@ -45,21 +46,20 @@ const EventCreatePage = () => {
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [imagePreview, setImagePreview] = useState<string | null>(null);
 	const [selectedCategories, setSelectedCategories] = useState<EventCategory[]>([]);
+	const [selectedGroup, setSelectedGroup] = useState<Group | null>(null);
 
 	const [formData, setFormData] = useState<EventInput>({
 		eventName: '',
 		eventDesc: '',
 		eventImage: '',
-		eventDate: new Date(),
 		eventStartTime: '00:00',
 		eventEndTime: '00:00',
-		eventAddress: '',
 		eventCity: '',
-		eventCapacity: 0,
-		eventPrice: 0,
+		eventAddress: '',
 		eventStatus: EventStatus.UPCOMING,
-		eventCategories: [],
+		eventDate: new Date(),
 		groupId: '',
+		eventCategories: [],
 	});
 
 	/** APOLLO REQUESTS **/
@@ -88,12 +88,12 @@ const EventCreatePage = () => {
 
 	const handleStartTimeChange = (hour: string, minute: string) => {
 		const newStartTime = `${hour}:${minute}`;
-		setFormData((prev) => ({ ...prev, eventStartTime: newStartTime }));
+		if (formData) setFormData((prev) => ({ ...prev, eventStartTime: newStartTime }));
 	};
 
 	const handleEndTimeChange = (hour: string, minute: string) => {
 		const newEndTime = `${hour}:${minute}`;
-		setFormData((prev) => ({ ...prev, eventEndTime: newEndTime }));
+		if (formData) setFormData((prev) => ({ ...prev, eventEndTime: newEndTime }));
 	};
 
 	const uploadImage = async (image: File) => {
@@ -155,9 +155,10 @@ const EventCreatePage = () => {
 
 		try {
 			if (!user._id) throw new Error(Message.NOT_AUTHENTICATED);
-			if (!formData.groupId) throw new Error(Message.GROUP_NOT_FOUND);
-			if (!formData.eventName) throw new Error(t('Event name is required'));
-			if (!formData.eventDesc) throw new Error(t('Event description is required'));
+			if (!formData) throw new Error(Message.INVALID_FORM_DATA);
+			if (!formData?.groupId) throw new Error(Message.GROUP_NOT_FOUND);
+			if (!formData?.eventName) throw new Error(t('Event name is required'));
+			if (!formData?.eventDesc) throw new Error(t('Event description is required'));
 			if (selectedCategories.length === 0) throw new Error(Message.CATEGORY_NOT_FOUND);
 			if (!formData.eventDate) throw new Error(t('Event date is required'));
 			if (!formData.eventStartTime) throw new Error(t('Start time is required'));
@@ -169,6 +170,8 @@ const EventCreatePage = () => {
 			if (!formData.eventAddress) throw new Error(t('Address is required'));
 			if (!formData.eventCapacity) throw new Error(t('Capacity is required'));
 			if (formData.eventCapacity < 1) throw new Error(t('Capacity must be at least 1'));
+			if (!formData.eventPrice) formData.eventPrice = 0;
+			if (formData.eventPrice < 0) throw new Error(t('Price must be at least 0'));
 			if (!formData.eventImage) throw new Error(t('Event image is required'));
 
 			const updatedFormData = {
@@ -176,12 +179,12 @@ const EventCreatePage = () => {
 				eventCategories: selectedCategories,
 			};
 
-			await createEvent({
+			const { data: createEventData } = await createEvent({
 				variables: { input: updatedFormData },
 			});
 
 			await smallSuccess(t('Event created successfully'));
-			router.push('/event');
+			router.push(`/event/detail?eventId=${createEventData?.createEvent?._id}`);
 		} catch (error: unknown) {
 			if (error instanceof Error) {
 				smallError(error.message);
@@ -196,10 +199,25 @@ const EventCreatePage = () => {
 	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
 		const { name, value } = e.target;
 
-		setFormData((prev) => ({
-			...prev,
-			[name]: name === 'eventCapacity' || name === 'eventPrice' ? Number(value) : value,
-		}));
+		if (name === 'eventCapacity' || name === 'eventPrice') {
+			if (value === '') {
+				// Allow empty input for user convenience
+				setFormData((prev) => ({ ...prev, [name]: undefined }));
+				return;
+			}
+
+			const cleanedValue = value.replace(/^0+/, '') || '0';
+			const numberValue = Number(cleanedValue);
+
+			if (isNaN(numberValue)) {
+				smallError(t('Invalid number'));
+				return;
+			}
+
+			setFormData((prev) => ({ ...prev, [name]: numberValue }));
+		} else {
+			setFormData((prev) => ({ ...prev, [name]: value }));
+		}
 	};
 
 	const handleCategorySelect = (category: EventCategory) => {
@@ -221,20 +239,7 @@ const EventCreatePage = () => {
 						onClick={() => router.push('/event')}
 						className="flex items-center gap-2 text-primary hover:text-primary-foreground hover:bg-primary border-primary hover:border-primary/80 transition-colors duration-200"
 					>
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							width="24"
-							height="24"
-							viewBox="0 0 24 24"
-							fill="none"
-							stroke="currentColor"
-							strokeWidth="2"
-							strokeLinecap="round"
-							strokeLinejoin="round"
-							className="h-4 w-4"
-						>
-							<path d="m15 18-6-6 6-6" />
-						</svg>
+						<ArrowLeft className="h-4 w-4" />
 						{t('Back to Events')}
 					</Button>
 				</div>
@@ -250,22 +255,27 @@ const EventCreatePage = () => {
 							</label>
 							<Select
 								value={formData.groupId}
-								onValueChange={(value: string) => setFormData((prev) => ({ ...prev, groupId: value }))}
+								onValueChange={(value: string) => {
+									const selectedGroup = groups.find((group) => group._id === value);
+									if (selectedGroup) {
+										setSelectedGroup(selectedGroup);
+										setFormData((prev) => ({ ...prev, groupId: value }));
+									}
+								}}
 							>
 								<SelectTrigger className="w-full bg-input text-input-foreground border-input">
 									<SelectValue placeholder="Select a group">
 										{formData.groupId && (
 											<div className="flex items-center space-x-3">
 												<div className="relative h-8 w-8 rounded-full overflow-hidden">
-													<img
-														src={groups.find((group) => group._id === formData.groupId)?.groupImage}
+													<Image
+														src={`${REACT_APP_API_URL}/${selectedGroup?.groupImage}`}
 														alt="Group preview"
 														className="object-cover w-full h-full"
+														fill
 													/>
 												</div>
-												<span className="text-foreground">
-													{groups.find((g) => g._id === formData.groupId)?.groupName}
-												</span>
+												<span className="text-foreground">{selectedGroup?.groupName}</span>
 											</div>
 										)}
 									</SelectValue>
@@ -279,7 +289,12 @@ const EventCreatePage = () => {
 										>
 											<div className="flex items-center space-x-4">
 												<div className="relative h-10 w-10 rounded-full overflow-hidden">
-													<img src={group.groupImage} alt={group.groupName} className="object-cover w-full h-full" />
+													<Image
+														src={`${REACT_APP_API_URL}/${group.groupImage}`}
+														alt={group.groupName}
+														fill
+														className="object-cover w-full h-full"
+													/>
 												</div>
 												<div>
 													<div className="font-medium text-foreground">{group.groupName}</div>
@@ -530,13 +545,13 @@ const EventCreatePage = () => {
 						<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 							<div className="space-y-2">
 								<label htmlFor="eventCapacity" className="text-sm font-medium text-foreground">
-									{t('Capacity')}
+									{t('Capacity (number)')}
 								</label>
 								<Input
 									id="eventCapacity"
 									name="eventCapacity"
 									type="number"
-									value={formData.eventCapacity}
+									value={formData.eventCapacity === undefined ? '' : String(formData.eventCapacity)}
 									onChange={handleInputChange}
 									placeholder={t('Enter event capacity')}
 									className="bg-input text-input-foreground border-input"
@@ -544,14 +559,14 @@ const EventCreatePage = () => {
 							</div>
 							<div className="space-y-2">
 								<label htmlFor="eventPrice" className="text-sm font-medium text-foreground">
-									{t('Price')}
+									{t('Price (number)')}
 								</label>
 								<Input
 									id="eventPrice"
 									name="eventPrice"
 									type="number"
-									min="0"
-									value={formData.eventPrice}
+									// Convert to string and strip leading zeros when displaying
+									value={formData.eventPrice === undefined ? '' : String(formData.eventPrice)}
 									onChange={handleInputChange}
 									placeholder={t('Enter event price')}
 									className="bg-input text-input-foreground border-input"
@@ -565,7 +580,7 @@ const EventCreatePage = () => {
 							<div className="relative aspect-video w-full max-w-2xl mx-auto rounded-xl overflow-hidden bg-muted/50">
 								{imagePreview ? (
 									<>
-										<img src={imagePreview} alt="Event preview" className="object-contain w-full h-full" />
+										<Image src={imagePreview} alt="Event preview" className="object-contain w-full h-full" fill />
 										<label
 											htmlFor="image"
 											className="absolute inset-0 flex items-center justify-center bg-black/0 hover:bg-black/20 transition-colors duration-200 cursor-pointer"

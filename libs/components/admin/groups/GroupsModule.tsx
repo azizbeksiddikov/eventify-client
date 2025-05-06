@@ -32,7 +32,7 @@ const GroupsModule = ({
 
 	/** HANDLERS **/
 
-	const changePageHandler = async (newPage: number) => {
+	const pageChangeHandler = (newPage: number) => {
 		setGroupsInquiry({ ...groupsInquiry, page: newPage });
 	};
 
@@ -56,7 +56,7 @@ const GroupsModule = ({
 						totalItems={groupsTotal ?? 0}
 						currentPage={groupsInquiry.page}
 						limit={groupsInquiry.limit}
-						setCurrentPage={changePageHandler}
+						pageChangeHandler={pageChangeHandler}
 					/>
 				</div>
 			</div>

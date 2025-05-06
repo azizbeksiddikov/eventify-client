@@ -146,7 +146,7 @@ const Header = () => {
 									{t('Login')}
 								</Button>
 							</Link>
-							<Link href="auth/signup">
+							<Link href="/auth/signup">
 								<Button className="text-sm h-9 px-4">{t('Sign Up')}</Button>
 							</Link>
 						</div>

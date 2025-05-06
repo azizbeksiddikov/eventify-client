@@ -50,7 +50,7 @@ export const GET_ORGANIZERS = gql`
 				memberViews
 				createdAt
 				updatedAt
-				accessToken
+				eventsOrganizedCount
 				meLiked {
 					memberId
 					likeRefId
@@ -77,6 +77,7 @@ export const GET_ORGANIZER = gql`
 			memberEmail
 			memberPhone
 			memberFullName
+			eventsOrganizedCount
 			memberType
 			memberStatus
 			emailVerified
@@ -163,6 +164,7 @@ export const GET_GROUPS = gql`
 				groupCategories
 				groupViews
 				groupLikes
+				eventsCount
 				memberCount
 				createdAt
 				updatedAt
@@ -214,6 +216,7 @@ export const GET_MY_GROUPS = gql`
 			groupDesc
 			groupImage
 			memberId
+			eventsCount
 			groupCategories
 			groupViews
 			groupLikes
@@ -231,6 +234,7 @@ export const GET_JOINED_GROUPS = gql`
 			groupName
 			groupDesc
 			groupImage
+			eventsCount
 			memberId
 			groupCategories
 			groupViews
@@ -265,6 +269,7 @@ export const GET_GROUP = gql`
 			groupCategories
 			groupViews
 			groupLikes
+			eventsCount
 			memberCount
 			createdAt
 			updatedAt

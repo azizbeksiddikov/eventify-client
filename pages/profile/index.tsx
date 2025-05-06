@@ -91,21 +91,25 @@ const ProfilePage = () => {
 	const { data: getJoinedGroupsData, refetch: refetchJoinedGroups } = useQuery(GET_JOINED_GROUPS, {
 		fetchPolicy: 'cache-and-network',
 		skip: !user?._id,
+		notifyOnNetworkStatusChange: true,
 	});
 
 	const { data: getTicketsData, refetch: refetchTickets } = useQuery(GET_ALL_TICKETS_LIST, {
 		fetchPolicy: 'cache-and-network',
 		skip: !user?._id,
+		notifyOnNetworkStatusChange: true,
 	});
 
 	const { data: getFollowingsData, refetch: refetchFollowings } = useQuery(GET_MEMBER_FOLLOWINGS_LIST, {
 		fetchPolicy: 'cache-and-network',
 		skip: !user?._id,
+		notifyOnNetworkStatusChange: true,
 	});
 
-	const { data: getFollowersData, refetch: refetchFollowers } = useQuery(GET_MEMBER_FOLLOWERS_LIST, {
+	const { data: getFollowersData } = useQuery(GET_MEMBER_FOLLOWERS_LIST, {
 		fetchPolicy: 'cache-and-network',
 		skip: !user?._id,
+		notifyOnNetworkStatusChange: true,
 	});
 
 	/** LIFECYCLE */
@@ -151,8 +155,8 @@ const ProfilePage = () => {
 	}, [getFollowersData]);
 
 	useEffect(() => {
-		if (getTicketsData?.getTickets) {
-			setTickets(getTicketsData.getTickets);
+		if (getTicketsData?.getAllTicketsList) {
+			setTickets(getTicketsData.getAllTicketsList);
 		}
 	}, [getTicketsData]);
 

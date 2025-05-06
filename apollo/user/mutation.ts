@@ -190,6 +190,7 @@ export const CREATE_GROUP = gql`
 			memberCount
 			createdAt
 			updatedAt
+			eventsCount
 			meJoined {
 				memberId
 				groupId
@@ -212,6 +213,7 @@ export const UPDATE_GROUP = gql`
 			groupCategories
 			groupViews
 			groupLikes
+			eventsCount
 			memberCount
 			createdAt
 			updatedAt
@@ -233,6 +235,7 @@ export const JOIN_GROUP = gql`
 			memberCount
 			createdAt
 			updatedAt
+			eventsCount
 			meJoined {
 				memberId
 				groupId
@@ -258,6 +261,7 @@ export const LEAVE_GROUP = gql`
 			memberCount
 			createdAt
 			updatedAt
+			eventsCount
 			meJoined {
 				memberId
 				groupId
@@ -293,6 +297,7 @@ export const DELETE_GROUP = gql`
 			groupmemberId
 			groupImage
 			groupViews
+			eventsCount
 			groupLikes
 			groupCategories
 			memberCount
@@ -313,6 +318,7 @@ export const LIKE_TARGET_GROUP = gql`
 			groupCategories
 			groupViews
 			groupLikes
+			eventsCount
 			memberCount
 			createdAt
 			updatedAt

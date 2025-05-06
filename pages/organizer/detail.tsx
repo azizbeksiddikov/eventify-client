@@ -40,7 +40,7 @@ const OrganizerDetailPage = () => {
 	const [subscribe] = useMutation(SUBSCRIBE);
 	const [unsubscribe] = useMutation(UNSUBSCRIBE);
 
-	const { data: getOrganizerData, refetch: refetchOrganizer } = useQuery(GET_ORGANIZER, {
+	const { data: getOrganizerData } = useQuery(GET_ORGANIZER, {
 		fetchPolicy: 'cache-and-network',
 		skip: !organizerId,
 		variables: { input: organizerId },

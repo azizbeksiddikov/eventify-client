@@ -31,7 +31,7 @@ const UsersModule = ({
 	const membersTotal = members.metaCounter[0]?.total;
 
 	/** HANDLERS **/
-	const changePageHandler = async (newPage: number) => {
+	const pageChangeHandler = (newPage: number) => {
 		setMembersInquiry({ ...membersInquiry, page: newPage });
 	};
 
@@ -55,7 +55,7 @@ const UsersModule = ({
 						totalItems={membersTotal ?? 0}
 						currentPage={membersInquiry.page}
 						limit={membersInquiry.limit}
-						setCurrentPage={changePageHandler}
+						pageChangeHandler={pageChangeHandler}
 					/>
 				</div>
 			</div>

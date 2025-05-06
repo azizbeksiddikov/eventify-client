@@ -9,6 +9,7 @@ export enum Message {
 	UPLOAD_FAILED = 'Failed to upload the file. Please try again.',
 	BAD_REQUEST = 'Invalid request. Please check your input.',
 	INVALID_SORT_OPTION = 'Invalid sort option',
+	INVALID_FORM_DATA = 'Invalid form data',
 
 	// ===== Member Related Messages =====
 	USERNAME_REQUIRED = 'Username is required',
@@ -21,11 +22,10 @@ export enum Message {
 	CONFIRM_PASSWORD_REQUIRED = 'Please confirm your password',
 	PASSWORDS_DONT_MATCH = 'Passwords do not match',
 	NOT_AUTHENTICATED = 'You are not authenticated',
-
+	SIGNUP_FAILED = 'Signup failed. Please try again.',
 	// ===== Event Related Messages =====
 	EVENT_NOT_FOUND = 'Event not found',
 	INVALID_TIME_SELECTION = 'Invalid time selection',
-
 	// ===== Group Related Messages =====
 	GROUP_NOT_FOUND = 'Group not found',
 	CATEGORY_NOT_FOUND = 'Category not found',

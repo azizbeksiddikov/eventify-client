@@ -15,6 +15,7 @@ import { REACT_APP_API_URL } from '@/libs/config';
 import { MemberStatus, MemberType } from '@/libs/enums/member.enum';
 import { Member } from '@/libs/types/member/member';
 import { MemberUpdateInput } from '@/libs/types/member/member.update';
+import { formatPhoneNumber } from '@/libs/utils';
 
 interface MemberRowProps {
 	member: Member;
@@ -59,6 +60,11 @@ const MemberRow = ({
 			...prev,
 			[field]: value,
 		}));
+	};
+
+	const handlePhoneChange = (value: string) => {
+		const formattedNumber = formatPhoneNumber(value);
+		setMemberUpdateInput({ ...memberUpdateInput, memberPhone: formattedNumber });
 	};
 
 	return (
@@ -106,7 +112,7 @@ const MemberRow = ({
 				{isEditing ? (
 					<Input
 						value={memberUpdateInput.memberPhone ?? ''}
-						onChange={(e) => handleInputChange('memberPhone', e.target.value)}
+						onChange={(e) => handlePhoneChange(e.target.value)}
 						className="h-8"
 					/>
 				) : (

@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import Link from 'next/link';
 import Image from 'next/image';
 
-import { Crown, Users } from 'lucide-react';
+import { Crown, Users, User } from 'lucide-react';
 import { Badge } from '@/libs/components/ui/badge';
 import { Card } from '@/libs/components/ui/card';
 
@@ -29,13 +29,17 @@ const Owner = ({ member, title = 'Group Owner' }: OwnerProps) => {
 			>
 				<div className="flex items-center space-x-6">
 					<div className="flex-shrink-0">
-						<div className="w-20 h-20 rounded-xl overflow-hidden relative">
-							<Image
-								src={`${REACT_APP_API_URL}/${member?.memberImage}`}
-								alt={member.memberFullName ?? t('Owner avatar')}
-								fill
-								className="object-cover group-hover:scale-105 transition-transform duration-200"
-							/>
+						<div className="w-20 h-20 rounded-xl overflow-hidden relative bg-muted flex items-center justify-center">
+							{member?.memberImage ? (
+								<Image
+									src={`${REACT_APP_API_URL}/${member.memberImage}`}
+									alt={member.memberFullName ?? t('Owner avatar')}
+									fill
+									className="object-cover group-hover:scale-105 transition-transform duration-200"
+								/>
+							) : (
+								<User className="w-10 h-10 text-muted-foreground" />
+							)}
 							<div className="absolute inset-0 bg-gradient-to-t from-background/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
 						</div>
 					</div>

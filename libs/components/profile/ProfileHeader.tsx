@@ -17,11 +17,14 @@ export const ProfileHeader = ({ member }: ProfileHeaderProps) => {
 			<div className="flex flex-col md:flex-row items-center md:items-start gap-6 md:gap-8">
 				<div className="relative">
 					{member.memberImage ? (
-						<Image
-							src={`${REACT_APP_API_URL}/${member.memberImage}`}
-							alt={member.memberFullName ?? t('No image')}
-							className="w-24 h-24 md:w-32 md:h-32 rounded-full object-cover ring-2 ring-ring/20"
-						/>
+						<div className="relative w-24 h-24 md:w-32 md:h-32 ">
+							<Image
+								src={`${REACT_APP_API_URL}/${member.memberImage}`}
+								alt={member.memberFullName ?? t('No image')}
+								className="object-contain rounded-full"
+								fill
+							/>
+						</div>
 					) : (
 						<div className="w-24 h-24 md:w-32 md:h-32 rounded-full bg-muted flex items-center justify-center ring-2 ring-ring/20">
 							<User className="h-12 w-12 md:h-16 md:w-16 text-muted-foreground/50" />

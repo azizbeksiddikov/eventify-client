@@ -23,7 +23,7 @@ const GroupsHeader = () => {
 	};
 
 	return (
-		<section className="bg-gradient-to-b from-secondary/40 to-background py-24">
+		<section className="bg-gradient-to-b from-secondary to-background py-8">
 			<div className="flex items-center justify-between mb-8 w-[90%] mx-auto">
 				<div>
 					<h2 className="text-left">{t('Discover Groups')}</h2>

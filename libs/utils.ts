@@ -38,3 +38,18 @@ export const formatDateHandler = (dateString: string | Date) => {
 	const pad = (n: number) => n.toString().padStart(2, '0');
 	return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
 };
+
+export const formatPhoneNumber = (value: string) => {
+	// Remove all non-digit characters
+	const numbers = value.replace(/\D/g, '');
+
+	// Format the number as XXX-XXXX-XXXX
+	// 012-3456-78910
+	if (numbers.length <= 3) {
+		return numbers;
+	} else if (numbers.length <= 7) {
+		return `${numbers.slice(0, 3)}-${numbers.slice(3)}`;
+	} else {
+		return `${numbers.slice(0, 3)}-${numbers.slice(3, 7)}-${numbers.slice(7, 11)}`;
+	}
+};

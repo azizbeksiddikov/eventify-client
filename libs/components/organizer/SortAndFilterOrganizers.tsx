@@ -47,7 +47,7 @@ const SortAndFilterOrganizers = ({ updateURL, organizerSearch, initialSearch }: 
 	};
 
 	return (
-		<div className="bg-background border-b border-border">
+		<div className="bg-background border-brounded-2xl shadow-lg p-6 relative  border-border ">
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
 				<div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
 					<div className="relative w-full">

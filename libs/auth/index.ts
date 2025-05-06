@@ -3,9 +3,9 @@ import { initializeApollo } from '@/apollo/client';
 import { userVar } from '@/apollo/store';
 
 import { LOGIN, SIGN_UP } from '@/apollo/user/mutation';
-import { smallError } from '@/libs/alert';
 import { CustomJwtPayload } from '@/libs/types/customJwtPayload';
 import { Message } from '@/libs/enums/common.enum';
+import { MemberType } from '@/libs/enums/member.enum';
 
 export function getJwtToken(): any {
 	if (typeof window !== 'undefined') {
@@ -53,15 +53,7 @@ const requestJwtToken = async ({
 
 		return { jwtToken: accessToken };
 	} catch (err: any) {
-		switch (err.graphQLErrors[0].message) {
-			case 'Definer: login and password do not match':
-				await smallError('Please check your password again');
-				break;
-			case 'Definer: user has been blocked!':
-				await smallError('User has been blocked!');
-				break;
-		}
-		throw new Error('token error');
+		throw new Error(err.message);
 	}
 };
 
@@ -70,17 +62,26 @@ export const signUp = async (
 	memberPassword: string,
 	memberEmail: string,
 	memberFullName: string,
+	memberType: MemberType,
 ): Promise<void> => {
 	try {
-		const { jwtToken } = await requestSignUpJwtToken({ username, memberPassword, memberEmail, memberFullName });
+		const { jwtToken } = await requestSignUpJwtToken({
+			username,
+			memberPassword,
+			memberEmail,
+			memberFullName,
+			memberType,
+		});
 
 		if (jwtToken) {
 			updateStorage({ jwtToken });
 			updateUserInfo(jwtToken);
 		}
-	} catch (err) {
-		console.warn('login err', err);
-		logOut();
+	} catch (err: any) {
+		console.warn('signup err', err);
+		deleteStorage();
+		deleteUserInfo();
+		throw new Error(err.message);
 	}
 };
 
@@ -89,11 +90,13 @@ const requestSignUpJwtToken = async ({
 	memberPassword,
 	memberEmail,
 	memberFullName,
+	memberType,
 }: {
 	username: string;
 	memberPassword: string;
 	memberEmail: string;
 	memberFullName: string;
+	memberType: MemberType;
 }): Promise<{ jwtToken: string }> => {
 	const apolloClient = await initializeApollo();
 
@@ -101,7 +104,7 @@ const requestSignUpJwtToken = async ({
 		const result = await apolloClient.mutate({
 			mutation: SIGN_UP,
 			variables: {
-				input: { username, memberPassword, memberEmail, memberFullName },
+				input: { username, memberPassword, memberEmail, memberFullName, memberType },
 			},
 			fetchPolicy: 'network-only',
 		});
@@ -111,15 +114,7 @@ const requestSignUpJwtToken = async ({
 		return { jwtToken: accessToken };
 	} catch (err: any) {
 		console.log('request token err', err.graphQLErrors);
-		switch (err.graphQLErrors[0].message) {
-			case 'Definer: login and password do not match':
-				await smallError('Please check your password again');
-				break;
-			case 'Definer: user has been blocked!':
-				await smallError('User has been blocked!');
-				break;
-		}
-		throw new Error('token error');
+		throw new Error(err.message);
 	}
 };
 
@@ -139,7 +134,6 @@ export const updateUserInfo = (jwtToken: string) => {
 		memberPhone: claims.memberPhone ?? '',
 		memberFullName: claims.memberFullName ?? '',
 		memberType: claims.memberType ?? '',
-		memberStatus: claims.memberStatus ?? '',
 		emailVerified: claims.emailVerified ?? false,
 		memberDesc: claims.memberDesc ?? '',
 		memberImage: claims.memberImage ?? '',
@@ -149,6 +143,10 @@ export const updateUserInfo = (jwtToken: string) => {
 		memberFollowers: claims.memberFollowers ?? 0,
 		memberViews: claims.memberViews ?? 0,
 		eventOrganizedCount: claims.eventOrganizedCount ?? 0,
+		memberStatus: claims.memberStatus ?? '',
+		memberGroups: claims.memberGroups ?? 0,
+		memberEvents: claims.memberEvents ?? 0,
+		memberRank: claims.memberRank ?? 0,
 		createdAt: claims.createdAt ?? new Date(),
 		updatedAt: claims.updatedAt ?? new Date(),
 	});
@@ -185,5 +183,8 @@ const deleteUserInfo = () => {
 		eventOrganizedCount: 0,
 		createdAt: new Date(),
 		updatedAt: new Date(),
+		memberGroups: 0,
+		memberEvents: 0,
+		memberRank: 0,
 	});
 };

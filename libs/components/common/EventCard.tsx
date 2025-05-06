@@ -2,7 +2,7 @@ import { format } from 'date-fns';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
-import { Heart, Calendar, Users, ExternalLink, MapPin, Eye, DollarSign } from 'lucide-react';
+import { Heart, Calendar, Users, ExternalLink, MapPin, Eye, DollarSign, UserPlus } from 'lucide-react';
 
 import { Button } from '@/libs/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader } from '@/libs/components/ui/card';
@@ -112,7 +112,7 @@ const EventCard = ({ event, likeEventHandler }: EventCardProps) => {
 					<Tooltip>
 						<TooltipTrigger asChild>
 							<div className="flex items-center justify-center gap-1.5 p-1.5 rounded-md bg-card/70 hover:bg-card transition-colors cursor-help">
-								<Calendar className="h-3.5 w-3.5 text-primary" />
+								<UserPlus className="h-3.5 w-3.5 text-primary" />
 								<p className="text-xs font-medium">{event.eventCapacity || 0}</p>
 							</div>
 						</TooltipTrigger>

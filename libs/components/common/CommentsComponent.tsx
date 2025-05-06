@@ -1,30 +1,32 @@
 import { useState, useRef, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import { userVar } from '@/apollo/store';
+import { useReactiveVar } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client';
+import { MessageSquare, Plus, Pencil, Trash2, User, ChevronDown } from 'lucide-react';
+
 import { Button } from '@/libs/components/ui/button';
 import { Textarea } from '@/libs/components/ui/textarea';
 import { Avatar } from '@/libs/components/ui/avatar';
-import { MessageSquare, Plus, Pencil, Trash2, User, ChevronDown } from 'lucide-react';
 import { Separator } from '@/libs/components/ui/separator';
 import { Card, CardHeader, CardContent } from '@/libs/components/ui/card';
+import PaginationComponent from '@/libs/components/common/PaginationComponent';
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from '@/libs/components/ui/dropdown-menu';
+
+import { GET_COMMENTS } from '@/apollo/user/query';
+import { CREATE_COMMENT, UPDATE_COMMENT } from '@/apollo/user/mutation';
+import { smallError, smallSuccess } from '@/libs/alert';
+import { Message, Direction } from '@/libs/enums/common.enum';
+import { REACT_APP_API_URL } from '@/libs/config';
+import { formatDateHandler } from '@/libs/utils';
 import type { Comment, Comments } from '@/libs/types/comment/comment';
 import { CommentGroup, CommentStatus } from '@/libs/enums/comment.enum';
 import { CommentInput, CommentsInquiry } from '@/libs/types/comment/comment.input';
-import { useTranslation } from 'react-i18next';
-import { userVar } from '@/apollo/store';
-import { useReactiveVar } from '@apollo/client';
-import { useMutation, useQuery } from '@apollo/client';
-import { CREATE_COMMENT, UPDATE_COMMENT } from '@/apollo/user/mutation';
-import { GET_COMMENTS } from '@/apollo/user/query';
-import { smallError, smallSuccess } from '@/libs/alert';
-import { Message, Direction } from '@/libs/enums/common.enum';
-import PaginationComponent from './PaginationComponent';
-import { REACT_APP_API_URL } from '@/libs/config';
-import { formatDateHandler } from '@/libs/utils';
 
 const LIMIT_OPTIONS = [5, 10, 20, 50];
 
@@ -86,8 +88,8 @@ const CommentsComponent = ({ commentRefId, commentGroup, initialCommentsInquiry 
 	const totalComments = comments.metaCounter?.[0]?.total ?? 0;
 
 	/** HANDLERS */
-	const setCurrentPage = (page: number) => {
-		setCommentInquiry({ ...commentInquiry, page });
+	const pageChangeHandler = (newPage: number) => {
+		setCommentInquiry({ ...commentInquiry, page: newPage });
 	};
 
 	const handleEditClick = (comment: Comment) => {
@@ -148,7 +150,6 @@ const CommentsComponent = ({ commentRefId, commentGroup, initialCommentsInquiry 
 
 			setNewCommentData({ ...newCommentData, commentContent: '' });
 			setIsWriting(false);
-			setCurrentPage(1);
 			await getCommentsRefetch();
 		} catch (error: unknown) {
 			if (error instanceof Error) {
@@ -158,7 +159,6 @@ const CommentsComponent = ({ commentRefId, commentGroup, initialCommentsInquiry 
 	};
 
 	const handleLimitChange = (newLimit: number) => {
-		setCurrentPage(1);
 		setCommentInquiry({ ...commentInquiry, limit: newLimit, page: 1 });
 	};
 
@@ -332,7 +332,7 @@ const CommentsComponent = ({ commentRefId, commentGroup, initialCommentsInquiry 
 							<PaginationComponent
 								totalItems={totalComments}
 								currentPage={commentInquiry.page}
-								setCurrentPage={setCurrentPage}
+								pageChangeHandler={pageChangeHandler}
 								limit={commentInquiry.limit}
 							/>
 						</div>

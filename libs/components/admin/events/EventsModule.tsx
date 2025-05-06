@@ -32,7 +32,7 @@ const EventsModule = ({
 
 	/** HANDLERS **/
 
-	const changePageHandler = async (newPage: number) => {
+	const pageChangeHandler = (newPage: number) => {
 		setEventsInquiry({ ...eventsInquiry, page: newPage });
 	};
 
@@ -56,7 +56,7 @@ const EventsModule = ({
 						totalItems={eventsTotal ?? 0}
 						currentPage={eventsInquiry.page}
 						limit={eventsInquiry.limit}
-						setCurrentPage={changePageHandler}
+						pageChangeHandler={pageChangeHandler}
 					/>
 				</div>
 			</div>

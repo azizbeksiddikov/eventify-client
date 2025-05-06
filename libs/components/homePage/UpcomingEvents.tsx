@@ -41,7 +41,6 @@ export default function UpcomingEvents({
 		(event) => new Date(event.eventDate).toDateString() === selectedDate?.toDateString(),
 	);
 
-	console.log('events', events);
 	return (
 		<section className="py-20 bg-muted">
 			<div className="w-[90%] mx-auto ">

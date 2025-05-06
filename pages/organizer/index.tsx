@@ -1,23 +1,22 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { useMutation, useQuery, useReactiveVar } from '@apollo/client';
 import { useRouter } from 'next/router';
-import { Direction, Message } from '@/libs/enums/common.enum';
+
 import withBasicLayout from '@/libs/components/layout/LayoutBasic';
 import OrganizerCard from '@/libs/components/common/OrganizerCard';
-import { OrganizersInquiry } from '@/libs/types/member/member.input';
 import OrganizersHeader from '@/libs/components/organizer/OrganizersHeader';
 import SortAndFilterOrganizers from '@/libs/components/organizer/SortAndFilterOrganizers';
 import PaginationComponent from '@/libs/components/common/PaginationComponent';
-import { smallError } from '@/libs/alert';
-import { useQuery, useReactiveVar } from '@apollo/client';
-import { SUBSCRIBE, UNSUBSCRIBE } from '@/apollo/user/mutation';
-import { LIKE_TARGET_MEMBER } from '@/apollo/user/mutation';
-import { useMutation } from '@apollo/client';
+
 import { GET_ORGANIZERS } from '@/apollo/user/query';
+import { SUBSCRIBE, UNSUBSCRIBE, LIKE_TARGET_MEMBER } from '@/apollo/user/mutation';
+import { Direction, Message } from '@/libs/enums/common.enum';
+import { OrganizersInquiry } from '@/libs/types/member/member.input';
+import { smallError, smallSuccess } from '@/libs/alert';
 import { Member } from '@/libs/types/member/member';
 import { userVar } from '@/apollo/store';
-import { smallSuccess } from '@/libs/alert';
-import { useTranslation } from 'react-i18next';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 
 export const getStaticProps = async ({ locale }: { locale: string }) => ({
 	props: {
@@ -43,8 +42,6 @@ const OrganizersPage = ({
 	const router = useRouter();
 	const user = useReactiveVar(userVar);
 	const { t } = useTranslation('common');
-
-	const [currentPage, setCurrentPage] = useState(initialSearch.page);
 
 	const readUrl = (): OrganizersInquiry => {
 		if (router?.query) {
@@ -145,6 +142,10 @@ const OrganizersPage = ({
 		}
 	};
 
+	const pageChangeHandler = (newPage: number) => {
+		updateURL({ ...organizerSearch, page: newPage });
+	};
+
 	return (
 		<div className="bg-background">
 			<OrganizersHeader />
@@ -169,7 +170,11 @@ const OrganizersPage = ({
 
 							{/* Pagination */}
 							<div className="mt-8 flex justify-center">
-								<PaginationComponent totalItems={organizers.length} setCurrentPage={setCurrentPage} />
+								<PaginationComponent
+									totalItems={organizers.length}
+									currentPage={organizerSearch.page}
+									pageChangeHandler={pageChangeHandler}
+								/>
 							</div>
 						</>
 					) : (

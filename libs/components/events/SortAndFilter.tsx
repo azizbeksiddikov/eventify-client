@@ -100,7 +100,7 @@ function SortAndFilter({ updateURL, eventsSearchFilters, initialSearch }: SortAn
 	};
 
 	return (
-		<div className="rounded-2xl shadow-lg p-6 mb-8 relative  border-border/80 border-2 w-[75%] mx-auto">
+		<div className="rounded-2xl shadow-lg p-6 relative  border-border/80 border-2 w-[75%] mx-auto">
 			<div className="flex flex-row items-center justify-between gap-12">
 				<Input
 					placeholder={t('Search events...')}

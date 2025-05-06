@@ -30,8 +30,8 @@ const MyTickets = ({ setTicketInquiry, ticketInquiry, myTickets }: MyTicketsProp
 	const { t } = useTranslation('common');
 	const totalTickets = myTickets.metaCounter?.[0]?.total ?? 0;
 
-	const setCurrentPage = (page: number) => {
-		setTicketInquiry({ ...ticketInquiry, page });
+	const pageChangeHandler = (newPage: number) => {
+		setTicketInquiry({ ...ticketInquiry, page: newPage });
 	};
 
 	const handleLimitChange = (newLimit: number) => {
@@ -125,7 +125,7 @@ const MyTickets = ({ setTicketInquiry, ticketInquiry, myTickets }: MyTicketsProp
 							<PaginationComponent
 								totalItems={totalTickets}
 								currentPage={ticketInquiry.page}
-								setCurrentPage={setCurrentPage}
+								pageChangeHandler={pageChangeHandler}
 								limit={ticketInquiry.limit}
 							/>
 						</div>

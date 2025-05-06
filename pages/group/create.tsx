@@ -118,12 +118,12 @@ const GroupCreatePage = () => {
 				groupCategories: selectedCategories,
 			};
 
-			await createGroup({
+			const response = await createGroup({
 				variables: { input: updatedFormData },
 			});
 
 			await smallSuccess(t('Group created successfully'));
-			router.push('/group');
+			router.push(`/group/detail?groupId=${response.data.createGroup._id}`);
 		} catch (error: unknown) {
 			if (error instanceof Error) {
 				smallError(error.message);

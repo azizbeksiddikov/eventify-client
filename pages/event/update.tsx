@@ -86,7 +86,7 @@ const EventUpdatePage = () => {
 
 	// Handle groupId from URL
 	useEffect(() => {
-		if (router.query.groupId) {
+		if (router.query.eventId) {
 			setEventId(router.query.eventId as string);
 		}
 	}, [router.query.eventId]);
@@ -212,14 +212,25 @@ const EventUpdatePage = () => {
 	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
 		const { name, value } = e.target;
 
-		setFormData((prev) =>
-			prev
-				? {
-						...prev,
-						[name]: name === 'eventCapacity' || name === 'eventPrice' ? Number(value) : value,
-					}
-				: null,
-		);
+		if (name === 'eventCapacity' || name === 'eventPrice') {
+			if (value === '') {
+				// Allow empty input for user convenience
+				setFormData((prev) => (prev ? { ...prev, [name]: undefined } : null));
+				return;
+			}
+
+			const cleanedValue = value.replace(/^0+/, '') || '0';
+			const numberValue = Number(cleanedValue);
+
+			if (isNaN(numberValue)) {
+				smallError(t('Invalid number'));
+				return;
+			}
+
+			setFormData((prev) => (prev ? { ...prev, [name]: numberValue } : null));
+		} else {
+			setFormData((prev) => (prev ? { ...prev, [name]: value } : null));
+		}
 	};
 
 	const handleCategorySelect = (category: EventCategory) => {

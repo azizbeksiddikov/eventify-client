@@ -71,7 +71,7 @@ const ChosenGroupData = ({
 
 				<div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-6">
 					{/* Group Image */}
-					<div className="relative aspect-square w-full group rounded-xl overflow-hidden">
+					<div className="relative aspect-square w-full group rounded-xl overflow-hidden border-2 border-border/50 shadow-sm hover:shadow-md transition-all duration-300">
 						<Image
 							src={`${REACT_APP_API_URL}/${group.groupImage}`}
 							alt={group.groupName}

@@ -8,7 +8,7 @@ const OrganizerHeader = () => {
 	const { t } = useTranslation('common');
 
 	return (
-		<section className="bg-gradient-to-b from-secondary/40 to-background py-10">
+		<section className="bg-gradient-to-b from-secondary to-background py-8">
 			<div className="flex items-center justify-between mb-8 w-[90%] mx-auto">
 				<Button
 					type="button"

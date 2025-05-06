@@ -25,7 +25,7 @@ export const organizersSortOptions = [
 	{ value: 'memberRank', label: 'Rank' },
 ];
 
-export const imageTypes = '.jpg,.jpeg,.png,image/jpeg,image/png,image/jpg,image/webp';
+export const imageTypes = '.jpg,.jpeg,.png,image/jpeg,image/png,image/jpg';
 
 export const getMemberTypeColor = (type: MemberType) => {
 	switch (type) {

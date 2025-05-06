@@ -7,6 +7,7 @@ import { Card } from '@/libs/components/ui/card';
 import Owner from '@/libs/components/common/Owner';
 import SmallEventCard from '@/libs/components/common/SmallEventCard';
 
+import { REACT_APP_API_URL } from '@/libs/config';
 import { Event } from '@/libs/types/event/event';
 
 interface ChosenEventOtherProps {
@@ -39,7 +40,7 @@ const ChosenEventOther = ({ event, likeEventHandler }: ChosenEventOtherProps) =>
 							<div className="flex-shrink-0">
 								<div className="w-20 h-20 rounded-xl overflow-hidden relative">
 									<Image
-										src={event.hostingGroup.groupImage}
+										src={`${REACT_APP_API_URL}/${event.hostingGroup.groupImage}`}
 										alt={event.hostingGroup.groupName}
 										fill
 										className="object-cover group-hover:scale-105 transition-transform duration-200"
@@ -52,7 +53,8 @@ const ChosenEventOther = ({ event, likeEventHandler }: ChosenEventOtherProps) =>
 									{event.hostingGroup.groupName}
 								</h3>
 								<p className="text-base text-card-foreground leading-relaxed group-hover:text-card-foreground/80 transition-colors duration-200">
-									{event.hostingGroup.groupDesc}
+									{event.hostingGroup.groupDesc.slice(0, 35)}...
+									{event.hostingGroup.groupDesc.length > 35 ? '...' : ''}
 								</p>
 								<div className="flex items-center space-x-6 pt-2">
 									<div className="flex items-center gap-2 text-sm text-card-foreground">

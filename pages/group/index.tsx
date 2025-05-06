@@ -1,19 +1,21 @@
 import { useEffect, useState } from 'react';
 import { useQuery } from '@apollo/client';
-import { GET_GROUPS } from '@/apollo/user/query';
 import { useTranslation } from 'react-i18next';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import withBasicLayout from '@/libs/components/layout/LayoutBasic';
-import { GroupCategory } from '@/libs/enums/group.enum';
-import { GroupsInquiry } from '@/libs/types/group/group.input';
-import { Direction } from '@/libs/enums/common.enum';
-import { Group } from '@/libs/types/group/group';
-import PaginationComponent from '@/libs/components/common/PaginationComponent';
 import { useRouter } from 'next/router';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+
+import withBasicLayout from '@/libs/components/layout/LayoutBasic';
+import PaginationComponent from '@/libs/components/common/PaginationComponent';
 import GroupsHeader from '@/libs/components/group/GroupsHeader';
 import SortAndFilterGroups from '@/libs/components/group/SortAndFilterGroups';
 import CategoriesSidebarGroup from '@/libs/components/group/CategoriesSidebarGroup';
 import GroupCard from '@/libs/components/common/GroupCard';
+
+import { GET_GROUPS } from '@/apollo/user/query';
+import { GroupCategory } from '@/libs/enums/group.enum';
+import { GroupsInquiry } from '@/libs/types/group/group.input';
+import { Direction } from '@/libs/enums/common.enum';
+import { Group } from '@/libs/types/group/group';
 
 export const getStaticProps = async ({ locale }: { locale: string }) => ({
 	props: {
@@ -41,7 +43,6 @@ const GroupsPage = ({
 	const { t } = useTranslation('common');
 
 	const [groups, setGroups] = useState<Group[]>([]);
-	const [totalPages, setTotalPages] = useState<number>(1);
 
 	const readUrl = (): GroupsInquiry => {
 		if (router?.query) {
@@ -106,21 +107,13 @@ const GroupsPage = ({
 	useEffect(() => {
 		if (getGroupsData) {
 			setGroups(getGroupsData?.getGroups?.list);
-			setTotalPages(
-				Math.max(
-					1,
-					Math.ceil(getGroupsData?.getGroups?.list.length / (groupsSearchFilters.limit || initialSearch.limit)),
-				),
-			);
 		}
 	}, [getGroupsData]);
 
 	/** HANDLERS */
 
-	const handlePageChange = (page: number) => {
-		if (page >= 1 && page <= totalPages) {
-			updateURL({ ...groupsSearchFilters, page });
-		}
+	const pageChangeHandler = (newPage: number) => {
+		setGroupsSearchFilters({ ...groupsSearchFilters, page: newPage });
 	};
 
 	return (
@@ -154,9 +147,9 @@ const GroupsPage = ({
 								{/* Pagination */}
 								<div className="mt-8 flex justify-center">
 									<PaginationComponent
-										totalItems={totalPages}
+										totalItems={getGroupsData?.getGroups?.metaCounter?.[0]?.total ?? 0}
 										currentPage={groupsSearchFilters.page}
-										setCurrentPage={handlePageChange}
+										pageChangeHandler={pageChangeHandler}
 										limit={groupsSearchFilters.limit}
 									/>
 								</div>

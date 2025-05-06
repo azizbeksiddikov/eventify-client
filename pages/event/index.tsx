@@ -2,24 +2,25 @@ import { GetStaticProps } from 'next';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { userVar } from '@/apollo/store';
-
-import { EventCategory, EventStatus } from '@/libs/enums/event.enum';
-import withBasicLayout from '@/libs/components/layout/LayoutBasic';
-import { Event } from '@/libs/types/event/event';
-import { EventsInquiry } from '@/libs/types/event/event.input';
-import { Direction } from '@/libs/enums/common.enum';
-import EventCard from '@/libs/components/common/EventCard';
-import SortAndFilter from '@/libs/components/events/SortAndFilter';
-import EventsHeader from '@/libs/components/events/EventsHeader';
-import CategoriesSidebar from '@/libs/components/events/CategoriesSidebar';
 import { useTranslation } from 'react-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useMutation, useReactiveVar } from '@apollo/client';
 import { useQuery } from '@apollo/client';
+
+import withBasicLayout from '@/libs/components/layout/LayoutBasic';
+import PaginationComponent from '@/libs/components/common/PaginationComponent';
+import EventCard from '@/libs/components/common/EventCard';
+import SortAndFilter from '@/libs/components/events/SortAndFilter';
+import EventsHeader from '@/libs/components/events/EventsHeader';
+import CategoriesSidebar from '@/libs/components/events/CategoriesSidebar';
+
 import { GET_EVENTS } from '@/apollo/user/query';
 import { LIKE_TARGET_EVENT } from '@/apollo/user/mutation';
-import PaginationComponent from '@/libs/components/common/PaginationComponent';
 import { likeHandler } from '@/libs/utils';
+import { EventCategory, EventStatus } from '@/libs/enums/event.enum';
+import { Event } from '@/libs/types/event/event';
+import { EventsInquiry } from '@/libs/types/event/event.input';
+import { Direction } from '@/libs/enums/common.enum';
 
 export const getStaticProps: GetStaticProps = async ({ locale }) => ({
 	props: {
@@ -49,7 +50,6 @@ const EventsPage = ({
 	const router = useRouter();
 	const { t } = useTranslation('common');
 	const user = useReactiveVar(userVar);
-	const [totalPages, setTotalPages] = useState<number>(1);
 	const [events, setEvents] = useState<Event[]>([]);
 
 	const readUrl = (): EventsInquiry => {
@@ -138,15 +138,12 @@ const EventsPage = ({
 	useEffect(() => {
 		if (getEventsData) {
 			setEvents(getEventsData?.getEvents?.list);
-			setTotalPages(Math.max(1, Math.ceil(getEventsData?.getEvents?.list.length / (eventsSearchFilters.limit || 6))));
 		}
 	}, [getEventsData]);
 
 	/** HANDLERS */
-	const handlePageChange = (page: number) => {
-		if (page >= 1 && page <= totalPages) {
-			updateURL({ ...eventsSearchFilters, page });
-		}
+	const pageChangeHandler = (newPage: number) => {
+		setEventsSearchFilters({ ...eventsSearchFilters, page: newPage });
 	};
 
 	const likeEventHandler = async (eventId: string) => {
@@ -180,9 +177,9 @@ const EventsPage = ({
 								{/* Pagination */}
 								<div className="mt-8 flex justify-center">
 									<PaginationComponent
-										totalItems={totalPages}
+										totalItems={getEventsData?.getEvents?.metaCounter?.[0]?.total ?? 0}
 										currentPage={eventsSearchFilters.page}
-										setCurrentPage={handlePageChange}
+										pageChangeHandler={pageChangeHandler}
 										limit={eventsSearchFilters.limit}
 									/>
 								</div>

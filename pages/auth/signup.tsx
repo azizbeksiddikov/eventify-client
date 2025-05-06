@@ -3,13 +3,14 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff, User, Star } from 'lucide-react';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/libs/components/ui/card';
 import { RadioGroup, RadioGroupItem } from '@/libs/components/ui/radio-group';
 import { Button } from '@/libs/components/ui/button';
 import { Input } from '@/libs/components/ui/input';
 import { Label } from '@/libs/components/ui/label';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/libs/components/ui/tooltip';
 
 import withAuthLayout from '@/libs/components/layout/LayoutAuth';
 import { MemberInput } from '@/libs/types/member/member.input';
@@ -50,10 +51,10 @@ const Signup = () => {
 		}));
 	};
 
-	const handleMemberTypeChange = (value: string) => {
+	const handleMemberTypeChange = (value: MemberType) => {
 		setFormData((prev) => ({
 			...prev,
-			memberType: value as MemberType,
+			memberType: value,
 		}));
 	};
 
@@ -102,11 +103,16 @@ const Signup = () => {
 
 			setIsLoading(true);
 			try {
-				await signUp(formData.username, formData.memberPassword, formData.memberEmail, formData.memberFullName);
+				await signUp(
+					formData.username,
+					formData.memberPassword,
+					formData.memberEmail,
+					formData.memberFullName,
+					formData.memberType ?? MemberType.USER,
+				);
 				await router.push(`${router.query.referrer ?? '/'}`);
 			} catch (err: unknown) {
-				const error = err as Error;
-				smallError(error.message);
+				console.log('err', err);
 			} finally {
 				setIsLoading(false);
 			}
@@ -135,25 +141,60 @@ const Signup = () => {
 							<div className="space-y-4">
 								<div className="space-y-2">
 									<Label className="text-sm font-medium block text-center mb-4">{t('Account Type')}</Label>
-									<RadioGroup
-										defaultValue={MemberType.USER}
-										value={formData.memberType}
-										onValueChange={handleMemberTypeChange}
-										className="flex flex-row justify-center gap-8"
-									>
-										<div className="flex items-center space-x-2">
-											<RadioGroupItem value={MemberType.USER} id="user" tabIndex={1} />
-											<Label htmlFor="user" className="cursor-pointer text-sm">
-												{t('User')}
-											</Label>
-										</div>
-										<div className="flex items-center space-x-2">
-											<RadioGroupItem value={MemberType.ORGANIZER} id="organizer" tabIndex={2} />
-											<Label htmlFor="organizer" className="cursor-pointer text-sm">
-												{t('Organizer')}
-											</Label>
-										</div>
-									</RadioGroup>
+									<TooltipProvider>
+										<RadioGroup
+											defaultValue={MemberType.USER}
+											value={formData.memberType}
+											onValueChange={handleMemberTypeChange}
+											className="flex flex-row justify-center gap-8"
+										>
+											<Tooltip>
+												<TooltipTrigger asChild>
+													<div className="flex items-center space-x-2">
+														<RadioGroupItem
+															value={MemberType.USER}
+															id="user"
+															className="peer sr-only"
+															aria-label={t('User account type')}
+														/>
+														<Label
+															htmlFor="user"
+															className="flex items-center gap-2 cursor-pointer rounded-lg border-2 border-muted p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
+														>
+															<User className="h-4 w-4" />
+															<span className="text-sm font-medium">{t('User')}</span>
+														</Label>
+													</div>
+												</TooltipTrigger>
+												<TooltipContent>
+													<p>{t('Regular user account for attending events')}</p>
+												</TooltipContent>
+											</Tooltip>
+
+											<Tooltip>
+												<TooltipTrigger asChild>
+													<div className="flex items-center space-x-2">
+														<RadioGroupItem
+															value={MemberType.ORGANIZER}
+															id="organizer"
+															className="peer sr-only"
+															aria-label={t('Organizer account type')}
+														/>
+														<Label
+															htmlFor="organizer"
+															className="flex items-center gap-2 cursor-pointer rounded-lg border-2 border-muted p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
+														>
+															<Star className="h-4 w-4" />
+															<span className="text-sm font-medium">{t('Organizer')}</span>
+														</Label>
+													</div>
+												</TooltipTrigger>
+												<TooltipContent>
+													<p>{t('Create and manage your own events')}</p>
+												</TooltipContent>
+											</Tooltip>
+										</RadioGroup>
+									</TooltipProvider>
 								</div>
 
 								<div className="space-y-2">
