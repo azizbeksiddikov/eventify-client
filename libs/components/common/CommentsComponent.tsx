@@ -7,7 +7,7 @@ import { MessageSquare, Plus, Pencil, Trash2, User, ChevronDown } from 'lucide-r
 
 import { Button } from '@/libs/components/ui/button';
 import { Textarea } from '@/libs/components/ui/textarea';
-import { Avatar } from '@/libs/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/libs/components/ui/avatar';
 import { Separator } from '@/libs/components/ui/separator';
 import { Card, CardHeader, CardContent } from '@/libs/components/ui/card';
 import PaginationComponent from '@/libs/components/common/PaginationComponent';
@@ -285,11 +285,11 @@ const CommentsComponent = ({ commentRefId, commentGroup, initialCommentsInquiry 
 											<div className="flex space-x-4 items-center">
 												<Avatar className="h-10 w-10">
 													{memberImage ? (
-														<img src={memberImage} alt={memberName} className="object-cover" />
+														<AvatarImage src={memberImage} alt={memberName} />
 													) : (
-														<div className="flex items-center justify-center w-full h-full">
+														<AvatarFallback className="bg-muted">
 															<User className="h-6 w-6 text-muted-foreground" />
-														</div>
+														</AvatarFallback>
 													)}
 												</Avatar>
 												<div className="flex-1 items-center">

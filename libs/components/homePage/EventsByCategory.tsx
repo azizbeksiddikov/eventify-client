@@ -78,7 +78,7 @@ const EventsByCategory = ({
 							</div>
 							<div className="p-4 border-t border-border mt-auto">
 								<Link
-									href={`/event?category=${categoryData.category.toLowerCase()}`}
+									href={`/event?categories=${categoryData.category.toUpperCase()}`}
 									className="text-sm text-primary hover:text-primary/80 font-medium flex items-center gap-1 transition-colors duration-200"
 								>
 									{t('View All')} {categoryData.category} {t('events')}

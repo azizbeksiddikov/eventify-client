@@ -289,6 +289,7 @@ const ProfilePage = () => {
 			});
 
 			await smallSuccess(t('Ticket cancelled successfully'));
+			refetchMember();
 			refetchTickets();
 		} catch (err: any) {
 			console.log('ERROR, cancelTicketHandler:', err.message);

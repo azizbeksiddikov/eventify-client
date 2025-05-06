@@ -1,13 +1,15 @@
-import Image from 'next/image';
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
-import { Shield, Users } from 'lucide-react';
+import { Shield, User, Users } from 'lucide-react';
 
 import { Card } from '@/libs/components/ui/card';
 import { Badge } from '@/libs/components/ui/badge';
+import { AvatarImage } from '@/libs/components/ui/avatar';
+import { Avatar, AvatarFallback } from '@radix-ui/react-avatar';
 
 import { GroupMember } from '@/libs/types/groupMembers/groupMember';
 import { GroupMemberRole } from '@/libs/enums/group.enum';
+import { REACT_APP_API_URL } from '@/libs/config';
 
 interface GroupModeratorsProps {
 	groupModerators: GroupMember[];
@@ -34,12 +36,20 @@ const GroupModerators = ({ groupModerators }: GroupModeratorsProps) => {
 							<div className="flex items-center space-x-6">
 								<div className="flex-shrink-0">
 									<div className="w-20 h-20 rounded-xl overflow-hidden relative">
-										<Image
-											src={moderator.memberData?.memberImage ?? '/images/default-avatar.jpg'}
-											alt={moderator.memberData?.memberFullName ?? 'Moderator avatar'}
-											fill
-											className="object-cover group-hover:scale-105 transition-transform duration-200"
-										/>
+										<Avatar className="h-10 w-10">
+											{moderator.memberData?.memberImage ? (
+												<AvatarImage
+													src={`${REACT_APP_API_URL}/${moderator.memberData?.memberImage}`}
+													alt={moderator.memberData?.memberFullName ?? 'Moderator avatar'}
+													className="object-cover group-hover:scale-105 transition-transform duration-200"
+												/>
+											) : (
+												<AvatarFallback className="bg-muted">
+													<User className="h-5 w-5 text-muted-foreground" />
+												</AvatarFallback>
+											)}
+										</Avatar>
+
 										<div className="absolute inset-0 bg-gradient-to-t from-background/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
 									</div>
 								</div>

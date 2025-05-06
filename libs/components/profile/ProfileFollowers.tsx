@@ -7,7 +7,7 @@ import { Button } from '@/libs/components/ui/button';
 import { Badge } from '@/libs/components/ui/badge';
 
 import { Member } from '@/libs/types/member/member';
-import { getMemberTypeColor } from '@/libs/config';
+import { getMemberTypeColor, REACT_APP_API_URL } from '@/libs/config';
 
 interface ProfileFollowersProps {
 	followers: Member[];
@@ -70,7 +70,7 @@ export const ProfileFollowers = ({
 											<div className="flex items-center gap-4">
 												<Avatar className="h-10 w-10">
 													{user.memberImage ? (
-														<AvatarImage src={user.memberImage} alt={user.memberFullName} />
+														<AvatarImage src={`${REACT_APP_API_URL}/${user.memberImage}`} alt={user.memberFullName} />
 													) : (
 														<AvatarFallback className="bg-muted">
 															<User className="h-5 w-5 text-muted-foreground" />
