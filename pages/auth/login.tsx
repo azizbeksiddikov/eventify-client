@@ -71,75 +71,74 @@ const Login = () => {
 	);
 
 	return (
-		<>
-			<div className="flex items-center justify-center min-h-[calc(100vh-200px)] px-4 sm:px-6 lg:px-8">
-				<Card className="w-full max-w-md">
-					<CardHeader className="text-center">
-						<CardTitle className="text-3xl font-semibold">{t('Login')}</CardTitle>
-						<CardDescription>
-							{t('Or')}
-							<Link
-								href="/auth/signup"
-								className="font-medium text-primary hover:text-primary/80 transition-colors duration-300 underline"
-							>
-								{t('create a new account')}
-							</Link>
-						</CardDescription>
-					</CardHeader>
-					<CardContent>
-						<form className="space-y-6" onSubmit={handleSubmit}>
-							<div className="space-y-4">
-								<div className="space-y-2">
-									<label htmlFor="username" className="text-sm font-medium">
-										{t('Username')}
-									</label>
-									<Input
-										id="username"
-										name="username"
-										type="text"
-										autoComplete="username"
-										value={loginInput.username}
-										onChange={(e) => handleInput(e.target.name, e.target.value)}
-										placeholder={t('Enter your username')}
-									/>
-								</div>
-
-								<div className="space-y-2">
-									<label htmlFor="memberPassword" className="text-sm font-medium">
-										{t('Password')}
-									</label>
-									<div className="relative">
-										<Input
-											id="memberPassword"
-											name="memberPassword"
-											type={showPassword ? 'text' : 'password'}
-											autoComplete="current-password"
-											value={loginInput.memberPassword}
-											onChange={(e) => handleInput(e.target.name, e.target.value)}
-											placeholder={t('Enter your password')}
-											className="pr-10"
-										/>
-										<Button
-											type="button"
-											variant="ghost"
-											size="icon"
-											onClick={() => setShowPassword(!showPassword)}
-											className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-										>
-											{showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-										</Button>
-									</div>
-								</div>
+		<div className="flex-1 my-10 flex items-center justify-center px-4 sm:px-6 lg:px-8">
+			<Card className="w-full max-w-md">
+				<CardHeader className="text-center">
+					<CardTitle className="text-3xl font-semibold">{t('Login')}</CardTitle>
+					<CardDescription>
+						{t('Or')}
+						<Link
+							href="/auth/signup"
+							className="font-medium text-primary hover:text-primary/80 transition-colors duration-300 underline"
+						>
+							{' '}
+							{t('create a new account')}
+						</Link>
+					</CardDescription>
+				</CardHeader>
+				<CardContent>
+					<form className="space-y-6" onSubmit={handleSubmit}>
+						<div className="space-y-4">
+							<div className="space-y-2">
+								<label htmlFor="username" className="text-sm font-medium">
+									{t('Username')}
+								</label>
+								<Input
+									id="username"
+									name="username"
+									type="text"
+									autoComplete="username"
+									value={loginInput.username}
+									onChange={(e) => handleInput(e.target.name, e.target.value)}
+									placeholder={t('Enter your username')}
+								/>
 							</div>
 
-							<Button type="submit" className="w-full" disabled={isLoading}>
-								{isLoading ? t('Signing in...') : t('Sign in')}
-							</Button>
-						</form>
-					</CardContent>
-				</Card>
-			</div>
-		</>
+							<div className="space-y-2">
+								<label htmlFor="memberPassword" className="text-sm font-medium">
+									{t('Password')}
+								</label>
+								<div className="relative">
+									<Input
+										id="memberPassword"
+										name="memberPassword"
+										type={showPassword ? 'text' : 'password'}
+										autoComplete="current-password"
+										value={loginInput.memberPassword}
+										onChange={(e) => handleInput(e.target.name, e.target.value)}
+										placeholder={t('Enter your password')}
+										className="pr-10"
+									/>
+									<Button
+										type="button"
+										variant="ghost"
+										size="icon"
+										onClick={() => setShowPassword(!showPassword)}
+										className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+									>
+										{showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+									</Button>
+								</div>
+							</div>
+						</div>
+
+						<Button type="submit" className="w-full" disabled={isLoading}>
+							{isLoading ? t('Signing in...') : t('Sign in')}
+						</Button>
+					</form>
+				</CardContent>
+			</Card>
+		</div>
 	);
 };
 
