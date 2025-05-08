@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import withBasicLayout from '@/libs/components/layout/LayoutBasic';
 import { useRouter } from 'next/router';
-import { Users, Users2, Calendar } from 'lucide-react';
+import { Users, Users2, Calendar, HelpCircle } from 'lucide-react';
 import { useMutation, useQuery, useReactiveVar } from '@apollo/client';
 import { userVar } from '@/apollo/store';
 import { MemberType } from '@/libs/enums/member.enum';
@@ -11,8 +11,15 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/libs/components/ui/t
 import UsersModule from '@/libs/components/admin/users/UsersModule';
 import GroupsModule from '@/libs/components/admin/groups/GroupsModule';
 import EventsModule from '@/libs/components/admin/events/EventsModule';
+import FaqsModule from '@/libs/components/admin/faqs/FaqsModule';
+
 import { useTranslation } from 'react-i18next';
-import { GET_ALL_EVENTS_BY_ADMIN, GET_ALL_GROUPS_BY_ADMIN, GET_ALL_MEMBERS_BY_ADMIN } from '@/apollo/admin/query';
+import {
+	GET_ALL_EVENTS_BY_ADMIN,
+	GET_ALL_GROUPS_BY_ADMIN,
+	GET_ALL_MEMBERS_BY_ADMIN,
+	GET_ALL_FAQS_BY_ADMIN,
+} from '@/apollo/admin/query';
 import { Members } from '@/libs/types/member/member';
 import { MembersInquiry } from '@/libs/types/member/member.input';
 import { Direction } from '@/libs/enums/common.enum';
@@ -29,10 +36,16 @@ import {
 	UPDATE_EVENT_BY_ADMIN,
 	UPDATE_GROUP_BY_ADMIN,
 	UPDATE_MEMBER_BY_ADMIN,
+	CREATE_FAQ,
+	UPDATE_FAQ,
+	REMOVE_FAQ,
 } from '@/apollo/admin/mutation';
 import { MemberUpdateInput } from '@/libs/types/member/member.update';
 import { GroupUpdateInput } from '@/libs/types/group/group.update';
 import { EventUpdateInput } from '@/libs/types/event/event.update';
+import { FaqByGroup } from '@/libs/types/faq/faq';
+import { FaqInput } from '@/libs/types/faq/faq.input';
+import { FaqUpdate } from '@/libs/types/faq/faq.update';
 
 interface AdminHomeProps {
 	initialMembersInquiry?: MembersInquiry;
@@ -104,6 +117,7 @@ const AdminHome = ({
 		list: [],
 		metaCounter: [],
 	});
+	const [faqs, setFaqs] = useState<FaqByGroup[]>([]);
 
 	/** APOLLO REQUESTS */
 	const [updateMember] = useMutation(UPDATE_MEMBER_BY_ADMIN);
@@ -112,6 +126,9 @@ const AdminHome = ({
 	const [removeGroup] = useMutation(REMOVE_GROUP_BY_ADMIN);
 	const [updateEvent] = useMutation(UPDATE_EVENT_BY_ADMIN);
 	const [removeEvent] = useMutation(REMOVE_EVENT_BY_ADMIN);
+	const [createFaq] = useMutation(CREATE_FAQ);
+	const [updateFaq] = useMutation(UPDATE_FAQ);
+	const [removeFaq] = useMutation(REMOVE_FAQ);
 
 	const { data: userData, refetch: refetchMembers } = useQuery(GET_ALL_MEMBERS_BY_ADMIN, {
 		variables: {
@@ -135,6 +152,11 @@ const AdminHome = ({
 		},
 		fetchPolicy: 'cache-and-network',
 		skip: !user._id,
+	});
+
+	const { data: faqsData, refetch: refetchFaqs } = useQuery(GET_ALL_FAQS_BY_ADMIN, {
+		skip: !user._id,
+		fetchPolicy: 'cache-and-network',
 	});
 
 	/** LIFECYCLE */
@@ -175,6 +197,12 @@ const AdminHome = ({
 			setEvents(eventsData.getAllEventsByAdmin);
 		}
 	}, [eventsData]);
+
+	useEffect(() => {
+		if (faqsData?.getAllFaqsByAdmin) {
+			setFaqs(faqsData.getAllFaqsByAdmin);
+		}
+	}, [faqsData]);
 
 	/** HANDLERS */
 	const updateMemberHandler = async (member: MemberUpdateInput) => {
@@ -228,11 +256,35 @@ const AdminHome = ({
 		localStorage.setItem('adminActiveTab', value);
 	};
 
+	const createFaqHandler = async (faq: FaqInput) => {
+		if (user._id && user.memberType === MemberType.ADMIN) {
+			await createFaq({ variables: { input: faq } });
+			refetchFaqs();
+			smallSuccess('Faq created successfully');
+		}
+	};
+
+	const updateFaqHandler = async (faq: FaqUpdate) => {
+		if (user._id && user.memberType === MemberType.ADMIN) {
+			await updateFaq({ variables: { input: faq } });
+			refetchFaqs();
+			smallSuccess('Faq updated successfully');
+		}
+	};
+
+	const removeFaqHandler = async (faqId: string) => {
+		if (user._id && user.memberType === MemberType.ADMIN) {
+			await removeFaq({ variables: { input: faqId } });
+			refetchFaqs();
+			smallSuccess('Faq removed successfully');
+		}
+	};
+
 	return (
 		<div className="container mx-auto py-8">
 			<Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
 				{/* TABS LIST */}
-				<TabsList className="grid w-full grid-cols-3 mb-8">
+				<TabsList className="grid w-full grid-cols-4 mb-8 h-12">
 					<TabsTrigger value="users" className="flex items-center gap-2">
 						<Users className="h-4 w-4" />
 						{t('Users')}
@@ -244,6 +296,10 @@ const AdminHome = ({
 					<TabsTrigger value="events" className="flex items-center gap-2">
 						<Calendar className="h-4 w-4" />
 						{t('Events')}
+					</TabsTrigger>
+					<TabsTrigger value="faqs" className="flex items-center gap-2">
+						<HelpCircle className="h-4 w-4" />
+						{t('Faqs')}
 					</TabsTrigger>
 				</TabsList>
 				{/* TABS CONTENT */}
@@ -275,6 +331,14 @@ const AdminHome = ({
 						setEventsInquiry={setEventsInquiry}
 						updateEventHandler={updateEventHandler}
 						removeEventHandler={removeEventHandler}
+					/>
+				</TabsContent>
+				<TabsContent value="faqs" className="mt-0">
+					<FaqsModule
+						faqByGroup={faqs}
+						createFaqHandler={createFaqHandler}
+						updateFaqHandler={updateFaqHandler}
+						removeFaqHandler={removeFaqHandler}
 					/>
 				</TabsContent>
 			</Tabs>
