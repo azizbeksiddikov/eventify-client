@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 import { Plus, X } from 'lucide-react';
 
 import { Separator } from '@/libs/components/ui/separator';

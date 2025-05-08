@@ -15,7 +15,7 @@ import { useMutation, useReactiveVar } from '@apollo/client';
 import { userVar } from '@/apollo/store';
 import { CREATE_GROUP } from '@/apollo/user/mutation';
 import { smallError, smallSuccess } from '@/libs/alert';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { Message } from '@/libs/enums/common.enum';
 import axios from 'axios';

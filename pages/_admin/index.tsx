@@ -13,7 +13,7 @@ import GroupsModule from '@/libs/components/admin/groups/GroupsModule';
 import EventsModule from '@/libs/components/admin/events/EventsModule';
 import FaqsModule from '@/libs/components/admin/faqs/FaqsModule';
 
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 import {
 	GET_ALL_EVENTS_BY_ADMIN,
 	GET_ALL_GROUPS_BY_ADMIN,

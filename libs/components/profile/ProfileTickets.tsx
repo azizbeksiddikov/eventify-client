@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 import { formatDistanceToNow } from 'date-fns';
 import { Calendar, Users, DollarSign, Clock, Link as LinkIcon, Ticket as TicketIcon } from 'lucide-react';
 

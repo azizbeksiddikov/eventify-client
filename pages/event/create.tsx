@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import axios from 'axios';
 import { useMutation, useQuery, useReactiveVar } from '@apollo/client';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 import { userVar } from '@/apollo/store';
 import { format } from 'date-fns';
 import { ImageIcon, RefreshCw, CalendarIcon, ArrowLeft } from 'lucide-react';

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 import { Separator } from '@/libs/components/ui/separator';
 import PaginationComponent from '@/libs/components/common/PaginationComponent';

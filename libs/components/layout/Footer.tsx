@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 import { Instagram, Linkedin, MapPin, Phone, Clock, Send } from 'lucide-react';
 
 import { Logo } from '@/libs/components/ui/logo';

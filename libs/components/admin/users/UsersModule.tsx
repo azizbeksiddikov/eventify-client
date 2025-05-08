@@ -1,5 +1,5 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 import { MemberPanelList } from '@/libs/components/admin/users/MemberList';
 import { MemberSearch } from '@/libs/components/admin/users/MemberSearch';

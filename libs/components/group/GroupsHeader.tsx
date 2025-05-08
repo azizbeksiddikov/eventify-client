@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 import { useReactiveVar } from '@apollo/client';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 import { ArrowRight } from 'lucide-react';
 
 import { Button } from '@/libs/components/ui/button';

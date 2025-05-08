@@ -1,5 +1,5 @@
 import { userVar } from '@/apollo/store';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 import { useReactiveVar } from '@apollo/client';
 import { useRouter } from 'next/router';
 import { ArrowRight } from 'lucide-react';

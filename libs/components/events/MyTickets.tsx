@@ -1,4 +1,4 @@
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 import { ChevronDown, Ticket as TicketIcon, Filter } from 'lucide-react';
 
 import { Button } from '@/libs/components/ui/button';

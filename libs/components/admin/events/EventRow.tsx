@@ -2,7 +2,7 @@ import { Avatar, AvatarFallback } from '@radix-ui/react-avatar';
 import { Calendar, Edit, Save, Trash2, X } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 import { AvatarImage } from '@/libs/components/ui/avatar';
 import { Badge } from '@/libs/components/ui/badge';

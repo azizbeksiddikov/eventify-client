@@ -2,7 +2,7 @@ import { GetStaticProps } from 'next';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { userVar } from '@/apollo/store';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useMutation, useReactiveVar } from '@apollo/client';
 import { useQuery } from '@apollo/client';

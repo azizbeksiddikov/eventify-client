@@ -1,5 +1,5 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 import { GroupPanelList } from '@/libs/components/admin/groups/GroupList';
 import { GroupSearch } from '@/libs/components/admin/groups/GroupSearch';

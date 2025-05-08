@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { formatDistanceToNow } from 'date-fns';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 import { useReactiveVar } from '@apollo/client';
 import { Users, Heart, LogIn, LogOut, Calendar, Clock, Link as LinkIcon } from 'lucide-react';
 

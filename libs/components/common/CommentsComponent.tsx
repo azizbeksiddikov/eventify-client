@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 import { userVar } from '@/apollo/store';
 import { useReactiveVar } from '@apollo/client';
 import { useMutation, useQuery } from '@apollo/client';

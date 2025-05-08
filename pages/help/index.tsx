@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useQuery } from '@apollo/client';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 import withBasicLayout from '@/libs/components/layout/LayoutBasic';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/libs/components/ui/tabs';

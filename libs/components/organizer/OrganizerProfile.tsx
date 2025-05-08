@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 import { Users, Heart, Eye, Mail, Phone, Calendar, CheckCircle2, Shield, Star, User, Trophy } from 'lucide-react';
 
 import { Badge } from '@/libs/components/ui/badge';

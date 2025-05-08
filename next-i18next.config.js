@@ -4,6 +4,9 @@ module.exports = {
 		locales: ['en', 'ko', 'ru', 'uz'],
 		localeDetection: false,
 	},
-	localePath: './public/locales',
 	trailingSlash: true,
+	fallbackLng: 'en',
+	localePath: './public/locales',
+	ns: ['common'],
+	reloadOnPrerender: process.env.NODE_ENV === 'development',
 };

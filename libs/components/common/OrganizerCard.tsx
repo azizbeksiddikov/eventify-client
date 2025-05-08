@@ -1,4 +1,4 @@
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 import Link from 'next/link';
 import { Heart, Calendar, Users, ExternalLink, Mail, User } from 'lucide-react';
 

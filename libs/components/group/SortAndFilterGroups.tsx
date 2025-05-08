@@ -1,4 +1,4 @@
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 import { ArrowUpDown, X } from 'lucide-react';
 
 import { Button, buttonVariants } from '@/libs/components/ui/button';

@@ -1,7 +1,7 @@
 import '@/styles/globals.css';
 import React from 'react';
 import { ApolloProvider } from '@apollo/client';
-import { useApollo } from '../apollo/client';
+import { useApollo } from '@/apollo/client';
 import { appWithTranslation } from 'next-i18next';
 import { ThemeProvider } from 'next-themes';
 

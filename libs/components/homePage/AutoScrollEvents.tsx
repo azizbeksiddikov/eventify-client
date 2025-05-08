@@ -10,6 +10,7 @@ import { EventsInquiry } from '@/libs/types/event/event.input';
 import { EventStatus } from '@/libs/enums/event.enum';
 import { Event } from '@/libs/types/event/event';
 import { Direction } from '@/libs/enums/common.enum';
+import { useTranslation } from 'next-i18next';
 
 interface AutoScrollEventsProps {
 	initialInput?: EventsInquiry;
@@ -24,6 +25,7 @@ const AutoScrollEvents = ({
 		search: { eventStatus: EventStatus.UPCOMING },
 	},
 }: AutoScrollEventsProps) => {
+	const { t } = useTranslation('common');
 	const [currentIndex, setCurrentIndex] = useState(0);
 	const [hoverPosition, setHoverPosition] = useState<number | null>(null);
 	const [isAutoScrolling, setIsAutoScrolling] = useState(true);
@@ -137,6 +139,7 @@ const AutoScrollEvents = ({
 	}, []);
 
 	if (upcomingEventsLoading || !eventList.length) return null;
+
 	return (
 		<section
 			ref={containerRef}
@@ -208,7 +211,7 @@ const AutoScrollEvents = ({
 								className="inline-block bg-primary text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full font-medium hover:bg-primary/90 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
 								aria-label={`View details for ${event.eventName}`}
 							>
-								View Details
+								{t('ViewDetails')}
 							</Link>
 						</div>
 					</div>

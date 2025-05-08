@@ -1,6 +1,6 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 import { useQuery } from '@apollo/client';
 import { ArrowRight } from 'lucide-react';
 

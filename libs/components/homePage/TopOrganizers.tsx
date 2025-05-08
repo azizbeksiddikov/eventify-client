@@ -1,7 +1,7 @@
 import { userVar } from '@/apollo/store';
 import { ArrowRight } from 'lucide-react';
 import { useMutation, useQuery, useReactiveVar } from '@apollo/client';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/navigation';
 
 import { Button } from '@/libs/components/ui/button';

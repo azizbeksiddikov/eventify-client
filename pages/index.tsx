@@ -10,9 +10,9 @@ import Acknowledgements from '@/libs/components/homepage/Acknowledgements';
 import withHomeLayout from '@/libs/components/layout/LayoutHome';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 
-export const getStaticProps = async ({ locale }: any) => ({
+export const getStaticProps = async ({ locale = 'en' }: { locale: string }) => ({
 	props: {
-		...(await serverSideTranslations(locale, ['common'])),
+		...(await serverSideTranslations(locale, ['common'], null, ['en', 'ru'])),
 	},
 });
 
