@@ -158,3 +158,49 @@ export const UPDATE_EVENT_BY_ADMIN = gql`
 		}
 	}
 `;
+
+/**************************
+ *         FAQ             *
+ *************************/
+
+export const CREATE_FAQ = gql`
+	mutation CreateFaq($input: FaqInput!) {
+		createFaq(input: $input) {
+			_id
+			faqGroup
+			faqStatus
+			faqQuestion
+			faqAnswer
+			createdAt
+			updatedAt
+		}
+	}
+`;
+
+export const UPDATE_FAQ = gql`
+	mutation UpdateFaq($input: FaqUpdate!) {
+		updateFaq(input: $input) {
+			_id
+			faqGroup
+			faqStatus
+			faqQuestion
+			faqAnswer
+			createdAt
+			updatedAt
+		}
+	}
+`;
+
+export const REMOVE_FAQ = gql`
+	mutation RemoveFaq($input: String!) {
+		removeFaq(input: $input) {
+			_id
+			faqGroup
+			faqStatus
+			faqQuestion
+			faqAnswer
+			createdAt
+			updatedAt
+		}
+	}
+`;

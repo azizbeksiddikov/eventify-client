@@ -96,3 +96,41 @@ export const GET_ALL_EVENTS_BY_ADMIN = gql`
 		}
 	}
 `;
+
+/**************************
+ *         FAQ             *
+ *************************/
+
+export const GET_FAQS = gql`
+	query GetFaqs {
+		getFaqs {
+			faqGroup
+			faqs {
+				_id
+				faqGroup
+				faqStatus
+				faqQuestion
+				faqAnswer
+				createdAt
+				updatedAt
+			}
+		}
+	}
+`;
+
+export const GET_ALL_FAQS = gql`
+	query GetAllFaqs {
+		getAllFaqs {
+			faqGroup
+			faqs {
+				_id
+				faqGroup
+				faqStatus
+				faqQuestion
+				faqAnswer
+				createdAt
+				updatedAt
+			}
+		}
+	}
+`;
