@@ -101,9 +101,9 @@ export const GET_ALL_EVENTS_BY_ADMIN = gql`
  *         FAQ             *
  *************************/
 
-export const GET_FAQS = gql`
-	query GetFaqs {
-		getFaqs {
+export const GET_ALL_FAQS_BY_ADMIN = gql`
+	query GetAllFaqsByAdmin {
+		getAllFaqsByAdmin {
 			faqGroup
 			faqs {
 				_id

@@ -9,3 +9,8 @@ export interface Faq {
 	createdAt: Date;
 	updatedAt: Date;
 }
+
+export interface FaqByGroup {
+	faqGroup: FaqGroup;
+	faqs: Faq[];
+}

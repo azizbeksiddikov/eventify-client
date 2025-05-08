@@ -855,3 +855,24 @@ export const GET_MEMBER_FOLLOWINGS_LIST = gql`
 		}
 	}
 `;
+
+/**************************
+ *         FAQ             *
+ *************************/
+
+export const GET_FAQS = gql`
+	query GetFaqs {
+		getFaqs {
+			faqGroup
+			faqs {
+				_id
+				faqGroup
+				faqStatus
+				faqQuestion
+				faqAnswer
+				createdAt
+				updatedAt
+			}
+		}
+	}
+`;
