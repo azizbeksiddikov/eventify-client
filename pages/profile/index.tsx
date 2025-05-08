@@ -299,9 +299,8 @@ const ProfilePage = () => {
 
 	if (!member) return <div>...Loading</div>;
 	return (
-		<div className="max-w-7xl mx-auto sm:px-6 lg:px-8 py-8">
-			<ProfileHeader member={member} />
-			<ProfileStats member={member} groupsCount={groups.length} ticketsCount={tickets.length} />
+		<div className="max-w-7xl mx-auto sm:px-6 lg:px-8 py-8 flex flex-col gap-4">
+			<ProfileHeader member={member} groupsCount={groups.length} ticketsCount={tickets.length} />
 
 			<div className="bg-card rounded-xl shadow-sm p-6">
 				<ProfileTabs

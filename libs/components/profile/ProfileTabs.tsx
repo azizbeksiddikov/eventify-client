@@ -51,7 +51,7 @@ export const ProfileTabs = ({
 }: ProfileTabsProps) => {
 	return (
 		<Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-			<TabsList className="w-full justify-between bg-muted/80 p-1 rounded-lg">
+			<TabsList className="w-full justify-between bg-muted/80 p-1 rounded-lg h-16">
 				{tabs.map((tab) => (
 					<TabsTrigger
 						key={tab.id}

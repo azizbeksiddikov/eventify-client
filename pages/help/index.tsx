@@ -30,8 +30,6 @@ const HelpPage = () => {
 		}
 	}, [getFaqsData]);
 
-	console.log(faqByGroup);
-
 	return (
 		<div className="container max-w-4xl mx-auto my-10">
 			<div className="text-center mb-16">
