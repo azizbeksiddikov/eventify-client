@@ -1,15 +1,17 @@
-import { NotificationType } from '@/libs/enums/notificatoin.enum';
-import { TotalCounter } from '@/libs/types/member/member';
+import { NotificationType } from '@/libs/enums/notification.enum';
+import { Member, TotalCounter } from '@/libs/types/member/member';
 
 export interface Notification {
 	_id: string;
-	senderId: string;
+	memberId: string;
 	receiverId: string;
-	notificationRefId: string;
+	notificationLink?: string;
 	notificationType: NotificationType;
 	isRead: boolean;
 	createdAt: Date;
 	updatedAt: Date;
+
+	memberData?: Member;
 }
 
 export interface Notifications {

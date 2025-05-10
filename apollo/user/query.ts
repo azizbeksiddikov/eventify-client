@@ -572,32 +572,6 @@ export const GET_EVENTS_BY_CATEGORY = gql`
 	}
 `;
 
-export const GET_MY_EVENTS = gql`
-	query GetMyEvents {
-		getMyEvents {
-			_id
-			eventDesc
-			eventImage
-			eventDate
-			eventStartTime
-			eventEndTime
-			eventAddress
-			eventCapacity
-			eventPrice
-			eventStatus
-			eventCategories
-			attendeeCount
-			eventLikes
-			eventViews
-			groupId
-			memberId
-			createdAt
-			updatedAt
-			eventName
-		}
-	}
-`;
-
 export const GET_FAVORITES = gql`
 	query GetFavorites($input: OrdinaryEventInquiry!) {
 		getFavorites(input: $input) {
@@ -872,6 +846,53 @@ export const GET_FAQS = gql`
 				faqAnswer
 				createdAt
 				updatedAt
+			}
+		}
+	}
+`;
+
+/**************************
+ *         NOTIFICATION     *
+ *************************/
+
+export const GET_NOTIFICATIONS = gql`
+	query GetNotifications($input: NotificationsInquiry!) {
+		getNotifications(input: $input) {
+			list {
+				_id
+				memberId
+				receiverId
+				notificationLink
+				notificationType
+				isRead
+				createdAt
+				updatedAt
+				memberData {
+					_id
+					username
+					memberEmail
+					memberPhone
+					memberFullName
+					memberType
+					memberStatus
+					emailVerified
+					memberDesc
+					memberImage
+					memberPoints
+					memberLikes
+					memberFollowings
+					memberFollowers
+					memberViews
+					memberRank
+					memberGroups
+					memberEvents
+					eventsOrganizedCount
+					createdAt
+					updatedAt
+				}
+			}
+			metaCounter {
+				total
 			}
 		}
 	}

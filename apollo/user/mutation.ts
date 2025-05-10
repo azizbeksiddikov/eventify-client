@@ -459,3 +459,28 @@ export const UPDATE_COMMENT = gql`
 		}
 	}
 `;
+
+/**************************
+ *         NOTIFICATION     *
+ *************************/
+
+export const UPDATE_NOTIFICATION = gql`
+	mutation UpdateNotification($input: NotificationUpdate!) {
+		updateNotification(input: $input) {
+			_id
+			memberId
+			receiverId
+			notificationLink
+			notificationType
+			isRead
+			createdAt
+			updatedAt
+		}
+	}
+`;
+
+export const READ_ALL_NOTIFICATIONS = gql`
+	mutation ReadAllNotifications {
+		readAllNotifications
+	}
+`;

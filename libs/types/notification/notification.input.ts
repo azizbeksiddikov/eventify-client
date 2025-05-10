@@ -1,5 +1,5 @@
 import { Direction } from '@/libs/enums/common.enum';
-import { NotificationType } from '@/libs/enums/notificatoin.enum';
+import { NotificationType } from '@/libs/enums/notification.enum';
 
 export interface NISearch {
 	receiverId?: string;

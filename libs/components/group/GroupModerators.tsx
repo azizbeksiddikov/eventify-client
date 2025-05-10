@@ -30,7 +30,7 @@ const GroupModerators = ({ groupModerators }: GroupModeratorsProps) => {
 					.map((moderator: GroupMember) => (
 						<Link
 							key={moderator._id}
-							href={`/organizer/detail?id=${moderator.memberData?._id}`}
+							href={`/organizer/detail?organizerId=${moderator.memberData?._id}`}
 							className="block group hover:scale-[1.02] transition-all duration-300 p-4 rounded-lg hover:bg-secondary/20 hover:border-l-4 hover:border-l-primary"
 						>
 							<div className="flex items-center space-x-6">

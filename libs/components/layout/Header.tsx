@@ -15,6 +15,7 @@ import {
 import { ModeToggle } from '@/libs/components/ui/mode-toggle';
 import { Logo } from '@/libs/components/ui/logo';
 import { UserNav } from '@/libs/components/layout/UserNav';
+import { NotificationDropdown } from '@/libs/components/layout/NotificationDropdown';
 
 import { cn } from '@/libs/utils';
 import { userVar } from '@/apollo/store';
@@ -112,6 +113,9 @@ const Header = () => {
 
 				{/* Auth & Lang & Theme */}
 				<div className="flex items-center gap-3">
+					{/* Notification */}
+					{authMember._id && <NotificationDropdown />}
+
 					{/* Theme Mode Switcher */}
 					<ModeToggle />
 
@@ -157,5 +161,4 @@ const Header = () => {
 	);
 };
 
-// export default withRouter(Header);
 export default withRouter(Header);
