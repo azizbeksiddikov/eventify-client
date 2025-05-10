@@ -25,8 +25,12 @@ export function UserNav({ authMember }: { authMember: Member }) {
 			<DropdownMenuTrigger asChild>
 				<Button variant="ghost" className="relative h-10 w-10 rounded-full">
 					<Avatar className="h-8 w-8">
-						<AvatarImage src={`${REACT_APP_API_URL}/${authMember?.memberImage}`} alt={authMember?.memberFullName} />
-						<AvatarFallback>
+						<AvatarImage
+							src={`${REACT_APP_API_URL}/${authMember?.memberImage}`}
+							alt={authMember?.memberFullName}
+							className="rounded-full"
+						/>
+						<AvatarFallback className="bg-muted rounded-full">
 							<User className="h-4 w-4" />
 						</AvatarFallback>
 					</Avatar>

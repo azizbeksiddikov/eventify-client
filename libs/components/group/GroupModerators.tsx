@@ -36,16 +36,16 @@ const GroupModerators = ({ groupModerators }: GroupModeratorsProps) => {
 							<div className="flex items-center space-x-6">
 								<div className="flex-shrink-0">
 									<div className="w-20 h-20 rounded-xl overflow-hidden relative">
-										<Avatar className="h-10 w-10">
+										<Avatar className="h-16 w-16">
 											{moderator.memberData?.memberImage ? (
 												<AvatarImage
-													src={`${REACT_APP_API_URL}/${moderator.memberData?.memberImage}`}
-													alt={moderator.memberData?.memberFullName ?? 'Moderator avatar'}
-													className="object-cover group-hover:scale-105 transition-transform duration-200"
+													src={`${REACT_APP_API_URL}/${moderator.memberData.memberImage}`}
+													alt={moderator.memberData.memberFullName ?? t('Owner avatar')}
+													className="rounded-full"
 												/>
 											) : (
-												<AvatarFallback className="bg-muted">
-													<User className="h-5 w-5 text-muted-foreground" />
+												<AvatarFallback className="bg-muted rounded-full">
+													<User className="h-12 w-12 text-muted-foreground" />
 												</AvatarFallback>
 											)}
 										</Avatar>

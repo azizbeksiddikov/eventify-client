@@ -25,8 +25,12 @@ const OrganizerCard = ({ organizer, likeHandler, subscribeHandler, unsubscribeHa
 			<CardHeader className="py-4 flex-shrink-0">
 				<div className="flex flex-col sm:flex-row gap-4 items-center sm:items-start">
 					<Avatar className="h-16 w-16 sm:h-20 sm:w-20 border-4 border-card shadow-lg ring-2 ring-primary/20">
-						<AvatarImage src={`${REACT_APP_API_URL}/${organizer?.memberImage}`} alt={organizer.memberFullName} />
-						<AvatarFallback className="bg-primary/10 text-primary">
+						<AvatarImage
+							src={`${REACT_APP_API_URL}/${organizer?.memberImage}`}
+							alt={organizer.memberFullName}
+							className="rounded-full"
+						/>
+						<AvatarFallback className="bg-primary/10 text-primary rounded-full">
 							<User className="h-8 w-8 sm:h-10 sm:w-10" />
 						</AvatarFallback>
 					</Avatar>

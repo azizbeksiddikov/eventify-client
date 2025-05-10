@@ -78,7 +78,7 @@ const ChosenEventData = ({
 
 	return (
 		<>
-			<Card className="overflow-hidden border-none shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl">
+			<Card className="overflow-hidden border-none shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl gap-0">
 				{/* Section: Event Data */}
 				<div className="relative">
 					{/* Edit Button */}
@@ -94,56 +94,57 @@ const ChosenEventData = ({
 						</Button>
 					)}
 
-					<div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-6">
-						{/* Event Image */}
-						<div className="relative aspect-square w-full group rounded-xl overflow-hidden border-border border-2">
-							<Image
-								src={`${REACT_APP_API_URL}/${event.eventImage}`}
-								alt={event.eventName}
-								fill
-								className="object-contain transition-transform duration-500 group-hover:scale-110"
-								priority
-								sizes="(max-width: 768px) 100vw, 50vw"
-							/>
-							<div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-							<div className="absolute bottom-0 left-0 right-0 h-[25%] bg-gradient-to-t from-black/60 to-transparent rounded-b-xl" />
-							<div className="absolute bottom-4 left-4">
-								<Badge
-									variant="secondary"
-									className={`${getStatusColor(event.eventStatus)} backdrop-blur-sm shadow-md px-3 py-1 font-medium`}
-								>
-									{event.eventStatus}
-								</Badge>
-							</div>
-							<div className="absolute bottom-4 right-4">
-								<Badge
-									variant="secondary"
-									className="bg-primary text-primary-foreground backdrop-blur-sm shadow-md px-3 py-1 font-medium"
-								>
-									${event.eventPrice}
-								</Badge>
+					<div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-6 pb-4">
+						{/* Event Name and Image */}
+						<div className="relative w-full h-full flex flex-col justify-start items-start">
+							<h2 className="text-2xl md:text-3xl font-semibold tracking-tight bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent mb-3 text-left">
+								{event.eventName}
+							</h2>
+							<div className="relative aspect-[16/9] w-full group rounded-xl overflow-hidden border-border border-2">
+								<Image
+									src={`${REACT_APP_API_URL}/${event.eventImage}`}
+									alt={event.eventName}
+									fill
+									className="object-contain transition-transform duration-500"
+									priority
+									sizes="(max-width: 768px) 100vw, 50vw"
+								/>
+
+								<div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+								<div className="absolute bottom-0 left-0 right-0 h-[25%] bg-gradient-to-t from-black/60 to-transparent rounded-b-xl" />
+								<div className="absolute bottom-4 left-4">
+									<Badge
+										variant="secondary"
+										className={`${getStatusColor(event.eventStatus)} backdrop-blur-sm shadow-md px-3 py-1 font-medium`}
+									>
+										{event.eventStatus}
+									</Badge>
+								</div>
+								<div className="absolute bottom-4 right-4">
+									<Badge
+										variant="secondary"
+										className="bg-primary text-primary-foreground backdrop-blur-sm shadow-md px-3 py-1 font-medium"
+									>
+										${event.eventPrice}
+									</Badge>
+								</div>
 							</div>
 						</div>
 
 						<div className="space-y-6 flex flex-col justify-between">
 							{/* Event Info */}
 							<div className="space-y-5">
-								{/* Event Name and Categories */}
-								<div>
-									<h2 className="text-2xl md:text-3xl font-semibold tracking-tight bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent mb-3">
-										{event.eventName}
-									</h2>
-									<div className="flex flex-wrap gap-2 mt-3">
-										{event.eventCategories.map((category) => (
-											<Badge
-												key={category}
-												variant="outline"
-												className="text-xs font-medium border-primary/30 text-primary bg-primary/5 hover:bg-primary/10 transition-colors px-3 py-1 rounded-full"
-											>
-												{category}
-											</Badge>
-										))}
-									</div>
+								{/* Event  Categories */}
+								<div className="flex flex-wrap gap-2 mt-3">
+									{event.eventCategories.map((category) => (
+										<Badge
+											key={category}
+											variant="outline"
+											className="text-xs font-medium border-primary/30 text-primary bg-primary/5 hover:bg-primary/10 transition-colors px-3 py-1 rounded-full"
+										>
+											{category}
+										</Badge>
+									))}
 								</div>
 
 								{/* Event Date and Time, Location, Capacity */}
@@ -214,7 +215,7 @@ const ChosenEventData = ({
 							</div>
 
 							{/* Ticket Purchase */}
-							<div className="bg-accent/30 p-4 rounded-xl">
+							<div className="bg-accent/30 rounded-xl">
 								<div className="flex items-center justify-between flex-wrap gap-4">
 									<div className="flex items-center gap-2">
 										<Button
@@ -253,7 +254,7 @@ const ChosenEventData = ({
 				</div>
 
 				{/* Section: Description */}
-				<Separator className="my-2" />
+				<Separator />
 				<div className="px-6 py-4">
 					<h3 className="text-sm font-medium mb-2 text-foreground/90">{t('Description')}</h3>
 					<p className="text-sm text-muted-foreground leading-relaxed">{event.eventDesc}</p>

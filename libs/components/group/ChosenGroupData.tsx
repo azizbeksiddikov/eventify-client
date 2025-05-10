@@ -53,7 +53,7 @@ const ChosenGroupData = ({
 	const likesCount = group.groupLikes;
 
 	return (
-		<Card className="overflow-hidden border-none shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl">
+		<Card className="overflow-hidden border-none shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl gap-0">
 			{/* Section: Group Data */}
 			<div className="relative">
 				{/* Edit Button */}
@@ -69,34 +69,40 @@ const ChosenGroupData = ({
 					</Button>
 				)}
 
-				<div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-6">
-					{/* Group Image */}
-					<div className="relative aspect-square w-full group rounded-xl overflow-hidden border-2 border-border/50 shadow-sm hover:shadow-md transition-all duration-300">
-						<Image
-							src={`${REACT_APP_API_URL}/${group.groupImage}`}
-							alt={group.groupName}
-							fill
-							className="object-scale-down transition-transform duration-500 group-hover:scale-110"
-							priority
-							sizes="(max-width: 768px) 100vw, 50vw"
-						/>
-						<div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-						<div className="absolute bottom-0 left-0 right-0 h-[25%] bg-gradient-to-t from-black/60 to-transparent rounded-b-xl" />
-						<div className="absolute bottom-4 left-4">
-							<Badge
-								variant="secondary"
-								className="bg-primary text-primary-foreground backdrop-blur-sm shadow-md px-3 py-1 font-medium"
-							>
-								{group.memberCount} {t('members')}
-							</Badge>
-						</div>
-						<div className="absolute bottom-4 right-4">
-							<Badge
-								variant="secondary"
-								className="bg-primary text-primary-foreground backdrop-blur-sm shadow-md px-3 py-1 font-medium"
-							>
-								{group.eventsCount} {t('events')}
-							</Badge>
+				<div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-6 pb-4">
+					{/* Group Name and Image */}
+					<div className="relative w-full h-full flex flex-col justify-start items-start">
+						<h2 className="text-2xl md:text-3xl font-semibold tracking-tight bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent mb-3 text-left">
+							{group.groupName}
+						</h2>
+
+						<div className="relative aspect-[16/9] w-full group rounded-xl overflow-hidden border-border border-2">
+							<Image
+								src={`${REACT_APP_API_URL}/${group.groupImage}`}
+								alt={group.groupName}
+								fill
+								className="object-contain transition-transform duration-500"
+								priority
+								sizes="(max-width: 768px) 100vw, 50vw"
+							/>
+							<div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+							<div className="absolute bottom-0 left-0 right-0 h-[25%] bg-gradient-to-t from-black/60 to-transparent rounded-b-xl" />
+							<div className="absolute bottom-4 left-4">
+								<Badge
+									variant="secondary"
+									className="bg-primary text-primary-foreground backdrop-blur-sm shadow-md px-3 py-1 font-medium"
+								>
+									{group.memberCount} {t('members')}
+								</Badge>
+							</div>
+							<div className="absolute bottom-4 right-4">
+								<Badge
+									variant="secondary"
+									className="bg-primary text-primary-foreground backdrop-blur-sm shadow-md px-3 py-1 font-medium"
+								>
+									{group.eventsCount} {t('events')}
+								</Badge>
+							</div>
 						</div>
 					</div>
 
@@ -104,21 +110,16 @@ const ChosenGroupData = ({
 						{/* Group Info */}
 						<div className="space-y-5">
 							{/* Group Name and Categories */}
-							<div>
-								<h2 className="text-2xl md:text-3xl font-semibold tracking-tight bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent mb-3">
-									{group.groupName}
-								</h2>
-								<div className="flex flex-wrap gap-2 mt-3">
-									{group.groupCategories.map((category) => (
-										<Badge
-											key={category}
-											variant="outline"
-											className="text-xs font-medium border-primary/30 text-primary bg-primary/5 hover:bg-primary/10 transition-colors px-3 py-1 rounded-full"
-										>
-											{category}
-										</Badge>
-									))}
-								</div>
+							<div className="flex flex-wrap gap-2 mt-3">
+								{group.groupCategories.map((category) => (
+									<Badge
+										key={category}
+										variant="outline"
+										className="text-xs font-medium border-primary/30 text-primary bg-primary/5 hover:bg-primary/10 transition-colors px-3 py-1 rounded-full"
+									>
+										{category}
+									</Badge>
+								))}
 							</div>
 
 							{/* Group Stats */}
@@ -194,7 +195,7 @@ const ChosenGroupData = ({
 			</div>
 
 			{/* Section: Description */}
-			<Separator className="my-2" />
+			<Separator />
 			<div className="px-6 py-4">
 				<h3 className="text-sm font-medium mb-2 text-foreground/90 flex items-center gap-2">
 					<Bookmark className="w-4 h-4" />

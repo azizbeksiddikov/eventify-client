@@ -357,8 +357,6 @@ const GroupUpdatePage = () => {
 							}}
 							onCropComplete={handleCropComplete}
 							imageUrl={tempImageUrl || ''}
-							aspectRatio={16 / 9}
-							quality={0.9}
 						/>
 
 						{/* Submit Button */}

@@ -598,7 +598,7 @@ const EventCreatePage = () => {
 							<div className="relative aspect-video w-full max-w-2xl mx-auto rounded-xl overflow-hidden bg-muted/50">
 								{imagePreview ? (
 									<>
-										<Image src={imagePreview} alt="Event preview" className="object-contain w-full h-full" fill />
+										<Image src={imagePreview} alt="Event preview" className="w-full h-full" fill />
 										<label
 											htmlFor="image"
 											className="absolute inset-0 flex items-center justify-center bg-black/0 hover:bg-black/20 transition-colors duration-200 cursor-pointer"
@@ -639,8 +639,6 @@ const EventCreatePage = () => {
 							}}
 							onCropComplete={handleCropComplete}
 							imageUrl={tempImageUrl || ''}
-							aspectRatio={16 / 9}
-							quality={0.9}
 						/>
 
 						{/* Submit Button */}

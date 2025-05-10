@@ -1,9 +1,9 @@
 import { useTranslation } from 'next-i18next';
-import Image from 'next/image';
 import { Calendar, Users, Ticket, Heart, Star, User } from 'lucide-react';
 
 import { getMemberTypeColor, REACT_APP_API_URL } from '@/libs/config';
 import { Member } from '@/libs/types/member/member';
+import { Avatar, AvatarFallback, AvatarImage } from '@radix-ui/react-avatar';
 
 interface ProfileHeaderProps {
 	member: Member;
@@ -47,22 +47,20 @@ export const ProfileHeader = ({ member, groupsCount, ticketsCount }: ProfileHead
 				<div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
 					{/* Profile Section */}
 					<div className="flex flex-col md:flex-row items-center md:items-start gap-6 md:gap-8 flex-1">
-						<div className="relative">
+						<Avatar className="w-28 h-28 md:w-36 md:h-36 ">
 							{member.memberImage ? (
-								<div className="relative w-28 h-28 md:w-36 md:h-36">
-									<Image
-										src={`${REACT_APP_API_URL}/${member.memberImage}`}
-										alt={member.memberFullName ?? t('No image')}
-										className="object-cover rounded-full ring-4 ring-primary/10"
-										fill
-									/>
-								</div>
+								<AvatarImage
+									src={`${REACT_APP_API_URL}/${member.memberImage}`}
+									alt={member.memberFullName ?? t('No image')}
+									className="rounded-full ring-4 ring-primary/10"
+								/>
 							) : (
-								<div className="w-28 h-28 md:w-36 md:h-36 rounded-full bg-muted flex items-center justify-center ring-4 ring-primary/10">
-									<User className="h-14 w-14 md:h-20 md:w-20 text-muted-foreground/50" />
-								</div>
+								<AvatarFallback className="bg-muted rounded-full">
+									<User className="w-28 h-28 md:w-36 md:h-36 text-muted-foreground" />
+								</AvatarFallback>
 							)}
-						</div>
+						</Avatar>
+
 						<div className="flex flex-col items-center md:items-start space-y-4  h-full justify-around">
 							<div className="flex flex-col items-center md:items-start gap-3 justify-between ">
 								<h1 className="text-3xl md:text-4xl font-bold text-card-foreground tracking-tight">

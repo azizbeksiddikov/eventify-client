@@ -116,8 +116,10 @@ const CommentsComponent = ({ commentRefId, commentGroup, initialCommentsInquiry 
 
 			await getCommentsRefetch();
 			await smallSuccess(t('Comment deleted successfully'));
-		} catch (error: any) {
-			await smallError(error.message);
+		} catch (error: unknown) {
+			if (error instanceof Error) {
+				await smallError(error.message);
+			}
 		}
 	};
 
@@ -285,13 +287,14 @@ const CommentsComponent = ({ commentRefId, commentGroup, initialCommentsInquiry 
 											<div className="flex space-x-4 items-center">
 												<Avatar className="h-10 w-10">
 													{memberImage ? (
-														<AvatarImage src={memberImage} alt={memberName} />
+														<AvatarImage src={memberImage} alt={memberName} className="rounded-full" />
 													) : (
-														<AvatarFallback className="bg-muted">
+														<AvatarFallback className="bg-muted rounded-full">
 															<User className="h-6 w-6 text-muted-foreground" />
 														</AvatarFallback>
 													)}
 												</Avatar>
+
 												<div className="flex-1 items-center">
 													<div className="flex items-center justify-between">
 														<h4 className="font-medium text-foreground/90 text-sm">{memberName}</h4>

@@ -126,24 +126,21 @@ export const ProfileSettings = ({
 					<label className="text-sm font-medium text-foreground">{t('Profile Image')}</label>
 					<div className="relative w-24 h-24 md:w-32 md:h-32 mx-auto rounded-full overflow-hidden bg-muted/50 border-2 border-dashed border-border hover:border-primary/50 transition-all duration-200">
 						{imagePreview ? (
-							<>
-								<div className="relative w-full h-full">
-									<Image
-										src={imagePreview}
-										alt={memberUpdateInput.memberFullName ?? t('No image')}
-										className="object-contain rounded-full"
-										fill
-									/>
-									<div className="absolute inset-0 bg-black/0 hover:bg-black/40 transition-all duration-200">
-										<label htmlFor="image" className="absolute inset-0 flex items-center justify-center cursor-pointer">
-											<div className="flex items-center gap-2 bg-card/90 backdrop-blur-sm text-card-foreground px-3 py-1.5 rounded-md opacity-0 hover:opacity-100 transition-all duration-200 shadow-lg">
-												<RefreshCw className="h-3.5 w-3.5" />
-												<span className="text-sm font-medium">{t('Change')}</span>
-											</div>
-										</label>
+							<div className="relative w-full h-full group">
+								<Image
+									src={imagePreview}
+									alt={memberUpdateInput.memberFullName ?? t('No image')}
+									className="rounded-full transition-transform duration-200"
+									fill
+								/>
+								<div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-full" />
+								<label htmlFor="image" className="absolute inset-0 flex items-center justify-center cursor-pointer">
+									<div className="flex items-center gap-2 bg-card/90 backdrop-blur-sm text-card-foreground px-3 py-1.5 rounded-md opacity-0 group-hover:opacity-100 transition-all duration-200 shadow-lg">
+										<RefreshCw className="h-3.5 w-3.5" />
+										<span className="text-sm font-medium">{t('Change')}</span>
 									</div>
-								</div>
-							</>
+								</label>
+							</div>
 						) : (
 							<label
 								htmlFor="image"
@@ -235,7 +232,7 @@ export const ProfileSettings = ({
 						}}
 						onCropComplete={handleCropComplete}
 						imageUrl={tempImageUrl}
-						circularCrop
+						isCircular={true}
 					/>
 				)}
 			</form>

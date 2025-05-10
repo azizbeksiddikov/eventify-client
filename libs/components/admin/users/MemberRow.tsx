@@ -75,10 +75,14 @@ const MemberRow = ({
 			{/* AVATAR + Nickname */}
 			<TableCell>
 				<div className="flex items-center gap-2">
-					<Avatar className="h-8 w-8 border border-input flex items-center justify-center ">
-						<AvatarImage src={`${REACT_APP_API_URL}/${member?.memberImage}`} alt={member.username} />
-						<AvatarFallback className="bg-muted text-muted-foreground flex items-center justify-center">
-							<User className="h-4 w-4" />
+					<Avatar className="h-8 w-8 flex items-center justify-center">
+						<AvatarImage
+							src={`${REACT_APP_API_URL}/${member?.memberImage}`}
+							alt={member.username}
+							className="rounded-full"
+						/>
+						<AvatarFallback className="bg-muted rounded-full">
+							<User className="h-6 w-6 text-muted-foreground" />
 						</AvatarFallback>
 					</Avatar>
 					{member.memberType === MemberType.ORGANIZER ? (

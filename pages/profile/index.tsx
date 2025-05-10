@@ -28,7 +28,6 @@ import { smallError, smallSuccess } from '@/libs/alert';
 import withBasicLayout from '@/libs/components/layout/LayoutBasic';
 import { ProfileHeader } from '@/libs/components/profile/ProfileHeader';
 import { ProfileTabs } from '@/libs/components/profile/ProfileTabs';
-import { ProfileStats } from '@/libs/components/profile/ProfileStats';
 
 import { Member } from '@/libs/types/member/member';
 import { Group } from '@/libs/types/group/group';

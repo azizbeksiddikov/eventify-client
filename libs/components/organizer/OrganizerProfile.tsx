@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import { useTranslation } from 'next-i18next';
 import { Users, Heart, Eye, Mail, Phone, Calendar, CheckCircle2, Shield, Star, User, Trophy } from 'lucide-react';
 
@@ -8,6 +7,7 @@ import { Button } from '@/libs/components/ui/button';
 import { REACT_APP_API_URL } from '@/libs/config';
 import { Member } from '@/libs/types/member/member';
 import { MemberType } from '@/libs/enums/member.enum';
+import { Avatar, AvatarFallback, AvatarImage } from '@radix-ui/react-avatar';
 
 interface OrganizerProfileProps {
 	organizer: Member;
@@ -73,23 +73,19 @@ const OrganizerProfile = ({
 				<div className="flex flex-col md:flex-row gap-6 md:gap-8">
 					{/* Left side - Image and Actions */}
 					<div className="relative flex-shrink-0 flex flex-col items-center gap-4">
-						<div>
+						<Avatar className="w-40 h-40">
 							{organizer.memberImage ? (
-								<div className="relative w-40 h-40 md:w-48 md:h-48 ring-4 ring-background shadow-lg rounded-full overflow-hidden">
-									<Image
-										src={`${REACT_APP_API_URL}/${organizer.memberImage}`}
-										alt={organizer.memberFullName ?? t('No image')}
-										className="object-cover"
-										fill
-										priority
-									/>
-								</div>
+								<AvatarImage
+									src={`${REACT_APP_API_URL}/${organizer.memberImage}`}
+									alt={organizer.memberFullName ?? t('Owner avatar')}
+									className="rounded-full"
+								/>
 							) : (
-								<div className="w-40 h-40 md:w-48 md:h-48 rounded-full bg-muted flex items-center justify-center ring-4 ring-background shadow-lg">
-									<User className="h-20 w-20 md:h-24 md:w-24 text-muted-foreground/50" />
-								</div>
+								<AvatarFallback className="bg-muted rounded-full">
+									<User className="h-20 w-20 text-muted-foreground" />
+								</AvatarFallback>
 							)}
-						</div>
+						</Avatar>
 
 						<div className="flex items-center gap-3">
 							<Button
