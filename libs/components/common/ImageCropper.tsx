@@ -1,37 +1,31 @@
 import { useRef, useState, useEffect } from 'react';
-import Image from 'next/image'; // Import Next.js Image component
+import Image from 'next/image';
 import { useTranslation } from 'next-i18next';
 import ReactCrop, { type Crop, centerCrop, makeAspectCrop } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
 
-import { Button } from '@/libs/components/ui/button'; // Assuming these are your UI components
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/libs/components/ui/dialog'; // Assuming these are your UI components
+import { Button } from '@/libs/components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/libs/components/ui/dialog';
 
 interface ImageCropperProps {
 	isOpen: boolean;
 	onClose: () => void;
 	onCropComplete: (croppedFile: File) => void;
-	imageUrl: string; // Data URL, object URL, or external URL for JPG, JPEG, PNG
+	imageUrl: string;
 	isCircular?: boolean;
-	quality?: number; // Output JPG quality (0.0 to 1.0)
+	quality?: number;
 }
 
-// Helper function to create an initial centered crop with a specific aspect ratio
-function createInitialCrop(
-	mediaWidth: number, // Rendered width of the image
-	mediaHeight: number, // Rendered height of the image
-	aspect: number, // Target aspect ratio for the crop
-): Crop {
+function createInitialCrop(mediaWidth: number, mediaHeight: number, aspect: number): Crop {
 	const crop = makeAspectCrop(
 		{
-			unit: '%', // Start with a percentage-based selection
-			width: 90, // Aim for 90% coverage of the constraining dimension
+			unit: '%',
+			width: 90,
 		},
 		aspect,
 		mediaWidth,
 		mediaHeight,
 	);
-	// centerCrop converts the percentage crop from makeAspectCrop into pixel values.
 	return centerCrop(crop, mediaWidth, mediaHeight);
 }
 
@@ -41,83 +35,113 @@ export const ImageCropper = ({
 	onCropComplete,
 	imageUrl,
 	isCircular = false,
-	quality = 0.92, // High quality JPG default
+	quality = 0.92,
 }: ImageCropperProps) => {
 	const { t } = useTranslation('common');
-	const imgRef = useRef<HTMLImageElement>(null); // Ref for the underlying <img> from Next/Image
+	const imgRef = useRef<HTMLImageElement>(null);
 
 	const isCircularOutput = isCircular;
-	const cropperAspect = isCircular ? 1 : 16 / 9; // 1:1 for circular
+	const cropperAspect = isCircular ? 1 : 16 / 9;
 
 	const [crop, setCrop] = useState<Crop>({
-		unit: 'px',
+		unit: '%', // Changed to percentage-based for better scaling
 		x: 0,
 		y: 0,
 		width: 0,
 		height: 0,
 	});
 
-	// Store natural dimensions of the source image for Next/Image's aspect ratio handling
-	const [sourceImageDimensions, setSourceImageDimensions] = useState<{ width: number; height: number } | null>(null);
+	const [imgDimensions, setImgDimensions] = useState<{
+		naturalWidth: number;
+		naturalHeight: number;
+		renderedWidth: number;
+		renderedHeight: number;
+	} | null>(null);
 
-	// Handler for Next/Image's onLoadingComplete event
+	// Reset states when dialog closes or imageUrl changes
+	useEffect(() => {
+		if (!isOpen || !imageUrl) {
+			setImgDimensions(null);
+			setCrop({ unit: '%', x: 0, y: 0, width: 0, height: 0 });
+		}
+	}, [isOpen, imageUrl]);
+
 	const handleImageReady = (imgElement: HTMLImageElement) => {
 		const { naturalWidth, naturalHeight, width: renderedWidth, height: renderedHeight } = imgElement;
 
 		if (naturalWidth === 0 || naturalHeight === 0) {
 			console.error('Image could not be loaded or is empty (zero natural dimensions).');
-			setSourceImageDimensions(null);
-			setCrop({ unit: 'px', x: 0, y: 0, width: 0, height: 0 });
+			setImgDimensions(null);
+			setCrop({ unit: '%', x: 0, y: 0, width: 0, height: 0 });
 			return;
 		}
 
-		setSourceImageDimensions({ width: naturalWidth, height: naturalHeight });
+		setImgDimensions({
+			naturalWidth,
+			naturalHeight,
+			renderedWidth,
+			renderedHeight,
+		});
 
-		// Use the actual rendered dimensions of the Next/Image for initial crop calculation
+		// Create initial crop based on rendered dimensions
 		const initialCrop = createInitialCrop(renderedWidth, renderedHeight, cropperAspect);
 		setCrop(initialCrop);
 	};
 
-	// Reset states when dialog closes or imageUrl changes
-	useEffect(() => {
-		if (!isOpen || !imageUrl) {
-			// Reset if dialog is closed or imageUrl is cleared
-			setSourceImageDimensions(null);
-			setCrop({ unit: 'px', x: 0, y: 0, width: 0, height: 0 });
+	const getCroppedImg = async (): Promise<Blob> => {
+		if (!imgRef.current || !imgDimensions) {
+			throw new Error('Image reference or dimensions not available');
 		}
-	}, [isOpen, imageUrl]);
 
-	const getCroppedImg = async (imageElement: HTMLImageElement, currentCrop: Crop): Promise<Blob> => {
-		if (!currentCrop || currentCrop.width === 0 || currentCrop.height === 0) {
-			throw new Error('Invalid crop dimensions. Width or height is zero.');
+		if (!crop || crop.width === 0 || crop.height === 0) {
+			throw new Error('Invalid crop dimensions');
 		}
 
 		const canvas = document.createElement('canvas');
-		// Scale factors from displayed image size (imageElement.width/height)
-		// to natural image size (imageElement.naturalWidth/Height)
-		const scaleX = imageElement.naturalWidth / imageElement.width;
-		const scaleY = imageElement.naturalHeight / imageElement.height;
-
-		// Crop values (x, y, width, height) are in pixels relative to the displayed image.
-		// Scale these to the natural image dimensions for drawing.
-		const cropXNatural = currentCrop.x * scaleX;
-		const cropYNatural = currentCrop.y * scaleY;
-		const cropWidthNatural = currentCrop.width * scaleX;
-		const cropHeightNatural = currentCrop.height * scaleY;
-
-		canvas.width = Math.floor(cropWidthNatural);
-		canvas.height = Math.floor(cropHeightNatural);
-
 		const ctx = canvas.getContext('2d');
+
 		if (!ctx) {
 			throw new Error('Failed to get 2D rendering context');
 		}
 
+		// Calculate the pixel values based on percentages if using percentage units
+		let cropX, cropY, cropWidth, cropHeight;
+
+		if (crop.unit === '%') {
+			// Convert percentage to pixels based on the rendered dimensions
+			cropX = (crop.x * imgDimensions.renderedWidth) / 100;
+			cropY = (crop.y * imgDimensions.renderedHeight) / 100;
+			cropWidth = (crop.width * imgDimensions.renderedWidth) / 100;
+			cropHeight = (crop.height * imgDimensions.renderedHeight) / 100;
+		} else {
+			// Already in pixels
+			cropX = crop.x;
+			cropY = crop.y;
+			cropWidth = crop.width;
+			cropHeight = crop.height;
+		}
+
+		// Calculate scaling factors between rendered and natural image dimensions
+		const scaleX = imgDimensions.naturalWidth / imgDimensions.renderedWidth;
+		const scaleY = imgDimensions.naturalHeight / imgDimensions.renderedHeight;
+
+		// Scale crop values to natural image dimensions
+		const cropXNatural = cropX * scaleX;
+		const cropYNatural = cropY * scaleY;
+		const cropWidthNatural = cropWidth * scaleX;
+		const cropHeightNatural = cropHeight * scaleY;
+
+		// Set canvas dimensions to match the cropped area's natural size
+		canvas.width = Math.round(cropWidthNatural);
+		canvas.height = Math.round(cropHeightNatural);
+
+		// Apply high-quality rendering settings
 		ctx.imageSmoothingQuality = 'high';
 		ctx.imageSmoothingEnabled = true;
 
+		// Draw the cropped portion of the image onto the canvas
 		ctx.drawImage(
-			imageElement, // This is the actual <img> element from Next/Image
+			imgRef.current,
 			cropXNatural,
 			cropYNatural,
 			cropWidthNatural,
@@ -128,12 +152,15 @@ export const ImageCropper = ({
 			canvas.height,
 		);
 
+		// Handle circular cropping if needed
 		if (isCircularOutput) {
 			const circleCanvas = document.createElement('canvas');
 			const circleCtx = circleCanvas.getContext('2d');
+
 			if (!circleCtx) {
 				throw new Error('Failed to get 2D context for circular crop');
 			}
+
 			const size = Math.min(canvas.width, canvas.height);
 			circleCanvas.width = size;
 			circleCanvas.height = size;
@@ -141,11 +168,13 @@ export const ImageCropper = ({
 			circleCtx.imageSmoothingQuality = 'high';
 			circleCtx.imageSmoothingEnabled = true;
 
+			// Create circular clipping path
 			circleCtx.beginPath();
 			circleCtx.arc(size / 2, size / 2, size / 2, 0, Math.PI * 2);
 			circleCtx.closePath();
 			circleCtx.clip();
 
+			// Center the image in the circular canvas
 			const offsetX = (canvas.width - size) / 2;
 			const offsetY = (canvas.height - size) / 2;
 			circleCtx.drawImage(canvas, offsetX, offsetY, size, size, 0, 0, size, size);
@@ -159,9 +188,10 @@ export const ImageCropper = ({
 			});
 		}
 
+		// Return the rectangular cropped image
 		return new Promise((resolve, reject) => {
 			canvas.toBlob(
-				(blob) => (blob ? resolve(blob) : reject(new Error('Rectangular canvas is empty after processing'))),
+				(blob) => (blob ? resolve(blob) : reject(new Error('Canvas is empty after processing'))),
 				'image/jpeg',
 				quality,
 			);
@@ -169,17 +199,18 @@ export const ImageCropper = ({
 	};
 
 	const handlePerformCrop = async () => {
-		if (!imgRef.current) {
-			console.error('Image reference not available for cropping.');
+		if (!imgRef.current || !imgDimensions) {
+			console.error('Image reference or dimensions not available for cropping.');
 			return;
 		}
+
 		if (!crop || crop.width === 0 || crop.height === 0) {
-			console.error('Crop is not set or has zero dimensions. Cannot perform crop.');
+			console.error('Crop is not set or has zero dimensions.');
 			return;
 		}
 
 		try {
-			const croppedImageBlob = await getCroppedImg(imgRef.current, crop);
+			const croppedImageBlob = await getCroppedImg();
 			const outputFileName = `cropped_${Date.now()}.jpg`;
 			const croppedFile = new File([croppedImageBlob], outputFileName, {
 				type: 'image/jpeg',
@@ -194,10 +225,11 @@ export const ImageCropper = ({
 		}
 	};
 
-	// Key for ReactCrop: ensures re-initialization if image or shape changes.
+	// Key for ReactCrop: ensures re-initialization if image or shape changes
 	const reactCropKey = `${imageUrl}-${isCircular}`;
+
 	// Enable crop button only if all conditions are met
-	const canCrop = !!crop && crop.width > 0 && crop.height > 0 && !!imageUrl && !!sourceImageDimensions;
+	const canCrop = !!crop && crop.width > 0 && crop.height > 0 && !!imageUrl && !!imgDimensions;
 
 	return (
 		<Dialog open={isOpen} onOpenChange={onClose}>
@@ -208,38 +240,34 @@ export const ImageCropper = ({
 				<div className="mt-4">
 					<div
 						className="relative w-full min-h-[200px] flex justify-center items-center bg-muted rounded-lg overflow-hidden"
-						// Responsive max height for the cropper area
 						style={{ maxHeight: 'clamp(200px, calc(80vh - 200px), 600px)' }}
 					>
 						{imageUrl ? (
 							<ReactCrop
 								key={reactCropKey}
 								crop={crop}
-								onChange={(pixelCrop) => setCrop(pixelCrop)} // Assumes pixelCrop is desired for state
+								onChange={(c) => setCrop(c)}
 								aspect={cropperAspect}
-								circularCrop={isCircularOutput} // Visual cue for circular selection
-								// onImageLoad prop of ReactCrop is not used here;
-								// Next/Image's onLoadingComplete handles image readiness.
+								circularCrop={isCircularOutput}
 							>
-								<Image
-									ref={imgRef}
-									src={imageUrl}
-									alt={t('cropImage.altPreview', 'Crop preview')}
-									// Provide natural width/height for Next/Image's aspect ratio calculation with layout="responsive".
-									// Fallback to common large dimensions if not yet loaded to guide initial layout.
-									width={sourceImageDimensions?.width || 1920}
-									height={sourceImageDimensions?.height || 1080}
-									layout="responsive"
-									unoptimized={true} // Essential for arbitrary external URLs, data URLs, or blobs
-									onLoadingComplete={handleImageReady}
-									// Styling applied to the actual <img> tag rendered by Next/Image
-									className="max-w-full" // Ensures it respects parent width if layout="responsive"
-									style={{
-										maxHeight: 'clamp(200px, calc(80vh - 200px), 600px)', // Match parent's responsive max height
-										objectFit: 'contain', // Crucial: scales image down to fit, preserving aspect ratio
-									}}
-									priority={isOpen} // Hint to Next.js to prioritize loading this image when dialog is open
-								/>
+								<div className="max-w-full max-h-[calc(80vh-200px)]">
+									<Image
+										ref={imgRef}
+										src={imageUrl || '/placeholder.svg'}
+										alt={t('cropImage.altPreview', 'Crop preview')}
+										width={1000}
+										height={1000}
+										unoptimized={true}
+										onLoadingComplete={handleImageReady}
+										style={{
+											maxWidth: '100%',
+											maxHeight: 'calc(80vh - 200px)',
+											objectFit: 'contain',
+											display: 'block',
+										}}
+										priority={isOpen}
+									/>
+								</div>
 							</ReactCrop>
 						) : (
 							<p className="text-muted-foreground p-4 text-center">
