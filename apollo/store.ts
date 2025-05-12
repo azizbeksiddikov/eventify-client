@@ -26,6 +26,3 @@ export const userVar = makeVar<CustomJwtPayload>({
 	createdAt: new Date(),
 	updatedAt: new Date(),
 });
-
-//@ts-expect-error
-export const socketVar = makeVar<WebSocket>();
