@@ -1,5 +1,5 @@
-import { MemberStatus, MemberType } from '../../enums/member.enum';
-import { Direction } from '../../enums/common.enum';
+import { MemberStatus, MemberType } from '@/libs/enums/member.enum';
+import { Direction } from '@/libs/enums/common.enum';
 
 export interface MemberInput {
 	username: string;

@@ -4,7 +4,7 @@ import createUploadLink from 'apollo-upload-client/public/createUploadLink.js';
 import { WebSocketLink } from '@apollo/client/link/ws';
 import { getMainDefinition } from '@apollo/client/utilities';
 import { onError } from '@apollo/client/link/error';
-import { getJwtToken } from '../libs/auth';
+import { getJwtToken } from '@/libs/auth';
 import { TokenRefreshLink } from 'apollo-link-token-refresh';
 import { smallError } from '@/libs/alert';
 let apolloClient: ApolloClient<NormalizedCacheObject>;

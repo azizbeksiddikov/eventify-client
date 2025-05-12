@@ -1,4 +1,4 @@
-import { GroupMemberRole } from '../../enums/group.enum';
+import { GroupMemberRole } from '@/libs/enums/group.enum';
 
 export interface GroupMemberInput {
 	groupId: string;

@@ -1,5 +1,5 @@
-import { MeLiked } from '../like/like';
-import { Member, TotalCounter } from '../member/member';
+import { MeLiked } from '@/libs/types/like/like';
+import { Member, TotalCounter } from '@/libs/types/member/member';
 
 export interface MeFollowed {
 	followingId: string;

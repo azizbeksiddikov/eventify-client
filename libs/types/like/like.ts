@@ -1,4 +1,4 @@
-import { LikeGroup } from '../../enums/like.enum';
+import { LikeGroup } from '@/libs/enums/like.enum';
 
 export interface Like {
 	_id: string;

@@ -1,5 +1,5 @@
-import { GroupMemberRole } from '../../enums/group.enum';
-import { Member } from '../member/member';
+import { GroupMemberRole } from '@/libs/enums/group.enum';
+import { Member } from '@/libs/types/member/member';
 
 export interface GroupMember {
 	_id: string;
