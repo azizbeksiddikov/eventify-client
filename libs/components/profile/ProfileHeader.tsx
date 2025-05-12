@@ -46,7 +46,7 @@ export const ProfileHeader = ({ member, groupsCount, ticketsCount }: ProfileHead
 			<div className="flex flex-col gap-8">
 				<div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
 					{/* Profile Section */}
-					<div className="flex flex-col md:flex-row items-center md:items-start gap-6 md:gap-8 flex-1">
+					<div className="flex flex-col md:flex-row items-center gap-6 md:gap-8 flex-1">
 						<Avatar className="w-28 h-28 md:w-36 md:h-36 ">
 							{member.memberImage ? (
 								<AvatarImage
@@ -80,7 +80,7 @@ export const ProfileHeader = ({ member, groupsCount, ticketsCount }: ProfileHead
 
 					{/* Stats Section */}
 					<div className="bg-muted/30 rounded-xl backdrop-blur-sm p-6">
-						<div className="flex flex-wrap justify-center gap-6">
+						<div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
 							{stats.map((stat, index) => (
 								<div key={index} className="flex flex-col items-center min-w-[120px] p-4 rounded-lg bg-card/50">
 									<div className="flex items-center gap-2 mb-1">
