@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -96,29 +96,26 @@ const Signup = () => {
 		return true;
 	};
 
-	const handleSubmit = useCallback(
-		async (e: React.FormEvent<HTMLFormElement>) => {
-			e.preventDefault();
-			if (!validateForm()) return;
+	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+		e.preventDefault();
+		if (!validateForm()) return;
 
-			setIsLoading(true);
-			try {
-				await signUp(
-					formData.username,
-					formData.memberPassword,
-					formData.memberEmail,
-					formData.memberFullName,
-					formData.memberType ?? MemberType.USER,
-				);
-				await router.push(`${router.query.referrer ?? '/'}`);
-			} catch (err: unknown) {
-				console.log('err', err);
-			} finally {
-				setIsLoading(false);
-			}
-		},
-		[formData, router],
-	);
+		setIsLoading(true);
+		try {
+			await signUp(
+				formData.username,
+				formData.memberPassword,
+				formData.memberEmail,
+				formData.memberFullName,
+				formData.memberType ?? MemberType.USER,
+			);
+			await router.push(`${router.query.referrer ?? '/'}`);
+		} catch (err: unknown) {
+			console.log('err', err);
+		} finally {
+			setIsLoading(false);
+		}
+	};
 
 	return (
 		<div className="flex-1 my-10 flex items-center justify-center px-4 sm:px-6 lg:px-8">

@@ -64,7 +64,7 @@ const OrganizersPage = ({
 		const query: Record<string, string> = {
 			page: Math.max(initialSearch.page, newSearch.page).toString(),
 			limit: Math.max(1, newSearch.limit).toString(),
-			sort: newSearch.sort || initialSearch.sort,
+			sort: newSearch.sort || initialSearch.sort || 'createdAt',
 			direction: newSearch.direction === Direction.ASC ? '1' : '-1',
 		};
 

@@ -51,24 +51,21 @@ const Login = () => {
 		return true;
 	};
 
-	const handleSubmit = useCallback(
-		async (e: React.FormEvent<HTMLFormElement>) => {
-			e.preventDefault();
-			if (!validateForm()) return;
+	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+		e.preventDefault();
+		if (!validateForm()) return;
 
-			setIsLoading(true);
-			try {
-				await logIn(loginInput.username, loginInput.memberPassword);
-				await router.push(`${router.query.referrer ?? '/'}`);
-			} catch (err: unknown) {
-				const error = err as Error;
-				smallError(error.message);
-			} finally {
-				setIsLoading(false);
-			}
-		},
-		[loginInput, router],
-	);
+		setIsLoading(true);
+		try {
+			await logIn(loginInput.username, loginInput.memberPassword);
+			await router.push(`${router.query.referrer ?? '/'}`);
+		} catch (err: unknown) {
+			const error = err as Error;
+			smallError(error.message);
+		} finally {
+			setIsLoading(false);
+		}
+	};
 
 	return (
 		<div className="flex-1 my-10 flex items-center justify-center px-4 sm:px-6 lg:px-8">

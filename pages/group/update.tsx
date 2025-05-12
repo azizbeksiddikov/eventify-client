@@ -24,6 +24,7 @@ import { imageTypes, REACT_APP_API_URL } from '@/libs/config';
 import { REACT_APP_API_GRAPHQL_URL } from '@/libs/config';
 import { GET_GROUP } from '@/apollo/user/query';
 import { GroupMember } from '@/libs/types/groupMembers/groupMember';
+import Image from 'next/image';
 
 export const getStaticProps = async ({ locale }: { locale: string }) => ({
 	props: {
@@ -316,7 +317,7 @@ const GroupUpdatePage = () => {
 							<div className="relative aspect-video w-full max-w-2xl mx-auto rounded-xl overflow-hidden bg-muted/50">
 								{imagePreview ? (
 									<>
-										<img src={imagePreview} alt="Group preview" className="object-contain w-full h-full" />
+										<Image src={imagePreview} alt="Group preview" className="object-contain w-full h-full" />
 										<label
 											htmlFor="image"
 											className="absolute inset-0 flex items-center justify-center bg-black/0 hover:bg-black/20 transition-colors duration-200 cursor-pointer group"

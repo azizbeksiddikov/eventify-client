@@ -5,7 +5,7 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 
 import { useMutation, useQuery, useReactiveVar } from '@apollo/client';
 import { GET_ORGANIZER } from '@/apollo/user/query';
-import { LIKE_TARGET_MEMBER, SUBSCRIBE, UNSUBSCRIBE } from '@/apollo/user/mutation';
+import { LIKE_TARGET_EVENT, LIKE_TARGET_MEMBER, SUBSCRIBE, UNSUBSCRIBE } from '@/apollo/user/mutation';
 import { userVar } from '@/apollo/store';
 
 import { Member } from '@/libs/types/member/member';
@@ -20,6 +20,7 @@ import OrganizerProfile from '@/libs/components/organizer/OrganizerProfile';
 import SimilarGroups from '@/libs/components/common/SimilarGroups';
 
 import { smallError, smallSuccess } from '@/libs/alert';
+import { likeHandler } from '@/libs/utils';
 
 export const getStaticProps = async ({ locale }: { locale: string }) => ({
 	props: {
@@ -39,6 +40,7 @@ const OrganizerDetailPage = () => {
 	const [likeTargetMember] = useMutation(LIKE_TARGET_MEMBER);
 	const [subscribe] = useMutation(SUBSCRIBE);
 	const [unsubscribe] = useMutation(UNSUBSCRIBE);
+	const [likeTargetEvent] = useMutation(LIKE_TARGET_EVENT);
 
 	const { data: getOrganizerData } = useQuery(GET_ORGANIZER, {
 		fetchPolicy: 'cache-and-network',
@@ -109,6 +111,10 @@ const OrganizerDetailPage = () => {
 		}
 	};
 
+	const likeEventHandler = async (eventId: string) => {
+		await likeHandler(user._id, eventId, likeTargetEvent, t('Event liked successfully'));
+	};
+
 	if (!organizer) return null;
 	return (
 		<div>
@@ -131,7 +137,11 @@ const OrganizerDetailPage = () => {
 
 				{/* Events Section */}
 				{organizer?.organizedEvents && organizer.organizedEvents.length > 0 && (
-					<UpcomingEvents events={organizer.organizedEvents} organizerName={organizer.memberFullName} />
+					<UpcomingEvents
+						events={organizer.organizedEvents}
+						organizerName={organizer.memberFullName}
+						likeEventHandler={likeEventHandler}
+					/>
 				)}
 
 				{/* Comments Section */}

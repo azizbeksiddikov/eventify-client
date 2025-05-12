@@ -213,7 +213,10 @@ const ProfilePage = () => {
 		try {
 			if (!user?._id) throw new Error(Message.NOT_AUTHENTICATED);
 
-			const { _id, memberStatus, emailVerified, ...cleanedMemberUpdateInput } = memberUpdateInput;
+			const excludedFields = ['_id', 'memberStatus', 'emailVerified'];
+			const cleanedMemberUpdateInput = Object.fromEntries(
+				Object.entries(memberUpdateInput).filter(([key]) => !excludedFields.includes(key)),
+			);
 
 			const result: any = await updateMember({
 				variables: { input: cleanedMemberUpdateInput },

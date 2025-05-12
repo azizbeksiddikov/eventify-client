@@ -40,7 +40,7 @@ const GroupDetailPage = () => {
 	const [leaveGroup] = useMutation(LEAVE_GROUP);
 	const [likeTargetEvent] = useMutation(LIKE_TARGET_EVENT);
 
-	const { data: getGroupData, refetch: refetchGroup } = useQuery(GET_GROUP, {
+	const { data: getGroupData } = useQuery(GET_GROUP, {
 		fetchPolicy: 'cache-and-network',
 		skip: !groupId,
 		variables: { input: groupId },

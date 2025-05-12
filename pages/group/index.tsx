@@ -73,7 +73,7 @@ const GroupsPage = ({
 		const query: Record<string, string> = {
 			page: Math.max(1, newSearch.page || initialSearch.page).toString(),
 			limit: Math.max(1, newSearch.limit || initialSearch.limit).toString(),
-			sort: newSearch.sort || initialSearch.sort,
+			sort: newSearch.sort || initialSearch.sort || 'createdAt',
 			direction: newSearch.direction === Direction.ASC ? '1' : '-1',
 		};
 
