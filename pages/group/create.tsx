@@ -22,6 +22,7 @@ import axios from 'axios';
 import { getJwtToken } from '@/libs/auth';
 import { imageTypes, REACT_APP_API_URL } from '@/libs/config';
 import { REACT_APP_API_GRAPHQL_URL } from '@/libs/config';
+import Image from 'next/image';
 
 export const getStaticProps = async ({ locale }: { locale: string }) => ({
 	props: {
@@ -261,10 +262,10 @@ const GroupCreatePage = () => {
 						{/* Image Section */}
 						<div className="space-y-4">
 							<label className="text-sm font-medium text-foreground">{t('Group Image')}</label>
-							<div className="relative aspect-video w-full max-w-2xl mx-auto rounded-xl overflow-hidden bg-muted/50">
+							<div className="relative aspect-[16/9] w-full max-w-2xl mx-auto rounded-xl overflow-hidden bg-muted/50 rounded-t-xl">
 								{imagePreview ? (
 									<>
-										<img src={imagePreview} alt="Group preview" className="object-contain w-full h-full" />
+										<Image src={imagePreview} alt="Group preview" className="object-contain" fill />
 										<label
 											htmlFor="image"
 											className="absolute inset-0 flex items-center justify-center bg-black/0 hover:bg-black/20 transition-colors duration-200 cursor-pointer group"

@@ -156,7 +156,7 @@ const GroupsPage = ({
 							</>
 						) : (
 							<div className="text-center py-12">
-								<p className="text-muted-foreground">{t('No events found. Try adjusting your filters.')}</p>
+								<p className="text-muted-foreground">{t('No groups found. Try adjusting your filters.')}</p>
 							</div>
 						)}
 					</div>
