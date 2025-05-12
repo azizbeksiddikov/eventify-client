@@ -14,7 +14,15 @@ const nextConfig = {
 		ignoreDuringBuilds: true,
 	},
 	images: {
-		remotePatterns: [{ hostname: 'localhost' }],
+		remotePatterns: [
+			new URL('https://82.29.162.87/**'),
+			new URL('http://82.29.162.87/**'),
+			new URL('http://82.29.162.87:4001/**'),
+			new URL('https://82.29.162.87:4001/**'),
+			new URL('http://localhost/**'),
+			new URL('http://localhost:4001/**'),
+			new URL('http://localhost:3007/**'),
+		],
 	},
 	trailingSlash: false,
 	reactStrictMode: true,
