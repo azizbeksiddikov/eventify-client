@@ -6,7 +6,6 @@ export default function Document() {
 			<Head>
 				{/* Basic SEO */}
 				<meta charSet="UTF-8" />
-				<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 				<meta name="theme-color" content="#ffffff" />
 				<meta name="robots" content="index,follow" />
 				<meta

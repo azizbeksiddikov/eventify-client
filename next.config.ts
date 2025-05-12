@@ -13,7 +13,7 @@ const nextConfig = {
 		ignoreDuringBuilds: true,
 	},
 	images: {
-		domains: ['localhost'],
+		remotePatterns: [{ hostname: 'localhost' }],
 	},
 	trailingSlash: false,
 	reactStrictMode: true,
