@@ -2,6 +2,7 @@
 
 /** @type {import('next').NextConfig} */
 import nextI18nextConfig from './next-i18next.config.js';
+import type { Configuration } from 'webpack';
 
 const nextConfig = {
 	env: {
@@ -18,6 +19,14 @@ const nextConfig = {
 	trailingSlash: false,
 	reactStrictMode: true,
 	i18n: nextI18nextConfig.i18n,
+	webpack: (config: Configuration) => {
+		config.resolve = config.resolve || {};
+		config.resolve.alias = {
+			...config.resolve.alias,
+			'@': '.',
+		};
+		return config;
+	},
 };
 
 export default nextConfig;
