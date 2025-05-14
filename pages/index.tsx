@@ -23,6 +23,9 @@ const Home: NextPage = () => {
 		return (
 			<div className="flex flex-col">
 				<SearchEvents />
+				<UpcomingEvents />
+				<PopularGroups />
+				<Acknowledgements />
 			</div>
 		);
 	} else {

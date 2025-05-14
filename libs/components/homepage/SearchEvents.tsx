@@ -1,3 +1,4 @@
+import type React from 'react';
 import { useState } from 'react';
 import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
@@ -36,30 +37,33 @@ const SearchEvents = () => {
 
 	console.log('Inside search events');
 	return (
-		<div className="bg-secondary/70 py-12 md:py-24 shadow-lg">
-			<div className="flex-container px-4 md:px-8">
-				<h2>{t('Find Events')}</h2>
-				<Card className="p-6 md:p-8 w-full max-w-5xl mx-auto border-2 border-primary/20 shadow-md">
-					<form onSubmit={searchHandler} className="flex flex-col md:flex-row items-stretch md:items-center gap-4">
+		<div className="bg-secondary/70 py-8 sm:py-10 md:py-16 lg:py-20 xl:py-24 shadow-lg">
+			<div className="flex-container px-4 sm:px-6 md:px-8 lg:px-10">
+				<h2 className="text-2xl sm:text-3xl md:text-4xl mb-4 sm:mb-6 md:mb-8 text-center">{t('Find Events')}</h2>
+				<Card className="p-4 sm:p-5 md:p-6 lg:p-8 w-full max-w-5xl mx-auto border-2 border-primary/20 shadow-md">
+					<form
+						onSubmit={searchHandler}
+						className="flex flex-col sm:flex-col md:flex-row items-stretch md:items-center gap-3 sm:gap-4"
+					>
 						<div className="flex-1 relative">
 							<Input
 								type="text"
 								placeholder={t('Search Events')}
-								className="w-full h-14 text-lg pl-10 rounded-md focus:ring-2 focus:ring-primary/50 transition-all"
+								className="w-full h-10 sm:h-12 md:h-14 text-base sm:text-lg pl-10 rounded-md focus:ring-2 focus:ring-primary/50 transition-all"
 								value={text}
 								onChange={(e) => setText(e.target.value)}
 							/>
-							<SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+							<SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 sm:h-5 w-4 sm:w-5 text-muted-foreground" />
 						</div>
 
-						<div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+						<div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
 							<Popover>
 								<PopoverTrigger asChild>
 									<Button
 										variant="outline"
-										className="w-full sm:w-40 h-14 justify-start text-left font-normal border border-input hover:bg-accent/50 transition-colors"
+										className="w-full sm:w-36 md:w-40 h-10 sm:h-12 md:h-14 justify-start text-left font-normal border border-input hover:bg-accent/50 transition-colors text-xs sm:text-sm md:text-base"
 									>
-										<CalendarIcon className="mr-2 h-4 w-4" />
+										<CalendarIcon className="mr-2 h-3 sm:h-4 w-3 sm:w-4" />
 										{startDate ? format(startDate, 'PPP') : <span>{t('Start date')}</span>}
 									</Button>
 								</PopoverTrigger>
@@ -71,9 +75,9 @@ const SearchEvents = () => {
 								<PopoverTrigger asChild>
 									<Button
 										variant="outline"
-										className="w-full sm:w-40 h-14 justify-start text-left font-normal border border-input hover:bg-accent/50 transition-colors"
+										className="w-full sm:w-36 md:w-40 h-10 sm:h-12 md:h-14 justify-start text-left font-normal border border-input hover:bg-accent/50 transition-colors text-xs sm:text-sm md:text-base"
 									>
-										<CalendarIcon className="mr-2 h-4 w-4" />
+										<CalendarIcon className="mr-2 h-3 sm:h-4 w-3 sm:w-4" />
 										{endDate ? format(endDate, 'PPP') : <span>{t('End date')}</span>}
 									</Button>
 								</PopoverTrigger>
@@ -84,7 +88,7 @@ const SearchEvents = () => {
 						</div>
 						<Button
 							type="submit"
-							className="h-14 px-8 bg-primary text-primary-foreground hover:bg-primary/90 transition-colors font-medium"
+							className="h-10 sm:h-12 md:h-14 px-4 sm:px-6 md:px-8 bg-primary text-primary-foreground hover:bg-primary/90 transition-colors font-medium text-sm sm:text-base"
 						>
 							{t('Search')}
 						</Button>

@@ -42,22 +42,22 @@ export default function UpcomingEvents({
 	);
 
 	return (
-		<section className="py-20 bg-muted">
-			<div className="w-[90%] mx-auto ">
-				<div className="flex items-center justify-between mb-8">
-					<h2>{t('Upcoming Events')}</h2>
+		<section className="py-10 sm:py-20 bg-muted">
+			<div className="w-[95%] sm:w-[90%] mx-auto">
+				<div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 sm:mb-8 gap-4 sm:gap-0">
+					<h2 className="text-xl sm:text-2xl my-4">{t('Upcoming Events')}</h2>
 
-					<Button type="submit" onClick={() => router.push('/event')} className="h-14 px-8 ">
-						<div className="flex items-center gap-1 ">
+					<Button type="submit" onClick={() => router.push('/event')} className="h-10 sm:h-14 px-4 sm:px-8">
+						<div className="flex items-center gap-1">
 							{t('View All Events')}
-							<ArrowRight className="w-4 h-4" />
+							<ArrowRight className="w-3 h-3 sm:w-4 sm:h-4" />
 						</div>
 					</Button>
 				</div>
 
-				<div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+				<div className="grid grid-cols-1 md:grid-cols-4 gap-4 sm:gap-6">
 					{/* Large Calendar - Takes most of the space */}
-					<div className="md:col-span-3 bg-card rounded-2xl shadow-sm p-6">
+					<div className="md:col-span-3 bg-card rounded-lg sm:rounded-2xl shadow-sm p-3 sm:p-6">
 						<Calendar
 							mode="single"
 							selected={selectedDate}
@@ -69,17 +69,18 @@ export default function UpcomingEvents({
 								months: 'flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0 w-full justify-center',
 								month: 'space-y-4 w-full',
 								caption: 'flex justify-center pt-1 relative items-center',
-								caption_label: 'text-xl font-semibold text-foreground',
+								caption_label: 'text-lg sm:text-xl font-semibold text-foreground',
 								nav: 'space-x-1 flex items-center',
-								nav_button: 'h-9 w-9 bg-transparent p-0 opacity-50 hover:opacity-100 rounded-full hover:bg-muted',
+								nav_button:
+									'h-7 w-7 sm:h-9 sm:w-9 bg-transparent p-0 opacity-50 hover:opacity-100 rounded-full hover:bg-muted',
 								nav_button_previous: 'absolute left-1',
 								nav_button_next: 'absolute right-1',
 								table: 'w-full border-collapse space-y-1',
 								head_row: 'flex w-full',
-								head_cell: 'text-muted-foreground rounded-md w-full font-medium text-sm',
+								head_cell: 'text-muted-foreground rounded-md w-full font-medium text-xs sm:text-sm',
 								row: 'flex w-full mt-2',
-								cell: 'h-12 w-full text-center text-sm p-0 relative focus-within:relative focus-within:z-20',
-								day: 'h-12 w-12 p-0 mx-auto font-normal aria-selected:opacity-100 rounded-full hover:bg-muted flex items-center justify-center',
+								cell: 'h-8 sm:h-12 w-full text-center text-xs sm:text-sm p-0 relative focus-within:relative focus-within:z-20',
+								day: 'h-8 w-8 sm:h-12 sm:w-12 p-0 mx-auto font-normal aria-selected:opacity-100 rounded-full hover:bg-muted flex items-center justify-center',
 								day_selected:
 									'bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground',
 								day_today: 'text-foreground font-medium',
@@ -91,9 +92,9 @@ export default function UpcomingEvents({
 							components={{
 								DayContent: ({ date }) => (
 									<div className="flex flex-col items-center">
-										<span>{date.getDate()}</span>
+										<span className="text-xs sm:text-sm">{date.getDate()}</span>
 										{events.some((event) => new Date(event.eventDate).toDateString() === date.toDateString()) && (
-											<span className="w-1.5 h-1.5 rounded-full bg-primary mt-1" />
+											<span className="w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full bg-primary mt-0.5 sm:mt-1" />
 										)}
 									</div>
 								),
@@ -103,10 +104,11 @@ export default function UpcomingEvents({
 
 					{/* Events List - Simple bullet points */}
 					<div className="md:col-span-1">
-						<div className="bg-card rounded-2xl shadow-sm p-5 h-full">
-							<div className="flex items-center mb-4">
-								<CalendarIcon className="w-5 h-5 text-primary mr-2" />
-								<h3 className="text-lg font-semibold text-foreground">
+						<div className="bg-card rounded-lg sm:rounded-2xl shadow-sm p-3 sm:p-5 h-full">
+							<div className="flex items-center mb-3 sm:mb-4">
+								{selectedDate !== undefined && <CalendarIcon className="w-4 h-4 sm:w-5 sm:h-5 text-primary mr-2" />}
+
+								<h3 className="text-base font-semibold text-foreground">
 									{selectedDate?.toLocaleDateString('en-US', {
 										month: 'long',
 										day: 'numeric',
@@ -116,21 +118,21 @@ export default function UpcomingEvents({
 							</div>
 
 							{filteredEvents.length > 0 ? (
-								<ul className="space-y-3">
+								<ul className="space-y-2 sm:space-y-3">
 									{filteredEvents.map((event: Event) => (
-										<li key={event._id} className="border-l-2 border-primary pl-3 py-1">
+										<li key={event._id} className="border-l-2 border-primary pl-2 sm:pl-3 py-1">
 											<Link
 												href={`/event/detail?eventId=${event._id}`}
-												className="block group hover:bg-muted -ml-3 pl-3 pr-2 py-2 rounded-r-lg transition-colors"
+												className="block group hover:bg-muted -ml-2 sm:-ml-3 pl-2 sm:pl-3 pr-1 sm:pr-2 py-1.5 sm:py-2 rounded-r-lg transition-colors"
 											>
 												<div className="flex justify-between items-start">
-													<h4 className="font-medium text-foreground text-sm group-hover:text-primary transition-colors line-clamp-1">
+													<h4 className="font-medium text-foreground text-xs group-hover:text-primary transition-colors line-clamp-1">
 														{event.eventName}
 													</h4>
-													<ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors flex-shrink-0 mt-0.5" />
+													<ChevronRight className="w-3 h-3 sm:w-4 sm:h-4 text-muted-foreground group-hover:text-primary transition-colors flex-shrink-0 mt-0.5" />
 												</div>
 												<div className="flex items-center mt-1 text-xs text-muted-foreground">
-													<Clock className="w-3.5 h-3.5 mr-1.5" />
+													<Clock className="w-3 h-3 sm:w-3.5 sm:h-3.5 mr-1 sm:mr-1.5" />
 													{new Date(event.eventDate).toLocaleDateString('en-US', {
 														month: 'long',
 														day: 'numeric',
@@ -138,7 +140,7 @@ export default function UpcomingEvents({
 													})}
 												</div>
 												<div className="flex items-center mt-1 text-xs text-muted-foreground">
-													<MapPin className="w-3.5 h-3.5 mr-1.5 flex-shrink-0" />
+													<MapPin className="w-3 h-3 sm:w-3.5 sm:h-3.5 mr-1 sm:mr-1.5 flex-shrink-0" />
 													<span className="truncate">{event.eventAddress}</span>
 												</div>
 											</Link>
@@ -147,9 +149,9 @@ export default function UpcomingEvents({
 								</ul>
 							) : (
 								<div className="flex flex-col items-center justify-center h-[calc(100%-2rem)] text-center">
-									<CalendarIcon className="w-10 h-10 text-muted-foreground/30 mb-2" />
-									<p className="text-muted-foreground text-sm">{t('No events scheduled')}</p>
-									<p className="text-muted-foreground text-xs mt-1">{t('Select another date')}</p>
+									<CalendarIcon className="w-8 h-8 sm:w-10 sm:h-10 text-muted-foreground/30 mb-2" />
+									<p className="text-xs text-muted-foreground">{t('No events scheduled')}</p>
+									<p className="text-xs text-muted-foreground mt-1">{t('Select another date')}</p>
 								</div>
 							)}
 						</div>

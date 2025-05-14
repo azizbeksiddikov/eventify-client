@@ -39,15 +39,15 @@ const PopularGroups = ({
 	const groups: Group[] = popularGroups?.getGroups?.list;
 
 	return (
-		<section className="py-20 bg-muted">
-			<div className="w-[90%] mx-auto ">
-				<div className="flex items-center justify-between mb-8">
-					<h2>{t('Popular Groups')}</h2>
+		<section className="py-10 sm:py-20 bg-muted">
+			<div className="w-[95%] sm:w-[90%] mx-auto">
+				<div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 sm:mb-8 sm:gap-0">
+					<h2 className="text-xl sm:text-2xl my-4">{t('Popular Groups')}</h2>
 
-					<Button type="submit" onClick={() => router.push('/group')} className="h-14 px-8 ">
-						<div className="flex items-center gap-1 ">
+					<Button type="submit" onClick={() => router.push('/event')} className="h-10 sm:h-14 px-4 sm:px-8">
+						<div className="flex items-center gap-1">
 							{t('View All Groups')}
-							<ArrowRight className="w-4 h-4" />
+							<ArrowRight className="w-3 h-3 sm:w-4 sm:h-4" />
 						</div>
 					</Button>
 				</div>

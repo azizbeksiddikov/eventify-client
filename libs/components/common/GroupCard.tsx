@@ -55,90 +55,86 @@ const GroupCard = ({ group }: GroupCardProps) => {
 							className="object-cover transition-transform duration-300"
 						/>
 					</Link>
-					<div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-						<Badge variant="secondary" className="bg-background/80 backdrop-blur-sm shadow-sm">
-							<Eye className="w-4 h-4 mr-1.5" />
+					<div className="absolute top-2.5 right-2.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+						<Badge variant="secondary" className="bg-background/80 backdrop-blur-sm shadow-sm text-xs px-2 py-0.5">
+							<Eye className="w-3.5 h-3.5 mr-1" />
 							{group.groupViews || 0}
 						</Badge>
 					</div>
-					<div className="absolute bottom-3 left-3">
-						<Badge variant="secondary" className="bg-background/80 backdrop-blur-sm shadow-sm">
-							<Users className="w-4 h-4 mr-1.5" />
+					<div className="absolute bottom-2.5 left-2.5">
+						<Badge variant="secondary" className="bg-background/80 backdrop-blur-sm shadow-sm text-xs px-2 py-0.5">
+							<Users className="w-3.5 h-3.5 mr-1" />
 							{group.memberCount || 0}
 						</Badge>
 					</div>
-					<div className="absolute bottom-3 right-3">
-						<Badge variant="secondary" className="bg-background/80 backdrop-blur-sm shadow-sm">
-							<Calendar className="w-4 h-4 mr-1.5" />
+					<div className="absolute bottom-2.5 right-2.5">
+						<Badge variant="secondary" className="bg-background/80 backdrop-blur-sm shadow-sm text-xs px-2 py-0.5">
+							<Calendar className="w-3.5 h-3.5 mr-1" />
 							{group.eventsCount || 0}
 						</Badge>
 					</div>
 				</div>
 			</CardHeader>
 
-			<CardContent className="space-y-3 p-3 flex-1 flex flex-col">
-				<div className="space-y-2">
-					<h3 className="text-lg font-semibold text-foreground line-clamp-1 h-6">{group.groupName}</h3>
+			<CardContent className="space-y-2.5 p-2 flex-1 flex flex-col">
+				<div className="space-y-1.5">
+					<h3 className="text-base font-semibold text-foreground line-clamp-1 h-5">{group.groupName}</h3>
 
-					<div className="flex flex-wrap gap-1 min-h-[20px]">
+					<div className="flex flex-wrap gap-1 min-h-[18px]">
 						{group.groupCategories.map((category, index) => (
-							<span key={index} className="text-xs text-primary/90 bg-primary/10 px-2 py-0.5 rounded-full">
+							<span key={index} className="text-[11px] text-primary/90 bg-primary/10 px-2 py-0.5 rounded-full">
 								#{category}
 							</span>
 						))}
 					</div>
 
-					<div className="space-y-1.5">
-						<div className="flex items-center gap-2 text-sm text-muted-foreground h-5">
-							<Calendar className="w-4 h-4 flex-shrink-0" />
+					<div className="space-y-1">
+						<div className="flex items-center gap-1.5 text-xs text-muted-foreground h-4.5">
+							<Calendar className="w-3.5 h-3.5 flex-shrink-0" />
 							<span>{new Date(group.createdAt).toLocaleDateString()}</span>
 						</div>
 					</div>
 				</div>
 
-				<div className="grid grid-cols-3 gap-1.5 p-2 bg-muted/50 rounded-lg mt-1">
-					<Tooltip>
-						<TooltipTrigger asChild>
-							<div className="flex items-center justify-center gap-1.5 p-1.5 rounded-md bg-card/70 hover:bg-card transition-colors cursor-help">
-								<Users className="h-3.5 w-3.5 text-primary" />
-								<p className="text-xs font-medium">{group.memberCount || 0}</p>
-							</div>
-						</TooltipTrigger>
-						<TooltipContent side="bottom">{t('Total group members')}</TooltipContent>
-					</Tooltip>
-
-					<Tooltip>
-						<TooltipTrigger asChild>
-							<div className="flex items-center justify-center gap-1.5 p-1.5 rounded-md bg-card/70 hover:bg-card transition-colors cursor-help">
-								<Calendar className="h-3.5 w-3.5 text-primary" />
-								<p className="text-xs font-medium">{group.eventsCount || 0}</p>
-							</div>
-						</TooltipTrigger>
-						<TooltipContent side="bottom">{t('Total events organized')}</TooltipContent>
-					</Tooltip>
-
-					<Tooltip>
-						<TooltipTrigger asChild>
-							<div className="flex items-center justify-center gap-1.5 p-1.5 rounded-md bg-card/70 hover:bg-card transition-colors cursor-help">
-								<Heart className="h-3.5 w-3.5 text-primary" />
-								<p className="text-xs font-medium">{group.groupLikes || 0}</p>
-							</div>
-						</TooltipTrigger>
-						<TooltipContent side="bottom">{t('Total likes received')}</TooltipContent>
-					</Tooltip>
+				<div className="grid grid-cols-3 gap-1.5 p-1.5 bg-muted/50 rounded-lg mt-1">
+					{[
+						{
+							icon: <Users className="h-3 w-3 text-primary" />,
+							value: group.memberCount || 0,
+							label: t('Total group members'),
+						},
+						{
+							icon: <Calendar className="h-3 w-3 text-primary" />,
+							value: group.eventsCount || 0,
+							label: t('Total events organized'),
+						},
+						{
+							icon: <Heart className="h-3 w-3 text-primary" />,
+							value: group.groupLikes || 0,
+							label: t('Total likes received'),
+						},
+					].map((item, i) => (
+						<Tooltip key={i}>
+							<TooltipTrigger asChild>
+								<div className="flex items-center justify-center gap-1.5 p-1 rounded-md bg-card/70 hover:bg-card transition-colors cursor-help">
+									{item.icon}
+									<p className="text-[11px] font-medium">{item.value}</p>
+								</div>
+							</TooltipTrigger>
+							<TooltipContent side="bottom">{item.label}</TooltipContent>
+						</Tooltip>
+					))}
 				</div>
 
 				<div className="px-0.5 mt-1">
-					<div className="relative">
-						<div className="bg-muted/30 p-2 rounded-lg min-h-[48px] flex items-center">
-							{group.groupDesc ? (
-								<p className="text-xs text-foreground leading-relaxed line-clamp-2">{group.groupDesc}</p>
-							) : (
-								<p className="text-xs text-muted-foreground italic flex items-center justify-center py-1 w-full">
-									<span className="bg-muted/50 px-2 py-0.5 rounded-md">{t('No description available')}</span>
-								</p>
-							)}
-						</div>
+					<div className="bg-muted/30 p-1.5 rounded-lg min-h-[44px] flex items-center">
+						{group.groupDesc ? (
+							<p className="text-xs text-foreground leading-snug line-clamp-2">{group.groupDesc}</p>
+						) : (
+							<p className="text-xs text-muted-foreground italic flex items-center justify-center py-1 w-full">
+								<span className="bg-muted/50 px-2 py-0.5 rounded-md">{t('No description available')}</span>
+							</p>
+						)}
 					</div>
 				</div>
 			</CardContent>
@@ -147,11 +143,15 @@ const GroupCard = ({ group }: GroupCardProps) => {
 				<Button
 					variant="ghost"
 					size="sm"
-					className={`h-8 px-3 font-medium transition-all ${group?.meLiked?.[0]?.myFavorite ? 'text-rose-500' : ''}`}
+					className={`h-7 px-2.5 text-xs font-medium transition-all ${
+						group?.meLiked?.[0]?.myFavorite ? 'text-rose-500' : ''
+					}`}
 					onClick={() => likeGroupHandler(group._id)}
 				>
 					<Heart
-						className={`h-3.5 w-3.5 mr-1 transition-all ${group?.meLiked?.[0]?.myFavorite ? 'fill-current stroke-current' : ''}`}
+						className={`h-3 w-3 mr-1 transition-all ${
+							group?.meLiked?.[0]?.myFavorite ? 'fill-current stroke-current' : ''
+						}`}
 					/>
 					{group?.meLiked?.[0]?.myFavorite ? t('Liked') : t('Like')}
 				</Button>
@@ -159,7 +159,9 @@ const GroupCard = ({ group }: GroupCardProps) => {
 				<Button
 					variant={group?.meJoined?.[0]?.meJoined ? 'outline' : 'default'}
 					size="sm"
-					className={`h-8 px-3 font-medium transition-all ${group?.meJoined?.[0]?.meJoined ? 'border-primary/30 text-primary hover:bg-primary/5' : ''}`}
+					className={`h-7 px-2.5 text-xs font-medium transition-all ${
+						group?.meJoined?.[0]?.meJoined ? 'border-primary/30 text-primary hover:bg-primary/5' : ''
+					}`}
 					onClick={() => (group?.meJoined?.[0]?.meJoined ? leaveGroupHandler(group._id) : joinGroupHandler(group._id))}
 				>
 					{group?.meJoined?.[0]?.meJoined ? t('Leave') : t('Join')}
@@ -169,9 +171,9 @@ const GroupCard = ({ group }: GroupCardProps) => {
 					<Button
 						variant="outline"
 						size="sm"
-						className="h-8 rounded-lg hover:bg-primary/5 border-primary/30 text-primary transition-colors"
+						className="h-7 px-2.5 rounded-lg text-xs hover:bg-primary/5 border-primary/30 text-primary transition-colors"
 					>
-						<ExternalLink className="h-3.5 w-3.5 mr-1" />
+						<ExternalLink className="h-3 w-3 mr-1" />
 						{t('View')}
 					</Button>
 				</Link>
