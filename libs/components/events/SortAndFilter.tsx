@@ -95,7 +95,7 @@ function SortAndFilter({ updateURL, eventsSearchFilters, initialSearch }: SortAn
 		});
 	};
 
-	const clearAllFilters = () => {
+	const clearAllHandler = () => {
 		updateURL(initialSearch);
 	};
 
@@ -220,7 +220,7 @@ function SortAndFilter({ updateURL, eventsSearchFilters, initialSearch }: SortAn
 
 					<Button
 						variant="outline"
-						onClick={clearAllFilters}
+						onClick={clearAllHandler}
 						className="h-11 hover:bg-accent hover:text-accent-foreground"
 					>
 						<X className="h-4 w-4 mr-2" />

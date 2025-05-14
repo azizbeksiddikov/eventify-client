@@ -116,38 +116,36 @@ const OrganizersPage = ({
 			<OrganizersHeader />
 			<SortAndFilterOrganizers updateURL={updateURL} organizerSearch={organizerSearch} initialSearch={initialSearch} />
 
-			<div className="max-w-7xl py-10 mx-auto mb-10">
-				{/* Organizers Grid */}
-				<div>
-					{organizers.length > 0 ? (
-						<>
-							<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-								{organizers.map((organizer) => (
-									<OrganizerCard
-										key={organizer._id}
-										organizer={organizer}
-										likeMemberHandler={likeMemberHandler}
-										subscribeHandler={subscribeHandler}
-										unsubscribeHandler={unsubscribeHandler}
-									/>
-								))}
-							</div>
-
-							{/* Pagination */}
-							<div className="mt-8 flex justify-center">
-								<PaginationComponent
-									totalItems={organizers.length}
-									currentPage={organizerSearch.page}
-									pageChangeHandler={pageChangeHandler}
+			{/* Organizers Grid */}
+			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 mb-10">
+				{organizers.length > 0 ? (
+					<>
+						<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+							{organizers.map((organizer) => (
+								<OrganizerCard
+									key={organizer._id}
+									organizer={organizer}
+									likeMemberHandler={likeMemberHandler}
+									subscribeHandler={subscribeHandler}
+									unsubscribeHandler={unsubscribeHandler}
 								/>
-							</div>
-						</>
-					) : (
-						<div className="text-center py-12">
-							<p className="text-muted-foreground">{t('No organizers found. Try adjusting your filters')}.</p>
+							))}
 						</div>
-					)}
-				</div>
+
+						{/* Pagination */}
+						<div className="mt-10 flex justify-center">
+							<PaginationComponent
+								totalItems={organizers.length}
+								currentPage={organizerSearch.page}
+								pageChangeHandler={pageChangeHandler}
+							/>
+						</div>
+					</>
+				) : (
+					<div className="py-16 text-center">
+						<p className="text-muted-foreground">{t('No organizers found. Try adjusting your filters.')}</p>
+					</div>
+				)}
 			</div>
 		</div>
 	);

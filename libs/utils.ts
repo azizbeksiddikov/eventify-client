@@ -2,7 +2,7 @@ import numeral from 'numeral';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { Message } from '@/libs/enums/common.enum';
-import { smallInfo, smallSuccess } from '@/libs/alert';
+import { smallError, smallInfo, smallSuccess } from '@/libs/alert';
 import { TFunction } from 'i18next';
 
 export function cn(...inputs: ClassValue[]) {
@@ -94,6 +94,7 @@ export const likeMember = async (
 		}
 	} catch (err: any) {
 		console.log('ERROR, likeMemberHandler:', err.message);
+		smallError(err.message);
 	}
 };
 

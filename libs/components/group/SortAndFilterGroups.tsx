@@ -49,7 +49,7 @@ function SortAndFilterGroups({ updateURL, groupsSearchFilters, initialSearch }: 
 		});
 	};
 
-	const clearAllFilters = () => {
+	const clearAllHandler = () => {
 		updateURL(initialSearch);
 	};
 
@@ -111,7 +111,7 @@ function SortAndFilterGroups({ updateURL, groupsSearchFilters, initialSearch }: 
 
 					<Button
 						variant="outline"
-						onClick={clearAllFilters}
+						onClick={clearAllHandler}
 						className="h-11 hover:bg-accent hover:text-accent-foreground"
 					>
 						<X className="h-4 w-4 mr-2" />
