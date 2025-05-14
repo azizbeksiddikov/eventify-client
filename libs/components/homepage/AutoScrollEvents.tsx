@@ -42,7 +42,7 @@ const AutoScrollEvents = ({
 	const eventList: Event[] = upcomingEvents?.getEvents?.list || [];
 
 	// Handle keyboard navigation with proper dependencies
-	const handleNavigation = useCallback(
+	const navigationHandler = useCallback(
 		(direction: 'prev' | 'next') => {
 			setIsAutoScrolling(false);
 			lastInteractionTimeRef.current = Date.now();
@@ -72,24 +72,24 @@ const AutoScrollEvents = ({
 	);
 
 	// Handle keyboard navigation
-	const handleKeyDown = useCallback(
+	const keyDownHandler = useCallback(
 		(e: KeyboardEvent) => {
 			if (e.key === 'ArrowLeft') {
-				handleNavigation('prev');
+				navigationHandler('prev');
 			} else if (e.key === 'ArrowRight') {
-				handleNavigation('next');
+				navigationHandler('next');
 			}
 		},
-		[handleNavigation],
+		[navigationHandler],
 	);
 
 	// Setup and cleanup keyboard event listeners
 	useEffect(() => {
-		window.addEventListener('keydown', handleKeyDown);
+		window.addEventListener('keydown', keyDownHandler);
 		return () => {
-			window.removeEventListener('keydown', handleKeyDown);
+			window.removeEventListener('keydown', keyDownHandler);
 		};
-	}, [handleKeyDown]);
+	}, [keyDownHandler]);
 
 	// Auto-scroll functionality
 	useEffect(() => {
@@ -110,7 +110,7 @@ const AutoScrollEvents = ({
 		};
 	}, [eventList.length, isAutoScrolling]);
 
-	const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+	const moveMouseHandler = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
 		if (!containerRef.current) return;
 
 		const rect = containerRef.current.getBoundingClientRect();
@@ -144,7 +144,7 @@ const AutoScrollEvents = ({
 		<section
 			ref={containerRef}
 			className="relative h-[calc(100vh-5rem)] overflow-hidden "
-			onMouseMove={handleMouseMove}
+			onMouseMove={moveMouseHandler}
 			aria-roledescription="carousel"
 			aria-label="Featured events"
 		>
@@ -220,7 +220,7 @@ const AutoScrollEvents = ({
 
 			{/* Navigation buttons with improved accessibility */}
 			<button
-				onClick={() => handleNavigation('prev')}
+				onClick={() => navigationHandler('prev')}
 				className="absolute inset-y-0 left-0 w-1/5 cursor-pointer group flex items-center justify-start pl-4 sm:pl-6 md:pl-8 z-20 focus-visible:outline-0"
 				aria-label="Previous event"
 			>
@@ -234,7 +234,7 @@ const AutoScrollEvents = ({
 				/>
 			</button>
 			<button
-				onClick={() => handleNavigation('next')}
+				onClick={() => navigationHandler('next')}
 				className="absolute inset-y-0 right-0 w-1/5 cursor-pointer group flex items-center justify-end pr-4 sm:pr-6 md:pr-8 z-20 focus-visible:outline-0"
 				aria-label="Next event"
 			>

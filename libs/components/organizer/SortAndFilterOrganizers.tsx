@@ -18,7 +18,7 @@ interface SortAndFilterOrganizersProps {
 const SortAndFilterOrganizers = ({ updateURL, organizerSearch, initialSearch }: SortAndFilterOrganizersProps) => {
 	const { t } = useTranslation('common');
 
-	const handleSearch = (text: string) => {
+	const searchHandler = (text: string) => {
 		updateURL({
 			...organizerSearch,
 			page: 1,
@@ -28,7 +28,7 @@ const SortAndFilterOrganizers = ({ updateURL, organizerSearch, initialSearch }: 
 		});
 	};
 
-	const handleSortChange = (value: string) => {
+	const sortHandler = (value: string) => {
 		updateURL({
 			...organizerSearch,
 			sort: value,
@@ -42,7 +42,7 @@ const SortAndFilterOrganizers = ({ updateURL, organizerSearch, initialSearch }: 
 		});
 	};
 
-	const handleClearFilters = () => {
+	const clearAllHandle = () => {
 		updateURL(initialSearch);
 	};
 
@@ -55,13 +55,13 @@ const SortAndFilterOrganizers = ({ updateURL, organizerSearch, initialSearch }: 
 						<Input
 							placeholder="Search by name, description..."
 							value={organizerSearch.search.text}
-							onChange={(e) => handleSearch(e.target.value)}
+							onChange={(e) => searchHandler(e.target.value)}
 							className="pl-9 pr-4 bg-background text-foreground placeholder:text-muted-foreground focus-visible:ring-ring h-11"
 						/>
 					</div>
 
 					<div className="flex items-center gap-4">
-						<Select value={organizerSearch.sort} onValueChange={handleSortChange}>
+						<Select value={organizerSearch.sort} onValueChange={sortHandler}>
 							<SelectTrigger className="w-[180px] h-11">
 								<ArrowUpDown className="text-muted-foreground" />
 								<SelectValue placeholder="Sort by" />
@@ -95,7 +95,7 @@ const SortAndFilterOrganizers = ({ updateURL, organizerSearch, initialSearch }: 
 
 						<Button
 							variant="outline"
-							onClick={handleClearFilters}
+							onClick={clearAllHandle}
 							className="h-11 hover:bg-accent hover:text-accent-foreground"
 						>
 							<X className="h-4 w-4 " />

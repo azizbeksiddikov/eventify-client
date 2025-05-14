@@ -51,7 +51,7 @@ const GroupRow = ({
 		await removeGroupHandler(group._id);
 	};
 
-	const handleInputChange = (field: keyof GroupUpdateInput, value: string | number) => {
+	const inputHandler = (field: keyof GroupUpdateInput, value: string | number) => {
 		setGroupUpdateInput((prev) => ({
 			...prev,
 			[field]: value,
@@ -75,7 +75,7 @@ const GroupRow = ({
 					{isEditing ? (
 						<Input
 							value={groupUpdateInput.groupName ?? group.groupName ?? ''}
-							onChange={(e) => handleInputChange('groupName', e.target.value)}
+							onChange={(e) => inputHandler('groupName', e.target.value)}
 							className="w-full bg-background text-foreground border-input focus:ring-primary"
 						/>
 					) : (
@@ -94,7 +94,7 @@ const GroupRow = ({
 				{isEditing ? (
 					<Input
 						value={groupUpdateInput.groupDesc ?? group.groupDesc ?? ''}
-						onChange={(e) => handleInputChange('groupDesc', e.target.value)}
+						onChange={(e) => inputHandler('groupDesc', e.target.value)}
 						className="w-full bg-background text-foreground border-input focus:ring-primary"
 					/>
 				) : (

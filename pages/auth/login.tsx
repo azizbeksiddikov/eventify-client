@@ -32,7 +32,7 @@ const Login = () => {
 	const [isLoading, setIsLoading] = useState(false);
 
 	/** HANDLERS **/
-	const handleInput = useCallback((name: string, value: string) => {
+	const inputHandler = useCallback((name: string, value: string) => {
 		setLoginInput((prev) => ({
 			...prev,
 			[name]: value,
@@ -51,7 +51,7 @@ const Login = () => {
 		return true;
 	};
 
-	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+	const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		if (!validateForm()) return;
 
@@ -84,7 +84,7 @@ const Login = () => {
 					</CardDescription>
 				</CardHeader>
 				<CardContent>
-					<form className="space-y-6" onSubmit={handleSubmit}>
+					<form className="space-y-6" onSubmit={submitHandler}>
 						<div className="space-y-4">
 							<div className="space-y-2">
 								<label htmlFor="username" className="text-sm font-medium">
@@ -96,7 +96,7 @@ const Login = () => {
 									type="text"
 									autoComplete="username"
 									value={loginInput.username}
-									onChange={(e) => handleInput(e.target.name, e.target.value)}
+									onChange={(e) => inputHandler(e.target.name, e.target.value)}
 									placeholder={t('Enter your username')}
 								/>
 							</div>
@@ -112,7 +112,7 @@ const Login = () => {
 										type={showPassword ? 'text' : 'password'}
 										autoComplete="current-password"
 										value={loginInput.memberPassword}
-										onChange={(e) => handleInput(e.target.name, e.target.value)}
+										onChange={(e) => inputHandler(e.target.name, e.target.value)}
 										placeholder={t('Enter your password')}
 										className="pr-10"
 									/>

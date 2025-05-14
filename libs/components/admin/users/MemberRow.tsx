@@ -55,14 +55,14 @@ const MemberRow = ({
 		await removeMemberHandler(member._id);
 	};
 
-	const handleInputChange = (field: keyof MemberUpdateInput, value: string | number) => {
+	const inputHandler = (field: keyof MemberUpdateInput, value: string | number) => {
 		setMemberUpdateInput((prev) => ({
 			...prev,
 			[field]: value,
 		}));
 	};
 
-	const handlePhoneChange = (value: string) => {
+	const phoneHandler = (value: string) => {
 		const formattedNumber = formatPhoneNumber(value);
 		setMemberUpdateInput({ ...memberUpdateInput, memberPhone: formattedNumber });
 	};
@@ -103,7 +103,7 @@ const MemberRow = ({
 				{isEditing ? (
 					<Input
 						value={memberUpdateInput.memberFullName ?? ''}
-						onChange={(e) => handleInputChange('memberFullName', e.target.value)}
+						onChange={(e) => inputHandler('memberFullName', e.target.value)}
 						className="h-8"
 					/>
 				) : (
@@ -116,7 +116,7 @@ const MemberRow = ({
 				{isEditing ? (
 					<Input
 						value={memberUpdateInput.memberPhone ?? ''}
-						onChange={(e) => handlePhoneChange(e.target.value)}
+						onChange={(e) => phoneHandler(e.target.value)}
 						className="h-8"
 					/>
 				) : (
@@ -130,7 +130,7 @@ const MemberRow = ({
 					<Input
 						type="number"
 						value={memberUpdateInput.memberPoints ?? 0}
-						onChange={(e) => handleInputChange('memberPoints', parseInt(e.target.value))}
+						onChange={(e) => inputHandler('memberPoints', parseInt(e.target.value))}
 						className="h-8"
 					/>
 				) : (
@@ -141,10 +141,7 @@ const MemberRow = ({
 			{/* MEMBER STATUS */}
 			<TableCell>
 				{isEditing ? (
-					<Select
-						value={memberUpdateInput.memberStatus}
-						onValueChange={(value) => handleInputChange('memberStatus', value)}
-					>
+					<Select value={memberUpdateInput.memberStatus} onValueChange={(value) => inputHandler('memberStatus', value)}>
 						<SelectTrigger className="h-8">
 							<SelectValue placeholder="Select status" />
 						</SelectTrigger>
@@ -161,10 +158,7 @@ const MemberRow = ({
 			{/* MEMBER TYPE */}
 			<TableCell>
 				{isEditing ? (
-					<Select
-						value={memberUpdateInput.memberType}
-						onValueChange={(value) => handleInputChange('memberType', value)}
-					>
+					<Select value={memberUpdateInput.memberType} onValueChange={(value) => inputHandler('memberType', value)}>
 						<SelectTrigger className="h-8">
 							<SelectValue placeholder="Select type" />
 						</SelectTrigger>

@@ -33,12 +33,7 @@ const ChosenGroupData = ({
 	if (!group) return null;
 
 	/** HANDLERS */
-
-	const handleLike = () => {
-		likeGroupHandler(group._id);
-	};
-
-	const handleJoin = () => {
+	const joinHandler = () => {
 		if (isJoined) {
 			leaveGroupHandler(group._id);
 		} else {
@@ -147,7 +142,7 @@ const ChosenGroupData = ({
 							{/* Group Likes and Views */}
 							<div className="flex items-center gap-4 pt-2">
 								<button
-									onClick={handleLike}
+									onClick={() => likeGroupHandler(group._id)}
 									className={cn(
 										'flex items-center gap-2 transition-all duration-200 hover:scale-105 bg-muted/40 hover:bg-muted/50 p-3 rounded-xl',
 										isLiked ? 'text-destructive hover:text-destructive/90' : 'text-muted-foreground hover:text-primary',
@@ -175,7 +170,7 @@ const ChosenGroupData = ({
 						{/* Join/Leave Button */}
 						<div className="bg-accent/30 p-4 rounded-xl">
 							<Button
-								onClick={handleJoin}
+								onClick={joinHandler}
 								size="lg"
 								disabled={isOwner}
 								className={cn(

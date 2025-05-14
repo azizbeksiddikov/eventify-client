@@ -139,7 +139,7 @@ const GroupUpdatePage = () => {
 		}
 	};
 
-	const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+	const imageChangeHandler = async (e: React.ChangeEvent<HTMLInputElement>) => {
 		const file = e.target.files?.[0];
 		if (file) {
 			const imageUrl = URL.createObjectURL(file);
@@ -148,7 +148,7 @@ const GroupUpdatePage = () => {
 		}
 	};
 
-	const handleCropComplete = async (croppedFile: File) => {
+	const cropCompleteHandler = async (croppedFile: File) => {
 		try {
 			const imageUrl = await uploadImage(croppedFile);
 			if (imageUrl) {
@@ -161,7 +161,7 @@ const GroupUpdatePage = () => {
 		}
 	};
 
-	const handleSubmit = async (e: React.FormEvent) => {
+	const submitHandler = async (e: React.FormEvent) => {
 		e.preventDefault();
 		setIsSubmitting(true);
 
@@ -184,18 +184,14 @@ const GroupUpdatePage = () => {
 
 			await smallSuccess(t('Group updated successfully'));
 			router.push(`/group/detail?groupId=${formData._id}`);
-		} catch (error: unknown) {
-			if (error instanceof Error) {
-				smallError(error.message);
-			} else {
-				smallError(t('An unexpected error occurred'));
-			}
+		} catch (error: any) {
+			console.log(error?.message);
 		} finally {
 			setIsSubmitting(false);
 		}
 	};
 
-	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+	const inputHandler = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
 		const { name, value } = e.target;
 
 		setFormData((prev) => {
@@ -207,7 +203,7 @@ const GroupUpdatePage = () => {
 		});
 	};
 
-	const handleCategorySelect = (category: GroupCategory) => {
+	const categoryHandler = (category: GroupCategory) => {
 		if (selectedCategories.includes(category)) {
 			// If category is already selected, remove it
 			setSelectedCategories((prev) => prev.filter((c) => c !== category));
@@ -255,7 +251,7 @@ const GroupUpdatePage = () => {
 				<Card className="p-6 bg-card text-card-foreground">
 					<h1 className="text-3xl font-semibold text-foreground mb-6">{t('Update Group')}</h1>
 
-					<form onSubmit={handleSubmit} className="space-y-6">
+					<form onSubmit={submitHandler} className="space-y-6">
 						{/* Group Name */}
 						<div className="space-y-2">
 							<label htmlFor="groupName" className="text-sm font-medium text-foreground">
@@ -265,7 +261,7 @@ const GroupUpdatePage = () => {
 								id="groupName"
 								name="groupName"
 								value={formData.groupName}
-								onChange={handleInputChange}
+								onChange={inputHandler}
 								placeholder={t('Enter group name')}
 								className="bg-input text-input-foreground border-input"
 								required
@@ -281,7 +277,7 @@ const GroupUpdatePage = () => {
 								id="groupDesc"
 								name="groupDesc"
 								value={formData.groupDesc}
-								onChange={handleInputChange}
+								onChange={inputHandler}
 								placeholder={t('Describe your group')}
 								className="min-h-[120px] bg-input text-input-foreground border-input"
 								required
@@ -297,7 +293,7 @@ const GroupUpdatePage = () => {
 										key={category}
 										type="button"
 										variant={selectedCategories.includes(category) ? 'default' : 'outline'}
-										onClick={() => handleCategorySelect(category)}
+										onClick={() => categoryHandler(category)}
 										disabled={selectedCategories.length >= 3 && !selectedCategories.includes(category)}
 										className={`h-10 transition-all duration-200 ${
 											selectedCategories.includes(category)
@@ -342,7 +338,7 @@ const GroupUpdatePage = () => {
 									name="image"
 									type="file"
 									accept={imageTypes}
-									onChange={handleImageChange}
+									onChange={imageChangeHandler}
 									className="hidden"
 								/>
 								<p className="text-sm text-muted-foreground mt-1">{t('Only JPG, JPEG, and PNG files are allowed')}</p>
@@ -356,7 +352,7 @@ const GroupUpdatePage = () => {
 								setIsCropperOpen(false);
 								setTempImageUrl(null);
 							}}
-							onCropComplete={handleCropComplete}
+							onCropComplete={cropCompleteHandler}
 							imageUrl={tempImageUrl || ''}
 						/>
 

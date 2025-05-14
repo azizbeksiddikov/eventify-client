@@ -18,13 +18,13 @@ import { Message } from '@/libs/enums/common.enum';
 import { formatPhoneNumber } from '@/libs/utils';
 
 interface ProfileSettingsProps {
-	handleUpdateMember: (data: MemberUpdateInput) => void;
+	updateMemberHandler: (data: MemberUpdateInput) => void;
 	memberUpdateInput: MemberUpdateInput;
 	setMemberUpdateInput: (data: MemberUpdateInput) => void;
 }
 
 export const ProfileSettings = ({
-	handleUpdateMember,
+	updateMemberHandler,
 	memberUpdateInput,
 	setMemberUpdateInput,
 }: ProfileSettingsProps) => {
@@ -84,7 +84,7 @@ export const ProfileSettings = ({
 		}
 	};
 
-	const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+	const imageChangeHandler = async (e: React.ChangeEvent<HTMLInputElement>) => {
 		const file = e.target.files?.[0];
 		if (file) {
 			const imageUrl = URL.createObjectURL(file);
@@ -93,17 +93,17 @@ export const ProfileSettings = ({
 		}
 	};
 
-	const handleCropComplete = async (croppedFile: File) => {
+	const cropCompleteHandler = async (croppedFile: File) => {
 		await uploadImage(croppedFile);
 		setTempImageUrl(null);
 	};
 
-	const handlePhoneChange = (value: string) => {
+	const phoneChangeHandler = (value: string) => {
 		const formattedNumber = formatPhoneNumber(value);
 		setMemberUpdateInput({ ...memberUpdateInput, memberPhone: formattedNumber });
 	};
 
-	const handleSubmit = (e: React.FormEvent) => {
+	const submitHandler = (e: React.FormEvent) => {
 		e.preventDefault();
 
 		// Validate email if it's being updated
@@ -112,7 +112,7 @@ export const ProfileSettings = ({
 			return;
 		}
 
-		handleUpdateMember(memberUpdateInput);
+		updateMemberHandler(memberUpdateInput);
 	};
 
 	return (
@@ -120,7 +120,7 @@ export const ProfileSettings = ({
 			<div className="px-6 py-4 border-b border-border">
 				<h2 className="text-lg font-medium text-card-foreground">{t('Profile Settings')}</h2>
 			</div>
-			<form onSubmit={handleSubmit} className="p-6 space-y-6">
+			<form onSubmit={submitHandler} className="p-6 space-y-6">
 				{/* Image Upload Section */}
 				<div className="space-y-4">
 					<label className="text-sm font-medium text-foreground">{t('Profile Image')}</label>
@@ -159,7 +159,7 @@ export const ProfileSettings = ({
 							name="image"
 							type="file"
 							accept={imageTypes}
-							onChange={handleImageChange}
+							onChange={imageChangeHandler}
 							className="hidden"
 						/>
 					</div>
@@ -201,7 +201,7 @@ export const ProfileSettings = ({
 					<Input
 						id="phone"
 						value={memberUpdateInput.memberPhone}
-						onChange={(e) => handlePhoneChange(e.target.value)}
+						onChange={(e) => phoneChangeHandler(e.target.value)}
 						placeholder="XXX-XXXX-XXXX"
 						className="bg-background"
 					/>
@@ -230,7 +230,7 @@ export const ProfileSettings = ({
 							setCropModalOpen(false);
 							setTempImageUrl(null);
 						}}
-						onCropComplete={handleCropComplete}
+						onCropComplete={cropCompleteHandler}
 						imageUrl={tempImageUrl}
 						isCircular={true}
 					/>

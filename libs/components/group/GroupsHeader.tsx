@@ -14,7 +14,7 @@ const GroupsHeader = () => {
 	const { t } = useTranslation('common');
 	const user = useReactiveVar(userVar);
 
-	const handleCreateGroup = () => {
+	const createGroupHandler = () => {
 		if (user.memberType !== MemberType.ORGANIZER) {
 			smallError(t('Only organizers can create groups'));
 			return;
@@ -32,7 +32,7 @@ const GroupsHeader = () => {
 
 				<Button
 					type="button"
-					onClick={handleCreateGroup}
+					onClick={createGroupHandler}
 					className={`h-14 px-8 transition-colors duration-200 ${
 						user.memberType === MemberType.ORGANIZER
 							? 'bg-primary text-primary-foreground hover:bg-primary/90'

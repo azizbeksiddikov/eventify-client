@@ -44,14 +44,14 @@ const Signup = () => {
 	const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
 
-	const handleInput = (name: string, value: string) => {
+	const inputHandler = (name: string, value: string) => {
 		setFormData((prev) => ({
 			...prev,
 			[name]: name === 'username' ? value.toLowerCase() : value,
 		}));
 	};
 
-	const handleMemberTypeChange = (value: MemberType) => {
+	const changeMemberTypeHandler = (value: MemberType) => {
 		setFormData((prev) => ({
 			...prev,
 			memberType: value,
@@ -96,7 +96,7 @@ const Signup = () => {
 		return true;
 	};
 
-	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+	const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		if (!validateForm()) return;
 
@@ -133,7 +133,7 @@ const Signup = () => {
 					</CardDescription>
 				</CardHeader>
 				<CardContent>
-					<form className="space-y-6" onSubmit={handleSubmit}>
+					<form className="space-y-6" onSubmit={submitHandler}>
 						<div className="space-y-4">
 							<div className="space-y-2">
 								<Label className="text-sm font-medium block text-center mb-4">{t('Account Type')}</Label>
@@ -141,7 +141,7 @@ const Signup = () => {
 									<RadioGroup
 										defaultValue={MemberType.USER}
 										value={formData.memberType}
-										onValueChange={handleMemberTypeChange}
+										onValueChange={changeMemberTypeHandler}
 										className="flex flex-row justify-center gap-8"
 									>
 										<Tooltip>
@@ -203,7 +203,7 @@ const Signup = () => {
 									type="text"
 									autoComplete="username"
 									value={formData.username}
-									onChange={(e) => handleInput(e.target.name, e.target.value)}
+									onChange={(e) => inputHandler(e.target.name, e.target.value)}
 									placeholder={t('Enter your username')}
 									tabIndex={3}
 								/>
@@ -219,7 +219,7 @@ const Signup = () => {
 									type="text"
 									autoComplete="email"
 									value={formData.memberEmail}
-									onChange={(e) => handleInput(e.target.name, e.target.value)}
+									onChange={(e) => inputHandler(e.target.name, e.target.value)}
 									placeholder={t('Enter your email')}
 									tabIndex={4}
 								/>
@@ -235,7 +235,7 @@ const Signup = () => {
 									type="text"
 									autoComplete="name"
 									value={formData.memberFullName}
-									onChange={(e) => handleInput(e.target.name, e.target.value)}
+									onChange={(e) => inputHandler(e.target.name, e.target.value)}
 									placeholder={t('Enter your full name')}
 									tabIndex={5}
 								/>
@@ -252,7 +252,7 @@ const Signup = () => {
 										type={showPassword ? 'text' : 'password'}
 										autoComplete="new-password"
 										value={formData.memberPassword}
-										onChange={(e) => handleInput(e.target.name, e.target.value)}
+										onChange={(e) => inputHandler(e.target.name, e.target.value)}
 										placeholder={t('Enter your password')}
 										className="pr-10"
 										tabIndex={6}
@@ -281,7 +281,7 @@ const Signup = () => {
 										type={showConfirmPassword ? 'text' : 'password'}
 										autoComplete="new-password"
 										value={formData.confirmPassword}
-										onChange={(e) => handleInput(e.target.name, e.target.value)}
+										onChange={(e) => inputHandler(e.target.name, e.target.value)}
 										placeholder={t('Confirm your password')}
 										className="pr-10"
 										tabIndex={7}

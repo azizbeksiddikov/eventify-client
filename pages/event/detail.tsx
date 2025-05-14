@@ -17,7 +17,7 @@ import { CREATE_TICKET, LIKE_TARGET_EVENT } from '@/apollo/user/mutation';
 import { Event } from '@/libs/types/event/event';
 import { Message } from '@/libs/enums/common.enum';
 import { smallSuccess } from '@/libs/alert';
-import { likeHandler } from '@/libs/utils';
+import { likeEvent } from '@/libs/utils';
 import MyTickets from '@/libs/components/events/MyTickets';
 import { TicketInput, TicketInquiry } from '@/libs/types/ticket/ticket.input';
 import { Tickets } from '@/libs/types/ticket/ticket';
@@ -99,7 +99,7 @@ const ChosenEvent = () => {
 	/**  HANDLERS */
 
 	const likeEventHandler = async (eventId: string) => {
-		await likeHandler(user._id, eventId, likeTargetEvent, t('Event liked successfully'));
+		await likeEvent(user._id, eventId, likeTargetEvent, t);
 	};
 
 	const purchaseTicketHandler = async () => {

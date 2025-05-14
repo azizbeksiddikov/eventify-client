@@ -10,7 +10,6 @@ import { userVar } from '@/apollo/store';
 
 import { Member } from '@/libs/types/member/member';
 import { CommentGroup } from '@/libs/enums/comment.enum';
-import { Message } from '@/libs/enums/common.enum';
 
 import withBasicLayout from '@/libs/components/layout/LayoutBasic';
 import CommentsComponent from '@/libs/components/common/CommentsComponent';
@@ -19,8 +18,7 @@ import OrganizerHeader from '@/libs/components/organizer/OrganizerHeader';
 import OrganizerProfile from '@/libs/components/organizer/OrganizerProfile';
 import SimilarGroups from '@/libs/components/common/SimilarGroups';
 
-import { smallError, smallSuccess } from '@/libs/alert';
-import { likeHandler } from '@/libs/utils';
+import { followMember, likeEvent, likeMember, unfollowMember } from '@/libs/utils';
 
 export const getStaticProps = async ({ locale }: { locale: string }) => ({
 	props: {
@@ -64,55 +62,19 @@ const OrganizerDetailPage = () => {
 
 	/** HANDLERS */
 	const likeMemberHandler = async (memberId: string) => {
-		try {
-			if (!memberId) return;
-			if (!user._id || user._id === '') throw new Error(Message.NOT_AUTHENTICATED);
-
-			await likeTargetMember({
-				variables: { input: memberId },
-			});
-
-			await smallSuccess(t('Member liked successfully'));
-		} catch (err: any) {
-			console.log('ERROR, likeMemberHandler:', err.message);
-			smallError(err.message);
-		}
+		likeMember(user._id, memberId, likeTargetMember, t);
 	};
 
 	const subscribeHandler = async (memberId: string) => {
-		try {
-			if (!memberId) return;
-			if (!user._id || user._id === '') throw new Error(Message.NOT_AUTHENTICATED);
-
-			await subscribe({
-				variables: { input: memberId },
-			});
-
-			await smallSuccess(t('Member subscribed successfully'));
-		} catch (err: any) {
-			console.log('ERROR, subscribeHandler:', err.message);
-			smallError(err.message);
-		}
+		followMember(user._id, memberId, subscribe, t);
 	};
 
 	const unsubscribeHandler = async (memberId: string) => {
-		try {
-			if (!memberId) return;
-			if (!user._id || user._id === '') throw new Error(Message.NOT_AUTHENTICATED);
-
-			await unsubscribe({
-				variables: { input: memberId },
-			});
-
-			await smallSuccess(t('Member unsubscribed successfully'));
-		} catch (err: any) {
-			console.log('ERROR, unsubscribeHandler:', err.message);
-			smallError(err.message);
-		}
+		unfollowMember(user._id, memberId, unsubscribe, t);
 	};
 
 	const likeEventHandler = async (eventId: string) => {
-		await likeHandler(user._id, eventId, likeTargetEvent, t('Event liked successfully'));
+		await likeEvent(user._id, eventId, likeTargetEvent, t);
 	};
 
 	if (!organizer) return null;

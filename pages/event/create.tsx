@@ -89,12 +89,12 @@ const EventCreatePage = () => {
 		return true;
 	};
 
-	const handleStartTimeChange = (hour: string, minute: string) => {
+	const startTimeChangeHandler = (hour: string, minute: string) => {
 		const newStartTime = `${hour}:${minute}`;
 		if (formData) setFormData((prev) => ({ ...prev, eventStartTime: newStartTime }));
 	};
 
-	const handleEndTimeChange = (hour: string, minute: string) => {
+	const endTimeHandler = (hour: string, minute: string) => {
 		const newEndTime = `${hour}:${minute}`;
 		if (formData) setFormData((prev) => ({ ...prev, eventEndTime: newEndTime }));
 	};
@@ -145,7 +145,7 @@ const EventCreatePage = () => {
 		}
 	};
 
-	const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+	const imageChangeHandler = async (e: React.ChangeEvent<HTMLInputElement>) => {
 		const file = e.target.files?.[0];
 		if (file) {
 			const imageUrl = URL.createObjectURL(file);
@@ -154,7 +154,7 @@ const EventCreatePage = () => {
 		}
 	};
 
-	const handleCropComplete = async (croppedFile: File) => {
+	const cropCompleteHandler = async (croppedFile: File) => {
 		try {
 			const imageUrl = await uploadImage(croppedFile);
 			if (imageUrl) {
@@ -167,7 +167,7 @@ const EventCreatePage = () => {
 		}
 	};
 
-	const handleSubmit = async (e: React.FormEvent) => {
+	const submitHandler = async (e: React.FormEvent) => {
 		e.preventDefault();
 		setIsSubmitting(true);
 
@@ -203,18 +203,14 @@ const EventCreatePage = () => {
 
 			await smallSuccess(t('Event created successfully'));
 			router.push(`/event/detail?eventId=${createEventData?.createEvent?._id}`);
-		} catch (error: unknown) {
-			if (error instanceof Error) {
-				smallError(error.message);
-			} else {
-				smallError(t('An unexpected error occurred'));
-			}
+		} catch (error: any) {
+			console.log(error?.message);
 		} finally {
 			setIsSubmitting(false);
 		}
 	};
 
-	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+	const inputHandler = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
 		const { name, value } = e.target;
 
 		if (name === 'eventCapacity' || name === 'eventPrice') {
@@ -238,7 +234,7 @@ const EventCreatePage = () => {
 		}
 	};
 
-	const handleCategorySelect = (category: EventCategory) => {
+	const categoryHandler = (category: EventCategory) => {
 		if (selectedCategories.includes(category)) {
 			// If category is already selected, remove it
 			setSelectedCategories((prev) => prev.filter((c) => c !== category));
@@ -265,7 +261,7 @@ const EventCreatePage = () => {
 				<Card className="p-6 bg-card text-card-foreground">
 					<h1 className="text-3xl font-semibold text-foreground mb-6">{t('Create New Event')}</h1>
 
-					<form onSubmit={handleSubmit} className="space-y-6">
+					<form onSubmit={submitHandler} className="space-y-6">
 						{/* Group Selection */}
 						<div className="space-y-2">
 							<label htmlFor="groupId" className="text-sm font-medium text-foreground">
@@ -336,7 +332,7 @@ const EventCreatePage = () => {
 								id="eventName"
 								name="eventName"
 								value={formData.eventName}
-								onChange={handleInputChange}
+								onChange={inputHandler}
 								placeholder={t('Enter event name')}
 								className="bg-input text-input-foreground border-input"
 							/>
@@ -351,7 +347,7 @@ const EventCreatePage = () => {
 								id="eventDesc"
 								name="eventDesc"
 								value={formData.eventDesc}
-								onChange={handleInputChange}
+								onChange={inputHandler}
 								placeholder={t('Describe your event')}
 								className="min-h-[120px] bg-input text-input-foreground border-input"
 							/>
@@ -366,7 +362,7 @@ const EventCreatePage = () => {
 										key={category}
 										type="button"
 										variant={selectedCategories.includes(category) ? 'default' : 'outline'}
-										onClick={() => handleCategorySelect(category)}
+										onClick={() => categoryHandler(category)}
 										disabled={selectedCategories.length >= 3 && !selectedCategories.includes(category)}
 										className={`h-10 transition-all duration-200 ${
 											selectedCategories.includes(category)
@@ -420,7 +416,7 @@ const EventCreatePage = () => {
 										value={formData.eventStartTime.split(':')[0]}
 										onValueChange={(hour) => {
 											const currentTime = formData.eventStartTime.split(':');
-											handleStartTimeChange(hour, currentTime[1]);
+											startTimeChangeHandler(hour, currentTime[1]);
 										}}
 									>
 										<SelectTrigger className="w-20 bg-input text-input-foreground border-input hover:bg-accent hover:text-accent-foreground transition-colors duration-200">
@@ -444,7 +440,7 @@ const EventCreatePage = () => {
 										value={formData.eventStartTime.split(':')[1]}
 										onValueChange={(minute) => {
 											const currentTime = formData.eventStartTime.split(':');
-											handleStartTimeChange(currentTime[0], minute);
+											startTimeChangeHandler(currentTime[0], minute);
 										}}
 									>
 										<SelectTrigger className="w-20 bg-input text-input-foreground border-input hover:bg-accent hover:text-accent-foreground transition-colors duration-200">
@@ -478,7 +474,7 @@ const EventCreatePage = () => {
 										value={formData.eventEndTime.split(':')[0]}
 										onValueChange={(hour) => {
 											const currentTime = formData.eventEndTime.split(':');
-											handleEndTimeChange(hour, currentTime[1]);
+											endTimeHandler(hour, currentTime[1]);
 										}}
 									>
 										<SelectTrigger className="w-20 bg-input text-input-foreground border-input hover:bg-accent hover:text-accent-foreground transition-colors duration-200">
@@ -502,7 +498,7 @@ const EventCreatePage = () => {
 										value={formData.eventEndTime.split(':')[1]}
 										onValueChange={(minute) => {
 											const currentTime = formData.eventEndTime.split(':');
-											handleEndTimeChange(currentTime[0], minute);
+											endTimeHandler(currentTime[0], minute);
 										}}
 									>
 										<SelectTrigger className="w-20 bg-input text-input-foreground border-input hover:bg-accent hover:text-accent-foreground transition-colors duration-200">
@@ -539,7 +535,7 @@ const EventCreatePage = () => {
 									id="eventCity"
 									name="eventCity"
 									value={formData.eventCity}
-									onChange={handleInputChange}
+									onChange={inputHandler}
 									placeholder={t('Enter city')}
 									className="bg-input text-input-foreground border-input"
 								/>
@@ -552,7 +548,7 @@ const EventCreatePage = () => {
 									id="eventAddress"
 									name="eventAddress"
 									value={formData.eventAddress}
-									onChange={handleInputChange}
+									onChange={inputHandler}
 									placeholder={t('Enter address')}
 									className="bg-input text-input-foreground border-input"
 								/>
@@ -570,7 +566,7 @@ const EventCreatePage = () => {
 									name="eventCapacity"
 									type="number"
 									value={formData.eventCapacity === undefined ? '' : String(formData.eventCapacity)}
-									onChange={handleInputChange}
+									onChange={inputHandler}
 									placeholder={t('Enter event capacity')}
 									className="bg-input text-input-foreground border-input"
 								/>
@@ -585,7 +581,7 @@ const EventCreatePage = () => {
 									type="number"
 									// Convert to string and strip leading zeros when displaying
 									value={formData.eventPrice === undefined ? '' : String(formData.eventPrice)}
-									onChange={handleInputChange}
+									onChange={inputHandler}
 									placeholder={t('Enter event price')}
 									className="bg-input text-input-foreground border-input"
 								/>
@@ -624,7 +620,7 @@ const EventCreatePage = () => {
 									name="image"
 									type="file"
 									accept={imageTypes}
-									onChange={handleImageChange}
+									onChange={imageChangeHandler}
 									className="hidden"
 								/>
 								<p className="text-sm text-muted-foreground mt-1">{t('Only JPG, JPEG, and PNG files are allowed')}</p>
@@ -638,7 +634,7 @@ const EventCreatePage = () => {
 								setIsCropperOpen(false);
 								setTempImageUrl(null);
 							}}
-							onCropComplete={handleCropComplete}
+							onCropComplete={cropCompleteHandler}
 							imageUrl={tempImageUrl || ''}
 						/>
 

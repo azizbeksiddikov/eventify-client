@@ -21,7 +21,7 @@ interface FaqFormProps {
 
 const FaqForm = ({ data, onChange }: FaqFormProps) => {
 	const { t } = useTranslation();
-	const handleChange = (field: keyof FaqFormData, value: string) => {
+	const changeHandler = (field: keyof FaqFormData, value: string) => {
 		onChange({ ...data, [field]: value });
 	};
 
@@ -30,7 +30,7 @@ const FaqForm = ({ data, onChange }: FaqFormProps) => {
 			<div className="grid grid-cols-2 gap-4">
 				<div className="space-y-2">
 					<label className="text-sm font-medium text-muted-foreground">{t('Group')}</label>
-					<Select value={data.faqGroup} onValueChange={(value) => handleChange('faqGroup', value as FaqGroup)}>
+					<Select value={data.faqGroup} onValueChange={(value) => changeHandler('faqGroup', value as FaqGroup)}>
 						<SelectTrigger className="w-full">
 							<SelectValue placeholder={t('Select group')} />
 						</SelectTrigger>
@@ -46,7 +46,7 @@ const FaqForm = ({ data, onChange }: FaqFormProps) => {
 
 				<div className="space-y-2">
 					<label className="text-sm font-medium text-muted-foreground">{t('Status')}</label>
-					<Select value={data.faqStatus} onValueChange={(value) => handleChange('faqStatus', value as FaqStatus)}>
+					<Select value={data.faqStatus} onValueChange={(value) => changeHandler('faqStatus', value as FaqStatus)}>
 						<SelectTrigger className="w-full">
 							<SelectValue placeholder={t('Select status')} />
 						</SelectTrigger>
@@ -65,7 +65,7 @@ const FaqForm = ({ data, onChange }: FaqFormProps) => {
 				<label className="text-sm font-medium text-muted-foreground">{t('Question')}</label>
 				<Input
 					value={data.faqQuestion}
-					onChange={(e) => handleChange('faqQuestion', e.target.value)}
+					onChange={(e) => changeHandler('faqQuestion', e.target.value)}
 					className="bg-background"
 					placeholder={t('Enter question')}
 				/>
@@ -75,7 +75,7 @@ const FaqForm = ({ data, onChange }: FaqFormProps) => {
 				<label className="text-sm font-medium text-muted-foreground">{t('Answer')}</label>
 				<Textarea
 					value={data.faqAnswer}
-					onChange={(e) => handleChange('faqAnswer', e.target.value)}
+					onChange={(e) => changeHandler('faqAnswer', e.target.value)}
 					className="bg-background min-h-[150px] resize-none"
 					placeholder={t('Enter answer')}
 				/>

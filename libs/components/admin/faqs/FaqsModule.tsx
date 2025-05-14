@@ -45,27 +45,27 @@ const FaqsModule = ({
 		}
 	}, [faqByGroup]);
 
-	const handleCreateFaq = async () => {
+	const createHandler = async () => {
 		if (!newFaq.faqQuestion || !newFaq.faqAnswer) return;
 		await createFaqHandler(newFaq);
 		setNewFaq(initialNewFaq);
 		setIsCreating(false);
 	};
 
-	const handleCancelCreate = () => {
+	const cancelHandler = () => {
 		setNewFaq(initialNewFaq);
 		setIsCreating(false);
 	};
 
 	const toggleCreateForm = () => {
 		if (isCreating) {
-			handleCancelCreate();
+			cancelHandler();
 		} else {
 			setIsCreating(true);
 		}
 	};
 
-	const handleTabChange = (value: string) => {
+	const tabHandler = (value: string) => {
 		const newGroup = value as FaqGroup;
 		setActiveTab(newGroup);
 		setIsCreating(false);
@@ -79,7 +79,7 @@ const FaqsModule = ({
 				<Separator className="bg-border" />
 
 				<div className="container max-w-4xl mx-auto my-10">
-					<Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
+					<Tabs value={activeTab} onValueChange={tabHandler} className="w-full">
 						<TabsList className="grid w-full grid-cols-3 mb-8 h-12">
 							{faqByGroup.map((group) => (
 								<TabsTrigger key={group.faqGroup} value={group.faqGroup} className="text-base font-medium">
@@ -127,10 +127,10 @@ const FaqsModule = ({
 													}
 												/>
 												<div className="flex justify-end space-x-2 pt-4">
-													<Button variant="outline" onClick={handleCancelCreate}>
+													<Button variant="outline" onClick={cancelHandler}>
 														{t('Cancel')}
 													</Button>
-													<Button onClick={handleCreateFaq}>{t('Create FAQ')}</Button>
+													<Button onClick={createHandler}>{t('Create FAQ')}</Button>
 												</div>
 											</CardContent>
 										</Card>

@@ -12,12 +12,12 @@ import { Member } from '@/libs/types/member/member';
 
 interface OrganizerCardProps {
 	organizer: Member;
-	likeHandler: (memberId: string) => void;
+	likeMemberHandler: (memberId: string) => void;
 	subscribeHandler: (memberId: string) => void;
 	unsubscribeHandler: (memberId: string) => void;
 }
 
-const OrganizerCard = ({ organizer, likeHandler, subscribeHandler, unsubscribeHandler }: OrganizerCardProps) => {
+const OrganizerCard = ({ organizer, likeMemberHandler, subscribeHandler, unsubscribeHandler }: OrganizerCardProps) => {
 	const { t } = useTranslation('common');
 
 	return (
@@ -104,7 +104,7 @@ const OrganizerCard = ({ organizer, likeHandler, subscribeHandler, unsubscribeHa
 					size="sm"
 					className={`w-full sm:w-auto h-9 sm:h-10 px-3 sm:px-4 font-medium transition-all rounded-lg ${organizer?.meLiked?.[0]?.myFavorite ? 'text-rose-500 hover:text-rose-600 hover:bg-rose-50/30' : 'hover:text-rose-500 hover:bg-rose-50/20'}`}
 					onClick={() => {
-						likeHandler(organizer._id);
+						likeMemberHandler(organizer._id);
 					}}
 				>
 					<Heart

@@ -18,13 +18,13 @@ interface ProfileTabsProps {
 	tickets: Ticket[];
 	followings: Member[];
 	followers: Member[];
-	handleUpdateMember: (data: MemberUpdateInput) => void;
+	updateMemberHandler: (data: MemberUpdateInput) => void;
 	likeMemberHandler: (memberId: string) => void;
 	subscribeHandler: (memberId: string) => void;
 	unsubscribeHandler: (memberId: string) => void;
 	likeGroupHandler: (groupId: string) => void;
-	handleJoinGroup: (groupId: string) => void;
-	handleLeaveGroup: (groupId: string) => void;
+	joinGroupHandler: (groupId: string) => void;
+	leaveGroupHandler: (groupId: string) => void;
 	cancelTicketHandler: (ticketId: string) => void;
 	memberUpdateInput: MemberUpdateInput;
 	setMemberUpdateInput: (data: MemberUpdateInput) => void;
@@ -35,13 +35,13 @@ export const ProfileTabs = ({
 	tickets,
 	followings,
 	followers,
-	handleUpdateMember,
+	updateMemberHandler,
 	likeMemberHandler,
 	subscribeHandler,
 	unsubscribeHandler,
 	likeGroupHandler,
-	handleJoinGroup,
-	handleLeaveGroup,
+	joinGroupHandler,
+	leaveGroupHandler,
 	cancelTicketHandler,
 	memberUpdateInput,
 	setMemberUpdateInput,
@@ -68,8 +68,8 @@ export const ProfileTabs = ({
 				<ProfileGroups
 					groups={groups}
 					likeGroupHandler={likeGroupHandler}
-					handleJoinGroup={handleJoinGroup}
-					handleLeaveGroup={handleLeaveGroup}
+					joinGroupHandler={joinGroupHandler}
+					leaveGroupHandler={leaveGroupHandler}
 				/>
 			</TabsContent>
 
@@ -96,7 +96,7 @@ export const ProfileTabs = ({
 
 			<TabsContent value="settings" className="mt-0">
 				<ProfileSettings
-					handleUpdateMember={handleUpdateMember}
+					updateMemberHandler={updateMemberHandler}
 					memberUpdateInput={memberUpdateInput}
 					setMemberUpdateInput={setMemberUpdateInput}
 				/>

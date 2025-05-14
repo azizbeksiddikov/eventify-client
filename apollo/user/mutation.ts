@@ -207,7 +207,7 @@ export const UPDATE_GROUP = gql`
 
 export const JOIN_GROUP = gql`
 	mutation JoinGroup($input: String!) {
-		joinGroup(groupId: $input) {
+		joinTargetGroup(groupId: $input) {
 			_id
 			memberCount
 			updatedAt
@@ -224,7 +224,7 @@ export const JOIN_GROUP = gql`
 
 export const LEAVE_GROUP = gql`
 	mutation LeaveGroup($input: String!) {
-		leaveGroup(groupId: $input) {
+		leaveTargetGroup(groupId: $input) {
 			_id
 			memberCount
 			updatedAt

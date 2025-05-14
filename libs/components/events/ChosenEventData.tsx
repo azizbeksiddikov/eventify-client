@@ -46,17 +46,17 @@ const ChosenEventData = ({
 
 	if (!event) return null;
 
-	const handleQuantityChange = (newQuantity: number) => {
+	const quantityHandler = (newQuantity: number) => {
 		if (newQuantity < 1 || newQuantity > event.eventCapacity) return;
 		// @ts-expect-error - TicketInput type is not properly defined in the interface
 		setTicketInput({ ...ticketInput, ticketQuantity: newQuantity });
 	};
 
-	const handlePurchaseClick = () => {
+	const purchaseHandler = () => {
 		setIsPaymentDialogOpen(true);
 	};
 
-	const handleConfirmPurchase = () => {
+	const confirmPurchaseHandler = () => {
 		setIsPaymentDialogOpen(false);
 		purchaseTicketHandler();
 	};
@@ -222,7 +222,7 @@ const ChosenEventData = ({
 											variant="outline"
 											size="icon"
 											className="h-9 w-9 hover:bg-primary/10 hover:text-primary transition-colors border-primary/20"
-											onClick={() => handleQuantityChange(ticketInput!.ticketQuantity - 1)}
+											onClick={() => quantityHandler(ticketInput!.ticketQuantity - 1)}
 										>
 											<Minus className="h-4 w-4" />
 										</Button>
@@ -231,7 +231,7 @@ const ChosenEventData = ({
 											variant="outline"
 											size="icon"
 											className="h-9 w-9 hover:bg-primary/10 hover:text-primary transition-colors border-primary/20"
-											onClick={() => handleQuantityChange(ticketInput!.ticketQuantity + 1)}
+											onClick={() => quantityHandler(ticketInput!.ticketQuantity + 1)}
 										>
 											<Plus className="h-4 w-4" />
 										</Button>
@@ -241,7 +241,7 @@ const ChosenEventData = ({
 										</div>
 									</div>
 									<Button
-										onClick={handlePurchaseClick}
+										onClick={purchaseHandler}
 										size="sm"
 										className="h-8 bg-primary hover:bg-primary/90 text-primary-foreground px-6 shadow-sm hover:shadow transition-all duration-200"
 									>
@@ -288,7 +288,7 @@ const ChosenEventData = ({
 						<Button variant="outline" onClick={() => setIsPaymentDialogOpen(false)}>
 							{t('Cancel')}
 						</Button>
-						<Button onClick={handleConfirmPurchase} className="bg-primary hover:bg-primary/90">
+						<Button onClick={confirmPurchaseHandler} className="bg-primary hover:bg-primary/90">
 							{t('Confirm Payment')}
 						</Button>
 					</DialogFooter>

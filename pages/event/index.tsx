@@ -16,7 +16,7 @@ import CategoriesSidebar from '@/libs/components/events/CategoriesSidebar';
 
 import { GET_EVENTS } from '@/apollo/user/query';
 import { LIKE_TARGET_EVENT } from '@/apollo/user/mutation';
-import { likeHandler, parseDate } from '@/libs/utils';
+import { likeEvent, parseDate } from '@/libs/utils';
 import { EventCategory, EventStatus } from '@/libs/enums/event.enum';
 import { Event } from '@/libs/types/event/event';
 import { EventsInquiry } from '@/libs/types/event/event.input';
@@ -143,7 +143,7 @@ const EventsPage = ({
 	};
 
 	const likeEventHandler = async (eventId: string) => {
-		await likeHandler(user._id, eventId, likeTargetEvent, t('Event liked successfully'));
+		await likeEvent(user._id, eventId, likeTargetEvent, t);
 	};
 
 	return (

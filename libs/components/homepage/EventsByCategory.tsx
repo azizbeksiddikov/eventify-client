@@ -13,9 +13,7 @@ import { LIKE_TARGET_EVENT } from '@/apollo/user/mutation';
 import { Event, CategoryEvents } from '@/libs/types/event/event';
 import { EventsByCategoryInquiry } from '@/libs/types/event/event.input';
 import { EventCategory } from '@/libs/enums/event.enum';
-import { Message } from '@/libs/enums/common.enum';
-import { smallError } from '@/libs/alert';
-import { smallSuccess } from '@/libs/alert';
+import { likeEvent } from '@/libs/utils';
 
 interface EventsByCategoryProps {
 	initialInput?: EventsByCategoryInquiry;
@@ -41,25 +39,8 @@ const EventsByCategory = ({
 	const eventsByCategory: CategoryEvents[] = data?.getEventsByCategory?.categories;
 
 	/** HANDLERS **/
-	const likeEventHandler = async (groupId: string) => {
-		try {
-			if (!groupId) return;
-			if (!user._id || user._id === '') throw new Error(Message.NOT_AUTHENTICATED);
-
-			const result: any = await likeTargetEvent({
-				variables: { input: groupId },
-			});
-
-			if (result.data.likeTargetEvent?.MeLiked.length > 0) {
-				await smallSuccess(t('Event liked successfully'));
-			} else {
-				await smallError(t('Event unliked successfully'));
-			}
-		} catch (error: unknown) {
-			const err = error as Error;
-			console.log('ERROR, likeEventHandler:', err.message);
-			smallError(err.message);
-		}
+	const likeEventHandler = async (eventId: string) => {
+		await likeEvent(user._id, eventId, likeTargetEvent, t);
 	};
 
 	return (

@@ -16,11 +16,11 @@ interface CategoriesSidebarProps {
 
 const CategoriesSidebar = ({ eventsSearchFilters, updateURL, initialSearch }: CategoriesSidebarProps) => {
 	const { t } = useTranslation('common');
-	const handleClearAll = () => {
+	const clearAllHandler = () => {
 		updateURL(initialSearch);
 	};
 
-	const handleCategoryChange = (category: EventCategory) => {
+	const categoryChangeHandler = (category: EventCategory) => {
 		const currentCategories = eventsSearchFilters.search.eventCategories || [];
 		const newCategories = currentCategories.includes(category)
 			? currentCategories.filter((cat) => cat !== category)
@@ -39,7 +39,7 @@ const CategoriesSidebar = ({ eventsSearchFilters, updateURL, initialSearch }: Ca
 				<div className="space-y-2">
 					<Button
 						type="submit"
-						onClick={handleClearAll}
+						onClick={clearAllHandler}
 						className="h-10 px-6 bg-secondary/50 text-card-foreground my-4"
 					>
 						<div className="flex items-center gap-1">
@@ -50,7 +50,7 @@ const CategoriesSidebar = ({ eventsSearchFilters, updateURL, initialSearch }: Ca
 					{Object.values(EventCategory).map((category) => (
 						<div
 							key={category}
-							onClick={() => handleCategoryChange(category)}
+							onClick={() => categoryChangeHandler(category)}
 							className="w-full flex items-center space-x-3 p-2 rounded-lg hover:bg-primary/10 transition-colors duration-200 text-left cursor-pointer"
 						>
 							<Checkbox

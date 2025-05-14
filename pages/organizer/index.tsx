@@ -12,11 +12,11 @@ import PaginationComponent from '@/libs/components/common/PaginationComponent';
 
 import { GET_ORGANIZERS } from '@/apollo/user/query';
 import { SUBSCRIBE, UNSUBSCRIBE, LIKE_TARGET_MEMBER } from '@/apollo/user/mutation';
-import { Direction, Message } from '@/libs/enums/common.enum';
+import { Direction } from '@/libs/enums/common.enum';
 import { OrganizersInquiry } from '@/libs/types/member/member.input';
-import { smallError, smallSuccess } from '@/libs/alert';
 import { Member } from '@/libs/types/member/member';
 import { userVar } from '@/apollo/store';
+import { followMember, likeMember, unfollowMember } from '@/libs/utils';
 
 export const getStaticProps = async ({ locale }: { locale: string }) => ({
 	props: {
@@ -96,50 +96,15 @@ const OrganizersPage = ({
 
 	/** HANDLERS */
 	const likeMemberHandler = async (memberId: string) => {
-		try {
-			if (!memberId) return;
-			if (!user._id || user._id === '') throw new Error(Message.NOT_AUTHENTICATED);
-
-			await likeTargetMember({
-				variables: { input: memberId },
-			});
-
-			await smallSuccess(t('Member liked successfully'));
-		} catch (err: any) {
-			console.log('ERROR, likeMemberHandler:', err.message);
-			smallError(err.message);
-		}
+		likeMember(user._id, memberId, likeTargetMember, t);
 	};
 
 	const subscribeHandler = async (memberId: string) => {
-		try {
-			if (!memberId) return;
-			if (!user._id || user._id === '') throw new Error(Message.NOT_AUTHENTICATED);
-
-			await subscribe({
-				variables: { input: memberId },
-			});
-
-			await smallSuccess(t('Member subscribed successfully'));
-		} catch (err: any) {
-			console.log('ERROR, subscribeHandler:', err.message);
-		}
+		followMember(user._id, memberId, subscribe, t);
 	};
 
 	const unsubscribeHandler = async (memberId: string) => {
-		try {
-			if (!memberId) return;
-			if (!user._id || user._id === '') throw new Error(Message.NOT_AUTHENTICATED);
-
-			await unsubscribe({
-				variables: { input: memberId },
-			});
-
-			await smallSuccess(t('Member unsubscribed successfully'));
-		} catch (err: any) {
-			console.log('ERROR, unsubscribeHandler:', err.message);
-			smallError(err.message);
-		}
+		unfollowMember(user._id, memberId, unsubscribe, t);
 	};
 
 	const pageChangeHandler = (newPage: number) => {
@@ -161,7 +126,7 @@ const OrganizersPage = ({
 									<OrganizerCard
 										key={organizer._id}
 										organizer={organizer}
-										likeHandler={likeMemberHandler}
+										likeMemberHandler={likeMemberHandler}
 										subscribeHandler={subscribeHandler}
 										unsubscribeHandler={unsubscribeHandler}
 									/>

@@ -8,6 +8,8 @@ import { REACT_APP_API_URL } from '@/libs/config';
 import { Member } from '@/libs/types/member/member';
 import { MemberType } from '@/libs/enums/member.enum';
 import { Avatar, AvatarFallback, AvatarImage } from '@radix-ui/react-avatar';
+import { useReactiveVar } from '@apollo/client';
+import { userVar } from '@/apollo/store';
 
 interface OrganizerProfileProps {
 	organizer: Member;
@@ -54,8 +56,9 @@ const OrganizerProfile = ({
 	unsubscribeHandler,
 }: OrganizerProfileProps) => {
 	const { t } = useTranslation('common');
+	const user = useReactiveVar(userVar);
 
-	const handleFollow = () => {
+	const followHandler = () => {
 		if (organizer?.meFollowed?.[0]?.myFollowing) {
 			unsubscribeHandler(organizer._id);
 		} else {
@@ -63,10 +66,7 @@ const OrganizerProfile = ({
 		}
 	};
 
-	const handleLike = () => {
-		likeMemberHandler(organizer._id);
-	};
-
+	console.log('organizer', organizer);
 	return (
 		<div className="lg:col-span-2 bg-card rounded-2xl shadow-sm border border-border/50 overflow-hidden transition-all duration-200 hover:shadow-md">
 			<div className="relative bg-gradient-to-b from-primary/5 to-transparent p-6 md:p-8">
@@ -90,13 +90,14 @@ const OrganizerProfile = ({
 						<div className="flex items-center gap-3">
 							<Button
 								variant={organizer?.meFollowed?.[0]?.myFollowing ? 'outline' : 'default'}
-								onClick={handleFollow}
+								disabled={organizer?._id === user?._id}
+								onClick={followHandler}
 								className="min-w-[100px] transition-all duration-200"
 							>
 								{organizer?.meFollowed?.[0]?.myFollowing ? t('Following') : t('Follow')}
 							</Button>
 							<button
-								onClick={handleLike}
+								onClick={() => likeMemberHandler(organizer._id)}
 								className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-200 ${
 									organizer?.meLiked?.[0]?.myFavorite
 										? 'bg-red-50 text-red-500 hover:bg-red-100 dark:bg-red-950/50 dark:hover:bg-red-950'

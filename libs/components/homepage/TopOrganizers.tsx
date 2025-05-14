@@ -9,10 +9,11 @@ import OrganizerCard from '@/libs/components/common/OrganizerCard';
 
 import { GET_ORGANIZERS } from '@/apollo/user/query';
 import { LIKE_TARGET_MEMBER, SUBSCRIBE, UNSUBSCRIBE } from '@/apollo/user/mutation';
-import { smallError, smallSuccess } from '@/libs/alert';
+import { smallSuccess } from '@/libs/alert';
 import { Member } from '@/libs/types/member/member';
 import { OrganizersInquiry } from '@/libs/types/member/member.input';
 import { Direction, Message } from '@/libs/enums/common.enum';
+import { likeMember } from '@/libs/utils';
 
 interface TopOrganizersProps {
 	initialInput?: OrganizersInquiry;
@@ -48,19 +49,7 @@ const TopOrganizers = ({
 
 	/** HANDLERS */
 	const likeMemberHandler = async (memberId: string) => {
-		try {
-			if (!memberId) return;
-			if (!user._id || user._id === '') throw new Error(Message.NOT_AUTHENTICATED);
-
-			await likeTargetMember({
-				variables: { input: memberId },
-			});
-
-			await smallSuccess(t('Member liked successfully'));
-		} catch (err: any) {
-			console.log('ERROR, likeMemberHandler:', err.message);
-			smallError(err.message);
-		}
+		likeMember(user._id, memberId, likeTargetMember, t);
 	};
 
 	const subscribeHandler = async (memberId: string) => {
@@ -75,7 +64,6 @@ const TopOrganizers = ({
 			await smallSuccess(t('Member subscribed successfully'));
 		} catch (err: any) {
 			console.log('ERROR, subscribeHandler:', err.message);
-			smallError(err.message);
 		}
 	};
 
@@ -91,7 +79,6 @@ const TopOrganizers = ({
 			await smallSuccess(t('Member unsubscribed successfully'));
 		} catch (err: any) {
 			console.log('ERROR, unsubscribeHandler:', err.message);
-			smallError(err.message);
 		}
 	};
 
@@ -117,7 +104,7 @@ const TopOrganizers = ({
 						<OrganizerCard
 							key={organizer._id}
 							organizer={organizer}
-							likeHandler={likeMemberHandler}
+							likeMemberHandler={likeMemberHandler}
 							subscribeHandler={subscribeHandler}
 							unsubscribeHandler={unsubscribeHandler}
 						/>

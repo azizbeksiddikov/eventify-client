@@ -2,7 +2,6 @@ import { Avatar, AvatarFallback } from '@radix-ui/react-avatar';
 import { Calendar, Edit, Save, Trash2, X } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
-import { useTranslation } from 'next-i18next';
 
 import { AvatarImage } from '@/libs/components/ui/avatar';
 import { Badge } from '@/libs/components/ui/badge';
@@ -70,7 +69,6 @@ const EventRow = ({
 		eventDate: event.eventDate,
 	},
 }: EventRowProps) => {
-	const { t } = useTranslation();
 	const [eventUpdateInput, setEventUpdateInput] = useState<EventUpdateInput>(initialEvent);
 	const [isEditing, setIsEditing] = useState(false);
 
@@ -88,7 +86,7 @@ const EventRow = ({
 		await removeEventHandler(event._id);
 	};
 
-	const handleInputChange = (field: keyof EventUpdateInput, value: string | number | Date) => {
+	const inputHandler = (field: keyof EventUpdateInput, value: string | number | Date) => {
 		setEventUpdateInput((prev) => ({
 			...prev,
 			[field]: value,
@@ -112,7 +110,7 @@ const EventRow = ({
 					{isEditing ? (
 						<Input
 							value={eventUpdateInput.eventName ?? event.eventName ?? ''}
-							onChange={(e) => handleInputChange('eventName', e.target.value)}
+							onChange={(e) => inputHandler('eventName', e.target.value)}
 							className="w-full bg-background text-foreground border-input focus:ring-primary"
 						/>
 					) : (
@@ -145,7 +143,7 @@ const EventRow = ({
 							<CalendarComponent
 								mode="single"
 								selected={new Date(eventUpdateInput.eventDate || event.eventDate)}
-								onSelect={(date) => date && handleInputChange('eventDate', date)}
+								onSelect={(date) => date && inputHandler('eventDate', date)}
 								initialFocus
 							/>
 						</PopoverContent>
@@ -166,7 +164,7 @@ const EventRow = ({
 				{isEditing ? (
 					<Input
 						value={eventUpdateInput.eventAddress ?? event.eventAddress ?? ''}
-						onChange={(e) => handleInputChange('eventAddress', e.target.value)}
+						onChange={(e) => inputHandler('eventAddress', e.target.value)}
 						className="h-8 w-[180px] bg-background text-foreground border-input"
 					/>
 				) : (
@@ -187,7 +185,7 @@ const EventRow = ({
 					<Input
 						type="number"
 						value={eventUpdateInput.eventPrice ?? event.eventPrice ?? ''}
-						onChange={(e) => handleInputChange('eventPrice', Number(e.target.value))}
+						onChange={(e) => inputHandler('eventPrice', Number(e.target.value))}
 						className="h-8 w-[80px] bg-background text-foreground border-input"
 					/>
 				) : (
@@ -200,7 +198,7 @@ const EventRow = ({
 				{isEditing ? (
 					<Select
 						value={eventUpdateInput.eventStatus || event.eventStatus}
-						onValueChange={(value) => handleInputChange('eventStatus', value as EventStatus)}
+						onValueChange={(value) => inputHandler('eventStatus', value as EventStatus)}
 					>
 						<SelectTrigger className="h-8 w-full bg-background text-foreground border-input">
 							<SelectValue placeholder={event.eventStatus} />

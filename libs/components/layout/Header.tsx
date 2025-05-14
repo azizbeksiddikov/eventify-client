@@ -64,7 +64,7 @@ const Header = () => {
 	}, []);
 
 	/** HANDLERS **/
-	const handleLanguageChange = useCallback(
+	const languageHandler = useCallback(
 		async (languageCode: string) => {
 			setCurrentLanguage(languageCode);
 			localStorage.setItem('locale', languageCode);
@@ -131,7 +131,7 @@ const Header = () => {
 								<DropdownMenuItem
 									key={language.code}
 									className={`${currentLanguage === language.code ? 'bg-background ' : ''} cursor-pointer w-full`}
-									onClick={() => handleLanguageChange(language.code)}
+									onClick={() => languageHandler(language.code)}
 								>
 									{language.name} {'  '}
 									{language.flag}

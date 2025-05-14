@@ -14,7 +14,7 @@ const ChosenEventHeader = () => {
 	const { t } = useTranslation('common');
 	const user = useReactiveVar(userVar);
 
-	const handleCreateEvent = () => {
+	const createHandler = () => {
 		if (user.memberType !== MemberType.ORGANIZER) {
 			smallError(t('Only organizers can create events'));
 			return;
@@ -38,7 +38,7 @@ const ChosenEventHeader = () => {
 
 				<Button
 					type="button"
-					onClick={handleCreateEvent}
+					onClick={createHandler}
 					className={`h-14 px-8 transition-colors duration-200 ${
 						user.memberType === MemberType.ORGANIZER
 							? 'bg-primary text-primary-foreground hover:bg-primary/90'

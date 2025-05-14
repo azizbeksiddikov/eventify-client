@@ -17,11 +17,16 @@ import { Group } from '@/libs/types/group/group';
 interface ProfileGroupsProps {
 	groups: Group[];
 	likeGroupHandler: (groupId: string) => void;
-	handleJoinGroup: (groupId: string) => void;
-	handleLeaveGroup: (groupId: string) => void;
+	joinGroupHandler: (groupId: string) => void;
+	leaveGroupHandler: (groupId: string) => void;
 }
 
-export const ProfileGroups = ({ groups, likeGroupHandler, handleJoinGroup, handleLeaveGroup }: ProfileGroupsProps) => {
+export const ProfileGroups = ({
+	groups,
+	likeGroupHandler,
+	joinGroupHandler,
+	leaveGroupHandler,
+}: ProfileGroupsProps) => {
 	const user = useReactiveVar(userVar);
 	const { t } = useTranslation('common');
 
@@ -115,7 +120,7 @@ export const ProfileGroups = ({ groups, likeGroupHandler, handleJoinGroup, handl
 													<Button
 														variant="ghost"
 														size="icon"
-														onClick={() => handleLeaveGroup(group._id)}
+														onClick={() => leaveGroupHandler(group._id)}
 														className="text-destructive hover:text-destructive/80 transition-colors duration-200"
 														aria-label={t('Leave group')}
 													>
@@ -125,7 +130,7 @@ export const ProfileGroups = ({ groups, likeGroupHandler, handleJoinGroup, handl
 													<Button
 														variant="ghost"
 														size="icon"
-														onClick={() => handleJoinGroup(group._id)}
+														onClick={() => joinGroupHandler(group._id)}
 														className="text-muted-foreground hover:text-primary transition-colors duration-200"
 														aria-label={t('Join group')}
 													>

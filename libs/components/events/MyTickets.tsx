@@ -34,11 +34,11 @@ const MyTickets = ({ setTicketInquiry, ticketInquiry, myTickets }: MyTicketsProp
 		setTicketInquiry({ ...ticketInquiry, page: newPage });
 	};
 
-	const handleLimitChange = (newLimit: number) => {
+	const limitHandler = (newLimit: number) => {
 		setTicketInquiry({ ...ticketInquiry, limit: newLimit, page: 1 });
 	};
 
-	const handleCategoryChange = (category: string) => {
+	const categoryHandler = (category: string) => {
 		const newCategory = category === 'ALL' ? undefined : (category as TicketStatus);
 		setTicketInquiry({
 			...ticketInquiry,
@@ -76,7 +76,7 @@ const MyTickets = ({ setTicketInquiry, ticketInquiry, myTickets }: MyTicketsProp
 								{CATEGORY_OPTIONS.map((category) => (
 									<DropdownMenuItem
 										key={category}
-										onClick={() => handleCategoryChange(category)}
+										onClick={() => categoryHandler(category)}
 										className={category === currentCategory ? 'bg-accent' : ''}
 									>
 										{category}
@@ -95,7 +95,7 @@ const MyTickets = ({ setTicketInquiry, ticketInquiry, myTickets }: MyTicketsProp
 								{LIMIT_OPTIONS.map((option) => (
 									<DropdownMenuItem
 										key={option}
-										onClick={() => handleLimitChange(option)}
+										onClick={() => limitHandler(option)}
 										className={option === ticketInquiry.limit ? 'bg-accent' : ''}
 									>
 										{option}

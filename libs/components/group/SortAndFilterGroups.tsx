@@ -21,7 +21,7 @@ interface SortAndFilterProps {
 function SortAndFilterGroups({ updateURL, groupsSearchFilters, initialSearch }: SortAndFilterProps) {
 	const { t } = useTranslation('common');
 
-	const handleSearch = (text: string) => {
+	const searchHandler = (text: string) => {
 		updateURL({
 			...groupsSearchFilters,
 			search: {
@@ -31,7 +31,7 @@ function SortAndFilterGroups({ updateURL, groupsSearchFilters, initialSearch }: 
 		});
 	};
 
-	const handleSortChange = (value: string) => {
+	const sortHandler = (value: string) => {
 		const sortOption = groupsSortOptions.find((option) => option.value === value);
 
 		if (!sortOption) smallError(t(Message.INVALID_SORT_OPTION));
@@ -59,7 +59,7 @@ function SortAndFilterGroups({ updateURL, groupsSearchFilters, initialSearch }: 
 				<Input
 					placeholder={t('Search groups...')}
 					value={groupsSearchFilters.search?.text}
-					onChange={(e) => handleSearch(e.target.value)}
+					onChange={(e) => searchHandler(e.target.value)}
 					className={cn(
 						buttonVariants({ variant: 'ghost', size: 'icon' }),
 						'w-[400px] bg-background/80  backdrop-blur-sm border-border/50 transition-colors  hover:bg-accent/50    ',
@@ -67,7 +67,7 @@ function SortAndFilterGroups({ updateURL, groupsSearchFilters, initialSearch }: 
 				/>
 
 				<div className="flex items-center gap-4">
-					<Select value={groupsSearchFilters.sort} onValueChange={handleSortChange}>
+					<Select value={groupsSearchFilters.sort} onValueChange={sortHandler}>
 						<SelectTrigger className="w-[180px] h-11">
 							<ArrowUpDown className="text-muted-foreground" />
 							<SelectValue placeholder={t('Sort by')} />

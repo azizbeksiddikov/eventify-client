@@ -66,7 +66,7 @@ export const ImageCropper = ({
 		}
 	}, [isOpen, imageUrl]);
 
-	const handleImageReady = (imgElement: HTMLImageElement) => {
+	const imageReadyHandler = (imgElement: HTMLImageElement) => {
 		const { naturalWidth, naturalHeight, width: renderedWidth, height: renderedHeight } = imgElement;
 
 		if (naturalWidth === 0 || naturalHeight === 0) {
@@ -198,7 +198,7 @@ export const ImageCropper = ({
 		});
 	};
 
-	const handlePerformCrop = async () => {
+	const performCropHandler = async () => {
 		if (!imgRef.current || !imgDimensions) {
 			console.error('Image reference or dimensions not available for cropping.');
 			return;
@@ -258,7 +258,7 @@ export const ImageCropper = ({
 										width={1000}
 										height={1000}
 										unoptimized={true}
-										onLoadingComplete={handleImageReady}
+										onLoadingComplete={imageReadyHandler}
 										style={{
 											maxWidth: '100%',
 											maxHeight: 'calc(80vh - 200px)',
@@ -279,7 +279,7 @@ export const ImageCropper = ({
 						<Button variant="outline" onClick={onClose}>
 							{t('common.cancel', 'Cancel')}
 						</Button>
-						<Button onClick={handlePerformCrop} disabled={!canCrop}>
+						<Button onClick={performCropHandler} disabled={!canCrop}>
 							{t('cropImage.cropAndSave', 'Crop & Save')}
 						</Button>
 					</div>

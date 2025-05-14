@@ -19,7 +19,7 @@ const SearchEvents = () => {
 	const [startDate, setStartDate] = useState<Date | undefined>();
 	const [endDate, setEndDate] = useState<Date | undefined>();
 
-	const handleSearch = (e: React.FormEvent) => {
+	const searchHandler = (e: React.FormEvent) => {
 		e.preventDefault();
 
 		const query: Record<string, string> = {};
@@ -39,7 +39,7 @@ const SearchEvents = () => {
 			<div className="flex-container px-4 md:px-8">
 				<h2>{t('Find Events')}</h2>
 				<Card className="p-6 md:p-8 w-full max-w-5xl mx-auto border-2 border-primary/20 shadow-md">
-					<form onSubmit={handleSearch} className="flex flex-col md:flex-row items-stretch md:items-center gap-4">
+					<form onSubmit={searchHandler} className="flex flex-col md:flex-row items-stretch md:items-center gap-4">
 						<div className="flex-1 relative">
 							<Input
 								type="text"

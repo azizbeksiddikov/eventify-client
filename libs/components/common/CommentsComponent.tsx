@@ -20,7 +20,7 @@ import {
 
 import { GET_COMMENTS } from '@/apollo/user/query';
 import { CREATE_COMMENT, UPDATE_COMMENT } from '@/apollo/user/mutation';
-import { smallError, smallSuccess } from '@/libs/alert';
+import { smallSuccess } from '@/libs/alert';
 import { Message, Direction } from '@/libs/enums/common.enum';
 import { REACT_APP_API_URL } from '@/libs/config';
 import { formatDateHandler } from '@/libs/utils';
@@ -92,7 +92,7 @@ const CommentsComponent = ({ commentRefId, commentGroup, initialCommentsInquiry 
 		setCommentInquiry({ ...commentInquiry, page: newPage });
 	};
 
-	const handleEditClick = (comment: Comment) => {
+	const editHandler = (comment: Comment) => {
 		setEditingCommentId(comment._id);
 		setNewCommentData({
 			commentGroup,
@@ -102,7 +102,7 @@ const CommentsComponent = ({ commentRefId, commentGroup, initialCommentsInquiry 
 		setIsWriting(true);
 	};
 
-	const handleDeleteClick = async (comment: Comment) => {
+	const deleteHandler = async (comment: Comment) => {
 		try {
 			if (!user._id) throw new Error(Message.NOT_AUTHENTICATED);
 			await updateComment({
@@ -118,12 +118,12 @@ const CommentsComponent = ({ commentRefId, commentGroup, initialCommentsInquiry 
 			await smallSuccess(t('Comment deleted successfully'));
 		} catch (error: unknown) {
 			if (error instanceof Error) {
-				await smallError(error.message);
+				console.log(error.message);
 			}
 		}
 	};
 
-	const handleSubmit = async (e: React.FormEvent) => {
+	const submitHandler = async (e: React.FormEvent) => {
 		e.preventDefault();
 		try {
 			if (!user._id) throw new Error(Message.NOT_AUTHENTICATED);
@@ -155,12 +155,12 @@ const CommentsComponent = ({ commentRefId, commentGroup, initialCommentsInquiry 
 			await getCommentsRefetch();
 		} catch (error: unknown) {
 			if (error instanceof Error) {
-				await smallError(error.message);
+				console.log(error.message);
 			}
 		}
 	};
 
-	const handleLimitChange = (newLimit: number) => {
+	const limitHandler = (newLimit: number) => {
 		setCommentInquiry({ ...commentInquiry, limit: newLimit, page: 1 });
 	};
 
@@ -188,7 +188,7 @@ const CommentsComponent = ({ commentRefId, commentGroup, initialCommentsInquiry 
 								{LIMIT_OPTIONS.map((option) => (
 									<DropdownMenuItem
 										key={option}
-										onClick={() => handleLimitChange(option)}
+										onClick={() => limitHandler(option)}
 										className={option === commentInquiry.limit ? 'bg-accent' : ''}
 									>
 										{option}
@@ -222,7 +222,7 @@ const CommentsComponent = ({ commentRefId, commentGroup, initialCommentsInquiry 
 			<CardContent>
 				{isWriting && (
 					<>
-						<form onSubmit={handleSubmit} className="mb-6">
+						<form onSubmit={submitHandler} className="mb-6">
 							<div className="flex items-start space-x-4">
 								<div className="flex-1 space-y-3">
 									<Textarea
@@ -307,7 +307,7 @@ const CommentsComponent = ({ commentRefId, commentGroup, initialCommentsInquiry 
 																	<Button
 																		variant="ghost"
 																		size="sm"
-																		onClick={() => handleEditClick(comment)}
+																		onClick={() => editHandler(comment)}
 																		className="h-8 w-8 p-0"
 																	>
 																		<Pencil className="h-4 w-4 text-muted-foreground/80 hover:text-foreground" />
@@ -315,7 +315,7 @@ const CommentsComponent = ({ commentRefId, commentGroup, initialCommentsInquiry 
 																	<Button
 																		variant="ghost"
 																		size="sm"
-																		onClick={() => handleDeleteClick(comment)}
+																		onClick={() => deleteHandler(comment)}
 																		className="h-8 w-8 p-0"
 																	>
 																		<Trash2 className="h-4 w-4 text-destructive/80 hover:text-destructive" />

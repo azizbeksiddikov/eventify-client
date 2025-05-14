@@ -24,7 +24,7 @@ import {
 	UPDATE_MEMBER,
 } from '@/apollo/user/mutation';
 import { getJwtToken, updateStorage, updateUserInfo } from '@/libs/auth';
-import { smallError, smallSuccess } from '@/libs/alert';
+import { smallSuccess } from '@/libs/alert';
 import withBasicLayout from '@/libs/components/layout/LayoutBasic';
 import { ProfileHeader } from '@/libs/components/profile/ProfileHeader';
 import { ProfileTabs } from '@/libs/components/profile/ProfileTabs';
@@ -33,6 +33,7 @@ import { Member } from '@/libs/types/member/member';
 import { Group } from '@/libs/types/group/group';
 import { Ticket } from '@/libs/types/ticket/ticket';
 import { MemberUpdateInput } from '@/libs/types/member/member.update';
+import { followMember, joinGroup, leaveGroup, likeGroup, likeMember, unfollowMember } from '@/libs/utils';
 import { Message } from '@/libs/enums/common.enum';
 
 export const getStaticProps = async ({ locale }: { locale: string }) => ({
@@ -76,8 +77,8 @@ const ProfilePage = () => {
 	const [subscribe] = useMutation(SUBSCRIBE);
 	const [unsubscribe] = useMutation(UNSUBSCRIBE);
 	const [likeTargetGroup] = useMutation(LIKE_TARGET_GROUP);
-	const [joinGroup] = useMutation(JOIN_GROUP);
-	const [leaveGroup] = useMutation(LEAVE_GROUP);
+	const [joinTargetGroup] = useMutation(JOIN_GROUP);
+	const [leaveTargetGroup] = useMutation(LEAVE_GROUP);
 	const [cancelTicket] = useMutation(CANCEL_TICKET);
 
 	const { data: getMemberData, refetch: refetchMember } = useQuery(GET_MEMBER, {
@@ -99,7 +100,7 @@ const ProfilePage = () => {
 		notifyOnNetworkStatusChange: true,
 	});
 
-	const { data: getFollowingsData, refetch: refetchFollowings } = useQuery(GET_MEMBER_FOLLOWINGS_LIST, {
+	const { data: getFollowingsData } = useQuery(GET_MEMBER_FOLLOWINGS_LIST, {
 		fetchPolicy: 'cache-and-network',
 		skip: !user?._id,
 		notifyOnNetworkStatusChange: true,
@@ -161,52 +162,15 @@ const ProfilePage = () => {
 
 	/** HANDLERS */
 	const likeMemberHandler = async (memberId: string) => {
-		try {
-			if (!memberId) return;
-			if (!user?._id) throw new Error(Message.NOT_AUTHENTICATED);
-
-			await likeTargetMember({
-				variables: { input: memberId },
-			});
-
-			await smallSuccess(t('Member liked successfully'));
-		} catch (err: any) {
-			console.log('ERROR, likeMemberHandler:', err.message);
-			smallError(err.message);
-		}
+		likeMember(user._id, memberId, likeTargetMember, t);
 	};
 
 	const subscribeHandler = async (memberId: string) => {
-		try {
-			if (!memberId) return;
-			if (!user?._id) throw new Error(Message.NOT_AUTHENTICATED);
-
-			await subscribe({
-				variables: { input: memberId },
-			});
-
-			await smallSuccess(t('Member subscribed successfully'));
-		} catch (err: any) {
-			console.log('ERROR, subscribeHandler:', err.message);
-			smallError(err.message);
-		}
+		followMember(user._id, memberId, subscribe, t);
 	};
 
 	const unsubscribeHandler = async (memberId: string) => {
-		try {
-			if (!memberId) return;
-			if (!user?._id) throw new Error(Message.NOT_AUTHENTICATED);
-
-			await unsubscribe({
-				variables: { input: memberId },
-			});
-			refetchFollowings();
-
-			await smallSuccess(t('Member unsubscribed successfully'));
-		} catch (err: any) {
-			console.log('ERROR, unsubscribeHandler:', err.message);
-			smallError(err.message);
-		}
+		unfollowMember(user._id, memberId, unsubscribe, t);
 	};
 
 	const updateMemberHandler = async (memberUpdateInput: MemberUpdateInput) => {
@@ -229,57 +193,20 @@ const ProfilePage = () => {
 			await smallSuccess(t('Member updated successfully'));
 		} catch (err: any) {
 			console.log('ERROR, updateMemberHandler:', err.message);
-			smallError(err.message);
 		}
 	};
 
 	const likeGroupHandler = async (groupId: string) => {
-		try {
-			if (!groupId) return;
-			if (!user?._id) throw new Error(Message.NOT_AUTHENTICATED);
-
-			await likeTargetGroup({
-				variables: { input: groupId },
-			});
-
-			await smallSuccess(t('Group liked successfully'));
-		} catch (err: any) {
-			console.log('ERROR, likeGroupHandler:', err.message);
-			smallError(err.message);
-		}
+		likeGroup(user._id, groupId, likeTargetGroup, t);
 	};
 
-	const handleJoinGroup = async (groupId: string) => {
-		try {
-			if (!groupId) return;
-			if (!user?._id) throw new Error(Message.NOT_AUTHENTICATED);
-
-			await joinGroup({
-				variables: { input: groupId },
-			});
-
-			await smallSuccess(t('Group joined successfully'));
-		} catch (err: any) {
-			console.log('ERROR, handleJoinGroup:', err.message);
-			smallError(err.message);
-		}
+	const joinGroupHandler = async (groupId: string) => {
+		joinGroup(user._id, groupId, joinTargetGroup, t);
 	};
 
-	const handleLeaveGroup = async (groupId: string) => {
-		try {
-			if (!groupId) return;
-			if (!user?._id) throw new Error(Message.NOT_AUTHENTICATED);
-
-			await leaveGroup({
-				variables: { input: groupId },
-			});
-
-			refetchJoinedGroups();
-
-			await smallSuccess(t('Group left successfully'));
-		} catch (err: any) {
-			console.log('ERROR, handleLeaveGroup:', err.message);
-		}
+	const leaveGroupHandler = async (groupId: string) => {
+		leaveGroup(user._id, groupId, leaveTargetGroup, t);
+		refetchJoinedGroups();
 	};
 
 	const cancelTicketHandler = async (ticketId: string) => {
@@ -295,7 +222,6 @@ const ProfilePage = () => {
 			refetchTickets();
 		} catch (err: any) {
 			console.log('ERROR, cancelTicketHandler:', err.message);
-			smallError(err.message);
 		}
 	};
 
@@ -313,13 +239,13 @@ const ProfilePage = () => {
 					tickets={tickets}
 					followings={followings}
 					followers={followers}
-					handleUpdateMember={updateMemberHandler}
+					updateMemberHandler={updateMemberHandler}
 					likeMemberHandler={likeMemberHandler}
 					subscribeHandler={subscribeHandler}
 					unsubscribeHandler={unsubscribeHandler}
 					likeGroupHandler={likeGroupHandler}
-					handleJoinGroup={handleJoinGroup}
-					handleLeaveGroup={handleLeaveGroup}
+					joinGroupHandler={joinGroupHandler}
+					leaveGroupHandler={leaveGroupHandler}
 					cancelTicketHandler={cancelTicketHandler}
 					memberUpdateInput={memberUpdateInput}
 					setMemberUpdateInput={setMemberUpdateInput}

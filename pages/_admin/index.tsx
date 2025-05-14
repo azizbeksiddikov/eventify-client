@@ -251,7 +251,7 @@ const AdminHome = ({
 		}
 	};
 
-	const handleTabChange = (value: string) => {
+	const changeTabHandler = (value: string) => {
 		setActiveTab(value);
 		localStorage.setItem('adminActiveTab', value);
 	};
@@ -282,7 +282,7 @@ const AdminHome = ({
 
 	return (
 		<div className="container mx-auto py-8">
-			<Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
+			<Tabs value={activeTab} onValueChange={changeTabHandler} className="w-full">
 				{/* TABS LIST */}
 				<TabsList className="grid w-full grid-cols-4 mb-8 h-12">
 					<TabsTrigger value="users" className="flex items-center gap-2">

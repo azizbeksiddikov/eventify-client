@@ -12,11 +12,10 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/libs/components/ui/to
 import { Badge } from '@/libs/components/ui/badge';
 
 import { REACT_APP_API_URL } from '@/libs/config';
-import { smallError, smallSuccess } from '@/libs/alert';
-import { Message } from '@/libs/enums/common.enum';
 
 import { JOIN_GROUP, LEAVE_GROUP, LIKE_TARGET_GROUP } from '@/apollo/user/mutation';
 import { Group } from '@/libs/types/group/group';
+import { joinGroup, leaveGroup, likeGroup } from '@/libs/utils';
 
 interface GroupCardProps {
 	group: Group;
@@ -28,56 +27,20 @@ const GroupCard = ({ group }: GroupCardProps) => {
 
 	/** APOLLO */
 	const [likeTargetGroup] = useMutation(LIKE_TARGET_GROUP);
-	const [joinGroup] = useMutation(JOIN_GROUP);
-	const [leaveGroup] = useMutation(LEAVE_GROUP);
+	const [joinTargetGroup] = useMutation(JOIN_GROUP);
+	const [leaveTargetGroup] = useMutation(LEAVE_GROUP);
 
 	/** HANDLERS **/
 	const likeGroupHandler = async (groupId: string) => {
-		try {
-			if (!groupId) return;
-			if (!user._id || user._id === '') throw new Error(Message.NOT_AUTHENTICATED);
-
-			await likeTargetGroup({
-				variables: { input: groupId },
-			});
-
-			await smallSuccess(t('Group liked successfully'));
-		} catch (error: unknown) {
-			const err = error as Error;
-			console.log('ERROR, likeGroupHandler:', err.message);
-			smallError(err.message);
-		}
+		likeGroup(user._id, groupId, likeTargetGroup, t);
 	};
 
-	const handleJoinGroup = async (groupId: string) => {
-		try {
-			if (!groupId) return;
-			if (!user._id || user._id === '') throw new Error(Message.NOT_AUTHENTICATED);
-
-			await joinGroup({
-				variables: { input: groupId },
-			});
-
-			await smallSuccess(t('Group joined successfully'));
-		} catch (error: unknown) {
-			const err = error as Error;
-			console.log('ERROR, handleJoinGroup:', err.message);
-			smallError(err.message);
-		}
+	const joinGroupHandler = async (groupId: string) => {
+		joinGroup(user._id, groupId, joinTargetGroup, t);
 	};
 
-	const handleLeaveGroup = async (groupId: string) => {
-		try {
-			if (!groupId) return;
-			if (!user._id || user._id === '') throw new Error(Message.NOT_AUTHENTICATED);
-
-			await leaveGroup({
-				variables: { input: groupId },
-			});
-		} catch (error: unknown) {
-			const err = error as Error;
-			console.log('ERROR, handleLeaveGroup:', err.message);
-		}
+	const leaveGroupHandler = async (groupId: string) => {
+		leaveGroup(user._id, groupId, leaveTargetGroup, t);
 	};
 
 	return (
@@ -197,7 +160,7 @@ const GroupCard = ({ group }: GroupCardProps) => {
 					variant={group?.meJoined?.[0]?.meJoined ? 'outline' : 'default'}
 					size="sm"
 					className={`h-8 px-3 font-medium transition-all ${group?.meJoined?.[0]?.meJoined ? 'border-primary/30 text-primary hover:bg-primary/5' : ''}`}
-					onClick={() => (group?.meJoined?.[0]?.meJoined ? handleLeaveGroup(group._id) : handleJoinGroup(group._id))}
+					onClick={() => (group?.meJoined?.[0]?.meJoined ? leaveGroupHandler(group._id) : joinGroupHandler(group._id))}
 				>
 					{group?.meJoined?.[0]?.meJoined ? t('Leave') : t('Join')}
 				</Button>

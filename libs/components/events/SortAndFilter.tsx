@@ -23,7 +23,7 @@ interface SortAndFilterProps {
 function SortAndFilter({ updateURL, eventsSearchFilters, initialSearch }: SortAndFilterProps) {
 	const { t } = useTranslation('common');
 
-	const handleSearch = (text: string) => {
+	const searchHandler = (text: string) => {
 		updateURL({
 			...eventsSearchFilters,
 			search: {
@@ -33,7 +33,7 @@ function SortAndFilter({ updateURL, eventsSearchFilters, initialSearch }: SortAn
 		});
 	};
 
-	const handleStartDateChange = (date: Date | undefined) => {
+	const startDateHandler = (date: Date | undefined) => {
 		const today = new Date();
 		// Set the time to noon UTC to avoid timezone issues
 		const startDate = date ? new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), 12, 0, 0)) : today;
@@ -59,7 +59,7 @@ function SortAndFilter({ updateURL, eventsSearchFilters, initialSearch }: SortAn
 		}
 	};
 
-	const handleEndDateChange = (date: Date | undefined) => {
+	const endDateHandler = (date: Date | undefined) => {
 		const today = new Date();
 		// Set the time to noon UTC to avoid timezone issues
 		const endDate = date ? new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), 12, 0, 0)) : today;
@@ -76,7 +76,7 @@ function SortAndFilter({ updateURL, eventsSearchFilters, initialSearch }: SortAn
 		}
 	};
 
-	const handleSortChange = (value: string) => {
+	const sortHandler = (value: string) => {
 		// check if the value is in the eventsSortOptions array
 		const sortOption = eventsSortOptions.find((option) => option.value === value);
 
@@ -105,7 +105,7 @@ function SortAndFilter({ updateURL, eventsSearchFilters, initialSearch }: SortAn
 				<Input
 					placeholder={t('Search events...')}
 					value={eventsSearchFilters.search?.text}
-					onChange={(e) => handleSearch(e.target.value)}
+					onChange={(e) => searchHandler(e.target.value)}
 					className={cn(
 						buttonVariants({ variant: 'ghost', size: 'icon' }),
 						'w-[400px] bg-background/80  backdrop-blur-sm border-border/50 transition-colors  hover:bg-accent/50    ',
@@ -130,7 +130,7 @@ function SortAndFilter({ updateURL, eventsSearchFilters, initialSearch }: SortAn
 								<CalendarComponent
 									mode="single"
 									selected={eventsSearchFilters.search.eventStartDay}
-									onSelect={handleStartDateChange}
+									onSelect={startDateHandler}
 									initialFocus
 									disabled={(date) =>
 										date < new Date() ||
@@ -182,7 +182,7 @@ function SortAndFilter({ updateURL, eventsSearchFilters, initialSearch }: SortAn
 								<CalendarComponent
 									mode="single"
 									selected={eventsSearchFilters.search.eventEndDay}
-									onSelect={handleEndDateChange}
+									onSelect={endDateHandler}
 									initialFocus
 									disabled={(date) =>
 										date < new Date() ||
@@ -219,7 +219,7 @@ function SortAndFilter({ updateURL, eventsSearchFilters, initialSearch }: SortAn
 				</div>
 
 				<div className="flex items-center gap-4">
-					<Select value={eventsSearchFilters.sort} onValueChange={handleSortChange}>
+					<Select value={eventsSearchFilters.sort} onValueChange={sortHandler}>
 						<SelectTrigger className="w-[180px] h-11">
 							<ArrowUpDown className="text-muted-foreground" />
 							<SelectValue placeholder={t('Sort by')} />

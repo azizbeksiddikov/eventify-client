@@ -24,12 +24,12 @@ const FaqItem = ({ faq, onUpdate, onRemove }: FaqItemProps) => {
 		faqAnswer: faq.faqAnswer,
 	});
 
-	const handleSave = async () => {
+	const saveHandler = async () => {
 		await onUpdate(editedFaq);
 		setIsEditing(false);
 	};
 
-	const handleCancel = () => {
+	const cancelHandler = () => {
 		setEditedFaq({
 			_id: faq._id,
 			faqGroup: faq.faqGroup,
@@ -62,10 +62,10 @@ const FaqItem = ({ faq, onUpdate, onRemove }: FaqItemProps) => {
 							/>
 
 							<div className="flex items-center gap-2 justify-end">
-								<Button variant="outline" size="icon" onClick={handleCancel}>
+								<Button variant="outline" size="icon" onClick={cancelHandler}>
 									<X className="h-4 w-4" />
 								</Button>
-								<Button size="icon" onClick={handleSave}>
+								<Button size="icon" onClick={saveHandler}>
 									<Save className="h-4 w-4" />
 								</Button>
 							</div>

@@ -106,12 +106,12 @@ const EventUpdatePage = () => {
 		return true;
 	};
 
-	const handleStartTimeChange = (hour: string, minute: string) => {
+	const startTimeChangeHandler = (hour: string, minute: string) => {
 		const newStartTime = `${hour}:${minute}`;
 		setFormData((prev) => (prev ? { ...prev, eventStartTime: newStartTime } : null));
 	};
 
-	const handleEndTimeChange = (hour: string, minute: string) => {
+	const endTimeHandler = (hour: string, minute: string) => {
 		const newEndTime = `${hour}:${minute}`;
 		setFormData((prev) => (prev ? { ...prev, eventEndTime: newEndTime } : null));
 	};
@@ -162,7 +162,7 @@ const EventUpdatePage = () => {
 		}
 	};
 
-	const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+	const imageChangeHandler = async (e: React.ChangeEvent<HTMLInputElement>) => {
 		const file = e.target.files?.[0];
 		if (file) {
 			const imageUrl = URL.createObjectURL(file);
@@ -171,7 +171,7 @@ const EventUpdatePage = () => {
 		}
 	};
 
-	const handleCropComplete = async (croppedFile: File) => {
+	const cropCompleteHandler = async (croppedFile: File) => {
 		try {
 			const imageUrl = await uploadImage(croppedFile);
 			if (imageUrl) {
@@ -184,7 +184,7 @@ const EventUpdatePage = () => {
 		}
 	};
 
-	const handleSubmit = async (e: React.FormEvent) => {
+	const submitHandler = async (e: React.FormEvent) => {
 		e.preventDefault();
 		setIsSubmitting(true);
 
@@ -228,7 +228,7 @@ const EventUpdatePage = () => {
 		}
 	};
 
-	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+	const inputHandler = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
 		const { name, value } = e.target;
 
 		if (name === 'eventCapacity' || name === 'eventPrice') {
@@ -252,7 +252,7 @@ const EventUpdatePage = () => {
 		}
 	};
 
-	const handleCategorySelect = (category: EventCategory) => {
+	const categoryHandler = (category: EventCategory) => {
 		if (selectedCategories.includes(category)) {
 			// If category is already selected, remove it
 			setSelectedCategories((prev) => prev.filter((c) => c !== category));
@@ -294,7 +294,7 @@ const EventUpdatePage = () => {
 				<Card className="p-6 bg-card text-card-foreground">
 					<h1 className="text-3xl font-semibold text-foreground mb-6">{t('Update Event')}</h1>
 
-					<form onSubmit={handleSubmit} className="space-y-6">
+					<form onSubmit={submitHandler} className="space-y-6">
 						{/* Event Name */}
 						<div className="space-y-2">
 							<label htmlFor="eventName" className="text-sm font-medium text-foreground">
@@ -304,7 +304,7 @@ const EventUpdatePage = () => {
 								id="eventName"
 								name="eventName"
 								value={formData.eventName}
-								onChange={handleInputChange}
+								onChange={inputHandler}
 								placeholder={t('Enter event name')}
 								className="bg-input text-input-foreground border-input"
 							/>
@@ -319,7 +319,7 @@ const EventUpdatePage = () => {
 								id="eventDesc"
 								name="eventDesc"
 								value={formData.eventDesc}
-								onChange={handleInputChange}
+								onChange={inputHandler}
 								placeholder={t('Describe your event')}
 								className="min-h-[120px] bg-input text-input-foreground border-input"
 							/>
@@ -334,7 +334,7 @@ const EventUpdatePage = () => {
 										key={category}
 										type="button"
 										variant={selectedCategories.includes(category) ? 'default' : 'outline'}
-										onClick={() => handleCategorySelect(category)}
+										onClick={() => categoryHandler(category)}
 										disabled={selectedCategories.length >= 3 && !selectedCategories.includes(category)}
 										className={`h-10 transition-all duration-200 ${
 											selectedCategories.includes(category)
@@ -388,7 +388,7 @@ const EventUpdatePage = () => {
 										value={formData.eventStartTime?.split(':')[0] ?? '00'}
 										onValueChange={(hour) => {
 											const currentTime = formData.eventStartTime?.split(':') ?? ['00', '00'];
-											handleStartTimeChange(hour, currentTime[1]);
+											startTimeChangeHandler(hour, currentTime[1]);
 										}}
 									>
 										<SelectTrigger className="w-20 bg-input text-input-foreground border-input hover:bg-accent hover:text-accent-foreground transition-colors duration-200">
@@ -412,7 +412,7 @@ const EventUpdatePage = () => {
 										value={formData.eventStartTime?.split(':')[1] ?? '00'}
 										onValueChange={(minute) => {
 											const currentTime = formData.eventStartTime?.split(':') ?? ['00', '00'];
-											handleStartTimeChange(currentTime[0], minute);
+											startTimeChangeHandler(currentTime[0], minute);
 										}}
 									>
 										<SelectTrigger className="w-20 bg-input text-input-foreground border-input hover:bg-accent hover:text-accent-foreground transition-colors duration-200">
@@ -446,7 +446,7 @@ const EventUpdatePage = () => {
 										value={formData.eventEndTime?.split(':')[0] ?? '00'}
 										onValueChange={(hour) => {
 											const currentTime = formData.eventEndTime?.split(':') ?? ['00', '00'];
-											handleEndTimeChange(hour, currentTime[1]);
+											endTimeHandler(hour, currentTime[1]);
 										}}
 									>
 										<SelectTrigger className="w-20 bg-input text-input-foreground border-input hover:bg-accent hover:text-accent-foreground transition-colors duration-200">
@@ -470,7 +470,7 @@ const EventUpdatePage = () => {
 										value={formData.eventEndTime?.split(':')[1] ?? '00'}
 										onValueChange={(minute) => {
 											const currentTime = formData.eventEndTime?.split(':') ?? ['00', '00'];
-											handleEndTimeChange(currentTime[0], minute);
+											endTimeHandler(currentTime[0], minute);
 										}}
 									>
 										<SelectTrigger className="w-20 bg-input text-input-foreground border-input hover:bg-accent hover:text-accent-foreground transition-colors duration-200">
@@ -507,7 +507,7 @@ const EventUpdatePage = () => {
 									id="eventCity"
 									name="eventCity"
 									value={formData.eventCity}
-									onChange={handleInputChange}
+									onChange={inputHandler}
 									placeholder={t('Enter city')}
 									className="bg-input text-input-foreground border-input"
 								/>
@@ -520,7 +520,7 @@ const EventUpdatePage = () => {
 									id="eventAddress"
 									name="eventAddress"
 									value={formData.eventAddress}
-									onChange={handleInputChange}
+									onChange={inputHandler}
 									placeholder={t('Enter address')}
 									className="bg-input text-input-foreground border-input"
 								/>
@@ -538,7 +538,7 @@ const EventUpdatePage = () => {
 									name="eventCapacity"
 									type="number"
 									value={formData.eventCapacity}
-									onChange={handleInputChange}
+									onChange={inputHandler}
 									placeholder={t('Enter event capacity')}
 									className="bg-input text-input-foreground border-input"
 								/>
@@ -553,7 +553,7 @@ const EventUpdatePage = () => {
 									type="number"
 									min="0"
 									value={formData.eventPrice}
-									onChange={handleInputChange}
+									onChange={inputHandler}
 									placeholder={t('Enter event price')}
 									className="bg-input text-input-foreground border-input"
 								/>
@@ -592,7 +592,7 @@ const EventUpdatePage = () => {
 									name="image"
 									type="file"
 									accept={imageTypes}
-									onChange={handleImageChange}
+									onChange={imageChangeHandler}
 									className="hidden"
 								/>
 								<p className="text-sm text-muted-foreground mt-1">{t('Only JPG, JPEG, and PNG files are allowed')}</p>
@@ -606,7 +606,7 @@ const EventUpdatePage = () => {
 								setIsCropperOpen(false);
 								setTempImageUrl(null);
 							}}
-							onCropComplete={handleCropComplete}
+							onCropComplete={cropCompleteHandler}
 							imageUrl={tempImageUrl || ''}
 						/>
 
