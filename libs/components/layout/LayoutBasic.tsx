@@ -1,15 +1,24 @@
 import { NextPage } from 'next';
 import React from 'react';
 
+import useDeviceDetect from '@/libs/hooks/useDeviceDetect';
 import Header from '@/libs/components/layout/Header';
 import Footer from '@/libs/components/layout/Footer';
-import useDeviceDetect from '@/libs/hooks/useDeviceDetect';
+import MobileHeader from '@/libs/components/layout/MobileHeader';
+import MobileFooter from '@/libs/components/layout/MobileFooter';
 
 const withBasicLayout = (Page: NextPage) => {
 	const WrappedComponent = (props: Record<string, unknown>) => {
 		const device = useDeviceDetect();
 
-		if (device === 'mobile') return null;
+		if (device === 'mobile')
+			return (
+				<div className="min-h-screen flex flex-col">
+					<MobileHeader />
+					<Page {...props} />
+					<MobileFooter />
+				</div>
+			);
 
 		return (
 			<div className="min-h-screen flex flex-col">

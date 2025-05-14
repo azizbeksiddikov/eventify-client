@@ -13,11 +13,11 @@ const withHomeLayout = (Page: NextPage) => {
 
 		if (device === 'mobile')
 			return (
-				<>
+				<div className="min-h-screen flex flex-col">
 					<MobileHeader />
 					<Page {...props} />
 					<MobileFooter />
-				</>
+				</div>
 			);
 
 		return (

@@ -130,7 +130,9 @@ const OrganizerCard = ({ organizer, likeMemberHandler, subscribeHandler, unsubsc
 
 				<Link
 					href={`/organizer/detail?organizerId=${organizer._id}`}
-					className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background h-9 sm:h-10 px-3 sm:px-4 w-full sm:w-auto rounded-lg hover:bg-primary/5 hover:text-primary border-primary/30 text-primary/90"
+					className="inline-flex items-center justify-center 
+					whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 
+					focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background h-9 sm:h-10 px-3 sm:px-4 w-full sm:w-auto rounded-lg hover:bg-primary/5 hover:text-primary border-primary/30 text-primary/90"
 				>
 					<ExternalLink className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1.5" />
 					{t('View Profile')}
