@@ -54,22 +54,24 @@ function SortAndFilterGroups({ updateURL, groupsSearchFilters, initialSearch }: 
 	};
 
 	return (
-		<div className="rounded-2xl shadow-lg p-6 relative  border-border/80 border-2 w-[75%] mx-auto">
-			<div className="flex flex-row items-center justify-between gap-12">
+		<div className="rounded-2xl shadow-lg p-6 relative border-2 border-border/80 bg-background/70 backdrop-blur-md w-full max-w-5xl mx-auto">
+			<div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 sm:gap-10">
+				{/* 🔍 Search Bar */}
 				<Input
 					placeholder={t('Search groups...')}
 					value={groupsSearchFilters.search?.text}
 					onChange={(e) => searchHandler(e.target.value)}
 					className={cn(
 						buttonVariants({ variant: 'ghost', size: 'icon' }),
-						'w-auto bg-background/80  backdrop-blur-sm border-border/50 transition-colors  hover:bg-accent/50    ',
+						'w-full sm:w-auto bg-background/80 backdrop-blur-sm border-border/50 transition-colors hover:bg-accent/50',
 					)}
 				/>
 
-				<div className="flex items-center gap-4">
+				{/* 🔽 Sort + Direction + Clear */}
+				<div className="flex flex-wrap sm:flex-nowrap gap-4 items-center">
 					<Select value={groupsSearchFilters.sort} onValueChange={sortHandler}>
-						<SelectTrigger className="w-[180px] h-11">
-							<ArrowUpDown className="text-muted-foreground" />
+						<SelectTrigger className="h-11 min-w-[120px]">
+							<ArrowUpDown className="text-muted-foreground mr-2" />
 							<SelectValue placeholder={t('Sort by')} />
 						</SelectTrigger>
 						<SelectContent>
@@ -85,15 +87,23 @@ function SortAndFilterGroups({ updateURL, groupsSearchFilters, initialSearch }: 
 						variant="outline"
 						size="icon"
 						onClick={toggleDirection}
-						className="w-16 h-9 bg-background/80 backdrop-blur-sm border-border/50 hover:bg-accent/50 transition-colors flex items-center justify-center gap-1"
+						className="w-14 h-11 bg-background/80 backdrop-blur-sm border-border/50 hover:bg-accent/50 transition-colors"
 					>
 						<span
-							className={`${groupsSearchFilters.direction === Direction.ASC ? 'text-lg font-bold text-primary' : 'text-sm text-muted-foreground'}`}
+							className={cn(
+								groupsSearchFilters.direction === Direction.ASC
+									? 'text-lg font-bold text-primary'
+									: 'text-muted-foreground',
+							)}
 						>
 							↑
 						</span>
 						<span
-							className={`${groupsSearchFilters.direction === Direction.DESC ? 'text-lg font-bold text-primary' : 'text-sm text-muted-foreground'}`}
+							className={cn(
+								groupsSearchFilters.direction === Direction.DESC
+									? 'text-lg font-bold text-primary'
+									: 'text-muted-foreground',
+							)}
 						>
 							↓
 						</span>
@@ -104,7 +114,7 @@ function SortAndFilterGroups({ updateURL, groupsSearchFilters, initialSearch }: 
 						onClick={clearAllFilters}
 						className="h-11 hover:bg-accent hover:text-accent-foreground"
 					>
-						<X className="h-4 w-4 " />
+						<X className="h-4 w-4 mr-2" />
 						{t('Clear')}
 					</Button>
 				</div>

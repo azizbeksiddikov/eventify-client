@@ -36,7 +36,7 @@ const CategoriesSidebar = ({ eventsSearchFilters, updateURL, initialSearch }: Ca
 		updateURL(initialSearch);
 	};
 
-	const categoryChangeHandler = (category: EventCategory) => {
+	const changeCategoryHandler = (category: EventCategory) => {
 		const currentCategories = eventsSearchFilters.search.eventCategories || [];
 		const newCategories = currentCategories.includes(category)
 			? currentCategories.filter((cat) => cat !== category)
@@ -62,7 +62,7 @@ const CategoriesSidebar = ({ eventsSearchFilters, updateURL, initialSearch }: Ca
 				return (
 					<div
 						key={category}
-						onClick={() => categoryChangeHandler(category)}
+						onClick={() => changeCategoryHandler(category)}
 						className="w-full flex items-center space-x-3 p-2 rounded-lg hover:bg-primary/10 transition-colors duration-200 text-left cursor-pointer"
 					>
 						<Checkbox

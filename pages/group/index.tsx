@@ -125,8 +125,8 @@ const GroupsPage = ({
 				initialSearch={initialSearch}
 			/>
 
-			<div className="max-w-7xl py-10 mx-auto mb-10">
-				<div className="flex flex-row gap-8">
+			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 mb-10">
+				<div className="flex flex-col lg:flex-row gap-8">
 					{/* Categories Sidebar */}
 					<CategoriesSidebarGroup
 						groupsSearchFilters={groupsSearchFilters}
@@ -138,14 +138,14 @@ const GroupsPage = ({
 					<div className="flex-1">
 						{groups.length > 0 ? (
 							<>
-								<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+								<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
 									{groups.map((group) => (
 										<GroupCard key={group._id} group={group} />
 									))}
 								</div>
 
 								{/* Pagination */}
-								<div className="mt-8 flex justify-center">
+								<div className="mt-10 flex justify-center">
 									<PaginationComponent
 										totalItems={getGroupsData?.getGroups?.metaCounter?.[0]?.total ?? 0}
 										currentPage={groupsSearchFilters.page}
@@ -155,8 +155,8 @@ const GroupsPage = ({
 								</div>
 							</>
 						) : (
-							<div className="text-center py-12">
-								<p className="text-muted-foreground">{t('No groups found. Try adjusting your filters.')}</p>
+							<div className="py-16 text-center">
+								<p className="text-muted-foreground">{t('No events found. Try adjusting your filters.')}</p>
 							</div>
 						)}
 					</div>
