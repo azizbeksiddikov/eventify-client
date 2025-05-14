@@ -12,26 +12,32 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 
 export const getStaticProps = async ({ locale = 'en' }: { locale: string }) => ({
 	props: {
-		...(await serverSideTranslations(locale, ['common'], null, ['en', 'ru'])),
+		...(await serverSideTranslations(locale, ['common'])),
 	},
 });
 
 const Home: NextPage = () => {
 	const device = useDeviceDetect();
-	if (device === 'mobile') return null;
 
-	return (
-		<div className="min-h-screen  flex flex-col">
-			{/* Hero Section */}
-			<AutoScrollEvents />
-			<SearchEvents />
-			<UpcomingEvents />
-			<EventsByCategory />
-			<PopularGroups />
-			<TopOrganizers />
-			<Acknowledgements />
-		</div>
-	);
+	if (device === 'mobile') {
+		return (
+			<div className="flex flex-col">
+				<SearchEvents />
+			</div>
+		);
+	} else {
+		return (
+			<div className="min-h-screen  flex flex-col">
+				<AutoScrollEvents />
+				<SearchEvents />
+				<UpcomingEvents />
+				<EventsByCategory />
+				<PopularGroups />
+				<TopOrganizers />
+				<Acknowledgements />
+			</div>
+		);
+	}
 };
 
 export default withHomeLayout(Home);
