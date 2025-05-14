@@ -31,29 +31,46 @@ const HelpPage = () => {
 	}, [getFaqsData]);
 
 	return (
-		<div className="container max-w-4xl mx-auto my-10">
+		<div className="max-w-4xl mx-auto my-10 px-4">
+			{/* Header Section */}
 			<div className="text-center mb-16">
-				<h1 className="text-4xl font-bold mb-4 text-foreground">{t('How can we help you?')}</h1>
-				<p className="text-muted-foreground text-lg">
+				<h1 className="text-3xl sm:text-4xl font-bold mb-4 text-foreground">{t('How can we help you?')}</h1>
+				<p className="text-base sm:text-lg text-muted-foreground">
 					{t('Find answers to common questions or get in touch with our support team.')}
 				</p>
 			</div>
 
-			<Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-				<TabsList className="grid w-full grid-cols-3 mb-8 h-12 ">
+			{/* Tabs Section */}
+			<Tabs value={activeTab} onValueChange={setActiveTab}>
+				{/* Tabs List */}
+				<TabsList className="grid grid-cols-3 gap-2 sm:gap-4 mb-8 h-10 sm:h-12 w-full">
 					{faqByGroup.map((group) => (
-						<TabsTrigger key={group.faqGroup} value={group.faqGroup} className="text-base font-medium">
+						<TabsTrigger
+							key={group.faqGroup}
+							value={group.faqGroup}
+							className="text-sm sm:text-base font-medium px-2 py-1"
+						>
 							{group.faqGroup}
 						</TabsTrigger>
 					))}
 				</TabsList>
+
+				{/* Tabs Content */}
 				{faqByGroup.map((group) => (
 					<TabsContent key={group.faqGroup} value={group.faqGroup}>
-						<Accordion type="single" collapsible className="w-full">
+						<Accordion type="single" collapsible className="w-full space-y-4">
 							{group.faqs.map((faq, index) => (
-								<AccordionItem key={faq._id} value={`item-${index}`}>
-									<AccordionTrigger className="text-lg font-medium">{faq.faqQuestion}</AccordionTrigger>
-									<AccordionContent className="text-muted-foreground">{faq.faqAnswer}</AccordionContent>
+								<AccordionItem
+									key={faq._id}
+									value={`item-${index}`}
+									className="border rounded-md shadow-none last:mb-0"
+								>
+									<AccordionTrigger className="text-sm sm:text-lg font-medium p-4 bg-muted/10 rounded-md">
+										{faq.faqQuestion}
+									</AccordionTrigger>
+									<AccordionContent className="text-sm sm:text-base text-muted-foreground px-4 py-2">
+										{faq.faqAnswer}
+									</AccordionContent>
 								</AccordionItem>
 							))}
 						</Accordion>
