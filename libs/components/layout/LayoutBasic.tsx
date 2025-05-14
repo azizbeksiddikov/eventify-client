@@ -15,7 +15,9 @@ const withBasicLayout = (Page: NextPage) => {
 			return (
 				<div className="min-h-screen flex flex-col">
 					<MobileHeader />
-					<Page {...props} />
+					<main className="flex-grow flex items-center justify-center">
+						<Page {...props} />
+					</main>
 					<MobileFooter />
 				</div>
 			);

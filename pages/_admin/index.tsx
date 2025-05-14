@@ -46,6 +46,7 @@ import { EventUpdateInput } from '@/libs/types/event/event.update';
 import { FaqByGroup } from '@/libs/types/faq/faq';
 import { FaqInput } from '@/libs/types/faq/faq.input';
 import { FaqUpdate } from '@/libs/types/faq/faq.update';
+import useDeviceDetect from '@/libs/hooks/useDeviceDetect';
 
 interface AdminHomeProps {
 	initialMembersInquiry?: MembersInquiry;
@@ -99,6 +100,7 @@ const AdminHome = ({
 	const user = useReactiveVar(userVar);
 	const { t } = useTranslation();
 	const [loading, setLoading] = useState(true);
+	const device = useDeviceDetect();
 
 	const [membersInquiry, setMembersInquiry] = useState<MembersInquiry>(initialMembersInquiry);
 	const [groupsInquiry, setGroupsInquiry] = useState<GroupsInquiry>(initialGroupsInquiry);
@@ -279,6 +281,14 @@ const AdminHome = ({
 			smallSuccess('Faq removed successfully');
 		}
 	};
+
+	if (device === 'mobile') {
+		return (
+			<div className="container mx-auto py-8">
+				<div className="text-center text-2xl font-bold">{t('Please, enter from Desktop')}</div>
+			</div>
+		);
+	}
 
 	return (
 		<div className="container mx-auto py-8">
