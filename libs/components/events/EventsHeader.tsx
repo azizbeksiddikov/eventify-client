@@ -23,22 +23,24 @@ const EventsHeader = () => {
 	};
 	return (
 		<section className="bg-gradient-to-b from-secondary to-background py-8">
-			<div className="flex items-center justify-between mb-8 w-[90%] mx-auto">
-				<div>
-					<h2 className="text-left">{t('Discover Events')}</h2>
-					<p className="text-muted-foreground mt-2 text-lg">{t('Find and join amazing events in your area')}</p>
+			<div className="flex flex-col md:flex-row items-center justify-between mb-8 w-[90%] mx-auto">
+				<div className="text-center md:text-left mb-4 md:mb-0">
+					<h2>{t('Discover Events')}</h2>
+					<p className="text-muted-foreground mt-2 text-base md:text-lg">
+						{t('Find and join amazing events in your area')}
+					</p>
 				</div>
 
 				<Button
 					type="button"
 					onClick={createEventHandler}
-					className={`h-14 px-8 transition-colors duration-200 ${
+					className={`w-full md:w-auto h-14 px-6 md:px-8 transition-colors duration-200 ${
 						user.memberType === MemberType.ORGANIZER
 							? 'bg-primary text-primary-foreground hover:bg-primary/90'
 							: 'bg-muted text-muted-foreground cursor-not-allowed'
 					}`}
 				>
-					<div className="flex items-center gap-2">
+					<div className="flex items-center justify-center gap-2">
 						{t('Create Event')}
 						<ArrowRight className="w-4 h-4" />
 					</div>

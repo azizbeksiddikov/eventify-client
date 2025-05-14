@@ -100,24 +100,27 @@ function SortAndFilter({ updateURL, eventsSearchFilters, initialSearch }: SortAn
 	};
 
 	return (
-		<div className="rounded-2xl shadow-lg p-6 relative  border-border/80 border-2 w-[75%] mx-auto">
-			<div className="flex flex-row items-center justify-between gap-12">
+		<div className="rounded-2xl shadow-lg p-6 relative border-2 border-border/80 bg-background/70 backdrop-blur-md w-full max-w-5xl mx-auto">
+			<div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 sm:gap-10">
+				{/* 🔍 Search Bar */}
 				<Input
 					placeholder={t('Search events...')}
 					value={eventsSearchFilters.search?.text}
 					onChange={(e) => searchHandler(e.target.value)}
 					className={cn(
 						buttonVariants({ variant: 'ghost', size: 'icon' }),
-						'w-auto bg-background/80  backdrop-blur-sm border-border/50 transition-colors  hover:bg-accent/50    ',
+						'w-full sm:w-auto bg-background/80 backdrop-blur-sm border-border/50 transition-colors hover:bg-accent/50',
 					)}
 				/>
 
-				<div className="flex items-center gap-6">
+				{/* Date Pickers */}
+				<div className="flex flex-wrap gap-4">
+					{/* Start Date */}
 					<Popover>
 						<PopoverTrigger asChild>
 							<Button
 								variant="outline"
-								className="justify-start text-left font-normal bg-background/80 backdrop-blur-sm border-border/50 hover:bg-accent/50 transition-colors"
+								className="w-full sm:w-auto bg-background/80 backdrop-blur-sm border-border/50 hover:bg-accent/50 transition-colors"
 							>
 								<Calendar className="mr-2 h-4 w-4 text-muted-foreground" />
 								{eventsSearchFilters.search.eventStartDay
@@ -134,42 +137,19 @@ function SortAndFilter({ updateURL, eventsSearchFilters, initialSearch }: SortAn
 									initialFocus
 									disabled={(date) =>
 										date < new Date() ||
-										(eventsSearchFilters.search.eventEndDay ? date > eventsSearchFilters.search.eventEndDay : false)
+										(eventsSearchFilters.search?.eventEndDay ? date > eventsSearchFilters.search.eventEndDay : false)
 									}
-									className="rounded-md"
-									classNames={{
-										months: 'flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0',
-										month: 'space-y-4',
-										caption: 'flex justify-center pt-1 relative items-center',
-										caption_label: 'text-sm font-medium text-foreground',
-										nav: 'space-x-1 flex items-center',
-										nav_button: 'h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100 text-foreground',
-										nav_button_previous: 'absolute left-1',
-										nav_button_next: 'absolute right-1',
-										table: 'w-full border-collapse space-y-1',
-										head_row: 'flex',
-										head_cell: 'text-muted-foreground rounded-md w-9 font-normal text-[0.8rem]',
-										row: 'flex w-full mt-2',
-										cell: 'text-center text-sm p-0 relative [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20',
-										day: 'h-9 w-9 p-0 font-normal aria-selected:opacity-100 hover:bg-accent/50 rounded-md transition-colors',
-										day_selected:
-											'bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground',
-										day_today: 'bg-accent text-accent-foreground',
-										day_outside: 'text-muted-foreground opacity-50',
-										day_disabled: 'text-muted-foreground opacity-50',
-										day_range_middle: 'aria-selected:bg-accent aria-selected:text-accent-foreground',
-										day_hidden: 'invisible',
-									}}
 								/>
 							</div>
 						</PopoverContent>
 					</Popover>
 
+					{/* End Date */}
 					<Popover>
 						<PopoverTrigger asChild>
 							<Button
 								variant="outline"
-								className="justify-start text-left font-normal bg-background/80 backdrop-blur-sm border-border/50 hover:bg-accent/50 transition-colors"
+								className="w-full sm:w-auto bg-background/80 backdrop-blur-sm border-border/50 hover:bg-accent/50 transition-colors"
 							>
 								<Calendar className="mr-2 h-4 w-4 text-muted-foreground" />
 								{eventsSearchFilters.search.eventEndDay
@@ -186,42 +166,21 @@ function SortAndFilter({ updateURL, eventsSearchFilters, initialSearch }: SortAn
 									initialFocus
 									disabled={(date) =>
 										date < new Date() ||
-										(eventsSearchFilters.search.eventStartDay ? date < eventsSearchFilters.search.eventStartDay : false)
+										(eventsSearchFilters.search?.eventStartDay
+											? date < eventsSearchFilters.search.eventStartDay
+											: false)
 									}
-									className="rounded-md"
-									classNames={{
-										months: 'flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0',
-										month: 'space-y-4',
-										caption: 'flex justify-center pt-1 relative items-center',
-										caption_label: 'text-sm font-medium text-foreground',
-										nav: 'space-x-1 flex items-center',
-										nav_button: 'h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100 text-foreground',
-										nav_button_previous: 'absolute left-1',
-										nav_button_next: 'absolute right-1',
-										table: 'w-full border-collapse space-y-1',
-										head_row: 'flex',
-										head_cell: 'text-muted-foreground rounded-md w-9 font-normal text-[0.8rem]',
-										row: 'flex w-full mt-2',
-										cell: 'text-center text-sm p-0 relative [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20',
-										day: 'h-9 w-9 p-0 font-normal aria-selected:opacity-100 hover:bg-accent/50 rounded-md transition-colors',
-										day_selected:
-											'bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground',
-										day_today: 'bg-accent text-accent-foreground',
-										day_outside: 'text-muted-foreground opacity-50',
-										day_disabled: 'text-muted-foreground opacity-50',
-										day_range_middle: 'aria-selected:bg-accent aria-selected:text-accent-foreground',
-										day_hidden: 'invisible',
-									}}
 								/>
 							</div>
 						</PopoverContent>
 					</Popover>
 				</div>
 
-				<div className="flex items-center gap-4">
+				{/* 🔽 Sort + Direction + Clear */}
+				<div className="flex flex-wrap sm:flex-nowrap gap-4 items-center">
 					<Select value={eventsSearchFilters.sort} onValueChange={sortHandler}>
-						<SelectTrigger className="h-11">
-							<ArrowUpDown className="text-muted-foreground" />
+						<SelectTrigger className="h-11 min-w-[120px]">
+							<ArrowUpDown className="text-muted-foreground mr-2" />
 							<SelectValue placeholder={t('Sort by')} />
 						</SelectTrigger>
 						<SelectContent>
@@ -237,15 +196,23 @@ function SortAndFilter({ updateURL, eventsSearchFilters, initialSearch }: SortAn
 						variant="outline"
 						size="icon"
 						onClick={toggleDirection}
-						className="w-16 h-9 bg-background/80 backdrop-blur-sm border-border/50 hover:bg-accent/50 transition-colors flex items-center justify-center gap-1"
+						className="w-14 h-11 bg-background/80 backdrop-blur-sm border-border/50 hover:bg-accent/50 transition-colors"
 					>
 						<span
-							className={`${eventsSearchFilters.direction === Direction.ASC ? 'text-lg font-bold text-primary' : 'text-sm text-muted-foreground'}`}
+							className={cn(
+								eventsSearchFilters.direction === Direction.ASC
+									? 'text-lg font-bold text-primary'
+									: 'text-muted-foreground',
+							)}
 						>
 							↑
 						</span>
 						<span
-							className={`${eventsSearchFilters.direction === Direction.DESC ? 'text-lg font-bold text-primary' : 'text-sm text-muted-foreground'}`}
+							className={cn(
+								eventsSearchFilters.direction === Direction.DESC
+									? 'text-lg font-bold text-primary'
+									: 'text-muted-foreground',
+							)}
 						>
 							↓
 						</span>
@@ -256,7 +223,7 @@ function SortAndFilter({ updateURL, eventsSearchFilters, initialSearch }: SortAn
 						onClick={clearAllFilters}
 						className="h-11 hover:bg-accent hover:text-accent-foreground"
 					>
-						<X className="h-4 w-4 " />
+						<X className="h-4 w-4 mr-2" />
 						{t('Clear')}
 					</Button>
 				</div>

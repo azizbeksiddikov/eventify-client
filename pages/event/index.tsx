@@ -151,8 +151,8 @@ const EventsPage = ({
 			<EventsHeader />
 			<SortAndFilter updateURL={updateURL} eventsSearchFilters={eventsSearchFilters} initialSearch={initialSearch} />
 
-			<div className="max-w-7xl py-10 mx-auto mb-10">
-				<div className="flex flex-row gap-8">
+			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 mb-10">
+				<div className="flex flex-col lg:flex-row gap-8">
 					{/* Categories Sidebar */}
 					<CategoriesSidebar
 						eventsSearchFilters={eventsSearchFilters}
@@ -164,14 +164,14 @@ const EventsPage = ({
 					<div className="flex-1">
 						{events.length > 0 ? (
 							<>
-								<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+								<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
 									{events.map((event) => (
 										<EventCard key={event._id} event={event} likeEventHandler={likeEventHandler} />
 									))}
 								</div>
 
 								{/* Pagination */}
-								<div className="mt-8 flex justify-center">
+								<div className="mt-10 flex justify-center">
 									<PaginationComponent
 										totalItems={getEventsData?.getEvents?.metaCounter?.[0]?.total ?? 0}
 										currentPage={eventsSearchFilters.page}
@@ -181,7 +181,7 @@ const EventsPage = ({
 								</div>
 							</>
 						) : (
-							<div className="text-center py-12">
+							<div className="py-16 text-center">
 								<p className="text-muted-foreground">{t('No events found. Try adjusting your filters.')}</p>
 							</div>
 						)}
