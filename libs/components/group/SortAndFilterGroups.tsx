@@ -62,7 +62,7 @@ function SortAndFilterGroups({ updateURL, groupsSearchFilters, initialSearch }: 
 					onChange={(e) => searchHandler(e.target.value)}
 					className={cn(
 						buttonVariants({ variant: 'ghost', size: 'icon' }),
-						'w-[400px] bg-background/80  backdrop-blur-sm border-border/50 transition-colors  hover:bg-accent/50    ',
+						'w-auto bg-background/80  backdrop-blur-sm border-border/50 transition-colors  hover:bg-accent/50    ',
 					)}
 				/>
 

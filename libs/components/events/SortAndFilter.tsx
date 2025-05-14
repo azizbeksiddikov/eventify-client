@@ -108,7 +108,7 @@ function SortAndFilter({ updateURL, eventsSearchFilters, initialSearch }: SortAn
 					onChange={(e) => searchHandler(e.target.value)}
 					className={cn(
 						buttonVariants({ variant: 'ghost', size: 'icon' }),
-						'w-[400px] bg-background/80  backdrop-blur-sm border-border/50 transition-colors  hover:bg-accent/50    ',
+						'w-auto bg-background/80  backdrop-blur-sm border-border/50 transition-colors  hover:bg-accent/50    ',
 					)}
 				/>
 
@@ -117,7 +117,7 @@ function SortAndFilter({ updateURL, eventsSearchFilters, initialSearch }: SortAn
 						<PopoverTrigger asChild>
 							<Button
 								variant="outline"
-								className="w-48 justify-start text-left font-normal bg-background/80 backdrop-blur-sm border-border/50 hover:bg-accent/50 transition-colors"
+								className="justify-start text-left font-normal bg-background/80 backdrop-blur-sm border-border/50 hover:bg-accent/50 transition-colors"
 							>
 								<Calendar className="mr-2 h-4 w-4 text-muted-foreground" />
 								{eventsSearchFilters.search.eventStartDay
@@ -169,7 +169,7 @@ function SortAndFilter({ updateURL, eventsSearchFilters, initialSearch }: SortAn
 						<PopoverTrigger asChild>
 							<Button
 								variant="outline"
-								className="w-48 justify-start text-left font-normal bg-background/80 backdrop-blur-sm border-border/50 hover:bg-accent/50 transition-colors"
+								className="justify-start text-left font-normal bg-background/80 backdrop-blur-sm border-border/50 hover:bg-accent/50 transition-colors"
 							>
 								<Calendar className="mr-2 h-4 w-4 text-muted-foreground" />
 								{eventsSearchFilters.search.eventEndDay
@@ -220,7 +220,7 @@ function SortAndFilter({ updateURL, eventsSearchFilters, initialSearch }: SortAn
 
 				<div className="flex items-center gap-4">
 					<Select value={eventsSearchFilters.sort} onValueChange={sortHandler}>
-						<SelectTrigger className="w-[180px] h-11">
+						<SelectTrigger className="h-11">
 							<ArrowUpDown className="text-muted-foreground" />
 							<SelectValue placeholder={t('Sort by')} />
 						</SelectTrigger>
