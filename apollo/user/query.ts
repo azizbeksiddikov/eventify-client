@@ -13,7 +13,6 @@ export const GET_MEMBER = gql`
 			memberPhone
 			memberFullName
 			memberType
-			memberPoints
 			memberDesc
 			memberImage
 			memberStatus
@@ -39,7 +38,6 @@ export const GET_ORGANIZERS = gql`
 				memberPhone
 				memberFullName
 				memberType
-				memberPoints
 				memberDesc
 				memberImage
 				memberStatus
@@ -83,7 +81,6 @@ export const GET_ORGANIZER = gql`
 			emailVerified
 			memberDesc
 			memberImage
-			memberPoints
 			memberLikes
 			memberFollowings
 			memberFollowers
@@ -93,7 +90,6 @@ export const GET_ORGANIZER = gql`
 			memberEvents
 			createdAt
 			updatedAt
-			accessToken
 			meLiked {
 				memberId
 				likeRefId
@@ -179,14 +175,12 @@ export const GET_GROUPS = gql`
 					emailVerified
 					memberDesc
 					memberImage
-					memberPoints
 					memberLikes
 					memberFollowings
 					memberFollowers
 					memberViews
 					createdAt
 					updatedAt
-					accessToken
 				}
 				meLiked {
 					memberId
@@ -284,7 +278,6 @@ export const GET_GROUP = gql`
 				emailVerified
 				memberDesc
 				memberImage
-				memberPoints
 				memberLikes
 				memberFollowings
 				memberFollowers
@@ -396,7 +389,6 @@ export const GET_EVENT = gql`
 				emailVerified
 				memberDesc
 				memberImage
-				memberPoints
 				memberLikes
 				memberFollowings
 				memberFollowers
@@ -404,7 +396,6 @@ export const GET_EVENT = gql`
 				memberRank
 				createdAt
 				updatedAt
-				accessToken
 				meLiked {
 					memberId
 					likeRefId
@@ -492,16 +483,9 @@ export const GET_EVENTS = gql`
 					memberType
 					memberStatus
 					emailVerified
-					memberDesc
 					memberImage
-					memberPoints
-					memberLikes
-					memberFollowings
-					memberFollowers
-					memberViews
 					createdAt
 					updatedAt
-					accessToken
 				}
 				meLiked {
 					memberId
@@ -547,19 +531,8 @@ export const GET_EVENTS_BY_CATEGORY = gql`
 						memberEmail
 						memberPhone
 						memberFullName
-						memberType
 						memberStatus
-						emailVerified
-						memberDesc
 						memberImage
-						memberPoints
-						memberLikes
-						memberFollowings
-						memberFollowers
-						memberViews
-						createdAt
-						updatedAt
-						accessToken
 					}
 					meLiked {
 						memberId
@@ -717,31 +690,11 @@ export const GET_COMMENTS = gql`
 					_id
 					username
 					memberEmail
-					memberPhone
 					memberFullName
 					memberType
-					memberPoints
-					memberDesc
 					memberImage
 					memberStatus
 					emailVerified
-					memberLikes
-					memberFollowings
-					memberFollowers
-					memberViews
-					createdAt
-					updatedAt
-					accessToken
-					meLiked {
-						memberId
-						likeRefId
-						myFavorite
-					}
-					meFollowed {
-						followingId
-						followerId
-						myFollowing
-					}
 				}
 			}
 			metaCounter {
@@ -768,7 +721,6 @@ export const GET_MEMBER_FOLLOWERS_LIST = gql`
 			emailVerified
 			memberDesc
 			memberImage
-			memberPoints
 			memberLikes
 			memberFollowings
 			memberFollowers
@@ -805,7 +757,6 @@ export const GET_MEMBER_FOLLOWINGS_LIST = gql`
 			emailVerified
 			memberDesc
 			memberImage
-			memberPoints
 			memberLikes
 			memberFollowings
 			memberFollowers
@@ -815,7 +766,6 @@ export const GET_MEMBER_FOLLOWINGS_LIST = gql`
 			memberEvents
 			createdAt
 			updatedAt
-			accessToken
 			meFollowed {
 				followingId
 				followerId
@@ -871,24 +821,10 @@ export const GET_NOTIFICATIONS = gql`
 					_id
 					username
 					memberEmail
-					memberPhone
 					memberFullName
 					memberType
 					memberStatus
-					emailVerified
-					memberDesc
 					memberImage
-					memberPoints
-					memberLikes
-					memberFollowings
-					memberFollowers
-					memberViews
-					memberRank
-					memberGroups
-					memberEvents
-					eventsOrganizedCount
-					createdAt
-					updatedAt
 				}
 			}
 			metaCounter {

@@ -72,7 +72,6 @@ export const UPDATE_MEMBER = gql`
 			memberFollowings
 			memberFollowers
 			memberViews
-			createdAt
 			updatedAt
 			accessToken
 		}
@@ -98,24 +97,8 @@ export const SUBSCRIBE = gql`
 	mutation Subscribe($input: String!) {
 		subscribe(input: $input) {
 			_id
-			username
-			memberEmail
-			memberPhone
-			memberFullName
-			memberType
-			memberStatus
-			emailVerified
-			memberDesc
-			memberImage
-			memberPoints
-			memberLikes
-			memberFollowings
 			memberFollowers
-			memberViews
-			memberRank
-			createdAt
 			updatedAt
-			accessToken
 			meFollowed {
 				followingId
 				followerId
@@ -129,24 +112,8 @@ export const UNSUBSCRIBE = gql`
 	mutation Unsubscribe($input: String!) {
 		unsubscribe(input: $input) {
 			_id
-			username
-			memberEmail
-			memberPhone
-			memberFullName
-			memberType
-			memberStatus
-			emailVerified
-			memberDesc
-			memberImage
-			memberPoints
-			memberLikes
-			memberFollowings
 			memberFollowers
-			memberViews
-			memberRank
-			createdAt
 			updatedAt
-			accessToken
 			meFollowed {
 				followingId
 				followerId
@@ -199,7 +166,6 @@ export const UPDATE_GROUP = gql`
 			groupLikes
 			eventsCount
 			memberCount
-			createdAt
 			updatedAt
 		}
 	}
@@ -257,17 +223,7 @@ export const DELETE_GROUP = gql`
 	mutation DeleteGroup($input: String!) {
 		deleteGroup(groupId: $input) {
 			_id
-
 			groupName
-			groupDesc
-			groupmemberId
-			groupImage
-			groupViews
-			eventsCount
-			groupLikes
-			groupCategories
-			memberCount
-			createdAt
 			updatedAt
 		}
 	}
@@ -339,7 +295,6 @@ export const UPDATE_EVENT_BY_ORGANIZER = gql`
 			attendeeCount
 			eventLikes
 			eventViews
-			createdAt
 			updatedAt
 		}
 	}
@@ -384,13 +339,7 @@ export const CANCEL_TICKET = gql`
 	mutation CancelTicket($input: String!) {
 		cancelTicket(input: $input) {
 			_id
-			eventId
-			memberId
 			ticketStatus
-			ticketPrice
-			ticketQuantity
-			totalPrice
-			createdAt
 			updatedAt
 		}
 	}
@@ -424,37 +373,15 @@ export const UPDATE_COMMENT = gql`
 			commentContent
 			commentRefId
 			memberId
-			createdAt
 			updatedAt
 			memberData {
 				_id
 				username
 				memberEmail
-				memberPhone
 				memberFullName
 				memberType
-				memberPoints
-				memberDesc
 				memberImage
 				memberStatus
-				emailVerified
-				memberLikes
-				memberFollowings
-				memberFollowers
-				memberViews
-				createdAt
-				updatedAt
-				accessToken
-				meLiked {
-					memberId
-					likeRefId
-					myFavorite
-				}
-				meFollowed {
-					followingId
-					followerId
-					myFollowing
-				}
 			}
 		}
 	}
@@ -468,12 +395,7 @@ export const UPDATE_NOTIFICATION = gql`
 	mutation UpdateNotification($input: NotificationUpdate!) {
 		updateNotification(input: $input) {
 			_id
-			memberId
-			receiverId
-			notificationLink
-			notificationType
 			isRead
-			createdAt
 			updatedAt
 		}
 	}

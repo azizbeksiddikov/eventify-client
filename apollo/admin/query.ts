@@ -25,7 +25,6 @@ export const GET_ALL_MEMBERS_BY_ADMIN = gql`
 				memberViews
 				createdAt
 				updatedAt
-				accessToken
 			}
 			metaCounter {
 				total

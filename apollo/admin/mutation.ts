@@ -54,9 +54,7 @@ export const UPDATE_MEMBER_BY_ADMIN = gql`
 			memberGroups
 			memberEvents
 			eventsOrganizedCount
-			createdAt
 			updatedAt
-			accessToken
 		}
 	}
 `;
