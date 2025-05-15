@@ -16,40 +16,24 @@ const nextConfig = {
 	images: {
 		remotePatterns: [
 			{
+				protocol: 'https',
+				hostname: 'eventify.azbek.me',
+				pathname: '/**',
+			},
+			{
+				protocol: 'http',
+				hostname: 'eventify.azbek.me',
+				pathname: '/**',
+			},
+			{
 				protocol: 'http',
 				hostname: '82.29.162.87',
 				pathname: '/**',
-				port: '4001',
-			},
-			{
-				protocol: 'http',
-				hostname: '82.29.162.87',
-				pathname: '/**',
-				port: '',
-			},
-			{
-				protocol: 'https',
-				hostname: '82.29.162.87',
-				pathname: '/**',
-				port: '4001',
-			},
-			{
-				protocol: 'https',
-				hostname: '82.29.162.87',
-				pathname: '/**',
-				port: '',
 			},
 			{
 				protocol: 'http',
 				hostname: 'localhost',
 				pathname: '/**',
-				port: '3007',
-			},
-			{
-				protocol: 'http',
-				hostname: 'localhost',
-				pathname: '/**',
-				port: '',
 			},
 		],
 	},
