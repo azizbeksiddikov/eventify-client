@@ -2,7 +2,7 @@ import { userVar } from '@/apollo/store';
 import { ArrowRight } from 'lucide-react';
 import { useMutation, useQuery, useReactiveVar } from '@apollo/client';
 import { useTranslation } from 'next-i18next';
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/router';
 
 import { Button } from '@/libs/components/ui/button';
 import OrganizerCard from '@/libs/components/common/OrganizerCard';

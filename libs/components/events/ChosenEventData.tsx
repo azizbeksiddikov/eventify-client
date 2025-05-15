@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/router';
 import { useTranslation } from 'next-i18next';
+import { Heart, Eye, Calendar, Clock, MapPin, Users, Plus, Minus, Ticket, Pencil } from 'lucide-react';
 
 import { Button } from '@/libs/components/ui/button';
 import { Badge } from '@/libs/components/ui/badge';
-import { Heart, Eye, Calendar, Clock, MapPin, Users, Plus, Minus, Ticket, Pencil } from 'lucide-react';
 import { Card } from '@/libs/components/ui/card';
 import { Separator } from '@/libs/components/ui/separator';
 import {
@@ -76,6 +76,7 @@ const ChosenEventData = ({
 		}
 	};
 
+	const isLiked = event.meLiked && event.meLiked.length > 0;
 	return (
 		<>
 			<Card className="overflow-hidden border-none shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl gap-0 py-0">
@@ -107,7 +108,6 @@ const ChosenEventData = ({
 									alt={event.eventName}
 									fill
 									className="object-contain transition-transform duration-500"
-									priority
 									sizes="(max-width: 640px) 100vw, (max-width: 768px) 100vw, 50vw"
 								/>
 
@@ -116,7 +116,7 @@ const ChosenEventData = ({
 								<div className="absolute bottom-4 left-4">
 									<Badge
 										variant="secondary"
-										className={`${getStatusColor(event.eventStatus)} backdrop-blur-sm shadow-md px-2 sm:px-3 py-1 text-xs sm:text-sm font-medium`}
+										className={`${getStatusColor(event.eventStatus)} backdrop-blur-sm shadow-md px-2 sm:px-3 py-1 font-medium`}
 									>
 										{event.eventStatus}
 									</Badge>
@@ -124,7 +124,7 @@ const ChosenEventData = ({
 								<div className="absolute bottom-4 right-4">
 									<Badge
 										variant="secondary"
-										className="bg-primary text-primary-foreground backdrop-blur-sm shadow-md px-2 sm:px-3 py-1 text-xs sm:text-sm font-medium"
+										className="bg-primary text-primary-foreground backdrop-blur-sm shadow-md px-2 sm:px-3 py-1 font-medium"
 									>
 										${event.eventPrice}
 									</Badge>
@@ -132,11 +132,11 @@ const ChosenEventData = ({
 							</div>
 						</div>
 
-						<div className="space-y-4 sm:space-y-6 flex flex-col justify-between">
+						<div className="space-y-6 flex flex-col justify-between">
 							{/* Event Info */}
-							<div className="space-y-4 sm:space-y-5">
+							<div className="space-y-5">
 								{/* Event Categories */}
-								<div className="flex flex-wrap gap-2 mt-2 sm:mt-3">
+								<div className="flex flex-wrap gap-2 mt-3">
 									{event.eventCategories.map((category) => (
 										<Badge
 											key={category}
@@ -149,10 +149,10 @@ const ChosenEventData = ({
 								</div>
 
 								{/* Event Date and Time, Location, Capacity */}
-								<div className="space-y-2 sm:space-y-3">
+								<div className="space-y-3">
 									{/* Event Date */}
-									<div className="flex items-center gap-3 text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-colors bg-muted/40 hover:bg-muted/50 p-2 sm:p-3 rounded-xl">
-										<Calendar className="h-4 sm:h-5 w-4 sm:w-5 flex-shrink-0 text-primary" />
+									<div className="flex items-center gap-3 text-muted-foreground hover:text-foreground transition-colors bg-muted/40 hover:bg-muted/50 p-2 sm:p-3 rounded-xl">
+										<Calendar className="h-5 w-5 flex-shrink-0 text-primary" />
 										<span className="font-medium">
 											{new Date(event.eventDate).toLocaleDateString('en-US', {
 												weekday: 'short',
@@ -164,20 +164,20 @@ const ChosenEventData = ({
 									</div>
 
 									{/* Event Time */}
-									<div className="flex items-center gap-3 text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-colors bg-muted/40 hover:bg-muted/50 p-2 sm:p-3 rounded-xl">
-										<Clock className="h-4 sm:h-5 w-4 sm:w-5 flex-shrink-0 text-primary" />
+									<div className="flex items-center gap-3 text-muted-foreground hover:text-foreground transition-colors bg-muted/40 hover:bg-muted/50 p-2 sm:p-3 rounded-xl">
+										<Clock className="h-5 w-5 flex-shrink-0 text-primary" />
 										<span className="font-medium">
 											{event.eventStartTime} - {event.eventEndTime}
 										</span>
 									</div>
 
 									{/* Event Location */}
-									<div className="flex items-center gap-3 text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-colors bg-muted/40 hover:bg-muted/50 p-2 sm:p-3 rounded-xl">
-										<MapPin className="h-4 sm:h-5 w-4 sm:w-5 flex-shrink-0 text-primary" />
+									<div className="flex items-center gap-3 text-muted-foreground hover:text-foreground transition-colors bg-muted/40 hover:bg-muted/50 p-2 sm:p-3 rounded-xl">
+										<MapPin className="h-5 w-5 flex-shrink-0 text-primary" />
 										<span className="line-clamp-1 font-medium">{event.eventAddress}</span>
 									</div>
-									<div className="flex items-center gap-3 text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-colors bg-muted/40 hover:bg-muted/50 p-2 sm:p-3 rounded-xl">
-										<Users className="h-4 sm:h-5 w-4 sm:w-5 flex-shrink-0 text-primary" />
+									<div className="flex items-center gap-3 text-muted-foreground hover:text-foreground transition-colors bg-muted/40 hover:bg-muted/50 p-2 sm:p-3 rounded-xl">
+										<Users className="h-5 w-5 flex-shrink-0 text-primary" />
 										<span className="font-medium">
 											{event.eventCapacity} {t('capacity')}
 										</span>
@@ -185,85 +185,81 @@ const ChosenEventData = ({
 								</div>
 
 								{/* Event Likes and Views */}
-								<div className="grid grid-cols-3 gap-2 pt-1 sm:pt-2">
+								<div className="grid grid-cols-3 gap-2 h-10">
 									{/* Event Likes */}
-									<button
-										onClick={() => likeEventHandler(event?._id)}
+									<Button
+										onClick={() => likeEventHandler(event._id)}
 										className={cn(
-											'flex items-center gap-2 transition-all duration-200 hover:scale-105 bg-muted/40 hover:bg-muted/50 p-2 sm:p-3 rounded-xl',
-											event?.meLiked?.[0]?.myFavorite
+											'flex h-auto items-center m-0 p-0 justify-center gap-2 text-muted-foreground bg-muted/40 hover:bg-muted/50 transition-colors rounded-xl',
+											isLiked
 												? 'text-destructive hover:text-destructive/90'
 												: 'text-muted-foreground hover:text-primary',
 										)}
 									>
 										<Heart
 											className={cn(
-												'h-4 sm:h-5 w-4 sm:w-5 transition-all duration-200',
-												event?.meLiked?.[0]?.myFavorite ? 'fill-destructive text-destructive' : 'text-primary/70',
+												'h-5 w-5 transition-all duration-200',
+												isLiked ? 'fill-destructive text-destructive' : 'text-primary/70',
 											)}
 										/>
-										<span className="text-xs sm:text-sm font-medium">
-											{event.eventLikes} {t('likes')}
-										</span>
-									</button>
+										<span className="font-medium">{event.eventLikes}</span>
+									</Button>
 
 									{/* Event Views */}
-									<div className="flex items-center gap-2 text-muted-foreground bg-muted/40 hover:bg-muted/50 transition-colors p-2 sm:p-3 rounded-xl">
-										<Eye className="h-4 sm:h-5 w-4 sm:w-5 text-primary/70" />
-										<span className="text-xs sm:text-sm font-medium">
-											{event.eventViews} {t('views')}
-										</span>
+									<div className="flex items-center justify-center gap-2 text-muted-foreground bg-muted/40 hover:bg-muted/50 transition-colors rounded-xl">
+										<Eye className="h-5 w-5 text-primary/70" />
+										<span className="font-medium">{event.eventViews}</span>
 									</div>
 
 									{/* Event Remaining Capacity */}
-									<div className="flex items-center gap-2 text-muted-foreground bg-muted/40 hover:bg-muted/50 transition-colors p-2 sm:p-3 rounded-xl">
-										<Ticket className="h-4 sm:h-5 w-4 sm:w-5 text-primary/70" />
-										<span className="text-xs sm:text-sm font-medium">{event.eventCapacity - event.attendeeCount}</span>
+									<div className="flex items-center justify-center gap-2 text-muted-foreground bg-muted/40 hover:bg-muted/50 transition-colors rounded-xl">
+										<Ticket className="h-5 w-5 text-primary/70" />
+										<span className="font-medium">{event.eventCapacity - event.attendeeCount}</span>
 									</div>
 								</div>
 							</div>
 
 							{/* Ticket Purchase */}
-							<div className="bg-accent/30 rounded-xl p-3 sm:p-4">
-								<div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-									{/* Ticket Quantity and Total Price */}
+							<div className="bg-accent/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+								{/* Ticket Quantity and Total Price */}
+								<div className="flex items-center justify-between">
 									<div className="flex items-center gap-2">
 										<Button
 											variant="outline"
 											size="icon"
-											className="h-8 sm:h-9 w-8 sm:w-9 hover:bg-primary/10 hover:text-primary transition-colors border-primary/20"
+											className="h-8 w-8 hover:bg-primary/10 hover:text-primary transition-colors border-primary/20"
 											onClick={() => quantityHandler(-1)}
 										>
-											<Minus className="h-3 sm:h-4 w-3 sm:w-4" />
+											<Minus className="h-3 w-3" />
 										</Button>
 
-										<div className="w-8 sm:w-10 text-center text-sm sm:text-base font-medium">
-											{ticketInput!.ticketQuantity}
-										</div>
+										<div className="w-8 text-center font-medium">{ticketInput!.ticketQuantity}</div>
 
 										<Button
 											variant="outline"
 											size="icon"
-											className="h-8 sm:h-9 w-8 sm:w-9 hover:bg-primary/10 hover:text-primary transition-colors border-primary/20"
+											className="h-8 w-8 hover:bg-primary/10 hover:text-primary transition-colors border-primary/20"
 											onClick={() => quantityHandler(1)}
 										>
-											<Plus className="h-3 sm:h-4 w-3 sm:w-4" />
+											<Plus className="h-3 w-3" />
 										</Button>
-										<div className="text-xs text-muted-foreground ml-2">{t('Total')}</div>
-										<div className="text-sm sm:text-base font-semibold text-primary">
+									</div>
+									<div className="flex items-center gap-2">
+										<div className="text-muted-foreground">{t('Total')}</div>
+										<div className="font-semibold text-primary">
 											${(event.eventPrice * ticketInput!.ticketQuantity).toFixed(2)}
 										</div>
 									</div>
-
-									{/* Buy Ticket Button */}
-									<Button
-										onClick={purchaseHandler}
-										size="sm"
-										className="h-8 bg-primary hover:bg-primary/90 text-primary-foreground px-4 sm:px-6 shadow-sm hover:shadow transition-all duration-200 w-full sm:w-auto"
-									>
-										{t('Buy Ticket')}
-									</Button>
 								</div>
+
+								{/* Buy Ticket Button */}
+								<Button
+									onClick={purchaseHandler}
+									size="sm"
+									className="h-8 bg-primary hover:bg-primary/90 text-primary-foreground px-4 sm:px-6 shadow-sm hover:shadow transition-all duration-200 w-full sm:w-auto"
+								>
+									{t('Buy Ticket')}
+								</Button>
 							</div>
 						</div>
 					</div>
@@ -272,8 +268,8 @@ const ChosenEventData = ({
 				{/* Section: Description */}
 				<Separator />
 				<div className="px-4 sm:px-6 py-4">
-					<h3 className="text-sm font-medium mb-2 text-foreground/90">{t('Description')}</h3>
-					<p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">{event.eventDesc}</p>
+					<h3 className="font-medium mb-2 text-foreground/90">{t('Description')}</h3>
+					<p className="text-muted-foreground leading-relaxed">{event.eventDesc}</p>
 				</div>
 			</Card>
 
@@ -285,17 +281,17 @@ const ChosenEventData = ({
 					</DialogHeader>
 					<div className="space-y-4 py-4">
 						<div className="flex justify-between items-center">
-							<span className="text-sm text-muted-foreground">{t('Price per ticket')}</span>
+							<span className="text-muted-foreground">{t('Price per ticket')}</span>
 							<span className="font-medium">${event.eventPrice}</span>
 						</div>
 						<div className="flex justify-between items-center">
-							<span className="text-sm text-muted-foreground">{t('Number of tickets')}</span>
+							<span className="text-muted-foreground">{t('Number of tickets')}</span>
 							<span className="font-medium">{ticketInput!.ticketQuantity}</span>
 						</div>
 						<Separator />
 						<div className="flex justify-between items-center">
-							<span className="text-sm font-medium">{t('Total amount')}</span>
-							<span className="text-lg font-semibold text-primary">
+							<span className="font-medium">{t('Total amount')}</span>
+							<span className="font-semibold text-primary">
 								${(event.eventPrice * ticketInput!.ticketQuantity).toFixed(2)}
 							</span>
 						</div>

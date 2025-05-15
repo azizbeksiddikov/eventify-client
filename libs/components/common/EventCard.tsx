@@ -41,7 +41,7 @@ const EventCard = ({ event, likeEventHandler }: EventCardProps) => {
 	};
 
 	return (
-		<Card className="pt-0 w-full mx-auto shadow-md hover:shadow-lg transition-all duration-300 bg-card/60 flex flex-col h-full group hover:scale-105 gap-0">
+		<Card className="pt-0  w-full h-full mx-auto shadow-md hover:shadow-lg transition-all duration-300 bg-card/60 flex flex-col group gap-0">
 			<CardHeader className="p-0 gap-0">
 				<div className="relative aspect-[16/9] w-full overflow-hidden rounded-t-xl">
 					<Link href={`/event/detail?eventId=${event._id}`}>
@@ -76,9 +76,13 @@ const EventCard = ({ event, likeEventHandler }: EventCardProps) => {
 				<div className="space-y-2">
 					<h3 className="text-lg font-semibold text-foreground line-clamp-1 h-6">{event.eventName}</h3>
 
-					<div className="flex flex-wrap gap-1 min-h-[20px]">
+					<div className="flex items-center gap-1 overflow-hidden whitespace-nowrap text-ellipsis">
 						{event.eventCategories?.map((category, index) => (
-							<span key={index} className="text-xs text-primary/90 bg-primary/10 px-2 py-0.5 rounded-full">
+							<span
+								key={index}
+								className="truncate text-xs text-primary/90 bg-primary/10 px-1.5 sm:px-2 py-0.5 rounded-full"
+								title={`#${category}`}
+							>
 								#{category}
 							</span>
 						))}

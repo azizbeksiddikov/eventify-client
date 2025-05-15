@@ -1,4 +1,4 @@
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/router';
 import { useTranslation } from 'next-i18next';
 import { useReactiveVar } from '@apollo/client';
 import { userVar } from '@/apollo/store';
