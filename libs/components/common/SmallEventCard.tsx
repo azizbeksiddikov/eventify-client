@@ -1,9 +1,11 @@
+'use client';
+
 import Link from 'next/link';
 import Image from 'next/image';
 import { REACT_APP_API_URL } from '@/libs/config';
 import { MapPin, Calendar, Heart, Eye } from 'lucide-react';
 import { Button } from '@/libs/components/ui/button';
-import { Event } from '@/libs/types/event/event';
+import type { Event } from '@/libs/types/event/event';
 
 interface EventCardProps {
 	event: Event;
@@ -12,13 +14,16 @@ interface EventCardProps {
 
 const SmallEventCard = ({ event, likeEventHandler }: EventCardProps) => {
 	return (
-		<div className="p-4 rounded-lg hover:bg-secondary/20 hover:border-l-4 hover:border-l-primary transition-all duration-300">
-			<div className="flex items-center gap-4">
+		<div className="p-2 sm:p-3 lg:p-2 xl:p-3 rounded-lg hover:bg-secondary/20 hover:border-l-2 sm:hover:border-l-4 hover:border-l-primary transition-all duration-300">
+			<div className="flex items-center gap-2 sm:gap-3 lg:gap-2 xl:gap-3">
 				{/* Image and Description Column */}
-				<Link href={`/event/detail?eventId=${event._id}`} className="flex-1 flex items-center gap-4 group">
+				<Link
+					href={`/event/detail?eventId=${event._id}`}
+					className="flex-1 flex items-center gap-2 sm:gap-3 lg:gap-2 xl:gap-3 group"
+				>
 					{/* Image */}
 					<div className="flex-shrink-0">
-						<div className="w-20 h-20 rounded-xl overflow-hidden relative">
+						<div className="w-12 h-12 sm:w-16 sm:h-16 lg:w-14 lg:h-14 xl:w-16 xl:h-16 rounded-md sm:rounded-lg overflow-hidden relative">
 							<Image
 								src={`${REACT_APP_API_URL}/${event.eventImage}`}
 								alt={event.eventName}
@@ -32,12 +37,12 @@ const SmallEventCard = ({ event, likeEventHandler }: EventCardProps) => {
 
 					{/* Description */}
 					<div className="flex-1 min-w-0">
-						<h4 className="text-base font-semibold text-card-foreground group-hover:text-card-foreground transition-colors duration-200 line-clamp-1">
+						<h4 className="text-sm sm:text-base lg:text-sm xl:text-base font-semibold text-card-foreground group-hover:text-card-foreground transition-colors duration-200 line-clamp-1">
 							{event.eventName}
 						</h4>
-						<div className="mt-2 flex items-center gap-4 text-sm text-card-foreground/70">
+						<div className="mt-1 sm:mt-2 flex flex-col xs:flex-row items-start xs:items-center gap-1 xs:gap-2 sm:gap-3 lg:gap-2 xl:gap-3 text-xs sm:text-sm lg:text-xs xl:text-sm text-card-foreground/70">
 							<div className="flex items-center">
-								<Calendar className="w-3.5 h-3.5 mr-1.5 text-card-foreground/70" />
+								<Calendar className="w-3 h-3 mr-1 text-card-foreground/70" />
 								{new Date(event.eventDate).toLocaleDateString('en-US', {
 									month: 'short',
 									day: 'numeric',
@@ -45,7 +50,7 @@ const SmallEventCard = ({ event, likeEventHandler }: EventCardProps) => {
 								})}
 							</div>
 							<div className="flex items-center">
-								<MapPin className="w-3.5 h-3.5 mr-1.5 text-card-foreground/70" />
+								<MapPin className="w-3 h-3 mr-1 text-card-foreground/70" />
 								<span className="line-clamp-1">{event.eventCity}</span>
 							</div>
 						</div>
@@ -53,19 +58,23 @@ const SmallEventCard = ({ event, likeEventHandler }: EventCardProps) => {
 				</Link>
 
 				{/* Views and Like Column */}
-				<div className="flex flex-col items-end gap-2">
+				<div className="flex flex-col items-end gap-1 sm:gap-2">
 					<div className="flex items-center">
-						<Eye className="w-3.5 h-3.5 mr-1.5 text-card-foreground/70" />
-						<span className="text-sm text-card-foreground/70">{event.eventViews.toLocaleString()}</span>
+						<Eye className="w-3 h-3 mr-1 text-card-foreground/70" />
+						<span className="text-xs sm:text-sm lg:text-xs xl:text-sm text-card-foreground/70">
+							{event.eventViews.toLocaleString()}
+						</span>
 					</div>
 					<Button
 						variant="ghost"
 						size="sm"
 						onClick={() => likeEventHandler(event?._id)}
-						className="text-card-foreground/70 hover:text-primary transition-colors duration-200 hover:bg-primary/10"
+						className="h-6 w-6 p-0 text-card-foreground/70 hover:text-primary transition-colors duration-200 hover:bg-primary/10"
 					>
 						<Heart
-							className={`h-4 w-4 transition-all duration-200 ${event?.meLiked?.[0]?.myFavorite ? 'fill-primary text-primary' : ''}`}
+							className={`h-3.5 w-3.5 transition-all duration-200 ${
+								event?.meLiked?.[0]?.myFavorite ? 'fill-primary text-primary' : ''
+							}`}
 						/>
 					</Button>
 				</div>
@@ -73,5 +82,4 @@ const SmallEventCard = ({ event, likeEventHandler }: EventCardProps) => {
 		</div>
 	);
 };
-
 export default SmallEventCard;

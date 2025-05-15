@@ -18,18 +18,18 @@ const Owner = ({ member, title = 'Group Owner' }: OwnerProps) => {
 	const { t } = useTranslation('common');
 
 	return (
-		<Card className="p-8 bg-card hover:bg-secondary/15 transition-all duration-300 shadow-sm hover:shadow-md border border-border/50">
-			<h2 className="text-2xl font-semibold mb-0 text-card-foreground flex items-center gap-2">
-				<Users className="w-5 h-5 text-card-foreground" />
+		<Card className="p-4 bg-card hover:bg-secondary/15 transition-all duration-300 shadow-sm hover:shadow-md border border-border/50">
+			<h2 className="text-lg font-semibold mb-3 text-card-foreground flex items-center gap-2">
+				<Users className="w-4 h-4 text-card-foreground" />
 				{title}
 			</h2>
 			<Link
 				href={`/organizer/detail?organizerId=${member._id}`}
 				className="block group hover:scale-105 transition-transform duration-300"
 			>
-				<div className="flex items-center space-x-6">
+				<div className="flex flex-row items-start gap-8">
 					<div className="flex items-center">
-						<Avatar className="h-24 w-24">
+						<Avatar className="h-16 w-16">
 							{member?.memberImage ? (
 								<AvatarImage
 									src={`${REACT_APP_API_URL}/${member.memberImage}`}
@@ -38,22 +38,20 @@ const Owner = ({ member, title = 'Group Owner' }: OwnerProps) => {
 								/>
 							) : (
 								<AvatarFallback className="bg-muted rounded-full">
-									<User className="h-16 w-16 text-muted-foreground" />
+									<User className="h-10 w-10 text-muted-foreground" />
 								</AvatarFallback>
 							)}
 						</Avatar>
 					</div>
-					<div className="space-y-2">
-						<div className="flex items-center gap-2">
-							<h3 className="text-xl font-semibold text-card-foreground group-hover:text-card-foreground transition-colors duration-200">
-								{member.memberFullName ?? t('No Name')}
-							</h3>
-							<Badge className="bg-yellow-100 text-yellow-800">
-								<Crown className="h-3 w-3 mr-1" />
-								{t('Owner')}
-							</Badge>
-						</div>
-						<p className="text-base text-card-foreground leading-relaxed group-hover:text-card-foreground/80 transition-colors duration-200">
+					<div className="flex flex-col gap-2">
+						<h3 className="font-semibold text-card-foreground group-hover:text-card-foreground transition-colors duration-200">
+							{member.memberFullName ?? t('No Name')}
+						</h3>
+						<Badge className="bg-yellow-100 text-yellow-800 py-0.5">
+							<Crown className="h-2.5 w-2.5 mr-1" />
+							{t('Owner')}
+						</Badge>
+						<p className="text-card-foreground leading-relaxed group-hover:text-card-foreground/80 transition-colors duration-200 line-clamp-2">
 							{member.memberDesc ?? t('No Description')}
 						</p>
 					</div>

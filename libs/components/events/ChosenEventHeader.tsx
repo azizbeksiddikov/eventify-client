@@ -23,34 +23,32 @@ const ChosenEventHeader = () => {
 	};
 
 	return (
-		<section className="bg-gradient-to-b from-secondary/40 to-background py-10">
-			<div className="flex items-center justify-between mb-8 w-[90%] mx-auto">
-				<Button
-					type="button"
-					onClick={() => router.push('/event')}
-					className="h-14 px-8 bg-primary text-primary-foreground hover:bg-primary/90 transition-colors duration-200"
-				>
-					<div className="flex items-center gap-2">
-						<ArrowLeft className="w-4 h-4 mr-2" />
-						{t('Back to Events')}
-					</div>
-				</Button>
+		<section className="bg-gradient-to-b from-secondary/40 to-background py-8 w-[95%] max-w-7xl flex flex-row items-center justify-between mx-auto">
+			<Button
+				type="button"
+				onClick={() => router.push('/event')}
+				className="h-12 px-6 bg-primary text-primary-foreground hover:bg-primary/90 transition-colors duration-200"
+			>
+				<div className="flex items-center gap-2">
+					<ArrowLeft className="w-4 h-4" />
+					{t('Back to Events')}
+				</div>
+			</Button>
 
-				<Button
-					type="button"
-					onClick={createHandler}
-					className={`h-14 px-8 transition-colors duration-200 ${
-						user.memberType === MemberType.ORGANIZER
-							? 'bg-primary text-primary-foreground hover:bg-primary/90'
-							: 'bg-muted text-muted-foreground cursor-not-allowed'
-					}`}
-				>
-					<div className="flex items-center gap-2">
-						{t('Create Event')}
-						<ArrowRight className="w-4 h-4" />
-					</div>
-				</Button>
-			</div>
+			<Button
+				type="button"
+				onClick={createHandler}
+				className={`h-12 px-6 transition-colors duration-200 ${
+					user.memberType === MemberType.ORGANIZER
+						? 'bg-primary text-primary-foreground hover:bg-primary/90'
+						: 'bg-muted text-muted-foreground cursor-not-allowed'
+				}`}
+			>
+				<div className="flex items-center gap-2">
+					{t('Create Event')}
+					<ArrowRight className="w-4 h-4" />
+				</div>
+			</Button>
 		</section>
 	);
 };

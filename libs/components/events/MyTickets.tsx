@@ -53,64 +53,67 @@ const MyTickets = ({ setTicketInquiry, ticketInquiry, myTickets }: MyTicketsProp
 	const currentCategory = ticketInquiry.search?.ticketStatus || 'ALL';
 
 	return (
-		<Card className="mt-10">
-			<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-				<CardTitle className="text-xl font-semibold text-foreground/90">{t('My Tickets')}</CardTitle>
-				<div className="flex items-center space-x-4">
-					<Badge variant="outline" className="flex items-center space-x-2">
+		<Card className="mt-10 gap-0">
+			<CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-0 pb-2">
+				<CardTitle className="text-xl font-semibold text-foreground/90 w-full">{t('My Tickets')}</CardTitle>
+
+				<div className="flex justify-between items-center w-full">
+					<Badge variant="outline" className="flex items-center gap-2">
 						<TicketIcon className="h-4 w-4" />
 						<span className="text-sm font-medium">
 							{totalTickets} {t('tickets')}
 						</span>
 					</Badge>
-					<div className="flex items-center space-x-2">
-						<DropdownMenu>
-							<DropdownMenuTrigger asChild>
-								<Button variant="outline" size="sm" className="h-8 flex items-center gap-2">
-									<Filter className="h-4 w-4" />
-									{currentCategory}
-									<ChevronDown className="h-4 w-4 ml-1" />
-								</Button>
-							</DropdownMenuTrigger>
-							<DropdownMenuContent align="end">
-								{CATEGORY_OPTIONS.map((category) => (
-									<DropdownMenuItem
-										key={category}
-										onClick={() => categoryHandler(category)}
-										className={category === currentCategory ? 'bg-accent' : ''}
-									>
-										{category}
-									</DropdownMenuItem>
-								))}
-							</DropdownMenuContent>
-						</DropdownMenu>
-						<DropdownMenu>
-							<DropdownMenuTrigger asChild>
-								<Button variant="outline" size="sm" className="h-8 w-[70px] flex items-center justify-between">
-									{ticketInquiry.limit}
-									<ChevronDown className="h-4 w-4 ml-1" />
-								</Button>
-							</DropdownMenuTrigger>
-							<DropdownMenuContent align="end">
-								{LIMIT_OPTIONS.map((option) => (
-									<DropdownMenuItem
-										key={option}
-										onClick={() => limitHandler(option)}
-										className={option === ticketInquiry.limit ? 'bg-accent' : ''}
-									>
-										{option}
-									</DropdownMenuItem>
-								))}
-							</DropdownMenuContent>
-						</DropdownMenu>
-					</div>
+
+					{/* Category Filter */}
+					<DropdownMenu>
+						<DropdownMenuTrigger asChild>
+							<Button variant="outline" size="sm" className="h-8 flex items-center gap-2">
+								<Filter className="h-4 w-4" />
+								{currentCategory}
+								<ChevronDown className="h-4 w-4 ml-1" />
+							</Button>
+						</DropdownMenuTrigger>
+						<DropdownMenuContent align="end">
+							{CATEGORY_OPTIONS.map((category) => (
+								<DropdownMenuItem
+									key={category}
+									onClick={() => categoryHandler(category)}
+									className={category === currentCategory ? 'bg-accent' : ''}
+								>
+									{category}
+								</DropdownMenuItem>
+							))}
+						</DropdownMenuContent>
+					</DropdownMenu>
+
+					{/* Limit Selector */}
+					<DropdownMenu>
+						<DropdownMenuTrigger asChild>
+							<Button variant="outline" size="sm" className="h-8 w-[70px] flex items-center justify-between">
+								{ticketInquiry.limit}
+								<ChevronDown className="h-4 w-4 ml-1" />
+							</Button>
+						</DropdownMenuTrigger>
+						<DropdownMenuContent align="end">
+							{LIMIT_OPTIONS.map((option) => (
+								<DropdownMenuItem
+									key={option}
+									onClick={() => limitHandler(option)}
+									className={option === ticketInquiry.limit ? 'bg-accent' : ''}
+								>
+									{option}
+								</DropdownMenuItem>
+							))}
+						</DropdownMenuContent>
+					</DropdownMenu>
 				</div>
 			</CardHeader>
 
-			<CardContent>
+			<CardContent className="p-0">
 				{totalTickets <= 0 ? (
 					<div className="text-center py-12">
-						<div className="flex flex-col items-center space-y-4">
+						<div className="flex flex-col items-center">
 							<TicketIcon className="h-12 w-12 text-muted-foreground/50" />
 							<div className="text-muted-foreground/80 text-sm">{t('You have no tickets yet')}</div>
 							<div className="text-muted-foreground/60 text-xs">{t('Purchase tickets to see them here')}</div>

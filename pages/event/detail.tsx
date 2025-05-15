@@ -12,7 +12,7 @@ import ChosenEventData from '@/libs/components/events/ChosenEventData';
 import ChosenEventHeader from '@/libs/components/events/ChosenEventHeader';
 import ChosenEventOther from '@/libs/components/events/ChosenEventOther';
 
-import { GET_EVENT, GET_TICKETS } from '@/apollo/user/query';
+import { GET_EVENT, GET_MY_TICKETS } from '@/apollo/user/query';
 import { CREATE_TICKET, LIKE_TARGET_EVENT } from '@/apollo/user/mutation';
 import { Event } from '@/libs/types/event/event';
 import { Message } from '@/libs/enums/common.enum';
@@ -35,7 +35,13 @@ const ChosenEvent = () => {
 
 	const [eventId, setEventId] = useState<string | null>(null);
 	const [event, setEvent] = useState<Event | null>(null);
-	const [ticketInput, setTicketInput] = useState<TicketInput | null>(null);
+	const [ticketInput, setTicketInput] = useState<TicketInput>({
+		eventId: eventId ?? '',
+		ticketPrice: 0,
+		ticketQuantity: 0,
+		totalPrice: 0,
+	});
+
 	const [ticketInquiry, setTicketInquiry] = useState<TicketInquiry>({
 		page: 1,
 		limit: 5,
@@ -58,7 +64,7 @@ const ChosenEvent = () => {
 		variables: { input: eventId },
 		notifyOnNetworkStatusChange: true,
 	});
-	const { data: getTicketsData, refetch: refetchTickets } = useQuery(GET_TICKETS, {
+	const { data: getTicketsData, refetch: refetchTickets } = useQuery(GET_MY_TICKETS, {
 		fetchPolicy: 'cache-and-network',
 		skip: !ticketInquiry.search.eventId || !user._id,
 		variables: { input: ticketInquiry },
@@ -93,7 +99,9 @@ const ChosenEvent = () => {
 	}, [getEventData]);
 
 	useEffect(() => {
-		if (getTicketsData?.getTickets) setMyTickets(getTicketsData.getTickets);
+		if (getTicketsData?.getMyTickets) {
+			setMyTickets(getTicketsData.getMyTickets);
+		}
 	}, [getTicketsData]);
 
 	/**  HANDLERS */
@@ -118,12 +126,13 @@ const ChosenEvent = () => {
 	};
 
 	if (!eventId) return null;
+
 	return (
-		<div>
+		<div className="mx-4">
 			<ChosenEventHeader />
 
-			<div className="w-[90%] mx-auto pb-10">
-				<div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+			<div className="max-w-7xl mx-auto pb-10">
+				<div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
 					<div className="lg:col-span-3">
 						<ChosenEventData
 							event={event}
@@ -136,6 +145,7 @@ const ChosenEvent = () => {
 						{/* My Tickets */}
 						<MyTickets myTickets={myTickets} ticketInquiry={ticketInquiry} setTicketInquiry={setTicketInquiry} />
 					</div>
+
 					<ChosenEventOther event={event} likeEventHandler={likeEventHandler} />
 				</div>
 

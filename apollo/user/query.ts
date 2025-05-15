@@ -412,6 +412,7 @@ export const GET_EVENT = gql`
 				groupViews
 				groupLikes
 				memberCount
+				eventsCount
 				createdAt
 				updatedAt
 			}
@@ -611,9 +612,9 @@ export const GET_VISITED = gql`
  *         TICKET          *
  *************************/
 
-export const GET_TICKETS = gql`
-	query GetTickets($input: TicketInquiry!) {
-		getTickets(input: $input) {
+export const GET_MY_TICKETS = gql`
+	query GetMyTickets($input: TicketInquiry!) {
+		getMyTickets(input: $input) {
 			list {
 				_id
 				eventId
@@ -624,6 +625,28 @@ export const GET_TICKETS = gql`
 				totalPrice
 				createdAt
 				updatedAt
+				event {
+					_id
+					eventName
+					eventDesc
+					eventImage
+					eventDate
+					eventStartTime
+					eventEndTime
+					eventCity
+					eventAddress
+					eventCapacity
+					eventPrice
+					eventStatus
+					eventCategories
+					groupId
+					memberId
+					attendeeCount
+					eventLikes
+					eventViews
+					createdAt
+					updatedAt
+				}
 			}
 			metaCounter {
 				total

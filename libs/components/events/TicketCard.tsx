@@ -1,5 +1,5 @@
 import { useTranslation } from 'next-i18next';
-import { Calendar, Ticket as TicketIcon } from 'lucide-react';
+import { Ticket as TicketIcon } from 'lucide-react';
 
 import { Badge } from '@/libs/components/ui/badge';
 import { Card, CardContent } from '@/libs/components/ui/card';
@@ -32,53 +32,46 @@ const TicketCard = ({ ticket, showSeparator = true }: TicketCardProps) => {
 
 	return (
 		<>
-			<Card className="border-none shadow-none">
-				<CardContent className="p-4">
-					<div className="flex items-center">
-						<div className="flex items-center min-w-[200px]">
-							<div className="h-12 w-12 rounded-lg bg-muted flex items-center justify-center">
-								<TicketIcon className="h-6 w-6 text-muted-foreground" />
-							</div>
-							<div className="flex flex-col ml-3">
-								<div className="text-sm font-medium truncate max-w-[180px]">{ticket.event?.eventName || 'Event'}</div>
-								<Badge variant={getStatusVariant(ticket.ticketStatus)} className="h-5 w-fit mt-1">
-									{ticket.ticketStatus}
-								</Badge>
-								{ticket.event && (
-									<div className="flex items-center mt-1">
-										<Calendar className="h-3 w-3 text-muted-foreground/60" />
-										<span className="text-xs text-muted-foreground/60 ml-1">
-											{new Date(ticket.event.eventDate).toLocaleDateString('en-US', {
-												month: 'short',
-												day: 'numeric',
-											})}
-										</span>
-									</div>
-								)}
-							</div>
+			<Card className="border-none shadow-none gap-0 my-0 py-0">
+				<CardContent className="p-4 flex flex-col sm:flex-row sm:items-center gap-4">
+					{/* Event Info */}
+					<div className="flex items-start sm:items-center sm:min-w-40">
+						<div className="h-12 w-12 rounded-lg bg-muted flex items-center justify-center shrink-0">
+							<TicketIcon className="h-6 w-6 text-muted-foreground" />
 						</div>
-						<Separator orientation="vertical" className="h-12 mx-6" />
-						<div className="flex-1">
-							<div className="grid grid-cols-3 gap-8">
-								<div className="flex flex-col">
-									<span className="text-sm text-muted-foreground/60">{t('Price per ticket')}</span>
-									<span className="text-base font-medium mt-1">${ticket.ticketPrice}</span>
-								</div>
-								<div className="flex flex-col">
-									<span className="text-sm text-muted-foreground/60">{t('Quantity')}</span>
-									<span className="text-base font-medium mt-1">{ticket.ticketQuantity}</span>
-								</div>
-								<div className="flex flex-col">
-									<span className="text-sm text-muted-foreground/60">{t('Total cost')}</span>
-									<span className="text-base font-medium mt-1">${ticket.totalPrice}</span>
-								</div>
+						<div className="flex flex-col ml-3">
+							<div className="text-sm font-medium truncate max-w-[180px]">{ticket.event?.eventName || 'Event'}</div>
+							<Badge variant={getStatusVariant(ticket.ticketStatus)} className="h-5 w-fit mt-1">
+								{ticket.ticketStatus}
+							</Badge>
+						</div>
+					</div>
+
+					{/* Ticket Info */}
+					<div className="flex-1 py-0">
+						<div className="grid grid-cols-3 gap-4 text-center sm:text-left">
+							{/* Price */}
+							<div className="flex flex-col">
+								<span className="inline text-sm text-muted-foreground/60">{t('Price per ticket')}</span>
+								<span className="text-base font-medium mt-0 sm:mt-1">${ticket.ticketPrice}</span>
+							</div>
+							{/* Quantity */}
+							<div className="flex flex-col">
+								<span className="inline text-sm text-muted-foreground/60">{t('Quantity')}</span>
+								<span className="text-base font-medium mt-0 sm:mt-1">{ticket.ticketQuantity}</span>
+							</div>
+							{/* Total */}
+							<div className="flex flex-col">
+								<span className="inline text-sm text-muted-foreground/60">{t('Total cost')}</span>
+								<span className="text-base font-medium mt-0 sm:mt-1">${ticket.totalPrice}</span>
 							</div>
 						</div>
-						<Separator orientation="vertical" className="h-12 mx-6" />
-						<div className="min-w-[140px] text-right">
-							<div className="text-xs text-muted-foreground/60">{t('Last change')}</div>
-							<div className="text-sm text-muted-foreground/60 mt-1"> {formatDateHandler(ticket.createdAt)}</div>
-						</div>
+					</div>
+
+					{/* Timestamp - hidden on small screens */}
+					<div className="hidden lg:block min-w-40 text-right">
+						<div className="text-xs text-muted-foreground/60">{t('Last change')}</div>
+						<div className="text-sm text-muted-foreground/60 mt-1">{formatDateHandler(ticket.createdAt)}</div>
 					</div>
 				</CardContent>
 			</Card>

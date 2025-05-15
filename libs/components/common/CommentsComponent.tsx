@@ -163,39 +163,40 @@ const CommentsComponent = ({ commentRefId, commentGroup, initialCommentsInquiry 
 	const limitHandler = (newLimit: number) => {
 		setCommentInquiry({ ...commentInquiry, limit: newLimit, page: 1 });
 	};
-
 	return (
 		<Card className="mt-5">
-			<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+			<CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-2 sm:gap-8">
 				<h3 className="text-xl font-semibold text-foreground/90">{t('Comments')}</h3>
-				<div className="flex items-center space-x-4">
-					<div className="flex items-center space-x-2 text-muted-foreground/80">
-						<MessageSquare className="h-5 w-5" />
-						<span className="text-sm font-medium">
-							{totalComments} {t('comments')}
-						</span>
-					</div>
-					<div className="flex items-center space-x-2">
-						<span className="text-sm text-muted-foreground">{t('per page')}:</span>
-						<DropdownMenu>
-							<DropdownMenuTrigger asChild>
-								<Button variant="outline" size="sm" className="h-8 w-[70px] flex items-center justify-between">
-									{commentInquiry.limit}
-									<ChevronDown className="h-4 w-4 ml-1" />
-								</Button>
-							</DropdownMenuTrigger>
-							<DropdownMenuContent align="end">
-								{LIMIT_OPTIONS.map((option) => (
-									<DropdownMenuItem
-										key={option}
-										onClick={() => limitHandler(option)}
-										className={option === commentInquiry.limit ? 'bg-accent' : ''}
-									>
-										{option}
-									</DropdownMenuItem>
-								))}
-							</DropdownMenuContent>
-						</DropdownMenu>
+				<div className="flex flex-col sm:flex-row w-full sm:w-auto items-start sm:items-center gap-3 sm:gap-6">
+					<div className="flex flex-row justify-between w-full sm:gap-6">
+						<div className="flex items-center gap-2 text-muted-foreground/80">
+							<MessageSquare className="h-5 w-5" />
+							<span className="text-sm font-medium">
+								{totalComments} {t('comments')}
+							</span>
+						</div>
+						<div className="flex items-center gap-2">
+							<span className="text-sm text-muted-foreground">{t('per page')}:</span>
+							<DropdownMenu>
+								<DropdownMenuTrigger asChild>
+									<Button variant="outline" size="sm" className="h-8 w-[70px] flex items-center justify-between">
+										{commentInquiry.limit}
+										<ChevronDown className="h-4 w-4 ml-1" />
+									</Button>
+								</DropdownMenuTrigger>
+								<DropdownMenuContent align="end">
+									{LIMIT_OPTIONS.map((option) => (
+										<DropdownMenuItem
+											key={option}
+											onClick={() => limitHandler(option)}
+											className={option === commentInquiry.limit ? 'bg-accent' : ''}
+										>
+											{option}
+										</DropdownMenuItem>
+									))}
+								</DropdownMenuContent>
+							</DropdownMenu>
+						</div>
 					</div>
 					{!isWriting && (
 						<Button
@@ -210,7 +211,7 @@ const CommentsComponent = ({ commentRefId, commentGroup, initialCommentsInquiry 
 									commentRefId,
 								});
 							}}
-							className="text-muted-foreground/80 hover:text-foreground transition-colors"
+							className="w-full sm:w-auto text-muted-foreground/80 hover:text-foreground transition-colors mt-2 sm:mt-0"
 						>
 							<Plus className="h-4 w-4 mr-2" />
 							{t('Write a comment')}
@@ -223,8 +224,8 @@ const CommentsComponent = ({ commentRefId, commentGroup, initialCommentsInquiry 
 				{isWriting && (
 					<>
 						<form onSubmit={submitHandler} className="mb-6">
-							<div className="flex items-start space-x-4">
-								<div className="flex-1 space-y-3">
+							<div className="flex flex-col sm:flex-row items-start space-y-3 sm:space-y-0 sm:space-x-4">
+								<div className="w-full space-y-3">
 									<Textarea
 										ref={textareaRef}
 										placeholder="Write a comment..."
@@ -258,7 +259,7 @@ const CommentsComponent = ({ commentRefId, commentGroup, initialCommentsInquiry 
 				)}
 
 				{totalComments <= 0 && !isWriting ? (
-					<div className="text-center py-12">
+					<div className="text-center py-8 sm:py-12">
 						<div className="text-muted-foreground/80 mb-4 text-sm">{t('No comments yet')}</div>
 						<Button
 							variant="outline"
@@ -284,21 +285,25 @@ const CommentsComponent = ({ commentRefId, commentGroup, initialCommentsInquiry 
 
 									return (
 										<div key={comment._id}>
-											<div className="flex space-x-4 items-center">
-												<Avatar className="h-10 w-10">
-													{memberImage ? (
-														<AvatarImage src={memberImage} alt={memberName} className="rounded-full" />
-													) : (
-														<AvatarFallback className="bg-muted rounded-full">
-															<User className="h-6 w-6 text-muted-foreground" />
-														</AvatarFallback>
-													)}
-												</Avatar>
+											<div className="flex flex-row items-center gap-4">
+												{/* Member Image */}
+												<div className="flex items-center justify-center">
+													<Avatar className="h-10 w-10 flex items-center justify-center">
+														{memberImage ? (
+															<AvatarImage src={memberImage} alt={memberName} className="rounded-full" />
+														) : (
+															<AvatarFallback className="bg-muted rounded-full">
+																<User className="h-6 w-6 text-muted-foreground" />
+															</AvatarFallback>
+														)}
+													</Avatar>
+												</div>
 
-												<div className="flex-1 items-center">
-													<div className="flex items-center justify-between">
+												{/* Member Info and Comment Content */}
+												<div className="flex-1">
+													<div className="flex flex-row items-center justify-between">
 														<h4 className="font-medium text-foreground/90 text-sm">{memberName}</h4>
-														<div className="flex items-center space-x-2">
+														<div className="flex items-center justify-end">
 															<span className="text-xs text-muted-foreground/80">
 																{formatDateHandler(comment.createdAt)}
 															</span>
@@ -324,6 +329,8 @@ const CommentsComponent = ({ commentRefId, commentGroup, initialCommentsInquiry 
 															)}
 														</div>
 													</div>
+
+													{/* Comment Content */}
 													<p className="mt-1.5 text-muted-foreground/80 text-sm">{comment.commentContent}</p>
 												</div>
 											</div>
