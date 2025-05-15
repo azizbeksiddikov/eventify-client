@@ -8,16 +8,16 @@ const OrganizerHeader = () => {
 	const { t } = useTranslation('common');
 
 	return (
-		<section className="bg-gradient-to-b from-secondary to-background py-8">
-			<div className="flex items-center justify-between mb-8 w-[90%] mx-auto">
+		<section className="bg-gradient-to-b from-secondary to-background py-4 sm:py-6 md:py-8">
+			<div className="flex items-center justify-between mb-4 max-w-7xl mx-auto">
 				<Button
 					type="button"
 					onClick={() => router.push('/organizer')}
-					className="h-14 px-8 bg-primary text-primary-foreground hover:bg-primary/90 transition-colors duration-200"
+					className="h-10 sm:h-12 md:h-14 px-4 sm:px-6 md:px-8 bg-primary text-primary-foreground hover:bg-primary/90 transition-colors duration-200"
 				>
 					<div className="flex items-center gap-2">
-						<ArrowLeft className="w-4 h-4 mr-2" />
-						{t('Back to Organizers')}
+						<ArrowLeft className="w-4 h-4 mr-1 sm:mr-2" />
+						<span className="text-sm sm:text-base">{t('Back to Organizers')}</span>
 					</div>
 				</Button>
 			</div>

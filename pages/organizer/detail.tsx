@@ -79,22 +79,20 @@ const OrganizerDetailPage = () => {
 
 	if (!organizer) return null;
 	return (
-		<div>
+		<div className="w-[90%] mx-auto">
 			<OrganizerHeader />
 
-			<div className="w-[80%] mx-auto pb-10">
-				<div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+			<div className="mx-auto pb-6 sm:pb-8 md:pb-10 max-w-7xl">
+				<div className="flex flex-col sm:flex-row gap-4 sm:gap-6 lg:gap-8">
 					<OrganizerProfile
 						organizer={organizer}
 						likeMemberHandler={likeMemberHandler}
 						subscribeHandler={subscribeHandler}
 						unsubscribeHandler={unsubscribeHandler}
 					/>
-					<div className="space-y-6">
-						{organizer?.organizedGroups && organizer.organizedGroups.length > 0 && (
-							<SimilarGroups groups={organizer.organizedGroups} text={t('Organizer Groups')} />
-						)}
-					</div>
+					{organizer?.organizedGroups && organizer.organizedGroups.length > 0 && (
+						<SimilarGroups groups={organizer.organizedGroups} text={t('Organizer Groups')} />
+					)}
 				</div>
 
 				{/* Events Section */}

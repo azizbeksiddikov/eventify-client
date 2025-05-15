@@ -157,7 +157,7 @@ export const unfollowMember = async (
 			variables: { input: followRefId },
 		});
 
-		await smallSuccess(t('Member unsubscribed successfully'));
+		await smallInfo(t('Member unsubscribed successfully'));
 	} catch (err: any) {
 		console.log('ERROR, unsubscribeHandler:', err.message);
 	}
