@@ -28,11 +28,13 @@ const withAuthLayout = (Page: NextPage) => {
 			);
 
 		return (
-			<main className="flex-grow flex items-center justify-center">
+			<div className="min-h-screen flex flex-col">
 				<Header />
-				<Page {...props} />
+				<main className="flex-grow flex items-center justify-center">
+					<Page {...props} />
+				</main>
 				<AuthFooter />
-			</main>
+			</div>
 		);
 	};
 

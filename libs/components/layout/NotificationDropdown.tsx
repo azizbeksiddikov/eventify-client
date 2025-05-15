@@ -146,7 +146,7 @@ export const NotificationDropdown = () => {
 					</Button>
 				</div>
 				<Separator />
-				<ScrollArea className="min-h-60">
+				<ScrollArea className="min-h-60 max-h-140">
 					{notifications.length > 0 ? (
 						notifications.map((notification: Notification) => (
 							<DropdownMenuItem
