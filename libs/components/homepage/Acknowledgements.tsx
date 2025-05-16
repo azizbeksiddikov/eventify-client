@@ -5,8 +5,8 @@ const Acknowledgements = () => {
 	const { t } = useTranslation('common');
 
 	return (
-		<section className="py-8 sm:py-12 md:py-16 lg:py-20  bg-muted">
-			<div className="w-[95%] sm:w-[90%] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 mx-auto ">
+		<section className="py-8 sm:py-12 md:py-16 lg:py-20 bg-muted">
+			<div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 px-4">
 				{/* Team & Community Section */}
 				<div className="bg-card rounded-lg sm:rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-all duration-200 animate-slideIn">
 					<div className="p-3 sm:p-4 border-b border-border">

@@ -30,7 +30,7 @@ const Home: NextPage = () => {
 		);
 	} else {
 		return (
-			<div className="min-h-screen  flex flex-col">
+			<div className="min-h-screen flex flex-col">
 				<AutoScrollEvents />
 				<SearchEvents />
 				<UpcomingEvents />

@@ -143,7 +143,7 @@ const AutoScrollEvents = ({
 	return (
 		<section
 			ref={containerRef}
-			className="relative h-[calc(100vh-5rem)] overflow-hidden "
+			className="relative h-[calc(100vh-5rem)] overflow-hidden w-full"
 			onMouseMove={moveMouseHandler}
 			aria-roledescription="carousel"
 			aria-label="Featured events"

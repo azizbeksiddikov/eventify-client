@@ -8,8 +8,8 @@ const OrganizerHeader = () => {
 	const { t } = useTranslation('common');
 
 	return (
-		<section className="bg-gradient-to-b from-secondary to-background py-4 sm:py-6 md:py-8">
-			<div className="flex items-center justify-between mb-4 max-w-7xl mx-auto">
+		<section className="bg-gradient-to-b from-muted-foreground/10 to-background py-8">
+			<div className="max-w-7xl flex flex-col md:flex-row items-center justify-between mb-8 mx-auto">
 				<Button
 					type="button"
 					onClick={() => router.push('/organizer')}

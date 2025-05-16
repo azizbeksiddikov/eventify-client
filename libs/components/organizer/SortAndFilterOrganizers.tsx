@@ -48,7 +48,7 @@ const SortAndFilterOrganizers = ({ updateURL, organizerSearch, initialSearch }: 
 	};
 
 	return (
-		<div className="bg-background border rounded-2xl shadow-lg p-4 md:p-6 relative border-border">
+		<div className="border rounded-2xl shadow-lg p-4 md:p-6 relative border-border">
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 md:py-6">
 				<div className="flex flex-col gap-4 sm:flex-row sm:gap-6 items-stretch sm:items-center">
 					{/* Search Input */}
@@ -58,7 +58,7 @@ const SortAndFilterOrganizers = ({ updateURL, organizerSearch, initialSearch }: 
 							placeholder={t('Search by name, description...')}
 							value={organizerSearch.search.text}
 							onChange={(e) => searchHandler(e.target.value)}
-							className="pl-9 pr-4 bg-background text-foreground placeholder:text-muted-foreground focus-visible:ring-ring h-10 md:h-11"
+							className="pl-9 pr-4  text-foreground placeholder:text-muted-foreground focus-visible:ring-ring h-10 md:h-11"
 						/>
 					</div>
 					{/* 🔽 Sort + Direction + Clear */}
@@ -81,7 +81,7 @@ const SortAndFilterOrganizers = ({ updateURL, organizerSearch, initialSearch }: 
 							variant="outline"
 							size="icon"
 							onClick={toggleDirection}
-							className="w-14 h-11 bg-background/80 backdrop-blur-sm border-border/50 hover:bg-accent/50 transition-colors"
+							className="w-14 h-11 backdrop-blur-sm border-border/50 hover:bg-accent/50 transition-colors"
 						>
 							<span
 								className={cn(

@@ -23,8 +23,8 @@ const GroupsHeader = () => {
 	};
 
 	return (
-		<section className="bg-gradient-to-b from-secondary to-background py-8">
-			<div className="flex flex-col md:flex-row items-center justify-between mb-8 w-[90%] mx-auto">
+		<section className="bg-gradient-to-b from-muted-foreground/10 to-background py-8">
+			<div className="flex flex-col md:flex-row items-center justify-between mb-8 max-w-7xl mx-auto">
 				<div className="text-center md:text-left mb-4 md:mb-0">
 					<h2>{t('Discover Groups')}</h2>
 					<p className="text-muted-foreground mt-2 text-base md:text-lg">

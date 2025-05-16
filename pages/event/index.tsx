@@ -151,7 +151,7 @@ const EventsPage = ({
 			<EventsHeader />
 			<SortAndFilter updateURL={updateURL} eventsSearchFilters={eventsSearchFilters} initialSearch={initialSearch} />
 
-			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 mb-10">
+			<div className=" max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 mb-10">
 				<div className="flex flex-col lg:flex-row gap-8">
 					{/* Categories Sidebar */}
 					<CategoriesSidebar

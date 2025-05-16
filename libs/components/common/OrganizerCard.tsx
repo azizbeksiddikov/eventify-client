@@ -100,22 +100,28 @@ const OrganizerCard = ({ organizer, likeMemberHandler, subscribeHandler, unsubsc
 			</CardContent>
 
 			{/* Footer */}
-			<CardFooter className="pt-3 border-t border-border flex flex-row items-center justify-between gap-2 mt-auto">
+			<CardFooter className="border-t border-border flex items-center justify-between gap-2 py-0 my-0">
 				<Button
 					variant="ghost"
 					size="sm"
-					className={`h-9 sm:h-10 px-3 sm:px-4 font-medium transition-all rounded-lg ${organizer?.meLiked?.[0]?.myFavorite ? 'text-rose-500 hover:text-rose-600 hover:bg-rose-50/30' : 'hover:text-rose-500 hover:bg-rose-50/20'}`}
+					className={`h-7 px-2.5 text-xs font-medium transition-all ${
+						organizer?.meLiked?.[0]?.myFavorite ? 'text-rose-500' : ''
+					}`}
 					onClick={() => likeMemberHandler(organizer._id)}
 				>
 					<Heart
-						className={`h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1.5 transition-all ${organizer?.meLiked?.[0]?.myFavorite ? 'fill-current stroke-current' : ''}`}
+						className={`h-3 w-3 mr-1 transition-all ${
+							organizer?.meLiked?.[0]?.myFavorite ? 'fill-current stroke-current' : ''
+						}`}
 					/>
 					{organizer?.meLiked?.[0]?.myFavorite ? t('Liked') : t('Like')}
 				</Button>
 				<Button
 					variant={organizer?.meFollowed?.[0]?.myFollowing ? 'outline' : 'default'}
 					size="sm"
-					className={`h-9 sm:h-10 px-3 sm:px-4 font-medium transition-all rounded-lg ${organizer?.meFollowed?.[0]?.myFollowing ? 'border-primary/30 text-primary hover:bg-primary/5' : ''}`}
+					className={`h-7 px-2.5 text-xs font-medium transition-all ${
+						organizer?.meFollowed?.[0]?.myFollowing ? 'border-primary/30 text-primary hover:bg-primary/5' : ''
+					}`}
 					onClick={() =>
 						organizer?.meFollowed?.[0]?.myFollowing
 							? unsubscribeHandler(organizer._id)
@@ -124,14 +130,15 @@ const OrganizerCard = ({ organizer, likeMemberHandler, subscribeHandler, unsubsc
 				>
 					{organizer?.meFollowed?.[0]?.myFollowing ? t('Following') : t('Follow')}
 				</Button>
-				<Link
-					href={`/organizer/detail?organizerId=${organizer._id}`}
-					className="inline-flex items-center justify-center 
-					whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 
-					focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background h-9 sm:h-10 px-3 sm:px-4 rounded-lg hover:bg-primary/5 hover:text-primary border-primary/30 text-primary/90"
-				>
-					<ExternalLink className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1.5" />
-					{t('View Profile')}
+				<Link href={`/group/detail?groupId=${organizer._id}`}>
+					<Button
+						variant="outline"
+						size="sm"
+						className="h-7 px-2.5 rounded-lg text-xs hover:bg-primary/5 border-primary/30 text-primary transition-colors"
+					>
+						<ExternalLink className="h-3 w-3 mr-1" />
+						{t('View')}
+					</Button>
 				</Link>
 			</CardFooter>
 		</Card>

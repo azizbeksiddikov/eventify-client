@@ -112,7 +112,7 @@ const OrganizersPage = ({
 	};
 
 	return (
-		<div className="bg-background">
+		<div>
 			<OrganizersHeader />
 			<SortAndFilterOrganizers updateURL={updateURL} organizerSearch={organizerSearch} initialSearch={initialSearch} />
 

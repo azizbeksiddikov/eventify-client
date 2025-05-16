@@ -37,7 +37,7 @@ const SearchEvents = () => {
 
 	return (
 		<div className="bg-secondary/70 py-8 sm:py-10 md:py-16 lg:py-20 xl:py-24 shadow-lg">
-			<div className="flex-container px-4 sm:px-6 md:px-8 lg:px-10">
+			<div className="flex-container px-4 sm:px-6 md:px-8 lg:px-10 max-w-7xl mx-auto">
 				<h2 className="text-2xl sm:text-3xl md:text-4xl mb-4 sm:mb-6 md:mb-8 text-center">{t('Find Events')}</h2>
 				<Card className="p-4 sm:p-5 md:p-6 lg:p-8 w-full max-w-5xl mx-auto border-2 border-primary/20 shadow-md">
 					<form

@@ -79,7 +79,7 @@ const OrganizerDetailPage = () => {
 
 	if (!organizer) return null;
 	return (
-		<div className="w-[90%] mx-auto">
+		<div>
 			<OrganizerHeader />
 
 			<div className="mx-auto pb-6 sm:pb-8 md:pb-10 max-w-7xl">

@@ -27,7 +27,7 @@ const withHomeLayout = (Page: NextPage) => {
 		return (
 			<div className="min-h-screen flex flex-col">
 				<Header />
-				<main className="flex-grow flex items-center justify-center">
+				<main className="flex-1">
 					<Page {...props} />
 				</main>
 				<Chat />

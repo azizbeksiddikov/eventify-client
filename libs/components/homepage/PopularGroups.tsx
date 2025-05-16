@@ -40,7 +40,7 @@ const PopularGroups = ({
 
 	return (
 		<section className="py-10 sm:py-20 bg-muted">
-			<div className="w-[95%] sm:w-[90%] mx-auto">
+			<div className="max-w-7xl mx-auto px-4">
 				<div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 sm:mb-8 sm:gap-0">
 					<h2 className="text-xl sm:text-2xl my-4">{t('Popular Groups')}</h2>
 

@@ -61,7 +61,7 @@ const TopOrganizers = ({
 
 	return (
 		<section className="bg-secondary/50 py-20">
-			<div className="w-[90%] mx-auto ">
+			<div className="max-w-7xl mx-auto px-4">
 				<div className="flex items-center justify-between mb-8">
 					<h2>{t('Top Organizers')}</h2>
 					<Button

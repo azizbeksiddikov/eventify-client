@@ -43,7 +43,7 @@ export default function UpcomingEvents({
 
 	return (
 		<section className="py-10 sm:py-20 bg-muted">
-			<div className="w-[95%] sm:w-[90%] mx-auto">
+			<div className="max-w-7xl mx-auto px-4">
 				<div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 sm:mb-8 gap-4 sm:gap-0">
 					<h2 className="text-xl sm:text-2xl my-4">{t('Upcoming Events')}</h2>
 
