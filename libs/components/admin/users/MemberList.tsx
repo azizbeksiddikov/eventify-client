@@ -5,6 +5,7 @@ import MemberRow from '@/libs/components/admin/users/MemberRow';
 
 import { Members } from '@/libs/types/member/member';
 import { MemberUpdateInput } from '@/libs/types/member/member.update';
+import { Message } from '@/libs/enums/common.enum';
 
 interface MemberPanelListType {
 	members: Members;
@@ -21,7 +22,7 @@ export const MemberPanelList = ({ members, updateMemberHandler, removeMemberHand
 				<TableHeader>
 					<TableRow className="bg-card hover:bg-accent/50">
 						<TableHead className="w-[10%] text-muted-foreground">{t('ID')}</TableHead>
-						<TableHead className="w-[20%] text-muted-foreground">{t('NICKNAME')}</TableHead>
+						<TableHead className="w-[20%] text-muted-foreground">{t('USERNAME')}</TableHead>
 						<TableHead className="w-[15%] text-muted-foreground">{t('FULL NAME')}</TableHead>
 						<TableHead className="w-[15%] text-muted-foreground">{t('PHONE NUMBER')}</TableHead>
 						<TableHead className="w-[10%] text-muted-foreground">{t('POINTS')}</TableHead>
@@ -34,7 +35,7 @@ export const MemberPanelList = ({ members, updateMemberHandler, removeMemberHand
 					{members.metaCounter[0]?.total === 0 ? (
 						<TableRow>
 							<TableCell colSpan={8} className="text-center">
-								<span className="text-muted-foreground">{t('No data found!')}</span>
+								<span className="text-muted-foreground">{t(Message.NO_DATA_FOUND)}</span>
 							</TableCell>
 						</TableRow>
 					) : (

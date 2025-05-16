@@ -113,7 +113,7 @@ export function GroupSearch({ initialInquiry, groupsInquiry, setGroupsInquiry }:
 				</SelectContent>
 			</Select>
 
-			{/* CLEAR ALL */}
+			{/* Clear */}
 			<Button
 				variant="outline"
 				onClick={clearAllHandler}

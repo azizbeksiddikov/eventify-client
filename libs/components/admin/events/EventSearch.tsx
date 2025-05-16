@@ -143,7 +143,7 @@ export function EventSearch({ initialInquiry, eventsInquiry, setEventsInquiry }:
 				</SelectContent>
 			</Select>
 
-			{/* CLEAR ALL */}
+			{/* Clear */}
 			<Button
 				variant="outline"
 				onClick={clearAllHandler}

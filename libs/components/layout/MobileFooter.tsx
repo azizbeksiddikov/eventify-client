@@ -76,7 +76,7 @@ const MobileFooter = () => {
 				<div className="mt-8 md:mt-16 pt-6 md:pt-8 border-t border-background/20">
 					<div className="flex flex-col md:flex-row justify-between items-center gap-4">
 						<p className="text-xs md:text-sm text-background text-center">
-							© {t('2025 Eventify. All rights reserved')}.
+							© 2025 Eventify. {t('All rights reserved')}.
 						</p>
 						<div className="flex items-center justify-around m-0  w-full">
 							<Link href="/privacy" className="text-xs md:text-sm text-background hover:text-primary transition-colors">

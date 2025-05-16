@@ -1,33 +1,34 @@
+import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
-import { EventCategory } from '@/libs/enums/event.enum';
+import { ImageIcon, RefreshCw, CalendarIcon } from 'lucide-react';
+import { format } from 'date-fns';
+import { userVar } from '@/apollo/store';
+import { useTranslation } from 'next-i18next';
+import { useMutation, useQuery, useReactiveVar } from '@apollo/client';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+
 import { Button } from '@/libs/components/ui/button';
 import { Input } from '@/libs/components/ui/input';
 import { Textarea } from '@/libs/components/ui/textarea';
 import { Card } from '@/libs/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/libs/components/ui/select';
-import { ImageIcon, RefreshCw, CalendarIcon } from 'lucide-react';
 import { Calendar } from '@/libs/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/libs/components/ui/popover';
 import { ScrollArea } from '@/libs/components/ui/scroll-area';
-import { cn } from '@/libs/utils';
-import { format } from 'date-fns';
 import withBasicLayout from '@/libs/components/layout/LayoutBasic';
-import { useMutation, useQuery, useReactiveVar } from '@apollo/client';
-import { userVar } from '@/apollo/store';
-import { GET_EVENT } from '@/apollo/user/query';
-import { UPDATE_EVENT_BY_ORGANIZER } from '@/apollo/user/mutation';
-import { smallError, smallSuccess } from '@/libs/alert';
-import { useTranslation } from 'next-i18next';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { Message } from '@/libs/enums/common.enum';
-import axios from 'axios';
-import { getJwtToken } from '@/libs/auth';
-import { imageTypes, REACT_APP_API_URL } from '@/libs/config';
-import { REACT_APP_API_GRAPHQL_URL } from '@/libs/config';
-import { EventUpdateInput } from '@/libs/types/event/event.update';
 import { ImageCropper } from '@/libs/components/common/ImageCropper';
+
+import { getJwtToken } from '@/libs/auth';
+import { REACT_APP_API_URL, REACT_APP_API_GRAPHQL_URL, imageTypes } from '@/libs/config';
+import { UPDATE_EVENT_BY_ORGANIZER } from '@/apollo/user/mutation';
+import { cn } from '@/libs/utils';
+import { GET_EVENT } from '@/apollo/user/query';
+import { smallError, smallSuccess } from '@/libs/alert';
+import { EventCategory } from '@/libs/enums/event.enum';
+import { Message } from '@/libs/enums/common.enum';
+import { EventUpdateInput } from '@/libs/types/event/event.update';
 
 export const getStaticProps = async ({ locale }: { locale: string }) => ({
 	props: {
@@ -180,7 +181,7 @@ const EventUpdatePage = () => {
 			}
 		} catch (err) {
 			console.error('Error handling cropped image:', err);
-			smallError(t('Failed to process image'));
+			smallError(t(Message.IMAGE_PROCESSING_FAILED));
 		}
 	};
 
@@ -193,7 +194,7 @@ const EventUpdatePage = () => {
 			if (!user._id) throw new Error(Message.NOT_AUTHENTICATED);
 			if (!formData.eventName) throw new Error(t('Event name is required'));
 			if (!formData.eventDesc) throw new Error(t('Event description is required'));
-			if (selectedCategories.length === 0) throw new Error(Message.CATEGORY_NOT_FOUND);
+			if (selectedCategories.length === 0) throw new Error(Message.GROUP_CATEGORY_REQUIRED);
 			if (!formData.eventDate) throw new Error(t('Event date is required'));
 			if (!formData.eventStartTime) throw new Error(t('Start time is required'));
 			if (!formData.eventEndTime) throw new Error(t('End time is required'));

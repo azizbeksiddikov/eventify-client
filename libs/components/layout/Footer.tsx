@@ -85,11 +85,7 @@ const Footer = () => {
 						<div className="space-y-6">
 							<div className="flex items-start gap-4">
 								<MapPin className="w-5 h-5 text-primary mt-1 flex-shrink-0" />
-								<p className="text-body text-background leading-relaxed">
-									{t('Gangnam-gu, Seoul')}
-									<br />
-									{t('South Korea')}
-								</p>
+								<p className="text-body text-background leading-relaxed">{t('Gangnam-gu, Seoul South Korea')}</p>
 							</div>
 							<div className="flex items-center gap-4">
 								<Phone className="w-5 h-5 text-primary flex-shrink-0" />

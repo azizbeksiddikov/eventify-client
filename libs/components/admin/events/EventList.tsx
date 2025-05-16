@@ -2,10 +2,11 @@ import React from 'react';
 import { useTranslation } from 'next-i18next';
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/libs/components/ui/table';
+import EventRow from '@/libs/components/admin/events/EventRow';
 
 import { Events, Event } from '@/libs/types/event/event';
 import { EventUpdateInput } from '@/libs/types/event/event.update';
-import EventRow from './EventRow';
+import { Message } from '@/libs/enums/common.enum';
 
 interface EventPanelListType {
 	events: Events;
@@ -35,7 +36,7 @@ export const EventPanelList = ({ events, updateEventHandler, removeEventHandler 
 					{events.metaCounter[0]?.total === 0 ? (
 						<TableRow>
 							<TableCell colSpan={8} className="text-center">
-								<span className="text-muted-foreground">{t('No data found!')}</span>
+								<span className="text-muted-foreground">{t(Message.NO_DATA_FOUND)}</span>
 							</TableCell>
 						</TableRow>
 					) : (

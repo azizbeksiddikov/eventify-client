@@ -22,19 +22,45 @@ export enum Message {
 	CONFIRM_PASSWORD_REQUIRED = 'Please confirm your password',
 	PASSWORDS_DONT_MATCH = 'Passwords do not match',
 	NOT_AUTHENTICATED = 'You are not authenticated',
+	NOT_AUTHORIZED = 'You are not authorized',
 	SIGNUP_FAILED = 'Signup failed. Please try again.',
+	MEMBER_UPDATED_SUCCESSFULLY = 'Member updated successfully',
 	// ===== Event Related Messages =====
+
 	EVENT_NOT_FOUND = 'Event not found',
 	INVALID_TIME_SELECTION = 'Invalid time selection',
+	EVENT_NAME_REQUIRED = 'Event name is required',
+	EVENT_DESCRIPTION_REQUIRED = 'Event description is required',
+	EVENT_CATEGORY_REQUIRED = 'Select at least one category',
+	EVENT_DATE_REQUIRED = 'Event date is required',
+	EVENT_START_TIME_REQUIRED = 'Start time is required',
+	EVENT_END_TIME_REQUIRED = 'End time is required',
+	EVENT_CAPACITY_REQUIRED = 'Capacity is required',
+	EVENT_CAPACITY_MIN_REQUIRED = 'Capacity must be at least 1',
+	EVENT_ADDRESS_REQUIRED = 'Address is required',
+	EVENT_CITY_REQUIRED = 'City is required',
+	EVENT_PRICE_MIN_REQUIRED = 'Price must be at least 0',
+	EVENT_IMAGE_REQUIRED = 'Event image is required',
+	EVENT_CREATED_SUCCESSFULLY = 'Event created successfully',
+
 	// ===== Group Related Messages =====
 	GROUP_NOT_FOUND = 'Group not found',
-	CATEGORY_NOT_FOUND = 'Category not found',
+	GROUP_UPDATED_SUCCESSFULLY = 'Group updated successfully',
+	GROUP_CREATED_SUCCESSFULLY = 'Group created successfully',
+	GROUP_NAME_REQUIRED = 'Group name is required',
+	GROUP_DESCRIPTION_REQUIRED = 'Group description is required',
+	GROUP_IMAGE_REQUIRED = 'Group image is required',
+	GROUP_CATEGORY_REQUIRED = 'Group category is required',
 
 	// ===== Ticket Related Messages =====
+	TICKET_CANCELLED_SUCCESSFULLY = 'Ticket cancelled successfully',
 
 	// ===== Comment Related Messages =====
 	COMMENT_REF_ID_REQUIRED = 'Comment ref id is required',
 	COMMENT_CONTENT_REQUIRED = 'Comment content is required',
+
+	// ===== Image Related Messages =====
+	IMAGE_PROCESSING_FAILED = 'Failed to process image',
 }
 
 // ===== Direction =====

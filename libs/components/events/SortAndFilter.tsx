@@ -12,7 +12,7 @@ import { cn } from '@/libs/utils';
 import { smallError } from '@/libs/alert';
 import { eventsSortOptions } from '@/libs/config';
 import { EventsInquiry } from '@/libs/types/event/event.input';
-import { Direction } from '@/libs/enums/common.enum';
+import { Direction, Message } from '@/libs/enums/common.enum';
 
 interface SortAndFilterProps {
 	updateURL: (search: EventsInquiry) => void;
@@ -80,7 +80,7 @@ function SortAndFilter({ updateURL, eventsSearchFilters, initialSearch }: SortAn
 		// check if the value is in the eventsSortOptions array
 		const sortOption = eventsSortOptions.find((option) => option.value === value);
 
-		if (!sortOption) smallError(t('Invalid sort option'));
+		if (!sortOption) smallError(t(Message.INVALID_SORT_OPTION));
 
 		updateURL({
 			...eventsSearchFilters,
@@ -104,7 +104,7 @@ function SortAndFilter({ updateURL, eventsSearchFilters, initialSearch }: SortAn
 			<div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 sm:gap-10">
 				{/* 🔍 Search Bar */}
 				<Input
-					placeholder={t('Search events...')}
+					placeholder={t('Search events') + '...'}
 					value={eventsSearchFilters.search?.text}
 					onChange={(e) => searchHandler(e.target.value)}
 					className={cn(
@@ -125,7 +125,7 @@ function SortAndFilter({ updateURL, eventsSearchFilters, initialSearch }: SortAn
 								<Calendar className="mr-2 h-4 w-4 text-muted-foreground" />
 								{eventsSearchFilters.search.eventStartDay
 									? format(eventsSearchFilters.search.eventStartDay, 'MMM d, yyyy')
-									: t('Start Date')}
+									: t('Start date')}
 							</Button>
 						</PopoverTrigger>
 						<PopoverContent className="w-auto p-0 z-[1000]" align="start">
@@ -154,7 +154,7 @@ function SortAndFilter({ updateURL, eventsSearchFilters, initialSearch }: SortAn
 								<Calendar className="mr-2 h-4 w-4 text-muted-foreground" />
 								{eventsSearchFilters.search.eventEndDay
 									? format(eventsSearchFilters.search.eventEndDay, 'MMM d, yyyy')
-									: t('End Date')}
+									: t('End date')}
 							</Button>
 						</PopoverTrigger>
 						<PopoverContent className="w-auto p-0 z-[1000]" align="start">

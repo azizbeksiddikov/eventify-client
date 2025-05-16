@@ -61,7 +61,7 @@ const SearchEvents = () => {
 								<PopoverTrigger asChild>
 									<Button
 										variant="outline"
-										className="w-full sm:w-36 md:w-40 h-10 sm:h-12 md:h-14 justify-start text-left font-normal border border-input hover:bg-accent/50 transition-colors text-xs sm:text-sm md:text-base"
+										className="h-10 sm:h-12 md:h-14 justify-start text-left font-normal border border-input hover:bg-accent/50 transition-colors text-xs sm:text-sm md:text-base"
 									>
 										<CalendarIcon className="mr-2 h-3 sm:h-4 w-3 sm:w-4" />
 										{startDate ? format(startDate, 'PPP') : <span>{t('Start date')}</span>}
@@ -75,7 +75,7 @@ const SearchEvents = () => {
 								<PopoverTrigger asChild>
 									<Button
 										variant="outline"
-										className="w-full sm:w-36 md:w-40 h-10 sm:h-12 md:h-14 justify-start text-left font-normal border border-input hover:bg-accent/50 transition-colors text-xs sm:text-sm md:text-base"
+										className="h-10 sm:h-12 md:h-14 justify-start text-left font-normal border border-input hover:bg-accent/50 transition-colors text-xs sm:text-sm md:text-base"
 									>
 										<CalendarIcon className="mr-2 h-3 sm:h-4 w-3 sm:w-4" />
 										{endDate ? format(endDate, 'PPP') : <span>{t('End date')}</span>}

@@ -94,7 +94,7 @@ const GroupCreatePage = () => {
 			return imageUrl;
 		} catch (err) {
 			console.error('Error uploading image:', err);
-			smallError(t('Failed to upload image'));
+			smallError(t(Message.UPLOAD_FAILED));
 			return null;
 		}
 	};
@@ -117,7 +117,7 @@ const GroupCreatePage = () => {
 			}
 		} catch (err) {
 			console.error('Error handling cropped image:', err);
-			smallError(t('Failed to process image'));
+			smallError(t(Message.IMAGE_PROCESSING_FAILED));
 		}
 	};
 
@@ -127,10 +127,10 @@ const GroupCreatePage = () => {
 
 		try {
 			if (!user._id) throw new Error(Message.NOT_AUTHENTICATED);
-			if (!formData.groupName) throw new Error(t('Group name is required'));
-			if (!formData.groupDesc) throw new Error(t('Group description is required'));
-			if (selectedCategories.length === 0) throw new Error(Message.CATEGORY_NOT_FOUND);
-			if (!formData.groupImage) throw new Error(t('Group image is required'));
+			if (!formData.groupName) throw new Error(t(Message.GROUP_NAME_REQUIRED));
+			if (!formData.groupDesc) throw new Error(t(Message.GROUP_DESCRIPTION_REQUIRED));
+			if (selectedCategories.length === 0) throw new Error(t(Message.GROUP_CATEGORY_REQUIRED));
+			if (!formData.groupImage) throw new Error(t(Message.GROUP_IMAGE_REQUIRED));
 
 			const updatedFormData = {
 				...formData,
@@ -141,13 +141,13 @@ const GroupCreatePage = () => {
 				variables: { input: updatedFormData },
 			});
 
-			await smallSuccess(t('Group created successfully'));
+			await smallSuccess(t(Message.GROUP_CREATED_SUCCESSFULLY));
 			router.push(`/group/detail?groupId=${response.data.createGroup._id}`);
 		} catch (error: unknown) {
 			if (error instanceof Error) {
 				smallError(error.message);
 			} else {
-				smallError(t('An unexpected error occurred'));
+				smallError(t(Message.SOMETHING_WENT_WRONG));
 			}
 		} finally {
 			setIsSubmitting(false);
@@ -230,7 +230,7 @@ const GroupCreatePage = () => {
 								name="groupDesc"
 								value={formData.groupDesc}
 								onChange={inputHandler}
-								placeholder={t('Describe your group')}
+								placeholder={t('Enter group description')}
 								className="min-h-[120px] bg-input text-input-foreground border-input"
 								required
 							/>

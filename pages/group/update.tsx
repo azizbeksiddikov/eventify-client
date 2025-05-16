@@ -65,7 +65,7 @@ const GroupUpdatePage = () => {
 			const isModerator = group.groupModerators?.some((moderator: GroupMember) => moderator.memberId === user?._id);
 
 			if (!isOwner && !isModerator) {
-				smallError(t('You are not authorized to update this group'));
+				smallError(t(Message.NOT_AUTHORIZED));
 				router.push('/group/detail?groupId=' + group._id);
 				return;
 			}
@@ -134,7 +134,7 @@ const GroupUpdatePage = () => {
 			return imageUrl;
 		} catch (err) {
 			console.error('Error uploading image:', err);
-			smallError(t('Failed to upload image'));
+			smallError(t(Message.UPLOAD_FAILED));
 			return null;
 		}
 	};
@@ -157,7 +157,7 @@ const GroupUpdatePage = () => {
 			}
 		} catch (err) {
 			console.error('Error handling cropped image:', err);
-			smallError(t('Failed to process image'));
+			smallError(t(Message.IMAGE_PROCESSING_FAILED));
 		}
 	};
 
@@ -167,11 +167,11 @@ const GroupUpdatePage = () => {
 
 		try {
 			if (!user._id || !token) throw new Error(Message.NOT_AUTHENTICATED);
-			if (!formData) throw new Error(t('Form data is missing'));
-			if (!formData.groupName) throw new Error(t('Group name is required'));
-			if (!formData.groupDesc) throw new Error(t('Group description is required'));
-			if (selectedCategories.length === 0) throw new Error(Message.CATEGORY_NOT_FOUND);
-			if (!formData.groupImage) throw new Error(t('Group image is required'));
+			if (!formData) throw new Error(t(Message.INVALID_FORM_DATA));
+			if (!formData.groupName) throw new Error(t(Message.GROUP_NAME_REQUIRED));
+			if (!formData.groupDesc) throw new Error(t(Message.GROUP_DESCRIPTION_REQUIRED));
+			if (selectedCategories.length === 0) throw new Error(t(Message.GROUP_CATEGORY_REQUIRED));
+			if (!formData.groupImage) throw new Error(t(Message.GROUP_IMAGE_REQUIRED));
 
 			const updatedFormData = {
 				...formData,
@@ -182,7 +182,7 @@ const GroupUpdatePage = () => {
 				variables: { input: updatedFormData },
 			});
 
-			await smallSuccess(t('Group updated successfully'));
+			await smallSuccess(t(Message.GROUP_UPDATED_SUCCESSFULLY));
 			router.push(`/group/detail?groupId=${formData._id}`);
 		} catch (error: any) {
 			console.log(error?.message);
@@ -278,7 +278,7 @@ const GroupUpdatePage = () => {
 								name="groupDesc"
 								value={formData.groupDesc}
 								onChange={inputHandler}
-								placeholder={t('Describe your group')}
+								placeholder={t('Enter group description')}
 								className="min-h-[120px] bg-input text-input-foreground border-input"
 								required
 							/>

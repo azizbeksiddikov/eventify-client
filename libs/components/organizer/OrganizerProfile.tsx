@@ -92,11 +92,7 @@ const OrganizerProfile = ({
 	}, [organizer, likeMemberHandler]);
 
 	if (!organizer) {
-		return (
-			<Card className="border-border/40 shadow-sm w-full bg-gradient-to-b from-primary/5 to-transparent p-6 text-center">
-				{t('Loading organizer profile...')}
-			</Card>
-		);
+		return null;
 	}
 
 	const statsData = [

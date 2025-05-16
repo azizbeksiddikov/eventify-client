@@ -190,7 +190,7 @@ const ProfilePage = () => {
 			await updateStorage({ jwtToken });
 			updateUserInfo(jwtToken);
 
-			await smallSuccess(t('Member updated successfully'));
+			await smallSuccess(t(Message.MEMBER_UPDATED_SUCCESSFULLY));
 		} catch (err: any) {
 			console.log('ERROR, updateMemberHandler:', err.message);
 		}
@@ -217,7 +217,7 @@ const ProfilePage = () => {
 				variables: { input: ticketId },
 			});
 
-			await smallSuccess(t('Ticket cancelled successfully'));
+			await smallSuccess(t(Message.TICKET_CANCELLED_SUCCESSFULLY));
 			refetchMember();
 			refetchTickets();
 		} catch (err: any) {

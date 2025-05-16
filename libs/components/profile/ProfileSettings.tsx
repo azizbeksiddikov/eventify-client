@@ -79,7 +79,7 @@ export const ProfileSettings = ({
 			return imageUrl;
 		} catch (err) {
 			console.error('Error uploading image:', err);
-			smallError(t('Failed to upload image'));
+			smallError(t(Message.UPLOAD_FAILED));
 			return null;
 		}
 	};

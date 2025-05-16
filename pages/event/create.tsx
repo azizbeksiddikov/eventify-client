@@ -175,22 +175,22 @@ const EventCreatePage = () => {
 			if (!user._id) throw new Error(Message.NOT_AUTHENTICATED);
 			if (!formData) throw new Error(Message.INVALID_FORM_DATA);
 			if (!formData?.groupId) throw new Error(Message.GROUP_NOT_FOUND);
-			if (!formData?.eventName) throw new Error(t('Event name is required'));
-			if (!formData?.eventDesc) throw new Error(t('Event description is required'));
-			if (selectedCategories.length === 0) throw new Error(Message.CATEGORY_NOT_FOUND);
-			if (!formData.eventDate) throw new Error(t('Event date is required'));
-			if (!formData.eventStartTime) throw new Error(t('Start time is required'));
-			if (!formData.eventEndTime) throw new Error(t('End time is required'));
+			if (!formData?.eventName) throw new Error(t(Message.EVENT_NAME_REQUIRED));
+			if (!formData?.eventDesc) throw new Error(t(Message.EVENT_DESCRIPTION_REQUIRED));
+			if (selectedCategories.length === 0) throw new Error(t(Message.EVENT_CATEGORY_REQUIRED));
+			if (!formData.eventDate) throw new Error(t(Message.EVENT_DATE_REQUIRED));
+			if (!formData.eventStartTime) throw new Error(t(Message.EVENT_START_TIME_REQUIRED));
+			if (!formData.eventEndTime) throw new Error(t(Message.EVENT_END_TIME_REQUIRED));
 			if (!validateTime(formData.eventStartTime, formData.eventEndTime)) {
-				throw new Error(Message.INVALID_TIME_SELECTION);
+				throw new Error(t(Message.INVALID_TIME_SELECTION));
 			}
-			if (!formData.eventCity) throw new Error(t('City is required'));
-			if (!formData.eventAddress) throw new Error(t('Address is required'));
-			if (!formData.eventCapacity) throw new Error(t('Capacity is required'));
-			if (formData.eventCapacity < 1) throw new Error(t('Capacity must be at least 1'));
+			if (!formData.eventCity) throw new Error(t(Message.EVENT_CITY_REQUIRED));
+			if (!formData.eventAddress) throw new Error(t(Message.EVENT_ADDRESS_REQUIRED));
+			if (!formData.eventCapacity) throw new Error(t(Message.EVENT_CAPACITY_REQUIRED));
+			if (formData.eventCapacity < 1) throw new Error(t(Message.EVENT_CAPACITY_MIN_REQUIRED));
 			if (!formData.eventPrice) formData.eventPrice = 0;
-			if (formData.eventPrice < 0) throw new Error(t('Price must be at least 0'));
-			if (!formData.eventImage) throw new Error(t('Event image is required'));
+			if (formData.eventPrice < 0) throw new Error(t(Message.EVENT_PRICE_MIN_REQUIRED));
+			if (!formData.eventImage) throw new Error(t(Message.EVENT_IMAGE_REQUIRED));
 
 			const updatedFormData = {
 				...formData,
@@ -201,7 +201,7 @@ const EventCreatePage = () => {
 				variables: { input: updatedFormData },
 			});
 
-			await smallSuccess(t('Event created successfully'));
+			await smallSuccess(t(Message.EVENT_CREATED_SUCCESSFULLY));
 			router.push(`/event/detail?eventId=${createEventData?.createEvent?._id}`);
 		} catch (error: any) {
 			console.log(error?.message);

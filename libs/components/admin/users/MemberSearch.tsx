@@ -131,7 +131,7 @@ export function MemberSearch({ initialInquiry, membersInquiry, setMembersInquiry
 				</SelectContent>
 			</Select>
 
-			{/* CLEAR ALL */}
+			{/* Clear */}
 			<Button
 				variant="outline"
 				onClick={clearAllHandler}

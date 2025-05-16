@@ -90,7 +90,7 @@ const CategoriesSidebar = ({ eventsSearchFilters, updateURL, initialSearch }: Ca
 		>
 			<div className="flex items-center gap-1">
 				<X className="w-4 h-4" />
-				{t('Clear All')}
+				{t('Clear')}
 			</div>
 		</Button>
 	);

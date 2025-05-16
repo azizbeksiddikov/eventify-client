@@ -21,7 +21,7 @@ const withAuthLayout = (Page: NextPage) => {
 					</main>
 					<footer className="w-full bg-foreground/95 backdrop-blur-sm mt-10 px-4 py-3 h-20 flex flex-col justify-center gap-4">
 						<p className="text-xs sm:text-sm text-background text-center">
-							© {t('2025 Eventify. All rights reserved')}.
+							© 2025 Eventify. {t('All rights reserved')}.
 						</p>
 					</footer>
 				</div>

@@ -112,7 +112,7 @@ export const ProfileGroups = ({
 															? 'text-destructive hover:text-destructive/80'
 															: 'text-muted-foreground hover:text-destructive'
 													} transition-colors duration-200`}
-													aria-label={isLiked ? t('Unlike group') : t('Like group')}
+													aria-label={isLiked ? t('Unlike') : t('Like')}
 												>
 													<Heart className={`h-4 w-4 ${isLiked ? 'fill-current' : ''}`} />
 												</Button>

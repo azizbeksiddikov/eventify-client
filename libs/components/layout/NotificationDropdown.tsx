@@ -38,23 +38,23 @@ const getNotificationText = (notification: Notification, t: (key: string) => str
 		case NotificationType.CREATE_EVENT:
 			return t('New event was created');
 		case NotificationType.JOIN_EVENT:
-			return t(`${notification.memberData?.memberFullName} joined your event`);
+			return `${notification.memberData?.memberFullName} ${t('joined your event')}`;
 		case NotificationType.LIKE_EVENT:
-			return t(`${notification.memberData?.memberFullName} liked your event`);
+			return `${notification.memberData?.memberFullName} ${t('liked your event')}`;
 		case NotificationType.COMMENT_EVENT:
-			return t(`${notification.memberData?.memberFullName} commented on your event`);
+			return `${notification.memberData?.memberFullName} ${t('commented on your event')}`;
 		case NotificationType.JOIN_GROUP:
-			return t(`${notification.memberData?.memberFullName} joined your group`);
+			return `${notification.memberData?.memberFullName} ${t('joined your group')}`;
 		case NotificationType.LIKE_GROUP:
-			return t(`${notification.memberData?.memberFullName} liked your group`);
+			return t(`${notification.memberData?.memberFullName} ${t('liked your group')}`);
 		case NotificationType.COMMENT_GROUP:
-			return t(`${notification.memberData?.memberFullName} commented on your group`);
+			return t(`${notification.memberData?.memberFullName} ${t('commented on your group')}`);
 		case NotificationType.LIKE_MEMBER:
-			return t(`${notification.memberData?.memberFullName} liked your profile`);
+			return t(`${notification.memberData?.memberFullName} ${t('liked your profile')}`);
 		case NotificationType.COMMENT_MEMBER:
-			return t(`${notification.memberData?.memberFullName} commented on your profile`);
+			return t(`${notification.memberData?.memberFullName} ${t('commented on your profile')}`);
 		case NotificationType.FOLLOW_MEMBER:
-			return t(`${notification.memberData?.memberFullName} followed you`);
+			return t(`${notification.memberData?.memberFullName} ${t('followed you')}`);
 		default:
 			return t('New notification');
 	}
