@@ -6,6 +6,7 @@ import MobileHeader from '@/libs/components/layout/MobileHeader';
 import Footer from '@/libs/components/layout/Footer';
 import MobileFooter from '@/libs/components/layout/MobileFooter';
 import useDeviceDetect from '@/libs/hooks/useDeviceDetect';
+import Chat from '@/libs/components/Chat';
 
 const withHomeLayout = (Page: NextPage) => {
 	const WrappedComponent = (props: Record<string, unknown>) => {
@@ -18,6 +19,7 @@ const withHomeLayout = (Page: NextPage) => {
 					<main className="flex-grow flex items-center justify-center">
 						<Page {...props} />
 					</main>
+					<Chat />
 					<MobileFooter />
 				</div>
 			);
@@ -28,6 +30,7 @@ const withHomeLayout = (Page: NextPage) => {
 				<main className="flex-grow flex items-center justify-center">
 					<Page {...props} />
 				</main>
+				<Chat />
 				<Footer />
 			</div>
 		);

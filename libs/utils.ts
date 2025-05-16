@@ -85,8 +85,6 @@ export const likeMember = async (
 			variables: { input: likeRefId },
 		});
 
-		console.log('result:', result);
-
 		if (result.data.likeTargetMember?.meLiked?.[0]?.myFavorite) {
 			await smallSuccess(t('Member liked successfully'));
 		} else {

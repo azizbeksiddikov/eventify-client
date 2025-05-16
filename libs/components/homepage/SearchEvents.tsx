@@ -35,7 +35,6 @@ const SearchEvents = () => {
 		});
 	};
 
-	console.log('Inside search events');
 	return (
 		<div className="bg-secondary/70 py-8 sm:py-10 md:py-16 lg:py-20 xl:py-24 shadow-lg">
 			<div className="flex-container px-4 sm:px-6 md:px-8 lg:px-10">

@@ -26,3 +26,6 @@ export const userVar = makeVar<CustomJwtPayload>({
 	createdAt: new Date(),
 	updatedAt: new Date(),
 });
+
+//@ts-expect-error - WebSocket is not defined in the global scope
+export const socketVar = makeVar<WebSocket>();
