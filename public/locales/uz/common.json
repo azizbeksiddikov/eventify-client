@@ -341,5 +341,6 @@
 	"City is required": "Shahar majburiy",
 	"Price must be at least 0": "Narx kamida 0 bo‘lishi kerak",
 	"Event image is required": "Tadbir rasmi majburiy",
-	"Event created successfully": "Tadbir muvaffaqiyatli yaratildi"
+	"Event created successfully": "Tadbir muvaffaqiyatli yaratildi",
+	"Crop": "Kesish"
 }

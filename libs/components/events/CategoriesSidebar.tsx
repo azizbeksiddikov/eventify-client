@@ -119,7 +119,7 @@ const CategoriesSidebar = ({ eventsSearchFilters, updateURL, initialSearch }: Ca
 
 	return (
 		<div className="w-full md:w-72 shrink-0">
-			<div className="bg-primary/5 backdrop-blur-sm rounded-2xl shadow-sm border border-primary/20 p-6">
+			<div className="bg-primary/5 backdrop-blur-sm rounded-2xl shadow-sm border border-primary/20 p-6 pt-0">
 				<div className="flex items-center justify-between mb-4">
 					<h3 className="text-lg font-semibold text-primary">{t('Categories')}</h3>
 					{renderClearButton()}

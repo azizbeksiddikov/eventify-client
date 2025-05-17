@@ -65,9 +65,9 @@ export const likeEvent = async (
 		} else {
 			await smallInfo(t('Event unliked successfully'));
 		}
-	} catch (err: unknown) {
-		const error = err as Error;
-		console.log('ERROR, likeEventHandler:', error.message);
+	} catch (err: any) {
+		smallError(err.message);
+		console.log('ERROR, likeEventHandler:', err.message);
 	}
 };
 
@@ -116,6 +116,7 @@ export const likeGroup = async (
 			await smallInfo(t('Group unliked successfully'));
 		}
 	} catch (err: any) {
+		smallError(err.message);
 		console.log('ERROR, likeGroupHandler:', err.message);
 	}
 };
@@ -137,6 +138,7 @@ export const followMember = async (
 
 		await smallSuccess(t('Member subscribed successfully'));
 	} catch (err: any) {
+		smallError(err.message);
 		console.log('ERROR, subscribeHandler:', err.message);
 	}
 };
@@ -157,6 +159,7 @@ export const unfollowMember = async (
 
 		await smallInfo(t('Member unsubscribed successfully'));
 	} catch (err: any) {
+		smallError(err.message);
 		console.log('ERROR, unsubscribeHandler:', err.message);
 	}
 };
@@ -178,6 +181,7 @@ export const joinGroup = async (
 
 		await smallSuccess(t('Group joined successfully'));
 	} catch (err: any) {
+		smallError(err.message);
 		console.log('ERROR, joinGroupHandler:', err.message);
 	}
 };
@@ -198,6 +202,7 @@ export const leaveGroup = async (
 
 		await smallSuccess(t('Group left successfully'));
 	} catch (err: any) {
+		smallError(err.message);
 		console.log('ERROR, leaveGroupHandler:', err.message);
 	}
 };

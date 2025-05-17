@@ -67,9 +67,8 @@ const SmallEventCard = ({ event, likeEventHandler }: EventCardProps) => {
 					</div>
 					<Button
 						variant="ghost"
-						size="sm"
 						onClick={() => likeEventHandler(event?._id)}
-						className="h-6 w-6 p-0 text-card-foreground/70 hover:text-primary transition-colors duration-200 hover:bg-primary/10"
+						className="h-8 w-8 p-0 text-card-foreground/70 hover:text-primary transition-colors duration-200 hover:bg-primary/10 flex items-center justify-center "
 					>
 						<Heart
 							className={`h-3.5 w-3.5 transition-all duration-200 ${

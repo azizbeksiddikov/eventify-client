@@ -65,28 +65,30 @@ const GroupRow = ({
 
 			{/* AVATAR + GROUP NAME */}
 			<TableCell>
-				<div className="flex items-center gap-2">
-					<Avatar className="h-8 w-8 border border-input flex items-center justify-center ">
-						<AvatarImage src={`${REACT_APP_API_URL}/${group.groupImage}`} alt={group.groupName} />
-						<AvatarFallback className="bg-muted text-muted-foreground flex items-center justify-center">
-							<GroupIcon className="h-4 w-4" />
-						</AvatarFallback>
-					</Avatar>
-					{isEditing ? (
-						<Input
-							value={groupUpdateInput.groupName ?? group.groupName ?? ''}
-							onChange={(e) => inputHandler('groupName', e.target.value)}
-							className="w-full bg-background text-foreground border-input focus:ring-primary"
-						/>
-					) : (
-						<Link
-							href={`/group/detail?groupId=${group._id}`}
-							className="font-medium text-foreground underline hover:text-primary hover:underline"
-						>
-							{group.groupName}
-						</Link>
-					)}
-				</div>
+				<Link href={`/group/detail?groupId=${group._id}`}>
+					<div className="flex items-center gap-2">
+						<Avatar className="h-8 w-8 border border-input flex items-center justify-center ">
+							<AvatarImage src={`${REACT_APP_API_URL}/${group.groupImage}`} alt={group.groupName} />
+							<AvatarFallback className="bg-muted text-muted-foreground flex items-center justify-center">
+								<GroupIcon className="h-4 w-4" />
+							</AvatarFallback>
+						</Avatar>
+						{isEditing ? (
+							<Input
+								value={groupUpdateInput.groupName ?? group.groupName ?? ''}
+								onChange={(e) => inputHandler('groupName', e.target.value)}
+								className="w-full bg-background text-foreground border-input focus:ring-primary"
+							/>
+						) : (
+							<Link
+								href={`/group/detail?groupId=${group._id}`}
+								className="font-medium text-foreground underline hover:text-primary hover:underline"
+							>
+								{group.groupName}
+							</Link>
+						)}
+					</div>
+				</Link>
 			</TableCell>
 
 			{/* GROUP DESCRIPTION */}

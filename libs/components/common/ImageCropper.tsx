@@ -280,7 +280,7 @@ export const ImageCropper = ({
 							{t('common.cancel', 'Cancel')}
 						</Button>
 						<Button onClick={performCropHandler} disabled={!canCrop}>
-							{t('cropImage.cropAndSave', 'Crop & Save')}
+							{t('cropImage.cropAndSave', 'Crop')}
 						</Button>
 					</div>
 				</div>

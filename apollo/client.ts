@@ -7,7 +7,7 @@ import { onError } from '@apollo/client/link/error';
 import { getJwtToken } from '@/libs/auth';
 import { TokenRefreshLink } from 'apollo-link-token-refresh';
 import { smallError } from '@/libs/alert';
-import { socketVar } from './store';
+import { socketVar } from '@/apollo/store';
 let apolloClient: ApolloClient<NormalizedCacheObject>;
 
 function getHeaders() {
@@ -35,25 +35,28 @@ class LoggingWebSocket {
 		this.socket = new WebSocket(`${url}?token=${getJwtToken()}`);
 
 		socketVar(this.socket);
+
 		this.socket.onopen = () => {
-			console.log('WebSocket connection!');
+			console.log('WebSocket connection established!');
 		};
 
 		this.socket.onmessage = (msg) => {
-			console.log('WebSocket message', msg.data);
+			console.log('WebSocket message received', msg.data);
 		};
+
 		this.socket.onerror = (error) => {
-			console.log('WebSocket error', error);
+			console.error('WebSocket error occurred', error);
 		};
 	}
+
 	send(data: string | ArrayBuffer | SharedArrayBuffer | Blob | ArrayBufferView) {
 		this.socket.send(data);
 	}
+
 	close() {
 		this.socket.close();
 	}
 }
-
 function createIsomorphicLink() {
 	if (typeof window !== 'undefined') {
 		const authLink = new ApolloLink((operation, forward) => {
@@ -67,14 +70,15 @@ function createIsomorphicLink() {
 			return forward(operation);
 		});
 
-		// @ts-expect-error
-		const link = new createUploadLink({
+		// @ts-ignore
+		const uploadLink = new createUploadLink({
 			uri: process.env.REACT_APP_API_GRAPHQL_URL,
 		});
 
 		/* WEBSOCKET SUBSCRIPTION LINK */
+		const wsUrl = process.env.REACT_APP_API_WS || 'wss://eventify.azbek.me/api';
 		const wsLink = new WebSocketLink({
-			uri: process.env.REACT_APP_API_WS ?? 'ws://127.0.0.1:3007',
+			uri: wsUrl,
 			options: {
 				reconnect: false,
 				timeout: 30000,
@@ -87,13 +91,13 @@ function createIsomorphicLink() {
 
 		const errorLink = onError(({ graphQLErrors, networkError }) => {
 			if (graphQLErrors) {
-				graphQLErrors.map(({ message, locations, path }) => {
+				graphQLErrors.forEach(({ message, locations, path }) => {
 					console.log(`[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`);
 					if (!message.includes('input')) smallError(message);
 				});
 			}
 			if (networkError) console.log(`[Network error]: ${networkError}`);
-			// @ts-expect-error
+			// @ts-ignore
 			if (networkError?.statusCode === 401) {
 			}
 		});
@@ -104,7 +108,7 @@ function createIsomorphicLink() {
 				return definition.kind === 'OperationDefinition' && definition.operation === 'subscription';
 			},
 			wsLink,
-			authLink.concat(link),
+			authLink.concat(uploadLink),
 		);
 
 		return from([errorLink, tokenRefreshLink, splitLink]);

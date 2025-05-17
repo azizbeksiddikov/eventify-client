@@ -60,28 +60,30 @@ export const ProfileGroups = ({
 								return (
 									<TableRow key={group._id} className="hover:bg-muted/50">
 										<TableCell>
-											<div className="flex items-center gap-3">
-												<Avatar className="h-10 w-10 ring-2 ring-primary/10">
-													<AvatarImage
-														src={`${REACT_APP_API_URL}/${group.groupImage}`}
-														alt={group.groupName}
-														className="object-cover"
-													/>
-													<AvatarFallback className="bg-muted">
-														<Users className="h-5 w-5 text-muted-foreground" />
-													</AvatarFallback>
-												</Avatar>
-												<div>
-													<div className="flex items-center gap-2">
-														<h3 className="text-sm font-medium text-card-foreground">{group.groupName}</h3>
-														{group.memberId === user?._id && (
-															<Badge variant="secondary" className="text-xs">
-																{t('Owner')}
-															</Badge>
-														)}
+											<Link href={`/group/detail?groupId=${group._id}`}>
+												<div className="flex items-center gap-3 underline">
+													<Avatar className="h-10 w-10 ring-2 ring-primary/10">
+														<AvatarImage
+															src={`${REACT_APP_API_URL}/${group.groupImage}`}
+															alt={group.groupName}
+															className="object-cover"
+														/>
+														<AvatarFallback className="bg-muted">
+															<Users className="h-5 w-5 text-muted-foreground" />
+														</AvatarFallback>
+													</Avatar>
+													<div>
+														<div className="flex items-center gap-2">
+															<h3 className="text-sm font-medium text-card-foreground">{group.groupName}</h3>
+															{group.memberId === user?._id && (
+																<Badge variant="secondary" className="text-xs">
+																	{t('Owner')}
+																</Badge>
+															)}
+														</div>
 													</div>
 												</div>
-											</div>
+											</Link>
 										</TableCell>
 										<TableCell className="text-center">
 											<div className="flex items-center justify-center gap-2">

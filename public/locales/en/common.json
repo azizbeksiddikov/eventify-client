@@ -342,5 +342,6 @@
 	"City is required": "City is required",
 	"Price must be at least 0": "Price must be at least 0",
 	"Event image is required": "Event image is required",
-	"Event created successfully": "Event created successfully"
+	"Event created successfully": "Event created successfully",
+	"Crop": "Crop"
 }

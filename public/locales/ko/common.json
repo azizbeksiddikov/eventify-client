@@ -341,5 +341,6 @@
 	"City is required": "도시는 필수입니다",
 	"Price must be at least 0": "가격은 0 이상이어야 합니다",
 	"Event image is required": "행사 이미지는 필수입니다",
-	"Event created successfully": "행사가 성공적으로 생성되었습니다"
+	"Event created successfully": "행사가 성공적으로 생성되었습니다",
+	"Crop": "자르기"
 }

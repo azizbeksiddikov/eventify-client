@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { useTranslation } from 'next-i18next';
 import { User, Heart, UserMinus, Users, Calendar } from 'lucide-react';
 
@@ -8,6 +9,7 @@ import { Badge } from '@/libs/components/ui/badge';
 
 import { Member } from '@/libs/types/member/member';
 import { getMemberTypeColor, REACT_APP_API_URL } from '@/libs/config';
+import { MemberType } from '@/libs/enums/member.enum';
 
 interface ProfileFollowingsProps {
 	followings: Member[];
@@ -60,25 +62,49 @@ export const ProfileFollowings = ({ followings, likeMemberHandler, unsubscribeHa
 								return (
 									<TableRow key={user._id} className="hover:bg-muted/50">
 										<TableCell>
-											<div className="flex items-center gap-4">
-												<Avatar className="h-10 w-10">
-													{user.memberImage ? (
-														<AvatarImage
-															src={`${REACT_APP_API_URL}/${user.memberImage}`}
-															alt={user.memberFullName}
-															className="rounded-full"
-														/>
-													) : (
-														<AvatarFallback className="bg-muted rounded-full">
-															<User className="h-5 w-5 text-muted-foreground" />
-														</AvatarFallback>
-													)}
-												</Avatar>
-												<div>
-													<h3 className="font-medium text-card-foreground">{user.memberFullName}</h3>
-													<p className="text-sm text-muted-foreground">@{user.username}</p>
+											{user.memberType === MemberType.ORGANIZER ? (
+												<Link href={`/organizer/detail?organizerId=${user._id}`}>
+													<div className="flex items-center gap-4 underline">
+														<Avatar className="h-10 w-10">
+															{user.memberImage ? (
+																<AvatarImage
+																	src={`${REACT_APP_API_URL}/${user.memberImage}`}
+																	alt={user.memberFullName}
+																	className="rounded-full"
+																/>
+															) : (
+																<AvatarFallback className="bg-muted rounded-full">
+																	<User className="h-5 w-5 text-muted-foreground" />
+																</AvatarFallback>
+															)}
+														</Avatar>
+														<div>
+															<h3 className="font-medium text-card-foreground">{user.memberFullName}</h3>
+															<p className="text-sm text-muted-foreground">@{user.username}</p>
+														</div>
+													</div>
+												</Link>
+											) : (
+												<div className="flex items-center gap-4">
+													<Avatar className="h-10 w-10">
+														{user.memberImage ? (
+															<AvatarImage
+																src={`${REACT_APP_API_URL}/${user.memberImage}`}
+																alt={user.memberFullName}
+																className="rounded-full"
+															/>
+														) : (
+															<AvatarFallback className="bg-muted rounded-full">
+																<User className="h-5 w-5 text-muted-foreground" />
+															</AvatarFallback>
+														)}
+													</Avatar>
+													<div>
+														<h3 className="font-medium text-card-foreground">{user.memberFullName}</h3>
+														<p className="text-sm text-muted-foreground">@{user.username}</p>
+													</div>
 												</div>
-											</div>
+											)}
 										</TableCell>
 										<TableCell className="text-center">
 											<Badge variant="outline" className={getMemberTypeColor(user.memberType)}>

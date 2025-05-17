@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useQuery } from '@apollo/client';
 import Link from 'next/link';
 import { Calendar, MapPin, ChevronLeft, ChevronRight } from 'lucide-react';
@@ -145,6 +145,11 @@ const AutoScrollEvents = ({
 			ref={containerRef}
 			className="relative h-[calc(100vh-5rem)] overflow-hidden w-full"
 			onMouseMove={moveMouseHandler}
+			onContextMenu={(e) => {
+				e.preventDefault(); // Prevent the default context menu
+				navigationHandler('next'); // Navigate to next slide on right-click
+				return false;
+			}}
 			aria-roledescription="carousel"
 			aria-label="Featured events"
 		>
@@ -221,6 +226,11 @@ const AutoScrollEvents = ({
 			{/* Navigation buttons with improved accessibility */}
 			<button
 				onClick={() => navigationHandler('prev')}
+				onContextMenu={(e) => {
+					e.preventDefault();
+					navigationHandler('prev');
+					return false;
+				}}
 				className="absolute inset-y-0 left-0 w-1/5 cursor-pointer group flex items-center justify-start pl-4 sm:pl-6 md:pl-8 z-20 focus-visible:outline-0"
 				aria-label="Previous event"
 			>
@@ -235,6 +245,11 @@ const AutoScrollEvents = ({
 			</button>
 			<button
 				onClick={() => navigationHandler('next')}
+				onContextMenu={(e) => {
+					e.preventDefault();
+					navigationHandler('next');
+					return false;
+				}}
 				className="absolute inset-y-0 right-0 w-1/5 cursor-pointer group flex items-center justify-end pr-4 sm:pr-6 md:pr-8 z-20 focus-visible:outline-0"
 				aria-label="Next event"
 			>
@@ -259,6 +274,11 @@ const AutoScrollEvents = ({
 								index === currentIndex ? 'bg-primary scale-125 w-2.5 h-2.5' : 'bg-white/50 hover:bg-white/75 w-2 h-2',
 							)}
 							onClick={() => setCurrentIndex(index)}
+							onContextMenu={(e) => {
+								e.preventDefault();
+								setCurrentIndex(index);
+								return false;
+							}}
 							aria-label={`Go to slide ${index + 1}: ${event.eventName}`}
 							aria-selected={index === currentIndex}
 							role="tab"

@@ -341,5 +341,6 @@
 	"City is required": "Город обязателен",
 	"Price must be at least 0": "Цена должна быть не менее 0",
 	"Event image is required": "Изображение мероприятия обязательно",
-	"Event created successfully": "Мероприятие успешно создано"
+	"Event created successfully": "Мероприятие успешно создано",
+	"Crop": "Обрезать"
 }

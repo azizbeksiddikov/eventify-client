@@ -205,7 +205,7 @@ const ProfilePage = () => {
 	};
 
 	const leaveGroupHandler = async (groupId: string) => {
-		leaveGroup(user._id, groupId, leaveTargetGroup, t);
+		await leaveGroup(user._id, groupId, leaveTargetGroup, t);
 		refetchJoinedGroups();
 	};
 
