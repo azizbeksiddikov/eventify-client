@@ -3,7 +3,7 @@
 	"version": "0.1.0",
 	"private": true,
 	"scripts": {
-		"dev": "next dev --turbopack",
+		"dev": "next dev",
 		"build": "next build",
 		"start": "next start",
 		"lint": "next lint"
@@ -64,11 +64,9 @@
 		"react-moment": "^1.1.2",
 		"react-slick": "^0.28.1",
 		"react-spring": "^9.4.5",
-		"react-telegram-auth": "^1.0.3",
 		"react-tree": "^0.0.4",
 		"sonner": "^2.0.3",
 		"subscriptions-transport-ws": "^0.9.19",
-		"sweetalert2": "^11.19.1",
 		"tailwind-merge": "^3.2.0",
 		"tailwindcss-animate": "^1.0.7"
 	},

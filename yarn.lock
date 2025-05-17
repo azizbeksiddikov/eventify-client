@@ -4936,7 +4936,7 @@ longest@^1.0.1:
   resolved "https://registry.yarnpkg.com/longest/-/longest-1.0.1.tgz#30a0b2da38f73770e8294a0d22e6625ed77d0097"
   integrity sha512-k+yt5n3l48JU4k8ftnKG6V7u32wyH2NfKzeMto9F/QRE0amxy/LayxwlvjjkZEIzqR+19IrtFO8p5kB9QaYUFg==
 
-loose-envify@^1.1.0, loose-envify@^1.4.0:
+loose-envify@^1.4.0:
   version "1.4.0"
   resolved "https://registry.npmjs.org/loose-envify/-/loose-envify-1.4.0.tgz"
   integrity sha512-lyuxPGr/Wfhrlem2CL/UcnUc1zcqKAImBDzukY7Y5F/yQiNdko6+fRLevlw1HgMySw7f611UIY408EtxRSoK3Q==
@@ -5885,26 +5885,12 @@ react-style-singleton@^2.2.2, react-style-singleton@^2.2.3:
     get-nonce "^1.0.0"
     tslib "^2.0.0"
 
-react-telegram-auth@^1.0.3:
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/react-telegram-auth/-/react-telegram-auth-1.0.4.tgz#76443a3930497de7ab03a24d791e03aeeac47a5c"
-  integrity sha512-S/yddONhaCW0LoaMIr9gaeaKrXZz4bPMFEHVmlTPJneVlA57qi1yomr6Q41mKhUCfwO3p0GWYgBN62J0A2IKYQ==
-  dependencies:
-    react "18.2.0"
-
 react-tree@^0.0.4:
   version "0.0.4"
   resolved "https://registry.yarnpkg.com/react-tree/-/react-tree-0.0.4.tgz#b0b74150702f9f19fb520cb8ec61c0bb5642cf73"
   integrity sha512-wWQftZg2Sw+mlwwGL+uACTuua0dUWsYTB2drNKO3EHt46/ZqE6qEjhnScFyHnz/bb5qLsJQfOKmADGtjv6/Bag==
   dependencies:
     webpack "^1.4.12"
-
-react@18.2.0:
-  version "18.2.0"
-  resolved "https://registry.yarnpkg.com/react/-/react-18.2.0.tgz#555bd98592883255fa00de14f1151a917b5d77d5"
-  integrity sha512-/3IjMdb2L9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ==
-  dependencies:
-    loose-envify "^1.1.0"
 
 react@^19.0.0:
   version "19.1.0"
@@ -6735,11 +6721,6 @@ supports-preserve-symlinks-flag@^1.0.0:
   version "1.0.0"
   resolved "https://registry.npmjs.org/supports-preserve-symlinks-flag/-/supports-preserve-symlinks-flag-1.0.0.tgz"
   integrity sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==
-
-sweetalert2@^11.19.1:
-  version "11.19.1"
-  resolved "https://registry.yarnpkg.com/sweetalert2/-/sweetalert2-11.19.1.tgz#b6583a3db8e17b2408f45c19d855f1416b37c2ae"
-  integrity sha512-+8yws3Sc1srAZbrgdhmEIZny1I1UOYhJOIOdtOlv4TYaP5kkwQ9Zm8/BT23Qg+KdByCNOazltxEJAHzXVu8mhA==
 
 symbol-observable@^1.0.4:
   version "1.2.0"

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'next-i18next';
-import { Send, X, MessageSquare, Calendar } from 'lucide-react';
+import { Send, X, MessageSquare, User } from 'lucide-react';
 
 import { useReactiveVar } from '@apollo/client';
 import { socketVar, userVar } from '@/apollo/store';
@@ -21,13 +21,13 @@ import { smallError } from '@/libs/alert';
 interface MessagePayload {
 	event: string;
 	text: string;
-	memberData: Member;
+	memberData: Member | null;
 }
 
 interface InfoPayload {
 	event: string;
 	totalClients: number;
-	memberData: Member;
+	memberData: Member | null;
 	action: string;
 }
 
@@ -179,11 +179,11 @@ const Chat = () => {
 											{!isCurrentUser && (
 												<Avatar className="h-8 w-8 border border-input flex items-center justify-center ">
 													<AvatarImage
-														src={`${REACT_APP_API_URL}/${memberData.memberImage}`}
-														alt={memberData.memberFullName}
+														src={`${REACT_APP_API_URL}/${memberData?.memberImage}`}
+														alt={memberData?.memberFullName}
 													/>
 													<AvatarFallback className="bg-muted text-muted-foreground flex items-center justify-center">
-														<Calendar className="h-4 w-4" />
+														<User className="h-4 w-4" />
 													</AvatarFallback>
 												</Avatar>
 											)}
