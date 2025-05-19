@@ -19,7 +19,7 @@ const withHomeLayout = (Page: NextPage) => {
 					<main className="flex-grow flex items-center justify-center">
 						<Page {...props} />
 					</main>
-					<Chat />
+					{/* <Chat /> */}
 					<MobileFooter />
 				</div>
 			);
@@ -30,7 +30,7 @@ const withHomeLayout = (Page: NextPage) => {
 				<main className="flex-1">
 					<Page {...props} />
 				</main>
-				<Chat />
+				{/* <Chat /> */}
 				<Footer />
 			</div>
 		);
