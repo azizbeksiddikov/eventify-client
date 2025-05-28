@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useTranslation } from 'next-i18next';
 import { userVar } from '@/apollo/store';
-import { useMutation, useQuery, useReactiveVar } from '@apollo/client';
+import { useMutation, useQuery, useReactiveVar, useApolloClient } from '@apollo/client';
 
 import withBasicLayout from '@/libs/components/layout/LayoutBasic';
 import CommentsComponent from '@/libs/components/common/CommentsComponent';
@@ -71,6 +71,8 @@ const ChosenEvent = () => {
 		notifyOnNetworkStatusChange: true,
 	});
 
+	const client = useApolloClient();
+
 	/** LIFECYCLES */
 	useEffect(() => {
 		if (router.query.eventId) {
@@ -107,7 +109,7 @@ const ChosenEvent = () => {
 	/**  HANDLERS */
 
 	const likeEventHandler = async (eventId: string) => {
-		await likeEvent(user._id, eventId, likeTargetEvent, t);
+		await likeEvent(user._id, eventId, likeTargetEvent, client.cache);
 	};
 
 	const purchaseTicketHandler = async () => {

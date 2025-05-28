@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'next-i18next';
-import { useMutation, useQuery, useReactiveVar } from '@apollo/client';
+import { useMutation, useQuery, useReactiveVar, useApolloClient } from '@apollo/client';
 import { userVar } from '@/apollo/store';
 import { ArrowRight } from 'lucide-react';
 
@@ -28,6 +28,8 @@ const EventsByCategory = ({
 	const router = useRouter();
 	const { t } = useTranslation('common');
 	const user = useReactiveVar(userVar);
+	const client = useApolloClient();
+
 	/** APOLLO */
 	const [likeTargetEvent] = useMutation(LIKE_TARGET_EVENT);
 
@@ -40,7 +42,11 @@ const EventsByCategory = ({
 
 	/** HANDLERS **/
 	const likeEventHandler = async (eventId: string) => {
-		await likeEvent(user._id, eventId, likeTargetEvent, t);
+		if (!user._id) {
+			router.push('/auth/sign-in');
+			return;
+		}
+		await likeEvent(user._id, eventId, likeTargetEvent, client.cache);
 	};
 
 	return (

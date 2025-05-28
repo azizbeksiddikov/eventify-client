@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 
-import { useMutation, useQuery, useReactiveVar } from '@apollo/client';
+import { useApolloClient, useMutation, useQuery, useReactiveVar } from '@apollo/client';
 import { GET_ORGANIZER } from '@/apollo/user/query';
 import { LIKE_TARGET_EVENT, LIKE_TARGET_MEMBER, SUBSCRIBE, UNSUBSCRIBE } from '@/apollo/user/mutation';
 import { userVar } from '@/apollo/store';
@@ -47,6 +47,8 @@ const OrganizerDetailPage = () => {
 		notifyOnNetworkStatusChange: true,
 	});
 
+	const client = useApolloClient();
+
 	/** LIFECYCLE */
 	useEffect(() => {
 		if (router.query.organizerId) {
@@ -62,7 +64,7 @@ const OrganizerDetailPage = () => {
 
 	/** HANDLERS */
 	const likeMemberHandler = async (memberId: string) => {
-		likeMember(user._id, memberId, likeTargetMember, t);
+		likeMember(user._id, memberId, likeTargetMember, client.cache);
 	};
 
 	const subscribeHandler = async (memberId: string) => {
@@ -74,7 +76,7 @@ const OrganizerDetailPage = () => {
 	};
 
 	const likeEventHandler = async (eventId: string) => {
-		await likeEvent(user._id, eventId, likeTargetEvent, t);
+		await likeEvent(user._id, eventId, likeTargetEvent, client.cache);
 	};
 
 	if (!organizer) return null;

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { useMutation, useQuery, useReactiveVar } from '@apollo/client';
+import { useApolloClient, useMutation, useQuery, useReactiveVar } from '@apollo/client';
 import { userVar } from '@/apollo/store';
 
 import withBasicLayout from '@/libs/components/layout/LayoutBasic';
@@ -45,6 +45,8 @@ const GroupDetailPage = () => {
 		notifyOnNetworkStatusChange: true,
 	});
 
+	const client = useApolloClient();
+
 	/** LIFECYCLES */
 	useEffect(() => {
 		if (router.query.groupId) {
@@ -60,7 +62,7 @@ const GroupDetailPage = () => {
 
 	/** HANDLERS **/
 	const likeGroupHandler = async (groupId: string) => {
-		likeGroup(user._id, groupId, likeTargetGroup, t);
+		likeGroup(user._id, groupId, likeTargetGroup, client.cache);
 	};
 
 	const joinGroupHandler = async (groupId: string) => {
@@ -72,7 +74,7 @@ const GroupDetailPage = () => {
 	};
 
 	const likeEventHandler = async (eventId: string) => {
-		await likeEvent(user._id, eventId, likeTargetEvent, t);
+		await likeEvent(user._id, eventId, likeTargetEvent, client.cache);
 	};
 
 	if (!groupId) return null;

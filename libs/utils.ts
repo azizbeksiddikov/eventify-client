@@ -4,6 +4,7 @@ import { twMerge } from 'tailwind-merge';
 import { Message } from '@/libs/enums/common.enum';
 import { smallError, smallInfo, smallSuccess } from '@/libs/alert';
 import { TFunction } from 'i18next';
+import { gql } from '@apollo/client';
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
@@ -45,29 +46,90 @@ export const parseDate = (dateStr: string | undefined): Date | undefined => {
 	return new Date(date[0], date[1] - 1, date[2]);
 };
 
-// Like
+// Simple debounce timers for likes
+const debounceTimers: { [key: string]: NodeJS.Timeout } = {};
+const clickCounts: { [key: string]: number } = {};
+
 export const likeEvent = async (
 	memberId: string,
 	likeRefId: string,
 	likeTargetEvent: (options?: any) => Promise<any>,
-	t: TFunction,
+	cache?: any,
 ) => {
 	try {
 		if (!likeRefId || likeRefId === '') return;
 		if (!memberId || memberId === '') throw new Error(Message.NOT_AUTHENTICATED);
 
-		const result = await likeTargetEvent({
-			variables: { input: likeRefId },
+		const eventKey = `Event:${likeRefId}`;
+
+		// Get current state
+		const currentData = cache?.readFragment({
+			id: eventKey,
+			fragment: gql`
+				fragment EventLikeData on Event {
+					eventLikes
+					meLiked
+				}
+			`,
 		});
 
-		if (result.data.likeTargetEvent?.meLiked.length > 0) {
-			await smallSuccess(t('Event liked successfully'));
-		} else {
-			await smallInfo(t('Event unliked successfully'));
+		const currentLikeState = currentData?.meLiked?.[0]?.myFavorite || false;
+		const newLikeState = !currentLikeState;
+
+		// Update UI immediately
+		if (cache) {
+			cache.modify({
+				id: eventKey,
+				fields: {
+					eventLikes(existing: number = 0) {
+						return newLikeState ? existing + 1 : existing - 1;
+					},
+					meLiked() {
+						return newLikeState ? [{ memberId, likeRefId, myFavorite: true, __typename: 'MeLiked' }] : [];
+					},
+				},
+			});
 		}
+
+		// Clear existing timer
+		if (debounceTimers[likeRefId]) {
+			clearTimeout(debounceTimers[likeRefId]);
+		}
+
+		// Count clicks
+		clickCounts[likeRefId] = (clickCounts[likeRefId] || 0) + 1;
+
+		// Debounce backend call
+		debounceTimers[likeRefId] = setTimeout(async () => {
+			try {
+				const isOddClicks = clickCounts[likeRefId] % 2 === 1;
+
+				if (isOddClicks) await likeTargetEvent({ variables: { input: likeRefId } });
+			} catch (err: any) {
+				// Revert on error
+				if (cache) {
+					cache.modify({
+						id: eventKey,
+						fields: {
+							eventLikes(existing: number = 0) {
+								return currentLikeState ? existing + 1 : existing - 1;
+							},
+							meLiked() {
+								return currentLikeState ? [{ memberId, likeRefId, myFavorite: true, __typename: 'MeLiked' }] : [];
+							},
+						},
+					});
+				}
+				smallError(err.message);
+			} finally {
+				delete debounceTimers[likeRefId];
+				delete clickCounts[likeRefId];
+			}
+		}, 500);
 	} catch (err: any) {
+		delete debounceTimers[likeRefId];
+		delete clickCounts[likeRefId];
 		smallError(err.message);
-		console.log('ERROR, likeEventHandler:', err.message);
 	}
 };
 
@@ -75,23 +137,82 @@ export const likeMember = async (
 	memberId: string,
 	likeRefId: string,
 	likeTargetMember: (options?: any) => Promise<any>,
-	t: TFunction,
+	cache?: any,
 ) => {
 	try {
 		if (!likeRefId || likeRefId === '') return;
 		if (!memberId || memberId === '') throw new Error(Message.NOT_AUTHENTICATED);
 
-		const result = await likeTargetMember({
-			variables: { input: likeRefId },
+		const memberKey = `Member:${likeRefId}`;
+
+		// Get current state
+		const currentData = cache?.readFragment({
+			id: memberKey,
+			fragment: gql`
+				fragment MemberLikeData on Member {
+					memberLikes
+					meLiked
+				}
+			`,
 		});
 
-		if (result.data.likeTargetMember?.meLiked?.[0]?.myFavorite) {
-			await smallSuccess(t('Member liked successfully'));
-		} else {
-			await smallInfo(t('Member unliked successfully'));
+		const currentLikeState = currentData?.meLiked?.[0]?.myFavorite || false;
+		const newLikeState = !currentLikeState;
+
+		// Update UI immediately
+		if (cache) {
+			cache.modify({
+				id: memberKey,
+				fields: {
+					memberLikes(existing: number = 0) {
+						return newLikeState ? existing + 1 : existing - 1;
+					},
+					meLiked() {
+						return newLikeState ? [{ memberId, likeRefId, myFavorite: true, __typename: 'MeLiked' }] : [];
+					},
+				},
+			});
 		}
+
+		// Clear existing timer
+		if (debounceTimers[likeRefId]) {
+			clearTimeout(debounceTimers[likeRefId]);
+		}
+
+		// Count clicks
+		clickCounts[likeRefId] = (clickCounts[likeRefId] || 0) + 1;
+
+		// Debounce backend call
+		debounceTimers[likeRefId] = setTimeout(async () => {
+			try {
+				const isOddClicks = clickCounts[likeRefId] % 2 === 1;
+
+				if (isOddClicks) await likeTargetMember({ variables: { input: likeRefId } });
+			} catch (err: any) {
+				// Revert on error
+				if (cache) {
+					cache.modify({
+						id: memberKey,
+						fields: {
+							memberLikes(existing: number = 0) {
+								return currentLikeState ? existing + 1 : existing - 1;
+							},
+							meLiked() {
+								return currentLikeState ? [{ memberId, likeRefId, myFavorite: true, __typename: 'MeLiked' }] : [];
+							},
+						},
+					});
+				}
+				smallError(err.message);
+				console.log('ERROR, likeMemberHandler:', err.message);
+			} finally {
+				delete debounceTimers[likeRefId];
+				delete clickCounts[likeRefId];
+			}
+		}, 500);
 	} catch (err: any) {
-		console.log('ERROR, likeMemberHandler:', err.message);
+		delete debounceTimers[likeRefId];
+		delete clickCounts[likeRefId];
 		smallError(err.message);
 	}
 };
@@ -100,24 +221,83 @@ export const likeGroup = async (
 	memberId: string,
 	likeRefId: string,
 	likeTargetGroup: (options?: any) => Promise<any>,
-	t: TFunction,
+	cache?: any,
 ) => {
 	try {
 		if (!likeRefId || likeRefId === '') return;
 		if (!memberId || memberId === '') throw new Error(Message.NOT_AUTHENTICATED);
 
-		const result = await likeTargetGroup({
-			variables: { input: likeRefId },
+		const groupKey = `Group:${likeRefId}`;
+
+		// Get current state
+		const currentData = cache?.readFragment({
+			id: groupKey,
+			fragment: gql`
+				fragment GroupLikeData on Group {
+					groupLikes
+					meLiked
+				}
+			`,
 		});
 
-		if (result.data.likeTargetGroup?.meLiked?.[0]?.myFavorite) {
-			await smallSuccess(t('Group liked successfully'));
-		} else {
-			await smallInfo(t('Group unliked successfully'));
+		const currentLikeState = currentData?.meLiked?.[0]?.myFavorite || false;
+		const newLikeState = !currentLikeState;
+
+		// Update UI immediately
+		if (cache) {
+			cache.modify({
+				id: groupKey,
+				fields: {
+					groupLikes(existing: number = 0) {
+						return newLikeState ? existing + 1 : existing - 1;
+					},
+					meLiked() {
+						return newLikeState ? [{ memberId, likeRefId, myFavorite: true, __typename: 'MeLiked' }] : [];
+					},
+				},
+			});
 		}
+
+		// Clear existing timer
+		if (debounceTimers[likeRefId]) {
+			clearTimeout(debounceTimers[likeRefId]);
+		}
+
+		// Count clicks
+		clickCounts[likeRefId] = (clickCounts[likeRefId] || 0) + 1;
+
+		// Debounce backend call
+		debounceTimers[likeRefId] = setTimeout(async () => {
+			try {
+				const isOddClicks = clickCounts[likeRefId] % 2 === 1;
+
+				if (isOddClicks) await likeTargetGroup({ variables: { input: likeRefId } });
+			} catch (err: any) {
+				// Revert on error
+				if (cache) {
+					cache.modify({
+						id: groupKey,
+						fields: {
+							groupLikes(existing: number = 0) {
+								return currentLikeState ? existing + 1 : existing - 1;
+							},
+							meLiked() {
+								return currentLikeState ? [{ memberId, likeRefId, myFavorite: true, __typename: 'MeLiked' }] : [];
+							},
+						},
+					});
+				}
+				smallError(err.message);
+				console.log('ERROR, likeGroupHandler:', err.message);
+			} finally {
+				delete debounceTimers[likeRefId];
+				delete clickCounts[likeRefId];
+			}
+		}, 500);
 	} catch (err: any) {
+		delete debounceTimers[likeRefId];
+		delete clickCounts[likeRefId];
 		smallError(err.message);
-		console.log('ERROR, likeGroupHandler:', err.message);
 	}
 };
 

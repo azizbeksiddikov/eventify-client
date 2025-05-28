@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { useMutation, useQuery, useReactiveVar } from '@apollo/client';
+import { useApolloClient, useMutation, useQuery, useReactiveVar } from '@apollo/client';
 import { useRouter } from 'next/router';
 
 import withBasicLayout from '@/libs/components/layout/LayoutBasic';
@@ -86,7 +86,7 @@ const OrganizersPage = ({
 		},
 		notifyOnNetworkStatusChange: true,
 	});
-
+	const client = useApolloClient();
 	const organizers: Member[] = organizersData?.getOrganizers?.list || [];
 
 	/** LIFECYCLE */
@@ -96,7 +96,7 @@ const OrganizersPage = ({
 
 	/** HANDLERS */
 	const likeMemberHandler = async (memberId: string) => {
-		likeMember(user._id, memberId, likeTargetMember, t);
+		likeMember(user._id, memberId, likeTargetMember, client.cache);
 	};
 
 	const subscribeHandler = async (memberId: string) => {

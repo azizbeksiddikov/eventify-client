@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useTranslation } from 'next-i18next';
-import { useReactiveVar } from '@apollo/client';
+import { useApolloClient, useReactiveVar } from '@apollo/client';
 import { Heart, Calendar, Users, ExternalLink, Eye } from 'lucide-react';
 import { useMutation } from '@apollo/client';
 import { userVar } from '@/apollo/store';
@@ -30,9 +30,11 @@ const GroupCard = ({ group }: GroupCardProps) => {
 	const [joinTargetGroup] = useMutation(JOIN_GROUP);
 	const [leaveTargetGroup] = useMutation(LEAVE_GROUP);
 
+	const client = useApolloClient();
+
 	/** HANDLERS **/
 	const likeGroupHandler = async (groupId: string) => {
-		likeGroup(user._id, groupId, likeTargetGroup, t);
+		likeGroup(user._id, groupId, likeTargetGroup, client.cache);
 	};
 
 	const joinGroupHandler = async (groupId: string) => {

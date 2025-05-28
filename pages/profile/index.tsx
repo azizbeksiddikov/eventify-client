@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { useMutation, useQuery, useReactiveVar } from '@apollo/client';
+import { useApolloClient, useMutation, useQuery, useReactiveVar } from '@apollo/client';
 import { Users, Ticket as TicketIcon, Settings, UserPlus, UserCheck } from 'lucide-react';
 import { useRouter } from 'next/router';
 
@@ -111,7 +111,7 @@ const ProfilePage = () => {
 		skip: !user?._id,
 		notifyOnNetworkStatusChange: true,
 	});
-
+	const client = useApolloClient();
 	/** LIFECYCLE */
 	useEffect(() => {
 		const jwt = getJwtToken();
@@ -162,7 +162,7 @@ const ProfilePage = () => {
 
 	/** HANDLERS */
 	const likeMemberHandler = async (memberId: string) => {
-		likeMember(user._id, memberId, likeTargetMember, t);
+		likeMember(user._id, memberId, likeTargetMember, client.cache);
 	};
 
 	const subscribeHandler = async (memberId: string) => {
@@ -197,7 +197,7 @@ const ProfilePage = () => {
 	};
 
 	const likeGroupHandler = async (groupId: string) => {
-		likeGroup(user._id, groupId, likeTargetGroup, t);
+		likeGroup(user._id, groupId, likeTargetGroup, client.cache);
 	};
 
 	const joinGroupHandler = async (groupId: string) => {

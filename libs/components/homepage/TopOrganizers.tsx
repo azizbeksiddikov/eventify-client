@@ -1,6 +1,6 @@
 import { userVar } from '@/apollo/store';
 import { ArrowRight } from 'lucide-react';
-import { useMutation, useQuery, useReactiveVar } from '@apollo/client';
+import { useApolloClient, useMutation, useQuery, useReactiveVar } from '@apollo/client';
 import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
 
@@ -43,12 +43,12 @@ const TopOrganizers = ({
 		},
 		notifyOnNetworkStatusChange: true,
 	});
-
+	const client = useApolloClient();
 	const organizers: Member[] = organizersData?.getOrganizers?.list || [];
 
 	/** HANDLERS */
 	const likeMemberHandler = async (memberId: string) => {
-		likeMember(user._id, memberId, likeTargetMember, t);
+		likeMember(user._id, memberId, likeTargetMember, client.cache);
 	};
 
 	const subscribeHandler = async (memberId: string) => {

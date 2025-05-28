@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import { userVar } from '@/apollo/store';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { useMutation, useReactiveVar } from '@apollo/client';
+import { useMutation, useReactiveVar, useApolloClient } from '@apollo/client';
 import { useQuery } from '@apollo/client';
 
 import withBasicLayout from '@/libs/components/layout/LayoutBasic';
@@ -120,6 +120,7 @@ const EventsPage = ({
 		},
 		notifyOnNetworkStatusChange: true,
 	});
+	const client = useApolloClient();
 
 	/** LIFECYCLES **/
 
@@ -143,7 +144,7 @@ const EventsPage = ({
 	};
 
 	const likeEventHandler = async (eventId: string) => {
-		await likeEvent(user._id, eventId, likeTargetEvent, t);
+		await likeEvent(user._id, eventId, likeTargetEvent, client.cache);
 	};
 
 	return (
