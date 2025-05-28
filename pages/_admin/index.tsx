@@ -47,6 +47,7 @@ import { FaqByGroup } from '@/libs/types/faq/faq';
 import { FaqInput } from '@/libs/types/faq/faq.input';
 import { FaqUpdate } from '@/libs/types/faq/faq.update';
 import useDeviceDetect from '@/libs/hooks/useDeviceDetect';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 
 interface AdminHomeProps {
 	initialMembersInquiry?: MembersInquiry;
@@ -90,6 +91,12 @@ const defaultEventsInquiry: EventsInquiry = {
 		eventEndDay: undefined,
 	},
 };
+
+export const getStaticProps = async ({ locale }: { locale: string }) => ({
+	props: {
+		...(await serverSideTranslations(locale, ['common'])),
+	},
+});
 
 const AdminHome = ({
 	initialMembersInquiry = defaultMembersInquiry,
