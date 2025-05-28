@@ -54,7 +54,7 @@ export const likeEvent = async (
 	memberId: string,
 	likeRefId: string,
 	likeTargetEvent: (options?: any) => Promise<any>,
-	cache?: any,
+	cache: any,
 ) => {
 	try {
 		if (!likeRefId || likeRefId === '') return;
@@ -137,7 +137,7 @@ export const likeMember = async (
 	memberId: string,
 	likeRefId: string,
 	likeTargetMember: (options?: any) => Promise<any>,
-	cache?: any,
+	cache: any,
 ) => {
 	try {
 		if (!likeRefId || likeRefId === '') return;
@@ -221,7 +221,7 @@ export const likeGroup = async (
 	memberId: string,
 	likeRefId: string,
 	likeTargetGroup: (options?: any) => Promise<any>,
-	cache?: any,
+	cache: any,
 ) => {
 	try {
 		if (!likeRefId || likeRefId === '') return;
