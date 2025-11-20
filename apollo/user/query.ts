@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 /**************************
  *         MEMBER         *
@@ -75,12 +75,12 @@ export const GET_ORGANIZER = gql`
 			memberEmail
 			memberPhone
 			memberFullName
-			eventsOrganizedCount
 			memberType
 			memberStatus
 			emailVerified
 			memberDesc
 			memberImage
+			memberPoints
 			memberLikes
 			memberFollowings
 			memberFollowers
@@ -90,6 +90,7 @@ export const GET_ORGANIZER = gql`
 			memberEvents
 			createdAt
 			updatedAt
+			accessToken
 			meLiked {
 				memberId
 				likeRefId
@@ -99,33 +100,6 @@ export const GET_ORGANIZER = gql`
 				followingId
 				followerId
 				myFollowing
-			}
-			organizedEvents {
-				_id
-				eventName
-				eventDesc
-				eventImage
-				eventDate
-				eventStartTime
-				eventEndTime
-				eventCity
-				eventAddress
-				eventCapacity
-				eventPrice
-				eventStatus
-				eventCategories
-				groupId
-				memberId
-				attendeeCount
-				eventLikes
-				eventViews
-				createdAt
-				updatedAt
-				meLiked {
-					memberId
-					likeRefId
-					myFavorite
-				}
 			}
 			organizedGroups {
 				_id
@@ -137,6 +111,31 @@ export const GET_ORGANIZER = gql`
 				groupViews
 				groupLikes
 				memberCount
+				createdAt
+				updatedAt
+			}
+			eventsOrganizedCount
+			organizedEvents {
+				_id
+				eventType
+				recurrenceId
+				eventName
+				eventDesc
+				eventImages
+				eventStartAt
+				eventEndAt
+				eventCity
+				eventAddress
+				eventCapacity
+				eventPrice
+				eventStatus
+				eventCategories
+				groupId
+				memberId
+				origin
+				attendeeCount
+				eventLikes
+				eventViews
 				createdAt
 				updatedAt
 			}
@@ -263,7 +262,6 @@ export const GET_GROUP = gql`
 			groupCategories
 			groupViews
 			groupLikes
-			eventsCount
 			memberCount
 			createdAt
 			updatedAt
@@ -278,6 +276,7 @@ export const GET_GROUP = gql`
 				emailVerified
 				memberDesc
 				memberImage
+				memberPoints
 				memberLikes
 				memberFollowings
 				memberFollowers
@@ -298,6 +297,32 @@ export const GET_GROUP = gql`
 				joinDate
 				meJoined
 			}
+			meOwner
+			eventsCount
+			groupUpcomingEvents {
+				_id
+				eventType
+				recurrenceId
+				eventName
+				eventDesc
+				eventImages
+				eventStartAt
+				eventEndAt
+				eventCity
+				eventAddress
+				eventCapacity
+				eventPrice
+				eventStatus
+				eventCategories
+				groupId
+				memberId
+				origin
+				attendeeCount
+				eventLikes
+				eventViews
+				createdAt
+				updatedAt
+			}
 			similarGroups {
 				_id
 				groupName
@@ -308,35 +333,9 @@ export const GET_GROUP = gql`
 				groupViews
 				groupLikes
 				memberCount
+				eventsCount
 				createdAt
 				updatedAt
-			}
-			groupUpcomingEvents {
-				_id
-				eventName
-				eventDesc
-				eventImage
-				eventDate
-				eventStartTime
-				eventEndTime
-				eventCity
-				eventAddress
-				eventCapacity
-				eventPrice
-				eventStatus
-				eventCategories
-				groupId
-				memberId
-				attendeeCount
-				eventLikes
-				eventViews
-				createdAt
-				updatedAt
-				meLiked {
-					memberId
-					likeRefId
-					myFavorite
-				}
 			}
 			groupModerators {
 				_id
@@ -354,17 +353,95 @@ export const GET_GROUP = gql`
 /**************************
  *         EVENT          *
  *************************/
+export const GET_EVENTS = gql`
+	query GetEvents($input: EventsInquiry!) {
+		getEvents(input: $input) {
+			list {
+				_id
+				eventType
+				recurrenceId
+				eventName
+				eventDesc
+				eventImages
+				eventStartAt
+				eventEndAt
+				eventCity
+				eventAddress
+				eventCapacity
+				eventPrice
+				eventStatus
+				eventCategories
+				groupId
+				memberId
+				origin
+				attendeeCount
+				eventLikes
+				eventViews
+				createdAt
+				updatedAt
+				meLiked {
+					memberId
+					likeRefId
+					myFavorite
+				}
+			}
+			metaCounter {
+				total
+			}
+		}
+	}
+`;
+
+export const GET_UNIQUE_EVENTS = gql`
+	query GetUniqueEvents($input: EventsInquiry!) {
+		getUniqueEvents(input: $input) {
+			list {
+				_id
+				eventType
+				recurrenceId
+				eventName
+				eventDesc
+				eventImages
+				eventStartAt
+				eventEndAt
+				eventCity
+				eventAddress
+				eventCapacity
+				eventPrice
+				eventStatus
+				eventCategories
+				groupId
+				memberId
+				origin
+				attendeeCount
+				eventLikes
+				eventViews
+				createdAt
+				updatedAt
+				meLiked {
+					memberId
+					likeRefId
+					myFavorite
+				}
+			}
+			metaCounter {
+				total
+			}
+		}
+	}
+`;
 
 export const GET_EVENT = gql`
 	query GetEvent($input: String!) {
 		getEvent(eventId: $input) {
 			_id
+			eventType
+			recurrenceId
 			eventName
 			eventDesc
-			eventImage
-			eventDate
-			eventStartTime
-			eventEndTime
+			eventImages
+			eventStartAt
+			eventEndAt
 			eventCity
 			eventAddress
 			eventCapacity
@@ -373,6 +450,7 @@ export const GET_EVENT = gql`
 			eventCategories
 			groupId
 			memberId
+			origin
 			attendeeCount
 			eventLikes
 			eventViews
@@ -389,17 +467,65 @@ export const GET_EVENT = gql`
 				emailVerified
 				memberDesc
 				memberImage
+				memberPoints
 				memberLikes
 				memberFollowings
 				memberFollowers
 				memberViews
 				memberRank
+				memberGroups
+				memberEvents
+				eventsOrganizedCount
 				createdAt
 				updatedAt
+				accessToken
 				meLiked {
 					memberId
 					likeRefId
 					myFavorite
+				}
+				organizedEvents {
+					_id
+					eventType
+					recurrenceId
+					eventName
+					eventDesc
+					eventImages
+					eventStartAt
+					eventEndAt
+					eventCity
+					eventAddress
+					eventCapacity
+					eventPrice
+					eventStatus
+					eventCategories
+					groupId
+					memberId
+					origin
+					attendeeCount
+					eventLikes
+					eventViews
+					createdAt
+					updatedAt
+				}
+				organizedGroups {
+					_id
+					groupName
+					groupDesc
+					groupImage
+					memberId
+					groupCategories
+					groupViews
+					groupLikes
+					memberCount
+					eventsCount
+					createdAt
+					updatedAt
+				}
+				meFollowed {
+					followingId
+					followerId
+					myFollowing
 				}
 			}
 			hostingGroup {
@@ -423,12 +549,13 @@ export const GET_EVENT = gql`
 			}
 			similarEvents {
 				_id
+				eventType
+				recurrenceId
 				eventName
 				eventDesc
-				eventImage
-				eventDate
-				eventStartTime
-				eventEndTime
+				eventImages
+				eventStartAt
+				eventEndAt
 				eventCity
 				eventAddress
 				eventCapacity
@@ -437,6 +564,39 @@ export const GET_EVENT = gql`
 				eventCategories
 				groupId
 				memberId
+				origin
+				attendeeCount
+				eventLikes
+				eventViews
+				createdAt
+				updatedAt
+			}
+		}
+	}
+`;
+
+export const GET_EVENTS_BY_CATEGORY = gql`
+	query GetEventsByCategory($input: EventsByCategoryInquiry!) {
+		getEventsByCategory(input: $input) {
+			category
+			events {
+				_id
+				eventType
+				recurrenceId
+				eventName
+				eventDesc
+				eventImages
+				eventStartAt
+				eventEndAt
+				eventCity
+				eventAddress
+				eventCapacity
+				eventPrice
+				eventStatus
+				eventCategories
+				groupId
+				memberId
+				origin
 				attendeeCount
 				eventLikes
 				eventViews
@@ -447,22 +607,48 @@ export const GET_EVENT = gql`
 					likeRefId
 					myFavorite
 				}
+				memberData {
+					_id
+					username
+					memberEmail
+					memberPhone
+					memberFullName
+					memberType
+					memberStatus
+					emailVerified
+					memberDesc
+					memberImage
+					memberPoints
+					memberLikes
+					memberFollowings
+					memberFollowers
+					memberViews
+					memberRank
+					memberGroups
+					memberEvents
+					eventsOrganizedCount
+					createdAt
+					updatedAt
+					accessToken
+				}
 			}
 		}
 	}
 `;
 
-export const GET_EVENTS = gql`
-	query GetEvents($input: EventsInquiry!) {
-		getEvents(input: $input) {
+export const GET_FAVORITES = gql`
+	query GetFavorites($input: OrdinaryEventInquiry!) {
+		getFavorites(input: $input) {
 			list {
 				_id
+				eventType
+				recurrenceId
 				eventName
 				eventDesc
-				eventImage
-				eventDate
-				eventStartTime
-				eventEndTime
+				eventImages
+				eventStartAt
+				eventEndAt
+				eventCity
 				eventAddress
 				eventCapacity
 				eventPrice
@@ -470,6 +656,70 @@ export const GET_EVENTS = gql`
 				eventCategories
 				groupId
 				memberId
+				origin
+				attendeeCount
+				eventLikes
+				eventViews
+				createdAt
+				updatedAt
+				meLiked {
+					memberId
+					likeRefId
+					myFavorite
+				}
+				memberData {
+					_id
+					username
+					memberEmail
+					memberPhone
+					memberFullName
+					memberType
+					memberStatus
+					emailVerified
+					memberDesc
+					memberImage
+					memberPoints
+					memberLikes
+					memberFollowings
+					memberFollowers
+					memberViews
+					memberRank
+					memberGroups
+					memberEvents
+					eventsOrganizedCount
+					createdAt
+					updatedAt
+					accessToken
+				}
+			}
+			metaCounter {
+				total
+			}
+		}
+	}
+`;
+
+export const GET_VISITED = gql`
+	query GetVisited($input: OrdinaryEventInquiry!) {
+		getVisited(input: $input) {
+			list {
+				_id
+				eventType
+				recurrenceId
+				eventName
+				eventDesc
+				eventImages
+				eventStartAt
+				eventEndAt
+				eventCity
+				eventAddress
+				eventCapacity
+				eventPrice
+				eventStatus
+				eventCategories
+				groupId
+				memberId
+				origin
 				attendeeCount
 				eventLikes
 				eventViews
@@ -484,122 +734,21 @@ export const GET_EVENTS = gql`
 					memberType
 					memberStatus
 					emailVerified
+					memberDesc
 					memberImage
+					memberPoints
+					memberLikes
+					memberFollowings
+					memberFollowers
+					memberViews
+					memberRank
+					memberGroups
+					memberEvents
+					eventsOrganizedCount
 					createdAt
 					updatedAt
+					accessToken
 				}
-				meLiked {
-					memberId
-					likeRefId
-					myFavorite
-				}
-			}
-			metaCounter {
-				total
-			}
-		}
-	}
-`;
-
-export const GET_EVENTS_BY_CATEGORY = gql`
-	query GetEventsByCategory($input: EventsByCategoryInquiry!) {
-		getEventsByCategory(input: $input) {
-			categories {
-				category
-				events {
-					_id
-					eventName
-					eventDesc
-					eventImage
-					eventDate
-					eventStartTime
-					eventEndTime
-					eventAddress
-					eventCapacity
-					eventPrice
-					eventStatus
-					eventCategories
-					groupId
-					memberId
-					attendeeCount
-					eventLikes
-					eventViews
-					createdAt
-					updatedAt
-					memberData {
-						_id
-						username
-						memberEmail
-						memberPhone
-						memberFullName
-						memberStatus
-						memberImage
-					}
-					meLiked {
-						memberId
-						likeRefId
-						myFavorite
-					}
-				}
-			}
-		}
-	}
-`;
-
-export const GET_FAVORITES = gql`
-	query GetFavorites($input: OrdinaryEventInquiry!) {
-		getFavorites(input: $input) {
-			list {
-				_id
-				eventName
-				eventDesc
-				eventImage
-				eventDate
-				eventStartTime
-				eventEndTime
-				eventAddress
-				eventCapacity
-				eventPrice
-				eventStatus
-				eventCategories
-				attendeeCount
-				eventLikes
-				eventViews
-				groupId
-				memberId
-				createdAt
-				updatedAt
-			}
-			metaCounter {
-				total
-			}
-		}
-	}
-`;
-
-export const GET_VISITED = gql`
-	query GetVisited($input: OrdinaryEventInquiry!) {
-		getVisited(input: $input) {
-			list {
-				_id
-				eventName
-				eventDesc
-				eventImage
-				eventDate
-				eventStartTime
-				eventEndTime
-				eventAddress
-				eventCapacity
-				eventPrice
-				eventStatus
-				eventCategories
-				attendeeCount
-				eventLikes
-				eventViews
-				groupId
-				memberId
-				createdAt
-				updatedAt
 			}
 			metaCounter {
 				total
@@ -615,6 +764,9 @@ export const GET_VISITED = gql`
 export const GET_MY_TICKETS = gql`
 	query GetMyTickets($input: TicketInquiry!) {
 		getMyTickets(input: $input) {
+			metaCounter {
+				total
+			}
 			list {
 				_id
 				eventId
@@ -627,12 +779,13 @@ export const GET_MY_TICKETS = gql`
 				updatedAt
 				event {
 					_id
+					eventType
+					recurrenceId
 					eventName
 					eventDesc
-					eventImage
-					eventDate
-					eventStartTime
-					eventEndTime
+					eventImages
+					eventStartAt
+					eventEndAt
 					eventCity
 					eventAddress
 					eventCapacity
@@ -641,15 +794,13 @@ export const GET_MY_TICKETS = gql`
 					eventCategories
 					groupId
 					memberId
+					origin
 					attendeeCount
 					eventLikes
 					eventViews
 					createdAt
 					updatedAt
 				}
-			}
-			metaCounter {
-				total
 			}
 		}
 	}
@@ -669,12 +820,13 @@ export const GET_ALL_TICKETS_LIST = gql`
 			updatedAt
 			event {
 				_id
+				eventType
+				recurrenceId
 				eventName
 				eventDesc
-				eventImage
-				eventDate
-				eventStartTime
-				eventEndTime
+				eventImages
+				eventStartAt
+				eventEndAt
 				eventCity
 				eventAddress
 				eventCapacity
@@ -683,6 +835,7 @@ export const GET_ALL_TICKETS_LIST = gql`
 				eventCategories
 				groupId
 				memberId
+				origin
 				attendeeCount
 				eventLikes
 				eventViews

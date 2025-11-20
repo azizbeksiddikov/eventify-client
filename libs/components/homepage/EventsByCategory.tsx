@@ -1,19 +1,19 @@
-import Link from 'next/link';
-import { useRouter } from 'next/router';
-import { useTranslation } from 'next-i18next';
-import { useMutation, useQuery, useReactiveVar, useApolloClient } from '@apollo/client';
-import { userVar } from '@/apollo/store';
-import { ArrowRight } from 'lucide-react';
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { useTranslation } from "next-i18next";
+import { useMutation, useQuery, useReactiveVar, useApolloClient } from "@apollo/client";
+import { userVar } from "@/apollo/store";
+import { ArrowRight } from "lucide-react";
 
-import { Button } from '@/libs/components/ui/button';
-import SmallEventCard from '@/libs/components/common/SmallEventCard';
+import { Button } from "@/libs/components/ui/button";
+import SmallEventCard from "@/libs/components/common/SmallEventCard";
 
-import { GET_EVENTS_BY_CATEGORY } from '@/apollo/user/query';
-import { LIKE_TARGET_EVENT } from '@/apollo/user/mutation';
-import { Event, CategoryEvents } from '@/libs/types/event/event';
-import { EventsByCategoryInquiry } from '@/libs/types/event/event.input';
-import { EventCategory } from '@/libs/enums/event.enum';
-import { likeEvent } from '@/libs/utils';
+import { GET_EVENTS_BY_CATEGORY } from "@/apollo/user/query";
+import { LIKE_TARGET_EVENT } from "@/apollo/user/mutation";
+import { Event, CategoryEvents } from "@/libs/types/event/event";
+import { EventsByCategoryInquiry } from "@/libs/types/event/event.input";
+import { EventCategory } from "@/libs/enums/event.enum";
+import { likeEvent } from "@/libs/utils";
 
 interface EventsByCategoryProps {
 	initialInput?: EventsByCategoryInquiry;
@@ -26,7 +26,7 @@ const EventsByCategory = ({
 	},
 }: EventsByCategoryProps) => {
 	const router = useRouter();
-	const { t } = useTranslation('common');
+	const { t } = useTranslation("common");
 	const user = useReactiveVar(userVar);
 	const client = useApolloClient();
 
@@ -34,16 +34,16 @@ const EventsByCategory = ({
 	const [likeTargetEvent] = useMutation(LIKE_TARGET_EVENT);
 
 	const { data } = useQuery(GET_EVENTS_BY_CATEGORY, {
-		fetchPolicy: 'cache-and-network',
+		fetchPolicy: "cache-and-network",
 		variables: { input: initialInput },
 		notifyOnNetworkStatusChange: true,
 	});
-	const eventsByCategory: CategoryEvents[] = data?.getEventsByCategory?.categories;
+	const eventsByCategory: CategoryEvents[] = data?.getEventsByCategory?.categoryEvents;
 
 	/** HANDLERS **/
 	const likeEventHandler = async (eventId: string) => {
 		if (!user._id) {
-			router.push('/auth/sign-in');
+			router.push("/auth/sign-in");
 			return;
 		}
 		await likeEvent(user._id, eventId, likeTargetEvent, client.cache);
@@ -53,14 +53,14 @@ const EventsByCategory = ({
 		<section className="bg-secondary/50 py-20">
 			<div className="max-w-7xl mx-auto px-4">
 				<div className="flex items-center justify-between mb-8">
-					<h2>{t('Events by Category')}</h2>
+					<h2>{t("Events by Category")}</h2>
 					<Button
 						type="submit"
-						onClick={() => router.push('/event')}
+						onClick={() => router.push("/event")}
 						className="h-14 px-8 bg-card text-card-foreground"
 					>
 						<div className="flex items-center gap-1 ">
-							{t('View All')}
+							{t("View All")}
 							<ArrowRight className="w-4 h-4" />
 						</div>
 					</Button>
@@ -87,7 +87,7 @@ const EventsByCategory = ({
 									href={`/event?categories=${categoryData.category.toUpperCase()}`}
 									className="text-sm text-primary hover:text-primary/80 font-medium flex items-center gap-1 transition-colors duration-200"
 								>
-									{t('View All')} {categoryData.category} {t('events')}
+									{t("View All")} {categoryData.category} {t("events")}
 									<ArrowRight className="w-3 h-3" />
 								</Link>
 							</div>

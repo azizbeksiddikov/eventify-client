@@ -1,32 +1,45 @@
 import { Direction } from '@/libs/enums/common.enum';
-import { EventStatus, EventCategory } from '@/libs/enums/event.enum';
+import { EventStatus, EventCategory, EventType, RecurrenceType } from '@/libs/enums/event.enum';
 
+// ============== Event Creation Input ==============
 export interface EventInput {
+	eventType?: EventType;
+
+	// ===== Basic Information =====
 	eventName: string;
 	eventDesc: string;
-	eventImage: string;
-	eventDate: Date;
-	eventStartTime: string; // hh:mm
-	eventEndTime: string; // hh:mm
+	eventImages: string[];
+
+	// ===== Event Timestamps =====
+	eventStartAt: Date;
+	eventEndAt: Date;
+
+	// ===== Event Location =====
+	eventCity: string;
 	eventAddress: string;
+
+	// ===== Event Capacity and Price =====
 	eventCapacity?: number;
 	eventPrice?: number;
-	eventStatus: EventStatus;
-	eventCity: string;
+	groupId?: string;
+
+	// ===== Event Status and Categories =====
+	eventStatus?: EventStatus;
 	eventCategories: EventCategory[];
-	groupId: string;
 }
 
+// ============== Search Inputs ==============
 export interface EISearch {
 	text?: string;
 	eventCategories?: EventCategory[];
 	eventStatus?: EventStatus;
 	eventStartDay?: Date;
 	eventEndDay?: Date;
-	eventAddress?: string;
 	eventCity?: string;
+	eventAddress?: string;
 }
 
+// ============== Inquiry Inputs ==============
 export interface EventsInquiry {
 	page: number;
 	limit?: number;
@@ -43,4 +56,56 @@ export interface OrdinaryEventInquiry {
 export interface EventsByCategoryInquiry {
 	categories: EventCategory[];
 	limit: number;
+}
+
+export interface EventRecurrenceInput {
+	// ===== Recurrence Rules =====
+	recurrenceType: RecurrenceType;
+	recurrenceInterval?: number;
+	recurrenceDaysOfWeek?: number[];
+	recurrenceDayOfMonth?: number;
+	recurrenceEndDate?: Date;
+
+	// ===== Template Fields =====
+	eventName: string;
+	eventDesc: string;
+	eventImages: string[];
+	eventCity: string;
+	eventAddress: string;
+	eventCapacity?: number;
+	eventPrice?: number;
+	eventStatus?: EventStatus;
+	eventCategories: EventCategory[];
+
+	// ===== First Occurrence Template =====
+	eventStartAt: Date;
+	eventEndAt: Date;
+
+	// ===== References =====
+	groupId?: string;
+}
+
+export interface EventRecurrenceUpdateInput {
+	_id: string;
+	updateAllFuture?: boolean;
+	recurrenceType?: RecurrenceType;
+	recurrenceInterval?: number;
+	recurrenceDaysOfWeek?: number[];
+	recurrenceDayOfMonth?: number;
+	recurrenceEndDate?: Date;
+
+	// ===== Template Fields =====
+	eventName?: string;
+	eventDesc?: string;
+	eventImages?: string[];
+	eventCity?: string;
+	eventAddress?: string;
+	eventCapacity?: number;
+	eventPrice?: number;
+	eventStatus?: EventStatus;
+	eventCategories?: EventCategory[];
+	eventStartAt?: Date;
+	eventEndAt?: Date;
+	groupId?: string;
+	isActive?: boolean; // todo: make it false when deleted or cancelled
 }

@@ -252,12 +252,14 @@ export const CREATE_EVENT = gql`
 	mutation CreateEvent($input: EventInput!) {
 		createEvent(input: $input) {
 			_id
+			eventType
+			recurrenceId
 			eventName
 			eventDesc
-			eventImage
-			eventDate
-			eventStartTime
-			eventEndTime
+			eventImages
+			eventStartAt
+			eventEndAt
+			eventCity
 			eventAddress
 			eventCapacity
 			eventPrice
@@ -265,9 +267,40 @@ export const CREATE_EVENT = gql`
 			eventCategories
 			groupId
 			memberId
+			origin
 			attendeeCount
 			eventLikes
 			eventViews
+			createdAt
+			updatedAt
+		}
+	}
+`;
+
+export const CREATE_RECURRING_EVENT = gql`
+	mutation CreateRecurringEvent($input: EventRecurrenceInput!) {
+		createRecurringEvent(input: $input) {
+			_id
+			recurrenceType
+			recurrenceInterval
+			recurrenceDaysOfWeek
+			recurrenceDayOfMonth
+			recurrenceEndDate
+			eventName
+			eventDesc
+			eventImages
+			eventAddress
+			eventCity
+			eventCapacity
+			eventPrice
+			eventCategories
+			eventStatus
+			eventStartAt
+			eventEndAt
+			groupId
+			memberId
+			origin
+			isActive
 			createdAt
 			updatedAt
 		}
@@ -278,12 +311,13 @@ export const UPDATE_EVENT_BY_ORGANIZER = gql`
 	mutation UpdateEventByOrganizer($input: EventUpdateInput!) {
 		updateEventByOrganizer(input: $input) {
 			_id
+			eventType
+			recurrenceId
 			eventName
 			eventDesc
-			eventImage
-			eventDate
-			eventStartTime
-			eventEndTime
+			eventImages
+			eventStartAt
+			eventEndAt
 			eventCity
 			eventAddress
 			eventCapacity
@@ -292,9 +326,11 @@ export const UPDATE_EVENT_BY_ORGANIZER = gql`
 			eventCategories
 			groupId
 			memberId
+			origin
 			attendeeCount
 			eventLikes
 			eventViews
+			createdAt
 			updatedAt
 		}
 	}
@@ -304,8 +340,6 @@ export const LIKE_TARGET_EVENT = gql`
 	mutation LikeTargetEvent($input: String!) {
 		likeTargetEvent(eventId: $input) {
 			_id
-			eventLikes
-			updatedAt
 			meLiked {
 				memberId
 				likeRefId

@@ -1,13 +1,13 @@
-import { useState } from 'react';
-import Image from 'next/image';
-import { useRouter } from 'next/router';
-import { useTranslation } from 'next-i18next';
-import { Heart, Eye, Calendar, Clock, MapPin, Users, Plus, Minus, Ticket, Pencil } from 'lucide-react';
+import { useState } from "react";
+import Image from "next/image";
+import { useRouter } from "next/router";
+import { useTranslation } from "next-i18next";
+import { Heart, Eye, Calendar, Clock, MapPin, Users, Plus, Minus, Ticket, Pencil } from "lucide-react";
 
-import { Button } from '@/libs/components/ui/button';
-import { Badge } from '@/libs/components/ui/badge';
-import { Card } from '@/libs/components/ui/card';
-import { Separator } from '@/libs/components/ui/separator';
+import { Button } from "@/libs/components/ui/button";
+import { Badge } from "@/libs/components/ui/badge";
+import { Card } from "@/libs/components/ui/card";
+import { Separator } from "@/libs/components/ui/separator";
 import {
 	Dialog,
 	DialogContent,
@@ -15,13 +15,14 @@ import {
 	DialogFooter,
 	DialogHeader,
 	DialogTitle,
-} from '@/libs/components/ui/dialog';
+} from "@/libs/components/ui/dialog";
 
-import { REACT_APP_API_URL } from '@/libs/config';
-import { cn } from '@/libs/utils';
-import { TicketInput } from '@/libs/types/ticket/ticket.input';
-import { EventStatus } from '@/libs/enums/event.enum';
-import { Event } from '@/libs/types/event/event';
+import { REACT_APP_API_URL } from "@/libs/config";
+import { cn } from "@/libs/utils";
+import { TicketInput } from "@/libs/types/ticket/ticket.input";
+import { EventStatus } from "@/libs/enums/event.enum";
+import { Event } from "@/libs/types/event/event";
+import { format } from "date-fns";
 
 interface ChosenEventDataProps {
 	event: Event | null;
@@ -41,14 +42,14 @@ const ChosenEventData = ({
 	ticketInput,
 }: ChosenEventDataProps) => {
 	const router = useRouter();
-	const { t } = useTranslation('common');
+	const { t } = useTranslation("common");
 	const [isPaymentDialogOpen, setIsPaymentDialogOpen] = useState(false);
 
 	if (!event) return null;
 
 	const quantityHandler = (change: number) => {
 		const newQuantity = ticketInput!.ticketQuantity + change;
-		if (newQuantity < 1 || newQuantity > event.eventCapacity) return;
+		if (newQuantity < 1 || newQuantity > (event.eventCapacity || 0)) return;
 		setTicketInput({ ...ticketInput, ticketQuantity: newQuantity });
 	};
 
@@ -64,15 +65,15 @@ const ChosenEventData = ({
 	const getStatusColor = (status: EventStatus) => {
 		switch (status) {
 			case EventStatus.UPCOMING:
-				return 'bg-blue-100 text-blue-800';
+				return "bg-blue-100 text-blue-800";
 			case EventStatus.ONGOING:
-				return 'bg-green-100 text-green-800';
+				return "bg-green-100 text-green-800";
 			case EventStatus.COMPLETED:
-				return 'bg-gray-100 text-gray-800';
+				return "bg-gray-100 text-gray-800";
 			case EventStatus.CANCELLED:
-				return 'bg-red-100 text-red-800';
+				return "bg-red-100 text-red-800";
 			default:
-				return 'bg-gray-100 text-gray-800';
+				return "bg-gray-100 text-gray-800";
 		}
 	};
 
@@ -91,7 +92,7 @@ const ChosenEventData = ({
 							onClick={() => router.push(`/event/update?eventId=${event._id}`)}
 						>
 							<Pencil className="h-4 w-4 mr-1.5" />
-							{t('Edit')}
+							{t("Edit")}
 						</Button>
 					)}
 
@@ -104,7 +105,7 @@ const ChosenEventData = ({
 							{/* Event Image */}
 							<div className="relative aspect-[16/9] w-full group rounded-xl overflow-hidden border-border border-2">
 								<Image
-									src={`${REACT_APP_API_URL}/${event.eventImage}`}
+									src={`${REACT_APP_API_URL}/${event.eventImages[0]}`}
 									alt={event.eventName}
 									fill
 									className="object-contain transition-transform duration-500"
@@ -154,11 +155,11 @@ const ChosenEventData = ({
 									<div className="flex items-center gap-3 text-muted-foreground hover:text-foreground transition-colors bg-muted/40 hover:bg-muted/50 p-2 sm:p-3 rounded-xl">
 										<Calendar className="h-5 w-5 flex-shrink-0 text-primary" />
 										<span className="font-medium">
-											{new Date(event.eventDate).toLocaleDateString('en-US', {
-												weekday: 'short',
-												month: 'short',
-												day: 'numeric',
-												year: 'numeric',
+											{new Date(event.eventStartAt).toLocaleDateString("en-US", {
+												weekday: "short",
+												month: "short",
+												day: "numeric",
+												year: "numeric",
 											})}
 										</span>
 									</div>
@@ -167,7 +168,7 @@ const ChosenEventData = ({
 									<div className="flex items-center gap-3 text-muted-foreground hover:text-foreground transition-colors bg-muted/40 hover:bg-muted/50 p-2 sm:p-3 rounded-xl">
 										<Clock className="h-5 w-5 flex-shrink-0 text-primary" />
 										<span className="font-medium">
-											{event.eventStartTime} - {event.eventEndTime}
+											{format(new Date(event.eventStartAt), "HH:mm")} - {format(new Date(event.eventEndAt), "HH:mm")}
 										</span>
 									</div>
 
@@ -179,7 +180,7 @@ const ChosenEventData = ({
 									<div className="flex items-center gap-3 text-muted-foreground hover:text-foreground transition-colors bg-muted/40 hover:bg-muted/50 p-2 sm:p-3 rounded-xl">
 										<Users className="h-5 w-5 flex-shrink-0 text-primary" />
 										<span className="font-medium">
-											{event.eventCapacity} {t('capacity')}
+											{event.eventCapacity} {t("capacity")}
 										</span>
 									</div>
 								</div>
@@ -190,16 +191,16 @@ const ChosenEventData = ({
 									<Button
 										onClick={() => likeEventHandler(event._id)}
 										className={cn(
-											'flex h-auto items-center m-0 p-0 justify-center gap-2 text-muted-foreground bg-muted/40 hover:bg-muted/50 transition-colors rounded-xl',
+											"flex h-auto items-center m-0 p-0 justify-center gap-2 text-muted-foreground bg-muted/40 hover:bg-muted/50 transition-colors rounded-xl",
 											isLiked
-												? 'text-destructive hover:text-destructive/90'
-												: 'text-muted-foreground hover:text-primary',
+												? "text-destructive hover:text-destructive/90"
+												: "text-muted-foreground hover:text-primary",
 										)}
 									>
 										<Heart
 											className={cn(
-												'h-5 w-5 transition-all duration-200',
-												isLiked ? 'fill-destructive text-destructive' : 'text-primary/70',
+												"h-5 w-5 transition-all duration-200",
+												isLiked ? "fill-destructive text-destructive" : "text-primary/70",
 											)}
 										/>
 										<span className="font-medium">{event.eventLikes}</span>
@@ -214,7 +215,7 @@ const ChosenEventData = ({
 									{/* Event Remaining Capacity */}
 									<div className="flex items-center justify-center gap-2 text-muted-foreground bg-muted/40 hover:bg-muted/50 transition-colors rounded-xl">
 										<Ticket className="h-5 w-5 text-primary/70" />
-										<span className="font-medium">{event.eventCapacity - event.attendeeCount}</span>
+										<span className="font-medium">{(event.eventCapacity || 0) - event.attendeeCount}</span>
 									</div>
 								</div>
 							</div>
@@ -245,9 +246,9 @@ const ChosenEventData = ({
 										</Button>
 									</div>
 									<div className="flex items-center gap-2">
-										<div className="text-muted-foreground">{t('Total')}</div>
+										<div className="text-muted-foreground">{t("Total")}</div>
 										<div className="font-semibold text-primary">
-											${(event.eventPrice * ticketInput!.ticketQuantity).toFixed(2)}
+											${((event.eventPrice || 0) * ticketInput!.ticketQuantity).toFixed(2)}
 										</div>
 									</div>
 								</div>
@@ -258,7 +259,7 @@ const ChosenEventData = ({
 									size="sm"
 									className="h-8 bg-primary hover:bg-primary/90 text-primary-foreground px-4 sm:px-6 shadow-sm hover:shadow transition-all duration-200 w-full sm:w-auto"
 								>
-									{t('Buy Ticket')}
+									{t("Buy Ticket")}
 								</Button>
 							</div>
 						</div>
@@ -268,7 +269,7 @@ const ChosenEventData = ({
 				{/* Section: Description */}
 				<Separator />
 				<div className="px-4 sm:px-6 py-4">
-					<h3 className="font-medium mb-2 text-foreground/90">{t('Description')}</h3>
+					<h3 className="font-medium mb-2 text-foreground/90">{t("Description")}</h3>
 					<p className="text-muted-foreground leading-relaxed">{event.eventDesc}</p>
 				</div>
 			</Card>
@@ -276,32 +277,32 @@ const ChosenEventData = ({
 			<Dialog open={isPaymentDialogOpen} onOpenChange={setIsPaymentDialogOpen}>
 				<DialogContent className="sm:max-w-md max-w-[90vw] rounded-lg">
 					<DialogHeader>
-						<DialogTitle>{t('Confirm Payment')}</DialogTitle>
-						<DialogDescription>{t('Do you want to proceed with the payment?')}</DialogDescription>
+						<DialogTitle>{t("Confirm Payment")}</DialogTitle>
+						<DialogDescription>{t("Do you want to proceed with the payment?")}</DialogDescription>
 					</DialogHeader>
 					<div className="space-y-4 py-4">
 						<div className="flex justify-between items-center">
-							<span className="text-muted-foreground">{t('Price per ticket')}</span>
+							<span className="text-muted-foreground">{t("Price per ticket")}</span>
 							<span className="font-medium">${event.eventPrice}</span>
 						</div>
 						<div className="flex justify-between items-center">
-							<span className="text-muted-foreground">{t('Number of tickets')}</span>
+							<span className="text-muted-foreground">{t("Number of tickets")}</span>
 							<span className="font-medium">{ticketInput!.ticketQuantity}</span>
 						</div>
 						<Separator />
 						<div className="flex justify-between items-center">
-							<span className="font-medium">{t('Total amount')}</span>
+							<span className="font-medium">{t("Total amount")}</span>
 							<span className="font-semibold text-primary">
-								${(event.eventPrice * ticketInput!.ticketQuantity).toFixed(2)}
+								${((event.eventPrice || 0) * ticketInput!.ticketQuantity).toFixed(2)}
 							</span>
 						</div>
 					</div>
 					<DialogFooter className="flex-col sm:flex-row gap-2">
 						<Button variant="outline" onClick={() => setIsPaymentDialogOpen(false)} className="w-full sm:w-auto">
-							{t('Cancel')}
+							{t("Cancel")}
 						</Button>
 						<Button onClick={confirmPurchaseHandler} className="bg-primary hover:bg-primary/90 w-full sm:w-auto">
-							{t('Confirm Payment')}
+							{t("Confirm Payment")}
 						</Button>
 					</DialogFooter>
 				</DialogContent>

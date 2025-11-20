@@ -1,17 +1,17 @@
-import { useState } from 'react';
-import { useQuery } from '@apollo/client';
-import Link from 'next/link';
-import { useRouter } from 'next/router';
-import { useTranslation } from 'next-i18next';
-import { MapPin, Clock, CalendarIcon, ChevronRight, ArrowRight } from 'lucide-react';
+import { useState } from "react";
+import { useQuery } from "@apollo/client";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { useTranslation } from "next-i18next";
+import { MapPin, Clock, CalendarIcon, ChevronRight, ArrowRight } from "lucide-react";
 
-import { Calendar } from '@/libs/components/ui/calendar';
-import { Button } from '@/libs/components/ui/button';
-import { GET_EVENTS } from '@/apollo/user/query';
+import { Calendar } from "@/libs/components/ui/calendar";
+import { Button } from "@/libs/components/ui/button";
+import { GET_EVENTS } from "@/apollo/user/query";
 
-import { Event } from '@/libs/types/event/event';
-import { EventsInquiry } from '@/libs/types/event/event.input';
-import { EventStatus } from '@/libs/enums/event.enum';
+import { Event } from "@/libs/types/event/event";
+import { EventsInquiry } from "@/libs/types/event/event.input";
+import { EventStatus } from "@/libs/enums/event.enum";
 
 interface UpcomingEventsProps {
 	initialInput?: EventsInquiry;
@@ -25,11 +25,11 @@ export default function UpcomingEvents({
 }: UpcomingEventsProps) {
 	const router = useRouter();
 	const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
-	const { t } = useTranslation('common');
+	const { t } = useTranslation("common");
 
 	/** APOLLO */
 	const { data: upcomingEvents } = useQuery(GET_EVENTS, {
-		fetchPolicy: 'cache-and-network',
+		fetchPolicy: "cache-and-network",
 		variables: {
 			input: initialInput,
 		},
@@ -38,18 +38,18 @@ export default function UpcomingEvents({
 
 	const events: Event[] = upcomingEvents?.getEvents?.list || [];
 	const filteredEvents = events.filter(
-		(event) => new Date(event.eventDate).toDateString() === selectedDate?.toDateString(),
+		(event) => new Date(event.eventStartAt).toDateString() === selectedDate?.toDateString(),
 	);
 
 	return (
 		<section className="py-10 sm:py-20 bg-muted">
 			<div className="max-w-7xl mx-auto px-4">
 				<div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 sm:mb-8 gap-4 sm:gap-0">
-					<h2 className="text-xl sm:text-2xl my-4">{t('Upcoming Events')}</h2>
+					<h2 className="text-xl sm:text-2xl my-4">{t("Upcoming Events")}</h2>
 
-					<Button type="submit" onClick={() => router.push('/event')} className="h-10 sm:h-14 px-4 sm:px-8">
+					<Button type="submit" onClick={() => router.push("/event")} className="h-10 sm:h-14 px-4 sm:px-8">
 						<div className="flex items-center gap-1">
-							{t('View All Events')}
+							{t("View All Events")}
 							<ArrowRight className="w-3 h-3 sm:w-4 sm:h-4" />
 						</div>
 					</Button>
@@ -66,34 +66,34 @@ export default function UpcomingEvents({
 							}}
 							className="rounded-md border-0 w-full"
 							classNames={{
-								months: 'flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0 w-full justify-center',
-								month: 'space-y-4 w-full',
-								caption: 'flex justify-center pt-1 relative items-center',
-								caption_label: 'text-lg sm:text-xl font-semibold text-foreground',
-								nav: 'space-x-1 flex items-center',
+								months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0 w-full justify-center",
+								month: "space-y-4 w-full",
+								caption: "flex justify-center pt-1 relative items-center",
+								caption_label: "text-lg sm:text-xl font-semibold text-foreground",
+								nav: "space-x-1 flex items-center",
 								nav_button:
-									'h-7 w-7 sm:h-9 sm:w-9 bg-transparent p-0 opacity-50 hover:opacity-100 rounded-full hover:bg-muted',
-								nav_button_previous: 'absolute left-1',
-								nav_button_next: 'absolute right-1',
-								table: 'w-full border-collapse space-y-1',
-								head_row: 'flex w-full',
-								head_cell: 'text-muted-foreground rounded-md w-full font-medium text-xs sm:text-sm',
-								row: 'flex w-full mt-2',
-								cell: 'h-8 sm:h-12 w-full text-center text-xs sm:text-sm p-0 relative focus-within:relative focus-within:z-20',
-								day: 'h-8 w-8 sm:h-12 sm:w-12 p-0 mx-auto font-normal aria-selected:opacity-100 rounded-full hover:bg-muted flex items-center justify-center',
+									"h-7 w-7 sm:h-9 sm:w-9 bg-transparent p-0 opacity-50 hover:opacity-100 rounded-full hover:bg-muted",
+								nav_button_previous: "absolute left-1",
+								nav_button_next: "absolute right-1",
+								table: "w-full border-collapse space-y-1",
+								head_row: "flex w-full",
+								head_cell: "text-muted-foreground rounded-md w-full font-medium text-xs sm:text-sm",
+								row: "flex w-full mt-2",
+								cell: "h-8 sm:h-12 w-full text-center text-xs sm:text-sm p-0 relative focus-within:relative focus-within:z-20",
+								day: "h-8 w-8 sm:h-12 sm:w-12 p-0 mx-auto font-normal aria-selected:opacity-100 rounded-full hover:bg-muted flex items-center justify-center",
 								day_selected:
-									'bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground',
-								day_today: 'text-foreground font-medium',
-								day_outside: 'text-muted-foreground opacity-50',
-								day_disabled: 'text-muted-foreground opacity-50',
-								day_range_middle: 'aria-selected:bg-muted aria-selected:text-foreground',
-								day_hidden: 'invisible',
+									"bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
+								day_today: "text-foreground font-medium",
+								day_outside: "text-muted-foreground opacity-50",
+								day_disabled: "text-muted-foreground opacity-50",
+								day_range_middle: "aria-selected:bg-muted aria-selected:text-foreground",
+								day_hidden: "invisible",
 							}}
 							components={{
 								DayContent: ({ date }) => (
 									<div className="flex flex-col items-center">
 										<span className="text-xs sm:text-sm">{date.getDate()}</span>
-										{events.some((event) => new Date(event.eventDate).toDateString() === date.toDateString()) && (
+										{events.some((event) => new Date(event.eventStartAt).toDateString() === date.toDateString()) && (
 											<span className="w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full bg-primary mt-0.5 sm:mt-1" />
 										)}
 									</div>
@@ -109,10 +109,10 @@ export default function UpcomingEvents({
 								{selectedDate !== undefined && <CalendarIcon className="w-4 h-4 sm:w-5 sm:h-5 text-primary mr-2" />}
 
 								<h3 className="text-base font-semibold text-foreground">
-									{selectedDate?.toLocaleDateString('en-US', {
-										month: 'long',
-										day: 'numeric',
-										year: 'numeric',
+									{selectedDate?.toLocaleDateString("en-US", {
+										month: "long",
+										day: "numeric",
+										year: "numeric",
 									})}
 								</h3>
 							</div>
@@ -133,10 +133,10 @@ export default function UpcomingEvents({
 												</div>
 												<div className="flex items-center mt-1 text-xs text-muted-foreground">
 													<Clock className="w-3 h-3 sm:w-3.5 sm:h-3.5 mr-1 sm:mr-1.5" />
-													{new Date(event.eventDate).toLocaleDateString('en-US', {
-														month: 'long',
-														day: 'numeric',
-														year: 'numeric',
+													{new Date(event.eventStartAt).toLocaleDateString("en-US", {
+														month: "long",
+														day: "numeric",
+														year: "numeric",
 													})}
 												</div>
 												<div className="flex items-center mt-1 text-xs text-muted-foreground">
@@ -150,8 +150,8 @@ export default function UpcomingEvents({
 							) : (
 								<div className="flex flex-col items-center justify-center h-[calc(100%-2rem)] text-center">
 									<CalendarIcon className="w-8 h-8 sm:w-10 sm:h-10 text-muted-foreground/30 mb-2" />
-									<p className="text-xs text-muted-foreground">{t('No events scheduled')}</p>
-									<p className="text-xs text-muted-foreground mt-1">{t('Select another date')}</p>
+									<p className="text-xs text-muted-foreground">{t("No events scheduled")}</p>
+									<p className="text-xs text-muted-foreground mt-1">{t("Select another date")}</p>
 								</div>
 							)}
 						</div>

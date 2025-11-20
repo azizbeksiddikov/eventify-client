@@ -1,16 +1,16 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
-import { useQuery } from '@apollo/client';
-import Link from 'next/link';
-import { Calendar, MapPin, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useState, useEffect, useRef, useCallback } from "react";
+import { useQuery } from "@apollo/client";
+import Link from "next/link";
+import { Calendar, MapPin, ChevronLeft, ChevronRight } from "lucide-react";
 
-import { REACT_APP_API_URL } from '@/libs/config';
-import { cn } from '@/libs/utils';
-import { GET_EVENTS } from '@/apollo/user/query';
-import { EventsInquiry } from '@/libs/types/event/event.input';
-import { EventStatus } from '@/libs/enums/event.enum';
-import { Event } from '@/libs/types/event/event';
-import { Direction } from '@/libs/enums/common.enum';
-import { useTranslation } from 'next-i18next';
+import { REACT_APP_API_URL } from "@/libs/config";
+import { cn } from "@/libs/utils";
+import { GET_EVENTS } from "@/apollo/user/query";
+import { EventsInquiry } from "@/libs/types/event/event.input";
+import { EventStatus } from "@/libs/enums/event.enum";
+import { Event } from "@/libs/types/event/event";
+import { Direction } from "@/libs/enums/common.enum";
+import { useTranslation } from "next-i18next";
 
 interface AutoScrollEventsProps {
 	initialInput?: EventsInquiry;
@@ -20,12 +20,12 @@ const AutoScrollEvents = ({
 	initialInput = {
 		page: 1,
 		limit: 8,
-		sort: 'eventViews',
+		sort: "eventViews",
 		direction: Direction.DESC,
 		search: { eventStatus: EventStatus.UPCOMING },
 	},
 }: AutoScrollEventsProps) => {
-	const { t } = useTranslation('common');
+	const { t } = useTranslation("common");
 	const [currentIndex, setCurrentIndex] = useState(0);
 	const [hoverPosition, setHoverPosition] = useState<number | null>(null);
 	const [isAutoScrolling, setIsAutoScrolling] = useState(true);
@@ -34,7 +34,7 @@ const AutoScrollEvents = ({
 	const lastInteractionTimeRef = useRef<number>(Date.now());
 
 	const { data: upcomingEvents, loading: upcomingEventsLoading } = useQuery(GET_EVENTS, {
-		fetchPolicy: 'cache-and-network',
+		fetchPolicy: "cache-and-network",
 		variables: { input: initialInput },
 		notifyOnNetworkStatusChange: true,
 	});
@@ -43,7 +43,7 @@ const AutoScrollEvents = ({
 
 	// Handle keyboard navigation with proper dependencies
 	const navigationHandler = useCallback(
-		(direction: 'prev' | 'next') => {
+		(direction: "prev" | "next") => {
 			setIsAutoScrolling(false);
 			lastInteractionTimeRef.current = Date.now();
 
@@ -53,7 +53,7 @@ const AutoScrollEvents = ({
 			}
 
 			setCurrentIndex((prevIndex) => {
-				if (direction === 'prev') {
+				if (direction === "prev") {
 					return (prevIndex - 1 + eventList.length) % eventList.length;
 				}
 				return (prevIndex + 1) % eventList.length;
@@ -74,10 +74,10 @@ const AutoScrollEvents = ({
 	// Handle keyboard navigation
 	const keyDownHandler = useCallback(
 		(e: KeyboardEvent) => {
-			if (e.key === 'ArrowLeft') {
-				navigationHandler('prev');
-			} else if (e.key === 'ArrowRight') {
-				navigationHandler('next');
+			if (e.key === "ArrowLeft") {
+				navigationHandler("prev");
+			} else if (e.key === "ArrowRight") {
+				navigationHandler("next");
 			}
 		},
 		[navigationHandler],
@@ -85,9 +85,9 @@ const AutoScrollEvents = ({
 
 	// Setup and cleanup keyboard event listeners
 	useEffect(() => {
-		window.addEventListener('keydown', keyDownHandler);
+		window.addEventListener("keydown", keyDownHandler);
 		return () => {
-			window.removeEventListener('keydown', keyDownHandler);
+			window.removeEventListener("keydown", keyDownHandler);
 		};
 	}, [keyDownHandler]);
 
@@ -130,11 +130,11 @@ const AutoScrollEvents = ({
 	// Format date for better accessibility
 	const formatDate = useCallback((dateString: Date) => {
 		const date = new Date(dateString);
-		return new Intl.DateTimeFormat('en-US', {
-			weekday: 'long',
-			year: 'numeric',
-			month: 'long',
-			day: 'numeric',
+		return new Intl.DateTimeFormat("en-US", {
+			weekday: "long",
+			year: "numeric",
+			month: "long",
+			day: "numeric",
 		}).format(date);
 	}, []);
 
@@ -147,7 +147,7 @@ const AutoScrollEvents = ({
 			onMouseMove={moveMouseHandler}
 			onContextMenu={(e) => {
 				e.preventDefault(); // Prevent the default context menu
-				navigationHandler('next'); // Navigate to next slide on right-click
+				navigationHandler("next"); // Navigate to next slide on right-click
 				return false;
 			}}
 			aria-roledescription="carousel"
@@ -159,8 +159,8 @@ const AutoScrollEvents = ({
 					<div
 						key={event._id}
 						className={cn(
-							'absolute inset-0 transition-all duration-1000 ease-in-out',
-							index === currentIndex ? 'opacity-100 scale-100 z-10' : 'opacity-0 scale-105 z-0',
+							"absolute inset-0 transition-all duration-1000 ease-in-out",
+							index === currentIndex ? "opacity-100 scale-100 z-10" : "opacity-0 scale-105 z-0",
 						)}
 						aria-hidden={index !== currentIndex}
 						role="group"
@@ -169,7 +169,7 @@ const AutoScrollEvents = ({
 					>
 						<div
 							className="absolute inset-0 bg-cover bg-center transition-transform duration-1000 ease-in-out"
-							style={{ backgroundImage: `url(${REACT_APP_API_URL}/${event.eventImage})` }}
+							style={{ backgroundImage: `url(${REACT_APP_API_URL}/${event.eventImages[0]})` }}
 							aria-hidden="true"
 						>
 							{/* Gradient overlays for navigation */}
@@ -207,7 +207,7 @@ const AutoScrollEvents = ({
 									</span>
 									<span className="flex items-center justify-center sm:justify-start   px-4 py-2 rounded-full text-white">
 										<Calendar className="w-5 h-5 mr-2" />
-										<time dateTime={new Date(event.eventDate).toISOString()}>{formatDate(event.eventDate)}</time>
+										<time dateTime={new Date(event.eventStartAt).toISOString()}>{formatDate(event.eventStartAt)}</time>
 									</span>
 								</div>
 							</div>
@@ -216,7 +216,7 @@ const AutoScrollEvents = ({
 								className="inline-block bg-primary text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full font-medium hover:bg-primary/90 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
 								aria-label={`View details for ${event.eventName}`}
 							>
-								{t('View Details')}
+								{t("View Details")}
 							</Link>
 						</div>
 					</div>
@@ -225,10 +225,10 @@ const AutoScrollEvents = ({
 
 			{/* Navigation buttons with improved accessibility */}
 			<button
-				onClick={() => navigationHandler('prev')}
+				onClick={() => navigationHandler("prev")}
 				onContextMenu={(e) => {
 					e.preventDefault();
-					navigationHandler('prev');
+					navigationHandler("prev");
 					return false;
 				}}
 				className="absolute inset-y-0 left-0 w-1/5 cursor-pointer group flex items-center justify-start pl-4 sm:pl-6 md:pl-8 z-20 focus-visible:outline-0"
@@ -238,16 +238,16 @@ const AutoScrollEvents = ({
 
 				<ChevronLeft
 					className={cn(
-						'w-8 h-8 text-foreground/0 group-hover:text-white/80 transition-all duration-300',
-						hoverPosition === 0 ? 'text-foreground/80' : '',
+						"w-8 h-8 text-foreground/0 group-hover:text-white/80 transition-all duration-300",
+						hoverPosition === 0 ? "text-foreground/80" : "",
 					)}
 				/>
 			</button>
 			<button
-				onClick={() => navigationHandler('next')}
+				onClick={() => navigationHandler("next")}
 				onContextMenu={(e) => {
 					e.preventDefault();
-					navigationHandler('next');
+					navigationHandler("next");
 					return false;
 				}}
 				className="absolute inset-y-0 right-0 w-1/5 cursor-pointer group flex items-center justify-end pr-4 sm:pr-6 md:pr-8 z-20 focus-visible:outline-0"
@@ -257,8 +257,8 @@ const AutoScrollEvents = ({
 
 				<ChevronRight
 					className={cn(
-						'w-8 h-8 text-foreground/0 group-hover:text-white/80 transition-all duration-300',
-						hoverPosition === 1 ? 'text-foreground/80' : '',
+						"w-8 h-8 text-foreground/0 group-hover:text-white/80 transition-all duration-300",
+						hoverPosition === 1 ? "text-foreground/80" : "",
 					)}
 				/>
 			</button>
@@ -270,8 +270,8 @@ const AutoScrollEvents = ({
 						<button
 							key={index}
 							className={cn(
-								' rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/50',
-								index === currentIndex ? 'bg-primary scale-125 w-2.5 h-2.5' : 'bg-white/50 hover:bg-white/75 w-2 h-2',
+								" rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/50",
+								index === currentIndex ? "bg-primary scale-125 w-2.5 h-2.5" : "bg-white/50 hover:bg-white/75 w-2 h-2",
 							)}
 							onClick={() => setCurrentIndex(index)}
 							onContextMenu={(e) => {

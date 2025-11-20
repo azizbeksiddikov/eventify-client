@@ -1,11 +1,20 @@
-export enum EventStatus {
-	UPCOMING = 'UPCOMING',
-	ONGOING = 'ONGOING',
-	COMPLETED = 'COMPLETED',
-	CANCELLED = 'CANCELLED',
-	DELETED = 'DELETED',
+// ===== Event Type =====
+export enum EventType {
+	ONCE = 'ONCE',
+	RECURRING = 'RECURRING',
 }
 
+// ===== Event Status =====
+export enum EventStatus {
+	UPCOMING = 'UPCOMING', // created but not yet started
+	ONGOING = 'ONGOING', // started and ongoing
+	COMPLETED = 'COMPLETED', // completed and ended
+
+	CANCELLED = 'CANCELLED', // cancelled by the host
+	DELETED = 'DELETED', // deleted by the host
+}
+
+// ===== Event Category =====
 export enum EventCategory {
 	SPORTS = 'SPORTS',
 	ART = 'ART',
@@ -19,4 +28,11 @@ export enum EventCategory {
 	POLITICS = 'POLITICS',
 	RELIGION = 'RELIGION',
 	OTHER = 'OTHER',
+}
+
+// ===== Recurrence Type =====
+export enum RecurrenceType {
+	INTERVAL = 'INTERVAL', // Every N days
+	DAYS_OF_WEEK = 'DAYS_OF_WEEK', // Weekly on specific days
+	DAY_OF_MONTH = 'DAY_OF_MONTH', // Monthly on specific day
 }

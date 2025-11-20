@@ -103,16 +103,17 @@ export const UPDATE_GROUP_BY_ADMIN = gql`
  *         EVENT           *
  *************************/
 
-export const REMOVE_EVENT_BY_ADMIN = gql`
-	mutation RemoveEventByAdmin($input: String!) {
-		removeEventByAdmin(eventId: $input) {
+export const UPDATE_EVENT_BY_ADMIN = gql`
+	mutation UpdateEventByAdmin($input: EventUpdateInput!) {
+		updateEventByAdmin(input: $input) {
 			_id
+			eventType
+			recurrenceId
 			eventName
 			eventDesc
-			eventImage
-			eventDate
-			eventStartTime
-			eventEndTime
+			eventImages
+			eventStartAt
+			eventEndAt
 			eventCity
 			eventAddress
 			eventCapacity
@@ -121,6 +122,7 @@ export const REMOVE_EVENT_BY_ADMIN = gql`
 			eventCategories
 			groupId
 			memberId
+			origin
 			attendeeCount
 			eventLikes
 			eventViews
@@ -130,16 +132,17 @@ export const REMOVE_EVENT_BY_ADMIN = gql`
 	}
 `;
 
-export const UPDATE_EVENT_BY_ADMIN = gql`
-	mutation UpdateEventByAdmin($input: EventUpdateInput!) {
-		updateEventByAdmin(input: $input) {
+export const REMOVE_EVENT_BY_ADMIN = gql`
+	mutation RemoveEventByAdmin($input: String!) {
+		removeEventByAdmin(eventId: $input) {
 			_id
+			eventType
+			recurrenceId
 			eventName
 			eventDesc
-			eventImage
-			eventDate
-			eventStartTime
-			eventEndTime
+			eventImages
+			eventStartAt
+			eventEndAt
 			eventCity
 			eventAddress
 			eventCapacity
@@ -148,6 +151,7 @@ export const UPDATE_EVENT_BY_ADMIN = gql`
 			eventCategories
 			groupId
 			memberId
+			origin
 			attendeeCount
 			eventLikes
 			eventViews

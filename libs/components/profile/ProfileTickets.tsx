@@ -1,15 +1,15 @@
-import Link from 'next/link';
-import { useTranslation } from 'next-i18next';
-import { formatDistanceToNow } from 'date-fns';
-import { Calendar, Users, DollarSign, Clock, Link as LinkIcon, Ticket as TicketIcon } from 'lucide-react';
+import Link from "next/link";
+import { useTranslation } from "next-i18next";
+import { formatDistanceToNow } from "date-fns";
+import { Calendar, Users, DollarSign, Clock, Link as LinkIcon, Ticket as TicketIcon } from "lucide-react";
 
-import { Badge } from '@/libs/components/ui/badge';
-import { Button } from '@/libs/components/ui/button';
-import { Card, CardContent, CardHeader } from '@/libs/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/libs/components/ui/table';
+import { Badge } from "@/libs/components/ui/badge";
+import { Button } from "@/libs/components/ui/button";
+import { Card, CardContent, CardHeader } from "@/libs/components/ui/card";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/libs/components/ui/table";
 
-import { TicketStatus } from '@/libs/enums/ticket.enum';
-import { Ticket } from '@/libs/types/ticket/ticket';
+import { TicketStatus } from "@/libs/enums/ticket.enum";
+import { Ticket } from "@/libs/types/ticket/ticket";
 
 interface ProfileTicketsProps {
 	tickets: Ticket[];
@@ -17,47 +17,47 @@ interface ProfileTicketsProps {
 }
 
 export const ProfileTickets = ({ tickets, cancelTicketHandler }: ProfileTicketsProps) => {
-	const { t } = useTranslation('common');
+	const { t } = useTranslation("common");
 
 	const getStatusColor = (status: TicketStatus) => {
 		switch (status) {
 			case TicketStatus.PURCHASED:
-				return 'bg-green-100 text-green-800';
+				return "bg-green-100 text-green-800";
 			case TicketStatus.CANCELLED:
-				return 'bg-red-100 text-red-800';
+				return "bg-red-100 text-red-800";
 			case TicketStatus.USED:
-				return 'bg-gray-100 text-gray-800';
+				return "bg-gray-100 text-gray-800";
 			default:
-				return 'bg-gray-100 text-gray-800';
+				return "bg-gray-100 text-gray-800";
 		}
 	};
 
 	return (
 		<Card className="w-full">
 			<CardHeader>
-				<h2 className="text-lg font-medium text-card-foreground">{t('My Tickets')}</h2>
+				<h2 className="text-lg font-medium text-card-foreground">{t("My Tickets")}</h2>
 			</CardHeader>
 			<CardContent>
 				{tickets.length === 0 ? (
-					<div className="text-center text-muted-foreground py-8">{t('No tickets found')}</div>
+					<div className="text-center text-muted-foreground py-8">{t("No tickets found")}</div>
 				) : (
 					<Table>
 						<TableHeader>
 							<TableRow>
-								<TableHead className="w-[250px] px-4">{t('Event')}</TableHead>
-								<TableHead className="text-center px-2">{t('Status')}</TableHead>
-								<TableHead className="text-center px-2">{t('Attendees')}</TableHead>
-								<TableHead className="text-center px-2">{t('Tickets')}</TableHead>
-								<TableHead className="text-center px-2">{t('Price')}</TableHead>
-								<TableHead className="text-center px-2">{t('Total')}</TableHead>
-								<TableHead className="text-center px-2">{t('Date')}</TableHead>
-								<TableHead className="text-right px-4">{t('Actions')}</TableHead>
+								<TableHead className="w-[250px] px-4">{t("Event")}</TableHead>
+								<TableHead className="text-center px-2">{t("Status")}</TableHead>
+								<TableHead className="text-center px-2">{t("Attendees")}</TableHead>
+								<TableHead className="text-center px-2">{t("Tickets")}</TableHead>
+								<TableHead className="text-center px-2">{t("Price")}</TableHead>
+								<TableHead className="text-center px-2">{t("Total")}</TableHead>
+								<TableHead className="text-center px-2">{t("Date")}</TableHead>
+								<TableHead className="text-right px-4">{t("Actions")}</TableHead>
 							</TableRow>
 						</TableHeader>
 						<TableBody>
 							{tickets.map((ticket) => {
-								const eventDate = ticket.event?.eventDate ? new Date(ticket.event.eventDate) : null;
-								const formattedDate = eventDate ? formatDistanceToNow(eventDate, { addSuffix: true }) : '';
+								const eventDate = ticket.event?.eventStartAt ? new Date(ticket.event.eventStartAt) : null;
+								const formattedDate = eventDate ? formatDistanceToNow(eventDate, { addSuffix: true }) : "";
 								const totalPrice = ticket.ticketPrice * (ticket.ticketQuantity || 1);
 
 								return (
@@ -69,7 +69,7 @@ export const ProfileTickets = ({ tickets, cancelTicketHandler }: ProfileTicketsP
 												</div>
 												<div>
 													<h3 className="text-sm font-medium text-card-foreground">
-														{ticket.event?.eventName || t('Event')}
+														{ticket.event?.eventName || t("Event")}
 													</h3>
 												</div>
 											</div>
@@ -118,7 +118,7 @@ export const ProfileTickets = ({ tickets, cancelTicketHandler }: ProfileTicketsP
 														onClick={() => cancelTicketHandler(ticket._id)}
 														className="bg-destructive/10 border-destructive text-destructive hover:bg-destructive/20 hover:text-destructive transition-colors duration-200"
 													>
-														{t('Cancel')}
+														{t("Cancel")}
 													</Button>
 												)}
 												<Link href={`/event/detail?eventId=${ticket.event?._id}`}>
@@ -126,7 +126,7 @@ export const ProfileTickets = ({ tickets, cancelTicketHandler }: ProfileTicketsP
 														variant="ghost"
 														size="icon"
 														className="text-muted-foreground hover:text-primary transition-colors duration-200"
-														aria-label={t('View event details')}
+														aria-label={t("View event details")}
 													>
 														<LinkIcon className="h-4 w-4" />
 													</Button>

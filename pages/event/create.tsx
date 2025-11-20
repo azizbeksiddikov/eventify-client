@@ -1,45 +1,45 @@
-import { useEffect, useState } from 'react';
-import Image from 'next/image';
-import { useRouter } from 'next/router';
-import axios from 'axios';
-import { useMutation, useQuery, useReactiveVar } from '@apollo/client';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { useTranslation } from 'next-i18next';
-import { userVar } from '@/apollo/store';
-import { format } from 'date-fns';
-import { ImageIcon, RefreshCw, CalendarIcon, ArrowLeft } from 'lucide-react';
+import { useEffect, useState } from "react";
+import Image from "next/image";
+import { useRouter } from "next/router";
+import axios from "axios";
+import { useMutation, useQuery, useReactiveVar } from "@apollo/client";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { useTranslation } from "next-i18next";
+import { userVar } from "@/apollo/store";
+import { format } from "date-fns";
+import { ImageIcon, RefreshCw, CalendarIcon, ArrowLeft } from "lucide-react";
 
-import { Button } from '@/libs/components/ui/button';
-import { Input } from '@/libs/components/ui/input';
-import { Textarea } from '@/libs/components/ui/textarea';
-import { Card } from '@/libs/components/ui/card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/libs/components/ui/select';
-import { Calendar } from '@/libs/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/libs/components/ui/popover';
-import { ScrollArea } from '@/libs/components/ui/scroll-area';
-import withBasicLayout from '@/libs/components/layout/LayoutBasic';
-import { ImageCropper } from '@/libs/components/common/ImageCropper';
+import { Button } from "@/libs/components/ui/button";
+import { Input } from "@/libs/components/ui/input";
+import { Textarea } from "@/libs/components/ui/textarea";
+import { Card } from "@/libs/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/libs/components/ui/select";
+import { Calendar } from "@/libs/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/libs/components/ui/popover";
+import { ScrollArea } from "@/libs/components/ui/scroll-area";
+import withBasicLayout from "@/libs/components/layout/LayoutBasic";
+import { ImageCropper } from "@/libs/components/common/ImageCropper";
 
-import { EventCategory, EventStatus } from '@/libs/enums/event.enum';
-import { GET_MY_GROUPS } from '@/apollo/user/query';
-import { CREATE_EVENT } from '@/apollo/user/mutation';
-import { cn } from '@/libs/utils';
-import { EventInput } from '@/libs/types/event/event.input';
-import { Group } from '@/libs/types/group/group';
-import { smallError, smallSuccess } from '@/libs/alert';
-import { Message } from '@/libs/enums/common.enum';
-import { getJwtToken } from '@/libs/auth';
-import { imageTypes, REACT_APP_API_URL, REACT_APP_API_GRAPHQL_URL } from '@/libs/config';
+import { EventCategory, EventStatus } from "@/libs/enums/event.enum";
+import { GET_MY_GROUPS } from "@/apollo/user/query";
+import { CREATE_EVENT } from "@/apollo/user/mutation";
+import { cn } from "@/libs/utils";
+import { EventInput } from "@/libs/types/event/event.input";
+import { Group } from "@/libs/types/group/group";
+import { smallError, smallSuccess } from "@/libs/alert";
+import { Message } from "@/libs/enums/common.enum";
+import { getJwtToken } from "@/libs/auth";
+import { imageTypes, REACT_APP_API_URL, REACT_APP_API_GRAPHQL_URL } from "@/libs/config";
 
 export const getStaticProps = async ({ locale }: { locale: string }) => ({
 	props: {
-		...(await serverSideTranslations(locale, ['common'])),
+		...(await serverSideTranslations(locale, ["common"])),
 	},
 });
 
 const EventCreatePage = () => {
 	const router = useRouter();
-	const { t } = useTranslation('common');
+	const { t } = useTranslation("common");
 	const user = useReactiveVar(userVar);
 	const token = getJwtToken();
 
@@ -52,16 +52,15 @@ const EventCreatePage = () => {
 	const [tempImageUrl, setTempImageUrl] = useState<string | null>(null);
 
 	const [formData, setFormData] = useState<EventInput>({
-		eventName: '',
-		eventDesc: '',
-		eventImage: '',
-		eventStartTime: '00:00',
-		eventEndTime: '00:00',
-		eventCity: '',
-		eventAddress: '',
+		eventName: "",
+		eventDesc: "",
+		eventImages: [],
+		eventStartAt: new Date(),
+		eventEndAt: new Date(),
+		eventCity: "",
+		eventAddress: "",
 		eventStatus: EventStatus.UPCOMING,
-		eventDate: new Date(),
-		groupId: '',
+		groupId: "",
 		eventCategories: [],
 	});
 
@@ -69,7 +68,7 @@ const EventCreatePage = () => {
 	const [createEvent] = useMutation(CREATE_EVENT);
 
 	const { data: groupsData } = useQuery(GET_MY_GROUPS, {
-		fetchPolicy: 'cache-and-network',
+		fetchPolicy: "cache-and-network",
 		skip: !user._id,
 		notifyOnNetworkStatusChange: true,
 	});
@@ -80,8 +79,8 @@ const EventCreatePage = () => {
 
 	/** HANDLERS */
 	const validateTime = (startTime: string, endTime: string) => {
-		const [startHour, startMinute] = startTime.split(':').map(Number);
-		const [endHour, endMinute] = endTime.split(':').map(Number);
+		const [startHour, startMinute] = startTime.split(":").map(Number);
+		const [endHour, endMinute] = endTime.split(":").map(Number);
 
 		if (endHour < startHour || (endHour === startHour && endMinute <= startMinute)) {
 			return false;
@@ -103,29 +102,29 @@ const EventCreatePage = () => {
 		try {
 			const formData = new FormData();
 			formData.append(
-				'operations',
+				"operations",
 				JSON.stringify({
 					query: `mutation ImageUploader($file: Upload!, $target: String!) {
 						imageUploader(file: $file, target: $target) 
 				  }`,
 					variables: {
 						file: null,
-						target: 'event',
+						target: "event",
 					},
 				}),
 			);
 			formData.append(
-				'map',
+				"map",
 				JSON.stringify({
-					'0': ['variables.file'],
+					"0": ["variables.file"],
 				}),
 			);
-			formData.append('0', image);
+			formData.append("0", image);
 
 			const response = await axios.post(`${REACT_APP_API_GRAPHQL_URL}`, formData, {
 				headers: {
-					'Content-Type': 'multipart/form-data',
-					'apollo-require-preflight': true,
+					"Content-Type": "multipart/form-data",
+					"apollo-require-preflight": true,
 					Authorization: `Bearer ${token}`,
 				},
 			});
@@ -139,8 +138,8 @@ const EventCreatePage = () => {
 
 			return imageUrl;
 		} catch (err) {
-			console.error('Error uploading image:', err);
-			smallError(t('Failed to upload image'));
+			console.error("Error uploading image:", err);
+			smallError(t("Failed to upload image"));
 			return null;
 		}
 	};
@@ -162,8 +161,8 @@ const EventCreatePage = () => {
 				setTempImageUrl(null);
 			}
 		} catch (err) {
-			console.error('Error handling cropped image:', err);
-			smallError(t('Failed to process image'));
+			console.error("Error handling cropped image:", err);
+			smallError(t("Failed to process image"));
 		}
 	};
 
@@ -178,19 +177,15 @@ const EventCreatePage = () => {
 			if (!formData?.eventName) throw new Error(t(Message.EVENT_NAME_REQUIRED));
 			if (!formData?.eventDesc) throw new Error(t(Message.EVENT_DESCRIPTION_REQUIRED));
 			if (selectedCategories.length === 0) throw new Error(t(Message.EVENT_CATEGORY_REQUIRED));
-			if (!formData.eventDate) throw new Error(t(Message.EVENT_DATE_REQUIRED));
-			if (!formData.eventStartTime) throw new Error(t(Message.EVENT_START_TIME_REQUIRED));
-			if (!formData.eventEndTime) throw new Error(t(Message.EVENT_END_TIME_REQUIRED));
-			if (!validateTime(formData.eventStartTime, formData.eventEndTime)) {
-				throw new Error(t(Message.INVALID_TIME_SELECTION));
-			}
+			if (!formData.eventStartAt) throw new Error(t(Message.EVENT_START_TIME_REQUIRED));
+			if (!formData.eventEndAt) throw new Error(t(Message.EVENT_END_TIME_REQUIRED));
 			if (!formData.eventCity) throw new Error(t(Message.EVENT_CITY_REQUIRED));
 			if (!formData.eventAddress) throw new Error(t(Message.EVENT_ADDRESS_REQUIRED));
 			if (!formData.eventCapacity) throw new Error(t(Message.EVENT_CAPACITY_REQUIRED));
 			if (formData.eventCapacity < 1) throw new Error(t(Message.EVENT_CAPACITY_MIN_REQUIRED));
 			if (!formData.eventPrice) formData.eventPrice = 0;
 			if (formData.eventPrice < 0) throw new Error(t(Message.EVENT_PRICE_MIN_REQUIRED));
-			if (!formData.eventImage) throw new Error(t(Message.EVENT_IMAGE_REQUIRED));
+			if (!formData.eventImages.length) throw new Error(t(Message.EVENT_IMAGE_REQUIRED));
 
 			const updatedFormData = {
 				...formData,
@@ -213,18 +208,18 @@ const EventCreatePage = () => {
 	const inputHandler = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
 		const { name, value } = e.target;
 
-		if (name === 'eventCapacity' || name === 'eventPrice') {
-			if (value === '') {
+		if (name === "eventCapacity" || name === "eventPrice") {
+			if (value === "") {
 				// Allow empty input for user convenience
 				setFormData((prev) => ({ ...prev, [name]: undefined }));
 				return;
 			}
 
-			const cleanedValue = value.replace(/^0+/, '') || '0';
+			const cleanedValue = value.replace(/^0+/, "") || "0";
 			const numberValue = Number(cleanedValue);
 
 			if (isNaN(numberValue)) {
-				smallError(t('Invalid number'));
+				smallError(t("Invalid number"));
 				return;
 			}
 
@@ -250,22 +245,22 @@ const EventCreatePage = () => {
 				<div className="mb-8">
 					<Button
 						variant="outline"
-						onClick={() => router.push('/event')}
+						onClick={() => router.push("/event")}
 						className="flex items-center gap-2 text-primary hover:text-primary-foreground hover:bg-primary border-primary hover:border-primary/80 transition-colors duration-200"
 					>
 						<ArrowLeft className="h-4 w-4" />
-						{t('Back to Events')}
+						{t("Back to Events")}
 					</Button>
 				</div>
 
 				<Card className="p-6 bg-card text-card-foreground">
-					<h1 className="text-3xl font-semibold text-foreground mb-6">{t('Create New Event')}</h1>
+					<h1 className="text-3xl font-semibold text-foreground mb-6">{t("Create New Event")}</h1>
 
 					<form onSubmit={submitHandler} className="space-y-6">
 						{/* Group Selection */}
 						<div className="space-y-2">
 							<label htmlFor="groupId" className="text-sm font-medium text-foreground">
-								{t('Select Group')}
+								{t("Select Group")}
 							</label>
 							<Select
 								value={formData.groupId}
@@ -313,7 +308,7 @@ const EventCreatePage = () => {
 												<div>
 													<div className="font-medium text-foreground">{group.groupName}</div>
 													<div className="text-xs text-muted-foreground">
-														{group.memberCount} {t('members')}
+														{group.memberCount} {t("members")}
 													</div>
 												</div>
 											</div>
@@ -326,14 +321,14 @@ const EventCreatePage = () => {
 						{/* Event Name */}
 						<div className="space-y-2">
 							<label htmlFor="eventName" className="text-sm font-medium text-foreground">
-								{t('Event Name')}
+								{t("Event Name")}
 							</label>
 							<Input
 								id="eventName"
 								name="eventName"
 								value={formData.eventName}
 								onChange={inputHandler}
-								placeholder={t('Enter event name')}
+								placeholder={t("Enter event name")}
 								className="bg-input text-input-foreground border-input"
 							/>
 						</div>
@@ -341,36 +336,36 @@ const EventCreatePage = () => {
 						{/* Event Description */}
 						<div className="space-y-2">
 							<label htmlFor="eventDesc" className="text-sm font-medium text-foreground">
-								{t('Description')}
+								{t("Description")}
 							</label>
 							<Textarea
 								id="eventDesc"
 								name="eventDesc"
 								value={formData.eventDesc}
 								onChange={inputHandler}
-								placeholder={t('Describe your event')}
+								placeholder={t("Describe your event")}
 								className="min-h-[120px] bg-input text-input-foreground border-input"
 							/>
 						</div>
 
 						{/* Categories */}
 						<div className="space-y-2">
-							<label className="text-sm font-medium text-foreground">{t('Categories (Select up to 3)')}</label>
+							<label className="text-sm font-medium text-foreground">{t("Categories (Select up to 3)")}</label>
 							<div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
 								{Object.values(EventCategory).map((category) => (
 									<Button
 										key={category}
 										type="button"
-										variant={selectedCategories.includes(category) ? 'default' : 'outline'}
+										variant={selectedCategories.includes(category) ? "default" : "outline"}
 										onClick={() => categoryHandler(category)}
 										disabled={selectedCategories.length >= 3 && !selectedCategories.includes(category)}
 										className={`h-10 transition-all duration-200 ${
 											selectedCategories.includes(category)
-												? 'bg-primary text-primary-foreground font-semibold shadow-sm hover:bg-primary/90'
-												: 'bg-transparent text-foreground hover:bg-accent hover:text-accent-foreground'
+												? "bg-primary text-primary-foreground font-semibold shadow-sm hover:bg-primary/90"
+												: "bg-transparent text-foreground hover:bg-accent hover:text-accent-foreground"
 										} disabled:opacity-50 disabled:cursor-not-allowed`}
 									>
-										{category.charAt(0) + category.slice(1).toLowerCase().replace('_', ' ')}
+										{category.charAt(0) + category.slice(1).toLowerCase().replace("_", " ")}
 									</Button>
 								))}
 							</div>
@@ -379,44 +374,16 @@ const EventCreatePage = () => {
 						{/* Event Date and Time */}
 						<div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
 							<div className="space-y-2">
-								<label htmlFor="eventDate" className="text-sm font-medium text-foreground">
-									{t('Event Date')}
-								</label>
-								<Popover>
-									<PopoverTrigger asChild>
-										<Button
-											variant="outline"
-											className={cn(
-												'w-full justify-start text-left font-normal bg-input text-input-foreground border-input hover:bg-accent hover:text-accent-foreground transition-colors duration-200',
-												!formData.eventDate && 'text-muted-foreground',
-											)}
-										>
-											<CalendarIcon className="mr-2 h-4 w-4" />
-											{formData.eventDate ? format(formData.eventDate, 'PPP') : <span>{t('Pick a date')}</span>}
-										</Button>
-									</PopoverTrigger>
-									<PopoverContent className="w-auto p-0 bg-popover text-popover-foreground border-border">
-										<Calendar
-											mode="single"
-											selected={formData.eventDate}
-											onSelect={(date) => date && setFormData((prev) => ({ ...prev, eventDate: date }))}
-											initialFocus
-											disabled={(date) => date < new Date()}
-											className="rounded-md border"
-										/>
-									</PopoverContent>
-								</Popover>
-							</div>
-							<div className="space-y-2">
-								<label htmlFor="eventStartTime" className="text-sm font-medium text-foreground">
-									{t('Start Time')}
+								<label htmlFor="eventStartAt" className="text-sm font-medium text-foreground">
+									{t("Start Time")}
 								</label>
 								<div className="flex gap-2">
 									<Select
-										value={formData.eventStartTime.split(':')[0]}
+										value={formData.eventStartAt.getHours().toString().padStart(2, "0")}
 										onValueChange={(hour) => {
-											const currentTime = formData.eventStartTime.split(':');
-											startTimeChangeHandler(hour, currentTime[1]);
+											const currentTime = new Date(formData.eventStartAt);
+											currentTime.setHours(Number(hour));
+											setFormData((prev) => ({ ...prev, eventStartAt: currentTime }));
 										}}
 									>
 										<SelectTrigger className="w-20 bg-input text-input-foreground border-input hover:bg-accent hover:text-accent-foreground transition-colors duration-200">
@@ -427,20 +394,21 @@ const EventCreatePage = () => {
 												{[...Array(24)].map((_, i) => (
 													<SelectItem
 														key={i}
-														value={i.toString().padStart(2, '0')}
+														value={i.toString().padStart(2, "0")}
 														className="hover:bg-accent hover:text-accent-foreground transition-colors duration-200 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
 													>
-														{i.toString().padStart(2, '0')}
+														{i.toString().padStart(2, "0")}
 													</SelectItem>
 												))}
 											</ScrollArea>
 										</SelectContent>
 									</Select>
 									<Select
-										value={formData.eventStartTime.split(':')[1]}
+										value={formData.eventStartAt.getMinutes().toString().padStart(2, "0")}
 										onValueChange={(minute) => {
-											const currentTime = formData.eventStartTime.split(':');
-											startTimeChangeHandler(currentTime[0], minute);
+											const currentTime = new Date(formData.eventStartAt);
+											currentTime.setMinutes(Number(minute));
+											setFormData((prev) => ({ ...prev, eventStartAt: currentTime }));
 										}}
 									>
 										<SelectTrigger className="w-20 bg-input text-input-foreground border-input hover:bg-accent hover:text-accent-foreground transition-colors duration-200">
@@ -449,7 +417,7 @@ const EventCreatePage = () => {
 										<SelectContent className="bg-popover text-popover-foreground border-border">
 											<ScrollArea className="h-[200px]">
 												{[...Array(12)].map((_, i) => {
-													const minute = (i * 5).toString().padStart(2, '0');
+													const minute = (i * 5).toString().padStart(2, "0");
 													return (
 														<SelectItem
 															key={minute}
@@ -466,15 +434,16 @@ const EventCreatePage = () => {
 								</div>
 							</div>
 							<div className="space-y-2">
-								<label htmlFor="eventEndTime" className="text-sm font-medium text-foreground">
-									{t('End Time')}
+								<label htmlFor="eventEndAt" className="text-sm font-medium text-foreground">
+									{t("End Time")}
 								</label>
 								<div className="flex gap-2">
 									<Select
-										value={formData.eventEndTime.split(':')[0]}
+										value={formData.eventEndAt.getHours().toString().padStart(2, "0")}
 										onValueChange={(hour) => {
-											const currentTime = formData.eventEndTime.split(':');
-											endTimeHandler(hour, currentTime[1]);
+											const currentTime = new Date(formData.eventEndAt);
+											currentTime.setHours(Number(hour));
+											setFormData((prev) => ({ ...prev, eventEndAt: currentTime }));
 										}}
 									>
 										<SelectTrigger className="w-20 bg-input text-input-foreground border-input hover:bg-accent hover:text-accent-foreground transition-colors duration-200">
@@ -485,20 +454,21 @@ const EventCreatePage = () => {
 												{[...Array(24)].map((_, i) => (
 													<SelectItem
 														key={i}
-														value={i.toString().padStart(2, '0')}
+														value={i.toString().padStart(2, "0")}
 														className="hover:bg-accent hover:text-accent-foreground transition-colors duration-200 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
 													>
-														{i.toString().padStart(2, '0')}
+														{i.toString().padStart(2, "0")}
 													</SelectItem>
 												))}
 											</ScrollArea>
 										</SelectContent>
 									</Select>
 									<Select
-										value={formData.eventEndTime.split(':')[1]}
+										value={formData.eventEndAt.getMinutes().toString().padStart(2, "0")}
 										onValueChange={(minute) => {
-											const currentTime = formData.eventEndTime.split(':');
-											endTimeHandler(currentTime[0], minute);
+											const currentTime = new Date(formData.eventEndAt);
+											currentTime.setMinutes(Number(minute));
+											setFormData((prev) => ({ ...prev, eventEndAt: currentTime }));
 										}}
 									>
 										<SelectTrigger className="w-20 bg-input text-input-foreground border-input hover:bg-accent hover:text-accent-foreground transition-colors duration-200">
@@ -507,7 +477,7 @@ const EventCreatePage = () => {
 										<SelectContent className="bg-popover text-popover-foreground border-border">
 											<ScrollArea className="h-[200px]">
 												{[...Array(12)].map((_, i) => {
-													const minute = (i * 5).toString().padStart(2, '0');
+													const minute = (i * 5).toString().padStart(2, "0");
 													return (
 														<SelectItem
 															key={minute}
@@ -529,27 +499,27 @@ const EventCreatePage = () => {
 						<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 							<div className="space-y-2">
 								<label htmlFor="eventCity" className="text-sm font-medium text-foreground">
-									{t('City')}
+									{t("City")}
 								</label>
 								<Input
 									id="eventCity"
 									name="eventCity"
 									value={formData.eventCity}
 									onChange={inputHandler}
-									placeholder={t('Enter city')}
+									placeholder={t("Enter city")}
 									className="bg-input text-input-foreground border-input"
 								/>
 							</div>
 							<div className="space-y-2">
 								<label htmlFor="eventAddress" className="text-sm font-medium text-foreground">
-									{t('Address')}
+									{t("Address")}
 								</label>
 								<Input
 									id="eventAddress"
 									name="eventAddress"
 									value={formData.eventAddress}
 									onChange={inputHandler}
-									placeholder={t('Enter address')}
+									placeholder={t("Enter address")}
 									className="bg-input text-input-foreground border-input"
 								/>
 							</div>
@@ -559,30 +529,30 @@ const EventCreatePage = () => {
 						<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 							<div className="space-y-2">
 								<label htmlFor="eventCapacity" className="text-sm font-medium text-foreground">
-									{t('Capacity (number)')}
+									{t("Capacity (number)")}
 								</label>
 								<Input
 									id="eventCapacity"
 									name="eventCapacity"
 									type="number"
-									value={formData.eventCapacity === undefined ? '' : String(formData.eventCapacity)}
+									value={formData.eventCapacity === undefined ? "" : String(formData.eventCapacity)}
 									onChange={inputHandler}
-									placeholder={t('Enter event capacity')}
+									placeholder={t("Enter event capacity")}
 									className="bg-input text-input-foreground border-input"
 								/>
 							</div>
 							<div className="space-y-2">
 								<label htmlFor="eventPrice" className="text-sm font-medium text-foreground">
-									{t('Price (number)')}
+									{t("Price (number)")}
 								</label>
 								<Input
 									id="eventPrice"
 									name="eventPrice"
 									type="number"
 									// Convert to string and strip leading zeros when displaying
-									value={formData.eventPrice === undefined ? '' : String(formData.eventPrice)}
+									value={formData.eventPrice === undefined ? "" : String(formData.eventPrice)}
 									onChange={inputHandler}
-									placeholder={t('Enter event price')}
+									placeholder={t("Enter event price")}
 									className="bg-input text-input-foreground border-input"
 								/>
 							</div>
@@ -590,7 +560,7 @@ const EventCreatePage = () => {
 
 						{/* Image Section */}
 						<div className="space-y-4">
-							<label className="text-sm font-medium text-foreground">{t('Event Image')}</label>
+							<label className="text-sm font-medium text-foreground">{t("Event Image")}</label>
 							<div className="relative aspect-[16/9] w-full max-w-2xl mx-auto rounded-xl overflow-hidden bg-muted/50 rounded-t-xl">
 								{imagePreview ? (
 									<>
@@ -602,7 +572,7 @@ const EventCreatePage = () => {
 										>
 											<div className="flex items-center gap-2 bg-white/90 text-foreground px-4 py-2 rounded-lg opacity-0 hover:opacity-100 transition-opacity duration-200">
 												<RefreshCw className="h-4 w-4" />
-												<span className="font-medium">{t('Reset Image')}</span>
+												<span className="font-medium">{t("Reset Image")}</span>
 											</div>
 										</label>
 									</>
@@ -612,7 +582,7 @@ const EventCreatePage = () => {
 										className="absolute inset-0 flex flex-col items-center justify-center bg-muted/50 hover:bg-muted/60 transition-colors duration-200 cursor-pointer"
 									>
 										<ImageIcon className="h-12 w-12 text-muted-foreground mb-2" />
-										<span className="text-muted-foreground font-medium">{t('Click to upload image')}</span>
+										<span className="text-muted-foreground font-medium">{t("Click to upload image")}</span>
 									</label>
 								)}
 								<input
@@ -623,7 +593,7 @@ const EventCreatePage = () => {
 									onChange={imageChangeHandler}
 									className="hidden"
 								/>
-								<p className="text-sm text-muted-foreground mt-1">{t('Only JPG, JPEG, and PNG files are allowed')}</p>
+								<p className="text-sm text-muted-foreground mt-1">{t("Only JPG, JPEG, and PNG files are allowed")}</p>
 							</div>
 						</div>
 
@@ -635,7 +605,7 @@ const EventCreatePage = () => {
 								setTempImageUrl(null);
 							}}
 							onCropComplete={cropCompleteHandler}
-							imageUrl={tempImageUrl || ''}
+							imageUrl={tempImageUrl || ""}
 						/>
 
 						{/* Submit Button */}
@@ -647,15 +617,16 @@ const EventCreatePage = () => {
 									isSubmitting ||
 									selectedCategories.length === 0 ||
 									!formData.groupId ||
-									!formData.eventDate ||
 									!formData.eventCity ||
 									!formData.eventAddress ||
 									!formData.eventCapacity ||
-									!formData.eventImage
+									!formData.eventImages.length ||
+									!formData.eventStartAt ||
+									!formData.eventEndAt
 								}
 								className="bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed px-8"
 							>
-								{isSubmitting ? t('Creating...') : t('Create Event')}
+								{isSubmitting ? t("Creating...") : t("Create Event")}
 							</Button>
 						</div>
 					</form>

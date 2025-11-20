@@ -1,18 +1,18 @@
-import { format } from 'date-fns';
-import Image from 'next/image';
-import Link from 'next/link';
-import { useTranslation } from 'next-i18next';
-import { Heart, Calendar, Users, ExternalLink, MapPin, Eye, DollarSign, UserPlus } from 'lucide-react';
+import { format } from "date-fns";
+import Image from "next/image";
+import Link from "next/link";
+import { useTranslation } from "next-i18next";
+import { Heart, Calendar, Users, ExternalLink, MapPin, Eye, DollarSign, UserPlus } from "lucide-react";
 
-import { Button } from '@/libs/components/ui/button';
-import { Card, CardContent, CardFooter, CardHeader } from '@/libs/components/ui/card';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/libs/components/ui/tooltip';
-import { Badge } from '@/libs/components/ui/badge';
+import { Button } from "@/libs/components/ui/button";
+import { Card, CardContent, CardFooter, CardHeader } from "@/libs/components/ui/card";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/libs/components/ui/tooltip";
+import { Badge } from "@/libs/components/ui/badge";
 
-import { Event } from '@/libs/types/event/event';
-import { EventStatus } from '@/libs/enums/event.enum';
+import { Event } from "@/libs/types/event/event";
+import { EventStatus } from "@/libs/enums/event.enum";
 
-import { REACT_APP_API_URL } from '@/libs/config';
+import { REACT_APP_API_URL } from "@/libs/config";
 
 interface EventCardProps {
 	event: Event;
@@ -20,23 +20,20 @@ interface EventCardProps {
 }
 
 const EventCard = ({ event, likeEventHandler }: EventCardProps) => {
-	const { t } = useTranslation('common');
-	const formatTime = (time: string) => {
-		return format(new Date(`2000-01-01T${time}`), 'h:mm a');
-	};
+	const { t } = useTranslation("common");
 
 	const getStatusColor = (status: EventStatus) => {
 		switch (status) {
 			case EventStatus.UPCOMING:
-				return 'bg-blue-100 text-blue-800';
+				return "bg-blue-100 text-blue-800";
 			case EventStatus.ONGOING:
-				return 'bg-green-100 text-green-800';
+				return "bg-green-100 text-green-800";
 			case EventStatus.COMPLETED:
-				return 'bg-gray-100 text-gray-800';
+				return "bg-gray-100 text-gray-800";
 			case EventStatus.CANCELLED:
-				return 'bg-red-100 text-red-800';
+				return "bg-red-100 text-red-800";
 			default:
-				return 'bg-gray-100 text-gray-800';
+				return "bg-gray-100 text-gray-800";
 		}
 	};
 
@@ -46,7 +43,7 @@ const EventCard = ({ event, likeEventHandler }: EventCardProps) => {
 				<div className="relative aspect-[16/9] w-full overflow-hidden rounded-t-xl">
 					<Link href={`/event/detail?eventId=${event._id}`}>
 						<Image
-							src={`${REACT_APP_API_URL}/${event.eventImage}`}
+							src={`${REACT_APP_API_URL}/${event.eventImages[0]}`}
 							alt={event.eventName}
 							fill
 							className="object-cover transition-transform duration-300"
@@ -96,7 +93,8 @@ const EventCard = ({ event, likeEventHandler }: EventCardProps) => {
 						<div className="flex items-center gap-2 text-sm text-muted-foreground h-5">
 							<Calendar className="w-4 h-4 flex-shrink-0" />
 							<span>
-								{format(new Date(event.eventDate), 'MMM d')} • {formatTime(event.eventStartTime)}
+								{format(new Date(event.eventStartAt), "MMM d")} • {format(new Date(event.eventStartAt), "HH:mm")} -{" "}
+								{format(new Date(event.eventEndAt), "HH:mm")}
 							</span>
 						</div>
 					</div>
@@ -110,7 +108,7 @@ const EventCard = ({ event, likeEventHandler }: EventCardProps) => {
 								<p className="text-xs font-medium">{event.attendeeCount || 0}</p>
 							</div>
 						</TooltipTrigger>
-						<TooltipContent side="bottom">{t('Total attendees')}</TooltipContent>
+						<TooltipContent side="bottom">{t("Total attendees")}</TooltipContent>
 					</Tooltip>
 
 					<Tooltip>
@@ -120,7 +118,7 @@ const EventCard = ({ event, likeEventHandler }: EventCardProps) => {
 								<p className="text-xs font-medium">{event.eventCapacity || 0}</p>
 							</div>
 						</TooltipTrigger>
-						<TooltipContent side="bottom">{t('Event capacity')}</TooltipContent>
+						<TooltipContent side="bottom">{t("Event capacity")}</TooltipContent>
 					</Tooltip>
 
 					<Tooltip>
@@ -130,7 +128,7 @@ const EventCard = ({ event, likeEventHandler }: EventCardProps) => {
 								<p className="text-xs font-medium">{event.eventLikes || 0}</p>
 							</div>
 						</TooltipTrigger>
-						<TooltipContent side="bottom">{t('Total likes received')}</TooltipContent>
+						<TooltipContent side="bottom">{t("Total likes received")}</TooltipContent>
 					</Tooltip>
 				</div>
 
@@ -141,7 +139,7 @@ const EventCard = ({ event, likeEventHandler }: EventCardProps) => {
 								<p className="text-xs text-foreground leading-relaxed line-clamp-2">{event.eventDesc}</p>
 							) : (
 								<p className="text-xs text-muted-foreground italic flex items-center justify-center py-1 w-full">
-									<span className="bg-muted/50 px-2 py-0.5 rounded-md">{t('No description available')}</span>
+									<span className="bg-muted/50 px-2 py-0.5 rounded-md">{t("No description available")}</span>
 								</p>
 							)}
 						</div>
@@ -153,13 +151,13 @@ const EventCard = ({ event, likeEventHandler }: EventCardProps) => {
 				<Button
 					variant="ghost"
 					size="sm"
-					className={`h-8 px-3 font-medium transition-all ${event?.meLiked?.[0]?.myFavorite ? 'text-rose-500' : ''}`}
+					className={`h-8 px-3 font-medium transition-all ${event?.meLiked?.[0]?.myFavorite ? "text-rose-500" : ""}`}
 					onClick={() => likeEventHandler(event._id)}
 				>
 					<Heart
-						className={`h-3.5 w-3.5 mr-1 transition-all ${event?.meLiked?.[0]?.myFavorite ? 'fill-current stroke-current' : ''}`}
+						className={`h-3.5 w-3.5 mr-1 transition-all ${event?.meLiked?.[0]?.myFavorite ? "fill-current stroke-current" : ""}`}
 					/>
-					{event?.meLiked?.[0]?.myFavorite ? t('Liked') : t('Like')}
+					{event?.meLiked?.[0]?.myFavorite ? t("Liked") : t("Like")}
 				</Button>
 
 				<Link href={`/event/detail?eventId=${event._id}`}>
@@ -169,7 +167,7 @@ const EventCard = ({ event, likeEventHandler }: EventCardProps) => {
 						className="h-8 rounded-lg hover:bg-primary/5 border-primary/30 text-primary transition-colors"
 					>
 						<ExternalLink className="h-3.5 w-3.5 mr-1" />
-						{t('View')}
+						{t("View")}
 					</Button>
 				</Link>
 			</CardFooter>

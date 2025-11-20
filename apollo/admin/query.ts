@@ -69,12 +69,13 @@ export const GET_ALL_EVENTS_BY_ADMIN = gql`
 		getAllEventsByAdmin(input: $input) {
 			list {
 				_id
+				eventType
+				recurrenceId
 				eventName
 				eventDesc
-				eventImage
-				eventDate
-				eventStartTime
-				eventEndTime
+				eventImages
+				eventStartAt
+				eventEndAt
 				eventCity
 				eventAddress
 				eventCapacity
@@ -83,6 +84,7 @@ export const GET_ALL_EVENTS_BY_ADMIN = gql`
 				eventCategories
 				groupId
 				memberId
+				origin
 				attendeeCount
 				eventLikes
 				eventViews

@@ -71,20 +71,31 @@ const EventUpdatePage = () => {
 			}
 
 			setFormData({
+				// ===== Identification =====
 				_id: event._id,
+				// ===== Recurring Event Update Option =====
+				updateAllFuture: false,
+
+				// ===== Basic Information =====
 				eventName: event.eventName,
 				eventDesc: event.eventDesc,
-				eventCategories: event.eventCategories,
+				eventImages: event.eventImages,
+
+				// ===== Event Timestamps =====
 				eventStartAt: new Date(event.eventStartAt),
 				eventEndAt: new Date(event.eventEndAt),
+
 				eventCity: event.eventCity,
 				eventAddress: event.eventAddress,
 				eventCapacity: event.eventCapacity,
 				eventPrice: event.eventPrice,
-				eventImages: event.eventImages,
+
+				// ===== Type and Status =====
+				eventStatus: event.eventStatus,
+				eventCategories: event.eventCategories,
 			});
 			setSelectedCategories(event.eventCategories);
-			setImagePreview(`${REACT_APP_API_URL}/${event.eventImage}`);
+			setImagePreview(`${REACT_APP_API_URL}/${event.eventImages[0]}`);
 		}
 	}, [eventData]);
 
@@ -194,13 +205,13 @@ const EventUpdatePage = () => {
 			if (!formData.eventName) throw new Error(t("Event name is required"));
 			if (!formData.eventDesc) throw new Error(t("Event description is required"));
 			if (selectedCategories.length === 0) throw new Error(Message.GROUP_CATEGORY_REQUIRED);
-			if (!formData.eventStartAt) throw new Error(t("Start time is required"));
+			if (!formData.eventStartAt) throw new Error(t("Event date is required"));
 			if (!formData.eventEndAt) throw new Error(t("End time is required"));
 			if (!formData.eventCity) throw new Error(t("City is required"));
 			if (!formData.eventAddress) throw new Error(t("Address is required"));
 			if (!formData.eventCapacity) throw new Error(t("Capacity is required"));
 			if (formData.eventCapacity < 1) throw new Error(t("Capacity must be at least 1"));
-			if (!formData.eventImages?.length) throw new Error(t("Event image is required"));
+			if (!formData.eventImages?.length) throw new Error(t("Event images are required"));
 
 			const updatedFormData = {
 				...formData,
@@ -345,13 +356,49 @@ const EventUpdatePage = () => {
 						</div>
 
 						{/* Event Date and Time */}
-						<div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+						{/* TODO: Add event date and time selection */}
+						{/* <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
 							<div className="space-y-2">
-								<label htmlFor="eventStartAt" className="text-sm font-medium text-foreground">
-									{t("Start Time")}
+								<label htmlFor="eventDate" className="text-sm font-medium text-foreground">
+									{t('Event Date')}
+								</label>
+								<Popover>
+									<PopoverTrigger asChild>
+										<Button
+											variant="outline"
+											className={cn(
+												'w-full justify-start text-left font-normal bg-input text-input-foreground border-input hover:bg-accent hover:text-accent-foreground transition-colors duration-200',
+												!formData.eventStartAt && 'text-muted-foreground',
+											)}
+										>
+											<CalendarIcon className="mr-2 h-4 w-4" />
+											{formData.eventDate ? format(formData.eventDate, 'PPP') : <span>{t('Pick a date')}</span>}
+										</Button>
+									</PopoverTrigger>
+									<PopoverContent className="w-auto p-0 bg-popover text-popover-foreground border-border">
+										<Calendar
+											mode="single"
+											selected={formData.eventDate}
+											onSelect={(date) => date && setFormData((prev) => (prev ? { ...prev, eventDate: date } : null))}
+											initialFocus
+											disabled={(date) => date < new Date()}
+											className="rounded-md border"
+										/>
+									</PopoverContent>
+								</Popover>
+							</div>
+							<div className="space-y-2">
+								<label htmlFor="eventStartTime" className="text-sm font-medium text-foreground">
+									{t('Start Time')}
 								</label>
 								<div className="flex gap-2">
-									<Select value={formData.eventStartAt?.toLocaleTimeString()}>
+									<Select
+										value={formData.eventStartTime?.split(':')[0] ?? '00'}
+										onValueChange={(hour) => {
+											const currentTime = formData.eventStartTime?.split(':') ?? ['00', '00'];
+											startTimeChangeHandler(hour, currentTime[1]);
+										}}
+									>
 										<SelectTrigger className="w-20 bg-input text-input-foreground border-input hover:bg-accent hover:text-accent-foreground transition-colors duration-200">
 											<SelectValue placeholder="HH" />
 										</SelectTrigger>
@@ -360,23 +407,29 @@ const EventUpdatePage = () => {
 												{[...Array(24)].map((_, i) => (
 													<SelectItem
 														key={i}
-														value={i.toString().padStart(2, "0")}
+														value={i.toString().padStart(2, '0')}
 														className="hover:bg-accent hover:text-accent-foreground transition-colors duration-200 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
 													>
-														{i.toString().padStart(2, "0")}
+														{i.toString().padStart(2, '0')}
 													</SelectItem>
 												))}
 											</ScrollArea>
 										</SelectContent>
 									</Select>
-									<Select value={formData.eventStartAt?.toLocaleTimeString()}>
+									<Select
+										value={formData.eventStartTime?.split(':')[1] ?? '00'}
+										onValueChange={(minute) => {
+											const currentTime = formData.eventStartTime?.split(':') ?? ['00', '00'];
+											startTimeChangeHandler(currentTime[0], minute);
+										}}
+									>
 										<SelectTrigger className="w-20 bg-input text-input-foreground border-input hover:bg-accent hover:text-accent-foreground transition-colors duration-200">
 											<SelectValue placeholder="MM" />
 										</SelectTrigger>
 										<SelectContent className="bg-popover text-popover-foreground border-border">
 											<ScrollArea className="h-[200px]">
 												{[...Array(12)].map((_, i) => {
-													const minute = (i * 5).toString().padStart(2, "0");
+													const minute = (i * 5).toString().padStart(2, '0');
 													return (
 														<SelectItem
 															key={minute}
@@ -393,11 +446,17 @@ const EventUpdatePage = () => {
 								</div>
 							</div>
 							<div className="space-y-2">
-								<label htmlFor="eventEndAt" className="text-sm font-medium text-foreground">
-									{t("End Time")}
+								<label htmlFor="eventEndTime" className="text-sm font-medium text-foreground">
+									{t('End Time')}
 								</label>
 								<div className="flex gap-2">
-									<Select value={formData.eventEndAt?.toLocaleTimeString()}>
+									<Select
+										value={formData.eventEndTime?.split(':')[0] ?? '00'}
+										onValueChange={(hour) => {
+											const currentTime = formData.eventEndTime?.split(':') ?? ['00', '00'];
+											endTimeHandler(hour, currentTime[1]);
+										}}
+									>
 										<SelectTrigger className="w-20 bg-input text-input-foreground border-input hover:bg-accent hover:text-accent-foreground transition-colors duration-200">
 											<SelectValue placeholder="HH" />
 										</SelectTrigger>
@@ -406,23 +465,29 @@ const EventUpdatePage = () => {
 												{[...Array(24)].map((_, i) => (
 													<SelectItem
 														key={i}
-														value={i.toString().padStart(2, "0")}
+														value={i.toString().padStart(2, '0')}
 														className="hover:bg-accent hover:text-accent-foreground transition-colors duration-200 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
 													>
-														{i.toString().padStart(2, "0")}
+														{i.toString().padStart(2, '0')}
 													</SelectItem>
 												))}
 											</ScrollArea>
 										</SelectContent>
 									</Select>
-									<Select value={formData.eventEndAt?.toLocaleTimeString()}>
+									<Select
+										value={formData.eventEndTime?.split(':')[1] ?? '00'}
+										onValueChange={(minute) => {
+											const currentTime = formData.eventEndTime?.split(':') ?? ['00', '00'];
+											endTimeHandler(currentTime[0], minute);
+										}}
+									>
 										<SelectTrigger className="w-20 bg-input text-input-foreground border-input hover:bg-accent hover:text-accent-foreground transition-colors duration-200">
 											<SelectValue placeholder="MM" />
 										</SelectTrigger>
 										<SelectContent className="bg-popover text-popover-foreground border-border">
 											<ScrollArea className="h-[200px]">
 												{[...Array(12)].map((_, i) => {
-													const minute = (i * 5).toString().padStart(2, "0");
+													const minute = (i * 5).toString().padStart(2, '0');
 													return (
 														<SelectItem
 															key={minute}
@@ -438,7 +503,7 @@ const EventUpdatePage = () => {
 									</Select>
 								</div>
 							</div>
-						</div>
+						</div> */}
 
 						{/* Location */}
 						<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -561,12 +626,12 @@ const EventUpdatePage = () => {
 								disabled={
 									isSubmitting ||
 									selectedCategories.length === 0 ||
+									!formData.eventStartAt ||
+									!formData.eventEndAt ||
 									!formData.eventCity ||
 									!formData.eventAddress ||
 									!formData.eventCapacity ||
-									!formData.eventImages?.length ||
-									!formData.eventStartAt ||
-									!formData.eventEndAt
+									!formData.eventImages?.length
 								}
 								className="bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed px-8"
 							>
