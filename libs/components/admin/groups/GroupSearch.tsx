@@ -1,12 +1,12 @@
-import { useTranslation } from 'next-i18next';
+import { useTranslation } from "next-i18next";
 
-import { Button } from '@/libs/components/ui/button';
-import { Input } from '@/libs/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/libs/components/ui/select';
+import { Button } from "@/libs/components/ui/button";
+import { Input } from "@/libs/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/libs/components/ui/select";
 
-import { GroupCategory } from '@/libs/enums/group.enum';
-import { GroupsInquiry } from '@/libs/types/group/group.input';
-import { Direction } from '@/libs/enums/common.enum';
+import { GroupCategory } from "@/libs/enums/group.enum";
+import { GroupsInquiry } from "@/libs/types/group/group.input";
+import { Direction } from "@/libs/enums/common.enum";
 
 interface GroupSearchProps {
 	initialInquiry: GroupsInquiry;
@@ -40,7 +40,7 @@ export function GroupSearch({ initialInquiry, groupsInquiry, setGroupsInquiry }:
 			...groupsInquiry,
 			search: {
 				...groupsInquiry.search,
-				groupCategories: value === 'all' ? [] : [value as GroupCategory],
+				groupCategories: value === "all" ? [] : [value as GroupCategory],
 			},
 		});
 	};
@@ -50,27 +50,27 @@ export function GroupSearch({ initialInquiry, groupsInquiry, setGroupsInquiry }:
 	};
 
 	return (
-		<div className="flex items-center gap-6 p-6 rounded-t-lg bg-card border border-border">
+		<div className="flex items-center gap-6 p-6 rounded-t-lg bg-card border  ">
 			{/* SEARCH */}
 			<Input
-				placeholder={t('Search groups...')}
-				value={groupsInquiry?.search?.text ?? ''}
+				placeholder={t("Search groups...")}
+				value={groupsInquiry?.search?.text ?? ""}
 				onChange={searchTextHandler}
 				className="w-full bg-background text-foreground border-input focus:ring-primary"
 			/>
 
 			{/* Category */}
 			<Select
-				value={groupsInquiry?.search?.groupCategories?.length ? groupsInquiry?.search?.groupCategories[0] : 'all'}
+				value={groupsInquiry?.search?.groupCategories?.length ? groupsInquiry?.search?.groupCategories[0] : "all"}
 				onValueChange={(value) => {
 					groupCategoryHandler(value);
 				}}
 			>
 				<SelectTrigger className="w-[180px] bg-background text-foreground border-input focus:ring-primary">
-					<SelectValue placeholder={t('Filter by category')} />
+					<SelectValue placeholder={t("Filter by category")} />
 				</SelectTrigger>
-				<SelectContent className="bg-card text-foreground border-border">
-					<SelectItem value="all">{t('All Categories')}</SelectItem>
+				<SelectContent className="bg-card text-foreground  ">
+					<SelectItem value="all">{t("All Categories")}</SelectItem>
 					{Object.values(GroupCategory).map((value) => (
 						<SelectItem key={value} value={value}>
 							{t(value.charAt(0).toUpperCase() + value.slice(1))}
@@ -83,17 +83,17 @@ export function GroupSearch({ initialInquiry, groupsInquiry, setGroupsInquiry }:
 			<Select
 				value={groupsInquiry?.sort}
 				onValueChange={(value: string) => {
-					inputFieldHandler('sort', value);
+					inputFieldHandler("sort", value);
 				}}
 			>
 				<SelectTrigger className="w-[180px] bg-background text-foreground border-input focus:ring-primary">
-					<SelectValue placeholder={t('Sort by')} />
+					<SelectValue placeholder={t("Sort by")} />
 				</SelectTrigger>
-				<SelectContent className="bg-card text-foreground border-border">
-					<SelectItem value="createdAt">{t('Created At')}</SelectItem>
-					<SelectItem value="memberCount">{t('Members')}</SelectItem>
-					<SelectItem value="eventsCount">{t('Events')}</SelectItem>
-					<SelectItem value="groupViews">{t('Views')}</SelectItem>
+				<SelectContent className="bg-card text-foreground  ">
+					<SelectItem value="createdAt">{t("Created At")}</SelectItem>
+					<SelectItem value="memberCount">{t("Members")}</SelectItem>
+					<SelectItem value="eventsCount">{t("Events")}</SelectItem>
+					<SelectItem value="groupViews">{t("Views")}</SelectItem>
 				</SelectContent>
 			</Select>
 
@@ -101,15 +101,15 @@ export function GroupSearch({ initialInquiry, groupsInquiry, setGroupsInquiry }:
 			<Select
 				value={groupsInquiry?.direction}
 				onValueChange={(value: Direction) => {
-					inputFieldHandler('direction', value);
+					inputFieldHandler("direction", value);
 				}}
 			>
 				<SelectTrigger className="w-[180px] bg-background text-foreground border-input focus:ring-primary">
-					<SelectValue placeholder={t('Direction')} />
+					<SelectValue placeholder={t("Direction")} />
 				</SelectTrigger>
-				<SelectContent className="bg-card text-foreground border-border">
-					<SelectItem value={Direction.ASC}>{t('Ascending')}</SelectItem>
-					<SelectItem value={Direction.DESC}>{t('Descending')}</SelectItem>
+				<SelectContent className="bg-card text-foreground  ">
+					<SelectItem value={Direction.ASC}>{t("Ascending")}</SelectItem>
+					<SelectItem value={Direction.DESC}>{t("Descending")}</SelectItem>
 				</SelectContent>
 			</Select>
 
@@ -119,7 +119,7 @@ export function GroupSearch({ initialInquiry, groupsInquiry, setGroupsInquiry }:
 				onClick={clearAllHandler}
 				className="bg-background text-foreground border-input hover:bg-accent hover:text-accent-foreground"
 			>
-				{t('Clear')}
+				{t("Clear")}
 			</Button>
 		</div>
 	);

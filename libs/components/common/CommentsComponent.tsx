@@ -1,32 +1,32 @@
-import { useState, useRef, useEffect } from 'react';
-import { useTranslation } from 'next-i18next';
-import { userVar } from '@/apollo/store';
-import { useReactiveVar } from '@apollo/client';
-import { useMutation, useQuery } from '@apollo/client';
-import { MessageSquare, Plus, Pencil, Trash2, User, ChevronDown } from 'lucide-react';
+import { useState, useRef, useEffect } from "react";
+import { useTranslation } from "next-i18next";
+import { userVar } from "@/apollo/store";
+import { useReactiveVar } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
+import { MessageSquare, Plus, Pencil, Trash2, User, ChevronDown } from "lucide-react";
 
-import { Button } from '@/libs/components/ui/button';
-import { Textarea } from '@/libs/components/ui/textarea';
-import { Avatar, AvatarFallback, AvatarImage } from '@/libs/components/ui/avatar';
-import { Separator } from '@/libs/components/ui/separator';
-import { Card, CardHeader, CardContent } from '@/libs/components/ui/card';
-import PaginationComponent from '@/libs/components/common/PaginationComponent';
+import { Button } from "@/libs/components/ui/button";
+import { Textarea } from "@/libs/components/ui/textarea";
+import { Avatar, AvatarFallback, AvatarImage } from "@/libs/components/ui/avatar";
+import { Separator } from "@/libs/components/ui/separator";
+import { Card, CardHeader, CardContent } from "@/libs/components/ui/card";
+import PaginationComponent from "@/libs/components/common/PaginationComponent";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuTrigger,
-} from '@/libs/components/ui/dropdown-menu';
+} from "@/libs/components/ui/dropdown-menu";
 
-import { GET_COMMENTS } from '@/apollo/user/query';
-import { CREATE_COMMENT, UPDATE_COMMENT } from '@/apollo/user/mutation';
-import { smallSuccess } from '@/libs/alert';
-import { Message, Direction } from '@/libs/enums/common.enum';
-import { REACT_APP_API_URL } from '@/libs/config';
-import { formatDateHandler } from '@/libs/utils';
-import type { Comment, Comments } from '@/libs/types/comment/comment';
-import { CommentGroup, CommentStatus } from '@/libs/enums/comment.enum';
-import { CommentInput, CommentsInquiry } from '@/libs/types/comment/comment.input';
+import { GET_COMMENTS } from "@/apollo/user/query";
+import { CREATE_COMMENT, UPDATE_COMMENT } from "@/apollo/user/mutation";
+import { smallSuccess } from "@/libs/alert";
+import { Message, Direction } from "@/libs/enums/common.enum";
+import { NEXT_APP_API_URL } from "@/libs/config";
+import { formatDateHandler } from "@/libs/utils";
+import type { Comment, Comments } from "@/libs/types/comment/comment";
+import { CommentGroup, CommentStatus } from "@/libs/enums/comment.enum";
+import { CommentInput, CommentsInquiry } from "@/libs/types/comment/comment.input";
 
 const LIMIT_OPTIONS = [5, 10, 20, 50];
 
@@ -42,17 +42,17 @@ const CommentsComponent = ({ commentRefId, commentGroup, initialCommentsInquiry 
 	const [comments, setComments] = useState<Comments>({ list: [], metaCounter: [] });
 	const [newCommentData, setNewCommentData] = useState<CommentInput>({
 		commentGroup,
-		commentContent: '',
+		commentContent: "",
 		commentRefId,
 	});
 	const textareaRef = useRef<HTMLTextAreaElement>(null);
-	const { t } = useTranslation('common');
+	const { t } = useTranslation("common");
 	const user = useReactiveVar(userVar);
 	const [commentInquiry, setCommentInquiry] = useState<CommentsInquiry>(
 		initialCommentsInquiry || {
 			page: 1,
 			limit: LIMIT_OPTIONS[0],
-			sort: 'createdAt',
+			sort: "createdAt",
 			direction: Direction.DESC,
 			search: {
 				commentRefId,
@@ -65,7 +65,7 @@ const CommentsComponent = ({ commentRefId, commentGroup, initialCommentsInquiry 
 	const [updateComment] = useMutation(UPDATE_COMMENT);
 
 	const { data: getCommentsData, refetch: getCommentsRefetch } = useQuery(GET_COMMENTS, {
-		fetchPolicy: 'cache-and-network',
+		fetchPolicy: "cache-and-network",
 		variables: {
 			input: commentInquiry,
 		},
@@ -115,7 +115,7 @@ const CommentsComponent = ({ commentRefId, commentGroup, initialCommentsInquiry 
 			});
 
 			await getCommentsRefetch();
-			await smallSuccess(t('Comment deleted successfully'));
+			await smallSuccess(t("Comment deleted successfully"));
 		} catch (error: unknown) {
 			if (error instanceof Error) {
 				console.log(error.message);
@@ -140,17 +140,17 @@ const CommentsComponent = ({ commentRefId, commentGroup, initialCommentsInquiry 
 					},
 				});
 				setEditingCommentId(null);
-				await smallSuccess(t('Comment updated successfully'));
+				await smallSuccess(t("Comment updated successfully"));
 			} else {
 				await createComment({
 					variables: {
 						input: newCommentData,
 					},
 				});
-				await smallSuccess(t('Comment created successfully'));
+				await smallSuccess(t("Comment created successfully"));
 			}
 
-			setNewCommentData({ ...newCommentData, commentContent: '' });
+			setNewCommentData({ ...newCommentData, commentContent: "" });
 			setIsWriting(false);
 			await getCommentsRefetch();
 		} catch (error: unknown) {
@@ -166,17 +166,17 @@ const CommentsComponent = ({ commentRefId, commentGroup, initialCommentsInquiry 
 	return (
 		<Card className="mt-5">
 			<CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-2 sm:gap-8">
-				<h3 className="text-xl font-semibold text-foreground/90">{t('Comments')}</h3>
+				<h3 className="text-xl font-semibold text-foreground/90">{t("Comments")}</h3>
 				<div className="flex flex-col sm:flex-row w-full sm:w-auto items-start sm:items-center gap-3 sm:gap-6">
 					<div className="flex flex-row justify-between w-full sm:gap-6">
 						<div className="flex items-center gap-2 text-muted-foreground/80">
 							<MessageSquare className="h-5 w-5" />
 							<span className="text-sm font-medium">
-								{totalComments} {t('comments')}
+								{totalComments} {t("comments")}
 							</span>
 						</div>
 						<div className="flex items-center gap-2">
-							<span className="text-sm text-muted-foreground">{t('per page')}:</span>
+							<span className="text-sm text-muted-foreground">{t("per page")}:</span>
 							<DropdownMenu>
 								<DropdownMenuTrigger asChild>
 									<Button variant="outline" size="sm" className="h-8 w-[70px] flex items-center justify-between">
@@ -189,7 +189,7 @@ const CommentsComponent = ({ commentRefId, commentGroup, initialCommentsInquiry 
 										<DropdownMenuItem
 											key={option}
 											onClick={() => limitHandler(option)}
-											className={option === commentInquiry.limit ? 'bg-accent' : ''}
+											className={option === commentInquiry.limit ? "bg-accent" : ""}
 										>
 											{option}
 										</DropdownMenuItem>
@@ -207,14 +207,14 @@ const CommentsComponent = ({ commentRefId, commentGroup, initialCommentsInquiry 
 								setEditingCommentId(null);
 								setNewCommentData({
 									commentGroup,
-									commentContent: '',
+									commentContent: "",
 									commentRefId,
 								});
 							}}
 							className="w-full sm:w-auto text-muted-foreground/80 hover:text-foreground transition-colors mt-2 sm:mt-0"
 						>
 							<Plus className="h-4 w-4 mr-2" />
-							{t('Write a comment')}
+							{t("Write a comment")}
 						</Button>
 					)}
 				</div>
@@ -239,16 +239,16 @@ const CommentsComponent = ({ commentRefId, commentGroup, initialCommentsInquiry 
 											variant="ghost"
 											size="sm"
 											onClick={() => {
-												setNewCommentData({ ...newCommentData, commentContent: '' });
+												setNewCommentData({ ...newCommentData, commentContent: "" });
 												setIsWriting(false);
 												setEditingCommentId(null);
 											}}
 											className="text-muted-foreground/80 hover:text-foreground"
 										>
-											{t('Cancel')}
+											{t("Cancel")}
 										</Button>
 										<Button type="submit" size="sm" disabled={!newCommentData.commentContent.trim()}>
-											{editingCommentId ? t('Update Comment') : t('Post Comment')}
+											{editingCommentId ? t("Update Comment") : t("Post Comment")}
 										</Button>
 									</div>
 								</div>
@@ -260,13 +260,13 @@ const CommentsComponent = ({ commentRefId, commentGroup, initialCommentsInquiry 
 
 				{totalComments <= 0 && !isWriting ? (
 					<div className="text-center py-8 sm:py-12">
-						<div className="text-muted-foreground/80 mb-4 text-sm">{t('No comments yet')}</div>
+						<div className="text-muted-foreground/80 mb-4 text-sm">{t("No comments yet")}</div>
 						<Button
 							variant="outline"
 							onClick={() => setIsWriting(true)}
 							className="text-muted-foreground/80 hover:text-foreground transition-colors"
 						>
-							{t('Be the first to comment')}
+							{t("Be the first to comment")}
 						</Button>
 					</div>
 				) : (
@@ -276,11 +276,11 @@ const CommentsComponent = ({ commentRefId, commentGroup, initialCommentsInquiry 
 								.filter((comment) => comment._id !== editingCommentId)
 								.map((comment, index) => {
 									const memberImage = !!comment.memberData?.memberImage
-										? `${REACT_APP_API_URL}/${comment.memberData?.memberImage}`
+										? `${NEXT_APP_API_URL}/${comment.memberData?.memberImage}`
 										: null;
 									const memberName = !!comment.memberData?.memberFullName
 										? comment.memberData?.memberFullName
-										: t('No Name');
+										: t("No Name");
 									const isOwner = user?._id === comment.memberId;
 
 									return (

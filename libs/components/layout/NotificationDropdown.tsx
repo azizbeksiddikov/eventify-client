@@ -1,32 +1,34 @@
-import { useTranslation } from 'next-i18next';
-import { useRouter } from 'next/router';
-import { useMutation, useQuery } from '@apollo/client';
-import { BellIcon } from 'lucide-react';
-import { format } from 'date-fns';
+"use client";
 
-import { Button } from '@/libs/components/ui/button';
+import { useTranslation } from "next-i18next";
+import { useMutation, useQuery } from "@apollo/client/react";
+import { useRouter } from "next/router";
+import { BellIcon } from "lucide-react";
+import { format } from "date-fns";
+
+import { Button } from "@/libs/components/ui/button";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuTrigger,
-} from '@/libs/components/ui/dropdown-menu';
-import { ScrollArea } from '@/libs/components/ui/scroll-area';
-import { Badge } from '@/libs/components/ui/badge';
-import { Separator } from '@/libs/components/ui/separator';
+} from "@/libs/components/ui/dropdown-menu";
+import { ScrollArea } from "@/libs/components/ui/scroll-area";
+import { Badge } from "@/libs/components/ui/badge";
+import { Separator } from "@/libs/components/ui/separator";
 
-import { GET_NOTIFICATIONS } from '@/apollo/user/query';
-import { READ_ALL_NOTIFICATIONS, UPDATE_NOTIFICATION } from '@/apollo/user/mutation';
-import { NotificationsInquiry } from '@/libs/types/notification/notification.input';
-import { Direction } from '@/libs/enums/common.enum';
-import { NotificationType } from '@/libs/enums/notification.enum';
-import { Notification } from '@/libs/types/notification/notification';
-import { useEffect, useState } from 'react';
+import { GET_NOTIFICATIONS } from "@/apollo/user/query";
+import { READ_ALL_NOTIFICATIONS, UPDATE_NOTIFICATION } from "@/apollo/user/mutation";
+import { NotificationsInquiry } from "@/libs/types/notification/notification.input";
+import { Direction } from "@/libs/enums/common.enum";
+import { NotificationType } from "@/libs/enums/notification.enum";
+import { Notification } from "@/libs/types/notification/notification";
+import { useEffect, useState } from "react";
 
 const defaultNotificationsInquiry: NotificationsInquiry = {
 	page: 1,
 	limit: 15,
-	sort: 'createdAt',
+	sort: "createdAt",
 	direction: Direction.DESC,
 	search: {
 		isRead: false,
@@ -36,32 +38,32 @@ const defaultNotificationsInquiry: NotificationsInquiry = {
 const getNotificationText = (notification: Notification, t: (key: string) => string) => {
 	switch (notification.notificationType) {
 		case NotificationType.CREATE_EVENT:
-			return t('New event was created');
+			return t("New event was created");
 		case NotificationType.JOIN_EVENT:
-			return `${notification.memberData?.memberFullName} ${t('joined your event')}`;
+			return `${notification.memberData?.memberFullName} ${t("joined your event")}`;
 		case NotificationType.LIKE_EVENT:
-			return `${notification.memberData?.memberFullName} ${t('liked your event')}`;
+			return `${notification.memberData?.memberFullName} ${t("liked your event")}`;
 		case NotificationType.COMMENT_EVENT:
-			return `${notification.memberData?.memberFullName} ${t('commented on your event')}`;
+			return `${notification.memberData?.memberFullName} ${t("commented on your event")}`;
 		case NotificationType.JOIN_GROUP:
-			return `${notification.memberData?.memberFullName} ${t('joined your group')}`;
+			return `${notification.memberData?.memberFullName} ${t("joined your group")}`;
 		case NotificationType.LIKE_GROUP:
-			return t(`${notification.memberData?.memberFullName} ${t('liked your group')}`);
+			return t(`${notification.memberData?.memberFullName} ${t("liked your group")}`);
 		case NotificationType.COMMENT_GROUP:
-			return t(`${notification.memberData?.memberFullName} ${t('commented on your group')}`);
+			return t(`${notification.memberData?.memberFullName} ${t("commented on your group")}`);
 		case NotificationType.LIKE_MEMBER:
-			return t(`${notification.memberData?.memberFullName} ${t('liked your profile')}`);
+			return t(`${notification.memberData?.memberFullName} ${t("liked your profile")}`);
 		case NotificationType.COMMENT_MEMBER:
-			return t(`${notification.memberData?.memberFullName} ${t('commented on your profile')}`);
+			return t(`${notification.memberData?.memberFullName} ${t("commented on your profile")}`);
 		case NotificationType.FOLLOW_MEMBER:
-			return t(`${notification.memberData?.memberFullName} ${t('followed you')}`);
+			return t(`${notification.memberData?.memberFullName} ${t("followed you")}`);
 		default:
-			return t('New notification');
+			return t("New notification");
 	}
 };
 
 export const NotificationDropdown = () => {
-	const { t } = useTranslation('common');
+	const { t } = useTranslation("common");
 	const router = useRouter();
 
 	const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -75,7 +77,7 @@ export const NotificationDropdown = () => {
 		variables: {
 			input: defaultNotificationsInquiry,
 		},
-		fetchPolicy: 'cache-and-network',
+		fetchPolicy: "cache-and-network",
 	});
 
 	/** LIFECYCLES */
@@ -101,7 +103,7 @@ export const NotificationDropdown = () => {
 				router.push(notification.notificationLink);
 			}
 		} catch (err) {
-			console.error('Failed to mark notification as read:', err);
+			console.error("Failed to mark notification as read:", err);
 		}
 	};
 
@@ -110,7 +112,7 @@ export const NotificationDropdown = () => {
 			await readAllNotifications();
 			await refetchNotifications();
 		} catch (err) {
-			console.error('Failed to mark all notifications as read:', err);
+			console.error("Failed to mark all notifications as read:", err);
 		}
 	};
 
@@ -131,9 +133,9 @@ export const NotificationDropdown = () => {
 			</DropdownMenuTrigger>
 			<DropdownMenuContent align="end" className="w-80">
 				<div className="flex items-center justify-between px-4 py-2">
-					<h4 className="text-sm font-medium">{t('Notifications')}</h4>
+					<h4 className="text-sm font-medium">{t("Notifications")}</h4>
 					<Badge variant="secondary" className="text-xs">
-						{unreadCount} {t('unread')}
+						{unreadCount} {t("unread")}
 					</Badge>
 					<Button
 						variant="default"
@@ -142,7 +144,7 @@ export const NotificationDropdown = () => {
 						onClick={readAllNotificationsHandler}
 						disabled={unreadCount === 0}
 					>
-						{t('Read All')}
+						{t("Read All")}
 					</Button>
 				</div>
 				<Separator />
@@ -151,13 +153,13 @@ export const NotificationDropdown = () => {
 						notifications.map((notification: Notification) => (
 							<DropdownMenuItem
 								key={notification._id}
-								className={`flex flex-col items-start p-4 cursor-pointer ${!notification.isRead ? 'bg-accent/50' : ''}`}
+								className={`flex flex-col items-start p-4 cursor-pointer ${!notification.isRead ? "bg-accent/50" : ""}`}
 							>
 								<div className="flex items-center justify-between w-full">
 									<div className="flex items-center gap-2">
 										<span className="text-sm font-medium">{getNotificationText(notification, t)}</span>
 										<span className="text-xs text-muted-foreground">
-											{format(new Date(notification.createdAt), 'MMM d, hh:mm')}
+											{format(new Date(notification.createdAt), "MMM d, hh:mm")}
 										</span>
 									</div>
 									{!notification.isRead && (
@@ -167,7 +169,7 @@ export const NotificationDropdown = () => {
 											className="h-6 text-xs bg-primary text-primary-foreground hover:bg-primary/90"
 											onClick={(e) => readNotificationHandler(notification, e)}
 										>
-											{t('Read')}
+											{t("Read")}
 										</Button>
 									)}
 								</div>
@@ -175,7 +177,7 @@ export const NotificationDropdown = () => {
 						))
 					) : (
 						<div className="flex items-center justify-center h-32 text-sm text-muted-foreground">
-							{t('No notifications')}
+							{t("No notifications")}
 						</div>
 					)}
 				</ScrollArea>

@@ -1,5 +1,5 @@
-import { Direction } from '@/libs/enums/common.enum';
-import { EventStatus, EventCategory, EventType, RecurrenceType } from '@/libs/enums/event.enum';
+import { Direction } from "@/libs/enums/common.enum";
+import { EventStatus, EventCategory, EventType, RecurrenceType } from "@/libs/enums/event.enum";
 
 // ============== Event Creation Input ==============
 export interface EventInput {

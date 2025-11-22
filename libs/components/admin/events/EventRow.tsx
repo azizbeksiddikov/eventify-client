@@ -12,7 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { format } from "date-fns";
 import { Calendar as CalendarComponent } from "@/libs/components/ui/calendar";
 
-import { REACT_APP_API_URL } from "@/libs/config";
+import { NEXT_APP_API_URL } from "@/libs/config";
 import { Event } from "@/libs/types/event/event";
 import { EventUpdateInput } from "@/libs/types/event/event.update";
 import { EventStatus } from "@/libs/enums/event.enum";
@@ -101,7 +101,7 @@ const EventRow = ({
 			<TableCell>
 				<div className="flex items-center gap-2">
 					<Avatar className="h-8 w-8 border border-input flex items-center justify-center ">
-						<AvatarImage src={`${REACT_APP_API_URL}/${event.eventImages[0]}`} alt={event.eventName} />
+						<AvatarImage src={`${NEXT_APP_API_URL}/${event.eventImages[0]}`} alt={event.eventName} />
 						<AvatarFallback className="bg-muted text-muted-foreground flex items-center justify-center">
 							<Calendar className="h-4 w-4" />
 						</AvatarFallback>

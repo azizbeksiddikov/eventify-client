@@ -1,74 +1,78 @@
-import Link from 'next/link';
-import React, { useState, useCallback, useEffect } from 'react';
-import { usePathname } from 'next/navigation';
-import { useRouter, withRouter } from 'next/router';
-import { useTranslation } from 'next-i18next';
-import { useReactiveVar } from '@apollo/client';
+"use client";
 
-import { Button, buttonVariants } from '@/libs/components/ui/button';
+import Link from "next/link";
+import { useState, useCallback, useEffect } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useReactiveVar } from "@apollo/client/react";
+
+import { Button, buttonVariants } from "@/libs/components/ui/button";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuTrigger,
-} from '@/libs/components/ui/dropdown-menu';
-import { ModeToggle } from '@/libs/components/ui/mode-toggle';
-import { Logo } from '@/libs/components/ui/logo';
-import { UserNav } from '@/libs/components/layout/UserNav';
-import { NotificationDropdown } from '@/libs/components/layout/NotificationDropdown';
+} from "@/libs/components/ui/dropdown-menu";
+import { ModeToggle } from "@/libs/components/ui/mode-toggle";
+// import { ModeToggle } from "@/libs/components/layout/ModeToggle";
+import { Languages } from "lucide-react";
+import { Logo } from "@/libs/components/common/Logo";
+import { UserNav } from "@/libs/components/layout/UserNav";
+import { NotificationDropdown } from "@/libs/components/layout/NotificationDropdown";
 
-import { cn } from '@/libs/utils';
-import { userVar } from '@/apollo/store';
-import { getJwtToken, updateUserInfo } from '@/libs/auth';
-import { Member } from '@/libs/types/member/member';
-import { MemberType } from '@/libs/enums/member.enum';
+import { cn } from "@/libs/utils";
+import { userVar } from "@/apollo/store";
+import { getValidJwtToken, updateUserInfo } from "@/libs/auth";
+import { Member } from "@/libs/types/member/member";
+import { MemberType } from "@/libs/enums/member.enum";
 
 const navLinks = [
-	{ href: '/', label: 'Home' },
-	{ href: '/event', label: 'Events' },
-	{ href: '/group', label: 'Groups' },
-	{ href: '/organizer', label: 'Organizers' },
-	{ href: '/help', label: 'Help' },
+	{ href: "/", label: "Home" },
+	{ href: "/event", label: "Events" },
+	{ href: "/group", label: "Groups" },
+	{ href: "/organizer", label: "Organizers" },
+	{ href: "/help", label: "Help" },
 ];
-const adminLink = { href: '/_admin', label: 'Admin' };
+const adminLink = { href: "/_admin", label: "Admin" };
 
 const Header = () => {
 	const pathname = usePathname();
 	const authMember = useReactiveVar(userVar) as unknown as Member;
-	const { t } = useTranslation('common');
 	const router = useRouter();
-	const [currentLanguage, setCurrentLanguage] = useState<string>('en');
+	const [currentLanguage, setCurrentLanguage] = useState<string>(() => {
+		// Initialize from localStorage only on client-side
+		if (typeof window !== "undefined") {
+			const locale = localStorage.getItem("locale");
+			if (!locale) {
+				localStorage.setItem("locale", "en");
+				return "en";
+			}
+			return locale;
+		}
+		return "en";
+	});
 
 	const languages = [
-		{ code: 'en', name: 'English', flag: '🇺🇸' },
-		{ code: 'ru', name: 'Russian', flag: '🇷🇺' },
-		{ code: 'uz', name: 'Uzbek', flag: '🇺🇿' },
-		{ code: 'ko', name: 'Korean', flag: '🇰🇷' },
+		{ code: "en", name: "English", flag: "🇺🇸" },
+		{ code: "ru", name: "Russian", flag: "🇷🇺" },
+		{ code: "uz", name: "Uzbek", flag: "🇺🇿" },
+		{ code: "ko", name: "Korean", flag: "🇰🇷" },
 	];
 
 	/** LIFECYCLES **/
-	// Set current language
-	useEffect(() => {
-		if (localStorage.getItem('locale') === null) {
-			localStorage.setItem('locale', 'en');
-			setCurrentLanguage('en');
-		} else {
-			setCurrentLanguage(localStorage.getItem('locale') || 'en');
-		}
-	}, [router]);
 
-	// Update user info
+	// Update user info on mount - only if token is valid and not expired
 	useEffect(() => {
-		const jwt = getJwtToken();
+		const jwt = getValidJwtToken();
 		if (jwt) updateUserInfo(jwt);
 	}, []);
 
 	/** HANDLERS **/
 	const languageHandler = useCallback(
-		async (languageCode: string) => {
+		(languageCode: string) => {
 			setCurrentLanguage(languageCode);
-			localStorage.setItem('locale', languageCode);
-			await router.push(router.asPath, undefined, { locale: languageCode });
+			localStorage.setItem("locale", languageCode);
+			// Refresh the page to apply the new locale
+			router.refresh();
 		},
 		[router],
 	);
@@ -90,11 +94,11 @@ const Header = () => {
 							href={link.href}
 							className={`text-sm font-medium transition-colors duration-300 ${
 								pathname === link.href
-									? 'text-foneground font-semibold underline underline-offset-6'
-									: 'text-muted-foreground hover:text-foreground'
+									? "text-foneground font-semibold underline underline-offset-6"
+									: "text-muted-foreground hover:text-foreground"
 							}`}
 						>
-							{t(`${link.label}`)}
+							{`${link.label}`}
 						</Link>
 					))}
 					{authMember.memberType === MemberType.ADMIN && (
@@ -102,11 +106,11 @@ const Header = () => {
 							href={adminLink.href}
 							className={`text-sm font-medium transition-colors duration-300 ${
 								pathname === adminLink.href
-									? 'text-foneground font-semibold underline underline-offset-6'
-									: 'text-muted-foreground hover:text-foreground'
+									? "text-foneground font-semibold underline underline-offset-6"
+									: "text-muted-foreground hover:text-foreground"
 							}`}
 						>
-							{t(`${adminLink.label}`)}
+							{`${adminLink.label}`}
 						</Link>
 					)}
 				</nav>
@@ -122,19 +126,21 @@ const Header = () => {
 					{/* Language Selector */}
 					<DropdownMenu>
 						<DropdownMenuTrigger
-							className={cn(buttonVariants({ variant: 'ghost', size: 'icon' }), 'offdet-0 text-xl h-10 w-10')}
+							className={cn(buttonVariants({ variant: "ghost", size: "icon" }), "offdet-0 h-10 w-10")}
 						>
-							{languages.find((lang) => lang.code === currentLanguage)?.flag || '🌐'}
+							<Languages className="h-5 w-5" />
 						</DropdownMenuTrigger>
 						<DropdownMenuContent align="end">
 							{languages.map((language) => (
 								<DropdownMenuItem
 									key={language.code}
-									className={`${currentLanguage === language.code ? 'bg-background ' : ''} cursor-pointer w-full`}
+									className={`${currentLanguage === language.code ? "bg-accent" : ""} cursor-pointer w-full`}
 									onClick={() => languageHandler(language.code)}
 								>
-									{language.name} {'  '}
-									{language.flag}
+									<div className="flex items-center gap-2">
+										<span className="text-lg">{language.flag}</span>
+										<span>{language.name}</span>
+									</div>
 								</DropdownMenuItem>
 							))}
 						</DropdownMenuContent>
@@ -147,11 +153,11 @@ const Header = () => {
 						<div className="flex items-center gap-4">
 							<Link href="/auth/login">
 								<Button variant="outline" className="text-sm  h-9 px-4">
-									{t('Login')}
+									{"Login"}
 								</Button>
 							</Link>
 							<Link href="/auth/signup">
-								<Button className="text-sm h-9 px-4">{t('Sign Up')}</Button>
+								<Button className="text-sm h-9 px-4">{"Sign Up"}</Button>
 							</Link>
 						</div>
 					)}
@@ -161,4 +167,4 @@ const Header = () => {
 	);
 };
 
-export default withRouter(Header);
+export default Header;

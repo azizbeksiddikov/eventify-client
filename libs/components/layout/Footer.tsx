@@ -1,112 +1,97 @@
-import Link from 'next/link';
-import { useTranslation } from 'next-i18next';
-import { Instagram, Linkedin, MapPin, Phone, Clock, Send } from 'lucide-react';
+import Link from "next/link";
+import { Instagram, Linkedin, MapPin, Phone, Clock, Send } from "lucide-react";
 
-import { Logo } from '@/libs/components/ui/logo';
-import { cn } from '@/libs/utils';
+import { Logo } from "@/libs/components/common/Logo";
 
 const quickLinks = [
-	{ href: '/event', label: 'Events' },
-	{ href: '/group', label: 'Groups' },
-	{ href: '/organizer', label: 'Organizers' },
-	{ href: '/help', label: 'Help Center' },
+	{ href: "/event", label: "Events" },
+	{ href: "/group", label: "Groups" },
+	{ href: "/organizer", label: "Organizers" },
+	{ href: "/help", label: "Help Center" },
 ];
 
 const Footer = () => {
-	const { t } = useTranslation();
-
 	return (
-		<footer className="w-full bg-secondary/30">
-			<div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
-				<div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-16">
-					{/* Company Info & Social */}
-					<div className="pt-8 space-y-6">
-						<Link href="/" className="flex items-center gap-3 hover:scale-95 transition-transform duration-300">
-							<Logo className="h-8 w-8 " />
-							<span className="text-xl font-semibold">Eventify</span>
+		<footer>
+			<div className="my-8 grid grid-cols-3 gap-12">
+				{/* Company Info & Social */}
+				<div className="space-y-8">
+					<Link href="/" className="flex items-center gap-3 hover:scale-95 transition-transform">
+						<Logo className="h-8 w-8" />
+						<span className="text-xl font-bold">Eventify</span>
+					</Link>
+					<p>{"Discover and create amazing events. Connect with people who share your interests and passions."}</p>
+					<div className="flex items-center gap-2 md:gap-4">
+						<Link
+							href="https://instagram.com/siddikov_aziz"
+							target="_blank"
+							className="p-2 md:p-3 rounded-full bg-background/50 hover:bg-primary transition-all hover:scale-110 border  /20"
+						>
+							<Instagram className="w-4 h-4 md:w-5 md:h-5" />
 						</Link>
-						<p className="text-body  leading-relaxed max-w-md">
-							{t('Discover and create amazing events. Connect with people who share your interests and passions.')}
-						</p>
-						<div className="flex items-center gap-4">
-							<Link
-								href="https://instagram.com/siddikov_aziz"
-								target="_blank"
-								className={cn(
-									'p-3 rounded-full bg-background/50 hover:bg-primary hover: transition-all duration-300 hover:scale-110 border border-border/20',
-								)}
-							>
-								<Instagram className="w-5 h-5" />
-							</Link>
-							<Link
-								href="https://linkedin.com/in/azbek"
-								target="_blank"
-								className={cn(
-									'p-3 rounded-full bg-background/50 hover:bg-primary hover: transition-all duration-300 hover:scale-110 border border-border/20',
-								)}
-							>
-								<Linkedin className="w-5 h-5" />
-							</Link>
-							<Link
-								href="https://t.me/siddikov_a"
-								target="_blank"
-								className={cn(
-									'p-3 rounded-full bg-background/50 hover:bg-primary hover: transition-all duration-300 hover:scale-110 border border-border/20',
-								)}
-							>
-								<Send className="w-5 h-5" />
-							</Link>
-						</div>
-					</div>
-
-					{/* Quick Links */}
-					<div className="pt-8">
-						<h3 className="text-h1 font-semibold  mb-6">{t('Quick Links')}</h3>
-						<ul className="space-y-4">
-							{quickLinks.map((link, index) => (
-								<li key={index}>
-									<Link
-										href={link.href}
-										className="flex items-center gap-3  hover:text-primary transition-colors duration-300 group"
-									>
-										<span className="w-2 h-2 rounded-full bg-primary opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-										<span className="text-body group-hover:translate-x-1 transition-transform duration-300">
-											{link.label}
-										</span>
-									</Link>
-								</li>
-							))}
-						</ul>
-					</div>
-
-					{/* Contact Info */}
-					<div className="pt-8">
-						<h3 className="text-h1 font-semibold  mb-6">{t('Contact Us')}</h3>
-						<div className="space-y-6">
-							<div className="flex items-start gap-4">
-								<MapPin className="w-5 h-5 text-primary mt-1 flex-shrink-0" />
-								<p className="text-body  leading-relaxed">{t('Gangnam-gu, Seoul South Korea')}</p>
-							</div>
-							<div className="flex items-center gap-4">
-								<Phone className="w-5 h-5 text-primary flex-shrink-0" />
-								<div className="text-body ">010-7305-6799</div>
-							</div>
-							<div className="flex items-center gap-4">
-								<Clock className="w-5 h-5 text-primary flex-shrink-0" />
-								<p className="text-body ">{t('Mon-Fri: 9:00 AM - 6:00 PM')}</p>
-							</div>
-						</div>
+						<Link
+							href="https://linkedin.com/in/azbek"
+							target="_blank"
+							className="p-2 md:p-3 rounded-full bg-background/50 hover:bg-primary transition-all hover:scale-110 border  /20"
+						>
+							<Linkedin className="w-4 h-4 md:w-5 md:h-5" />
+						</Link>
+						<Link
+							href="https://t.me/siddikov_a"
+							target="_blank"
+							className="p-2 md:p-3 rounded-full bg-background/50 hover:bg-primary transition-all hover:scale-110 border  /20"
+						>
+							<Send className="w-4 h-4 md:w-5 md:h-5" />
+						</Link>
 					</div>
 				</div>
 
-				{/* Bottom Bar */}
-				<div className="mt-16 pt-8 border-t border-border">
-					<div className="flex flex-col md:flex-row justify-between items-center gap-6">
-						<p className="text-sm ">© {t('2025 Eventify. All rights reserved')}.</p>
-						<div className="flex items-center gap-8">
-							<div className="text-sm  transition-colors">{t('Privacy Policy')}</div>
-							<div className="text-sm  transition-colors">{t('Terms of Service')}</div>
+				{/* Quick Links */}
+				<div className="space-y-8">
+					<h3 className="text-xl font-medium">{"Quick Links"}</h3>
+					<ul className="space-y-4">
+						{quickLinks.map((link, index) => (
+							<li key={index}>
+								<Link
+									href={link.href}
+									className="flex items-center hover:text-primary transition-colors group group-hover:gap-6"
+								>
+									<span className="w-2 h-2 rounded-full bg-primary hidden group-hover:block" />
+									<span className="group-hover:translate-x-2 transition-transform">{link.label}</span>
+								</Link>
+							</li>
+						))}
+					</ul>
+				</div>
+
+				{/* Contact Info */}
+				<div className="space-y-8">
+					<h3 className="text-xl font-medium">{"Contact Us"}</h3>
+					<div className="space-y-6">
+						<div className="flex items-center gap-4">
+							<MapPin className="w-5 h-5 text-primary shrink-0" />
+							<p>{"Gangnam-gu, Seoul South Korea"}</p>
 						</div>
+						<div className="flex items-center gap-4">
+							<Phone className="w-5 h-5 text-primary shrink-0" />
+							<p>010-7305-6799</p>
+						</div>
+						<div className="flex items-center gap-4">
+							<Clock className="w-5 h-5 text-primary shrink-0" />
+							<p>{"Mon-Fri: 9:00 AM - 6:00 PM"}</p>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<hr />
+			{/* Bottom Bar */}
+			<div className="mt-4 mb-12">
+				<div className="flex flex-row justify-between items-center gap-6">
+					<p>© {"2025 Eventify. All rights reserved"}.</p>
+					<div className="flex items-center gap-8">
+						<p>{"Privacy Policy"}</p>
+						<p>{"Terms of Service"}</p>
 					</div>
 				</div>
 			</div>

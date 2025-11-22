@@ -1,8 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
 	env: {
-		REACT_APP_API_URL: process.env.REACT_APP_API_URL,
-		REACT_APP_API_GRAPHQL_URL: process.env.REACT_APP_API_GRAPHQL_URL,
+		NEXT_APP_API_URL: process.env.NEXT_APP_API_URL,
+		NEXT_PUBLIC_API_GRAPHQL_URL: process.env.NEXT_PUBLIC_API_GRAPHQL_URL,
 	},
 	images: {
 		remotePatterns: [

@@ -1,16 +1,16 @@
-import { useTranslation } from 'next-i18next';
-import { ArrowUpDown, X } from 'lucide-react';
+import { useTranslation } from "next-i18next";
+import { ArrowUpDown, X } from "lucide-react";
 
-import { Button, buttonVariants } from '@/libs/components/ui/button';
-import { Input } from '@/libs/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/libs/components/ui/select';
+import { Button, buttonVariants } from "@/libs/components/ui/button";
+import { Input } from "@/libs/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/libs/components/ui/select";
 
-import { groupsSortOptions } from '@/libs/config';
-import { cn } from '@/libs/utils';
-import { smallError } from '@/libs/alert';
-import { Direction, Message } from '@/libs/enums/common.enum';
-import { GroupsInquiry } from '@/libs/types/group/group.input';
-import { Group } from '@/libs/types/group/group';
+import { groupsSortOptions } from "@/libs/config";
+import { cn } from "@/libs/utils";
+import { smallError } from "@/libs/alert";
+import { Direction, Message } from "@/libs/enums/common.enum";
+import { GroupsInquiry } from "@/libs/types/group/group.input";
+import { Group } from "@/libs/types/group/group";
 
 interface SortAndFilterProps {
 	updateURL: (search: GroupsInquiry) => void;
@@ -19,7 +19,7 @@ interface SortAndFilterProps {
 }
 
 function SortAndFilterGroups({ updateURL, groupsSearchFilters, initialSearch }: SortAndFilterProps) {
-	const { t } = useTranslation('common');
+	const { t } = useTranslation("common");
 
 	const searchHandler = (text: string) => {
 		updateURL({
@@ -54,16 +54,16 @@ function SortAndFilterGroups({ updateURL, groupsSearchFilters, initialSearch }: 
 	};
 
 	return (
-		<div className="rounded-2xl shadow-lg p-6 relative border-2 border-border/80 bg-background/70 backdrop-blur-md w-full max-w-5xl mx-auto">
+		<div className="rounded-2xl shadow-lg p-6 relative border-2  /80 bg-background/70 backdrop-blur-md w-full max-w-5xl mx-auto">
 			<div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 sm:gap-10">
 				{/* 🔍 Search Bar */}
 				<Input
-					placeholder={t('Search groups...')}
+					placeholder={t("Search groups...")}
 					value={groupsSearchFilters.search?.text}
 					onChange={(e) => searchHandler(e.target.value)}
 					className={cn(
-						buttonVariants({ variant: 'ghost', size: 'icon' }),
-						'w-full sm:w-auto bg-background/80 backdrop-blur-sm border-border/50 transition-colors hover:bg-accent/50',
+						buttonVariants({ variant: "ghost", size: "icon" }),
+						"w-full sm:w-auto bg-background/80 backdrop-blur-sm  /50 transition-colors hover:bg-accent/50",
 					)}
 				/>
 
@@ -72,7 +72,7 @@ function SortAndFilterGroups({ updateURL, groupsSearchFilters, initialSearch }: 
 					<Select value={groupsSearchFilters.sort} onValueChange={sortHandler}>
 						<SelectTrigger className="h-11 min-w-[120px]">
 							<ArrowUpDown className="text-muted-foreground mr-2" />
-							<SelectValue placeholder={t('Sort by')} />
+							<SelectValue placeholder={t("Sort by")} />
 						</SelectTrigger>
 						<SelectContent>
 							{groupsSortOptions.map((option) => (
@@ -87,13 +87,13 @@ function SortAndFilterGroups({ updateURL, groupsSearchFilters, initialSearch }: 
 						variant="outline"
 						size="icon"
 						onClick={toggleDirection}
-						className="w-14 h-11 bg-background/80 backdrop-blur-sm border-border/50 hover:bg-accent/50 transition-colors"
+						className="w-14 h-11 bg-background/80 backdrop-blur-sm  /50 hover:bg-accent/50 transition-colors"
 					>
 						<span
 							className={cn(
 								groupsSearchFilters.direction === Direction.ASC
-									? 'text-lg font-bold text-primary'
-									: 'text-muted-foreground',
+									? "text-lg font-bold text-primary"
+									: "text-muted-foreground",
 							)}
 						>
 							↑
@@ -101,8 +101,8 @@ function SortAndFilterGroups({ updateURL, groupsSearchFilters, initialSearch }: 
 						<span
 							className={cn(
 								groupsSearchFilters.direction === Direction.DESC
-									? 'text-lg font-bold text-primary'
-									: 'text-muted-foreground',
+									? "text-lg font-bold text-primary"
+									: "text-muted-foreground",
 							)}
 						>
 							↓
@@ -115,7 +115,7 @@ function SortAndFilterGroups({ updateURL, groupsSearchFilters, initialSearch }: 
 						className="h-11 hover:bg-accent hover:text-accent-foreground"
 					>
 						<X className="h-4 w-4 mr-2" />
-						{t('Clear')}
+						{t("Clear")}
 					</Button>
 				</div>
 			</div>

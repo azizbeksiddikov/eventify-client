@@ -1,7 +1,7 @@
 import { useTranslation } from "next-i18next";
 import { Calendar, Users, Ticket, Heart, Star, User } from "lucide-react";
 
-import { getMemberTypeColor, REACT_APP_API_URL } from "@/libs/config";
+import { getMemberTypeColor, NEXT_APP_API_URL } from "@/libs/config";
 import { Member } from "@/libs/types/member/member";
 import { Avatar, AvatarImage, AvatarFallback } from "@/libs/components/ui/avatar";
 
@@ -42,7 +42,7 @@ export const ProfileHeader = ({ member, groupsCount, ticketsCount }: ProfileHead
 	];
 
 	return (
-		<div className="bg-card rounded-xl shadow-lg p-8 md:p-10 border border-border/50">
+		<div className="bg-card rounded-xl shadow-lg p-8 md:p-10 border  /50">
 			<div className="flex flex-col gap-8">
 				<div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
 					{/* Profile Section */}
@@ -50,7 +50,7 @@ export const ProfileHeader = ({ member, groupsCount, ticketsCount }: ProfileHead
 						<Avatar className="w-28 h-28 md:w-36 md:h-36 ">
 							{member.memberImage ? (
 								<AvatarImage
-									src={`${REACT_APP_API_URL}/${member.memberImage}`}
+									src={`${NEXT_APP_API_URL}/${member.memberImage}`}
 									alt={member.memberFullName ?? t("No image")}
 									className="rounded-full ring-4 ring-primary/10"
 								/>
@@ -96,7 +96,7 @@ export const ProfileHeader = ({ member, groupsCount, ticketsCount }: ProfileHead
 
 				{/* Description Section */}
 				{member.memberDesc && (
-					<div className="border-t border-border/50 pt-4">
+					<div className="border-t  /50 pt-4">
 						<p className="text-card-foreground/80 text-base md:text-lg text-left leading-relaxed">
 							{member.memberDesc ?? t("No description")}
 						</p>

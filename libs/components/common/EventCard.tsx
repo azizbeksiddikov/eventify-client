@@ -12,7 +12,7 @@ import { Badge } from "@/libs/components/ui/badge";
 import { Event } from "@/libs/types/event/event";
 import { EventStatus } from "@/libs/enums/event.enum";
 
-import { REACT_APP_API_URL } from "@/libs/config";
+import { NEXT_APP_API_URL } from "@/libs/config";
 
 interface EventCardProps {
 	event: Event;
@@ -43,7 +43,7 @@ const EventCard = ({ event, likeEventHandler }: EventCardProps) => {
 				<div className="relative aspect-[16/9] w-full overflow-hidden rounded-t-xl">
 					<Link href={`/event/detail?eventId=${event._id}`}>
 						<Image
-							src={`${REACT_APP_API_URL}/${event.eventImages[0]}`}
+							src={`${NEXT_APP_API_URL}/${event.eventImages[0]}`}
 							alt={event.eventName}
 							fill
 							className="object-cover transition-transform duration-300"
@@ -147,7 +147,7 @@ const EventCard = ({ event, likeEventHandler }: EventCardProps) => {
 				</div>
 			</CardContent>
 
-			<CardFooter className="border-t border-border flex items-center justify-between gap-2 py-0 my-0">
+			<CardFooter className="border-t   flex items-center justify-between gap-2 py-0 my-0">
 				<Button
 					variant="ghost"
 					size="sm"

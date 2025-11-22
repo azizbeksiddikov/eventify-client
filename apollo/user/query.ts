@@ -1,10 +1,29 @@
-import { gql } from "@apollo/client";
+import { Event, CategoryEvents, Events } from "@/libs/types/event/event";
+import { EventsInquiry, EventsByCategoryInquiry, OrdinaryEventInquiry } from "@/libs/types/event/event.input";
+import { TotalCounter, Member, Members } from "@/libs/types/member/member";
+import { OrganizersInquiry } from "@/libs/types/member/member.input";
+import { Group, Groups } from "@/libs/types/group/group";
+import { GroupsInquiry } from "@/libs/types/group/group.input";
+import { Ticket, Tickets } from "@/libs/types/ticket/ticket";
+import { TicketInquiry } from "@/libs/types/ticket/ticket.input";
+import { Comments } from "@/libs/types/comment/comment";
+import { CommentsInquiry } from "@/libs/types/comment/comment.input";
+import { Notifications } from "@/libs/types/notification/notification";
+import { NotificationsInquiry } from "@/libs/types/notification/notification.input";
+import { FaqByGroup } from "@/libs/types/faq/faq";
+import { gql, TypedDocumentNode } from "@apollo/client";
 
 /**************************
  *         MEMBER         *
  *************************/
 
-export const GET_MEMBER = gql`
+type GetMemberQuery = {
+	getMember: Member;
+};
+type GetMemberQueryVariables = {
+	input: string;
+};
+export const GET_MEMBER: TypedDocumentNode<GetMemberQuery, GetMemberQueryVariables> = gql`
 	query GetMember($input: String!) {
 		getMember(memberId: $input) {
 			_id
@@ -28,7 +47,13 @@ export const GET_MEMBER = gql`
 	}
 `;
 
-export const GET_ORGANIZERS = gql`
+type GetOrganizersQuery = {
+	getOrganizers: Members;
+};
+type GetOrganizersQueryVariables = {
+	input: OrganizersInquiry;
+};
+export const GET_ORGANIZERS: TypedDocumentNode<GetOrganizersQuery, GetOrganizersQueryVariables> = gql`
 	query GetOrganizers($input: OrganizersInquiry!) {
 		getOrganizers(input: $input) {
 			list {
@@ -67,7 +92,13 @@ export const GET_ORGANIZERS = gql`
 	}
 `;
 
-export const GET_ORGANIZER = gql`
+type GetOrganizerQuery = {
+	getOrganizer: Member & { accessToken?: string };
+};
+type GetOrganizerQueryVariables = {
+	input: string;
+};
+export const GET_ORGANIZER: TypedDocumentNode<GetOrganizerQuery, GetOrganizerQueryVariables> = gql`
 	query GetOrganizer($input: String!) {
 		getOrganizer(input: $input) {
 			_id
@@ -147,7 +178,13 @@ export const GET_ORGANIZER = gql`
  *         GROUP          *
  *************************/
 
-export const GET_GROUPS = gql`
+type GetGroupsQuery = {
+	getGroups: Groups;
+};
+type GetGroupsQueryVariables = {
+	input: GroupsInquiry;
+};
+export const GET_GROUPS: TypedDocumentNode<GetGroupsQuery, GetGroupsQueryVariables> = gql`
 	query GetGroups($input: GroupsInquiry!) {
 		getGroups(input: $input) {
 			list {
@@ -201,7 +238,11 @@ export const GET_GROUPS = gql`
 	}
 `;
 
-export const GET_MY_GROUPS = gql`
+type GetMyGroupsQuery = {
+	getMyGroups: Group[];
+};
+type GetMyGroupsQueryVariables = Record<string, never>;
+export const GET_MY_GROUPS: TypedDocumentNode<GetMyGroupsQuery, GetMyGroupsQueryVariables> = gql`
 	query GetMyGroups {
 		getMyGroups {
 			_id
@@ -220,7 +261,11 @@ export const GET_MY_GROUPS = gql`
 	}
 `;
 
-export const GET_JOINED_GROUPS = gql`
+type GetJoinedGroupsQuery = {
+	getJoinedGroups: Group[];
+};
+type GetJoinedGroupsQueryVariables = Record<string, never>;
+export const GET_JOINED_GROUPS: TypedDocumentNode<GetJoinedGroupsQuery, GetJoinedGroupsQueryVariables> = gql`
 	query GetJoinedGroups {
 		getJoinedGroups {
 			_id
@@ -251,7 +296,13 @@ export const GET_JOINED_GROUPS = gql`
 	}
 `;
 
-export const GET_GROUP = gql`
+type GetGroupQuery = {
+	getGroup: Group;
+};
+type GetGroupQueryVariables = {
+	input: string;
+};
+export const GET_GROUP: TypedDocumentNode<GetGroupQuery, GetGroupQueryVariables> = gql`
 	query GetGroup($input: String!) {
 		getGroup(groupId: $input) {
 			_id
@@ -353,7 +404,14 @@ export const GET_GROUP = gql`
 /**************************
  *         EVENT          *
  *************************/
-export const GET_EVENTS = gql`
+
+type GetEventsQuery = {
+	getEvents: Events;
+};
+type GetEventsQueryVariables = {
+	input: EventsInquiry;
+};
+export const GET_EVENTS: TypedDocumentNode<GetEventsQuery, GetEventsQueryVariables> = gql`
 	query GetEvents($input: EventsInquiry!) {
 		getEvents(input: $input) {
 			list {
@@ -392,7 +450,13 @@ export const GET_EVENTS = gql`
 	}
 `;
 
-export const GET_UNIQUE_EVENTS = gql`
+type GetUniqueEventsQuery = {
+	getUniqueEvents: Events;
+};
+type GetUniqueEventsQueryVariables = {
+	input: EventsInquiry;
+};
+export const GET_UNIQUE_EVENTS: TypedDocumentNode<GetUniqueEventsQuery, GetUniqueEventsQueryVariables> = gql`
 	query GetUniqueEvents($input: EventsInquiry!) {
 		getUniqueEvents(input: $input) {
 			list {
@@ -431,7 +495,13 @@ export const GET_UNIQUE_EVENTS = gql`
 	}
 `;
 
-export const GET_EVENT = gql`
+type GetEventQuery = {
+	getEvent: Event;
+};
+type GetEventQueryVariables = {
+	input: string;
+};
+export const GET_EVENT: TypedDocumentNode<GetEventQuery, GetEventQueryVariables> = gql`
 	query GetEvent($input: String!) {
 		getEvent(eventId: $input) {
 			_id
@@ -575,68 +645,81 @@ export const GET_EVENT = gql`
 	}
 `;
 
-export const GET_EVENTS_BY_CATEGORY = gql`
-	query GetEventsByCategory($input: EventsByCategoryInquiry!) {
-		getEventsByCategory(input: $input) {
-			category
-			events {
-				_id
-				eventType
-				recurrenceId
-				eventName
-				eventDesc
-				eventImages
-				eventStartAt
-				eventEndAt
-				eventCity
-				eventAddress
-				eventCapacity
-				eventPrice
-				eventStatus
-				eventCategories
-				groupId
-				memberId
-				origin
-				attendeeCount
-				eventLikes
-				eventViews
-				createdAt
-				updatedAt
-				meLiked {
-					memberId
-					likeRefId
-					myFavorite
-				}
-				memberData {
+type GetEventsByCategoryQuery = {
+	getEventsByCategory: CategoryEvents[];
+};
+type GetEventsByCategoryQueryVariables = {
+	input: EventsByCategoryInquiry;
+};
+export const GET_EVENTS_BY_CATEGORY: TypedDocumentNode<GetEventsByCategoryQuery, GetEventsByCategoryQueryVariables> =
+	gql`
+		query GetEventsByCategory($input: EventsByCategoryInquiry!) {
+			getEventsByCategory(input: $input) {
+				category
+				events {
 					_id
-					username
-					memberEmail
-					memberPhone
-					memberFullName
-					memberType
-					memberStatus
-					emailVerified
-					memberDesc
-					memberImage
-					memberPoints
-					memberLikes
-					memberFollowings
-					memberFollowers
-					memberViews
-					memberRank
-					memberGroups
-					memberEvents
-					eventsOrganizedCount
+					eventType
+					recurrenceId
+					eventName
+					eventDesc
+					eventImages
+					eventStartAt
+					eventEndAt
+					eventCity
+					eventAddress
+					eventCapacity
+					eventPrice
+					eventStatus
+					eventCategories
+					groupId
+					memberId
+					origin
+					attendeeCount
+					eventLikes
+					eventViews
 					createdAt
 					updatedAt
-					accessToken
+					meLiked {
+						memberId
+						likeRefId
+						myFavorite
+					}
+					memberData {
+						_id
+						username
+						memberEmail
+						memberPhone
+						memberFullName
+						memberType
+						memberStatus
+						emailVerified
+						memberDesc
+						memberImage
+						memberPoints
+						memberLikes
+						memberFollowings
+						memberFollowers
+						memberViews
+						memberRank
+						memberGroups
+						memberEvents
+						eventsOrganizedCount
+						createdAt
+						updatedAt
+						accessToken
+					}
 				}
 			}
 		}
-	}
-`;
+	`;
 
-export const GET_FAVORITES = gql`
+type GetFavoritesQuery = {
+	getFavorites: Events;
+};
+type GetFavoritesQueryVariables = {
+	input: OrdinaryEventInquiry;
+};
+export const GET_FAVORITES: TypedDocumentNode<GetFavoritesQuery, GetFavoritesQueryVariables> = gql`
 	query GetFavorites($input: OrdinaryEventInquiry!) {
 		getFavorites(input: $input) {
 			list {
@@ -699,7 +782,13 @@ export const GET_FAVORITES = gql`
 	}
 `;
 
-export const GET_VISITED = gql`
+type GetVisitedQuery = {
+	getVisited: Events;
+};
+type GetVisitedQueryVariables = {
+	input: OrdinaryEventInquiry;
+};
+export const GET_VISITED: TypedDocumentNode<GetVisitedQuery, GetVisitedQueryVariables> = gql`
 	query GetVisited($input: OrdinaryEventInquiry!) {
 		getVisited(input: $input) {
 			list {
@@ -761,7 +850,13 @@ export const GET_VISITED = gql`
  *         TICKET          *
  *************************/
 
-export const GET_MY_TICKETS = gql`
+type GetMyTicketsQuery = {
+	getMyTickets: Tickets;
+};
+type GetMyTicketsQueryVariables = {
+	input: TicketInquiry;
+};
+export const GET_MY_TICKETS: TypedDocumentNode<GetMyTicketsQuery, GetMyTicketsQueryVariables> = gql`
 	query GetMyTickets($input: TicketInquiry!) {
 		getMyTickets(input: $input) {
 			metaCounter {
@@ -806,7 +901,11 @@ export const GET_MY_TICKETS = gql`
 	}
 `;
 
-export const GET_ALL_TICKETS_LIST = gql`
+type GetAllTicketsListQuery = {
+	getAllTicketsList: Ticket[];
+};
+type GetAllTicketsListQueryVariables = Record<string, never>;
+export const GET_ALL_TICKETS_LIST: TypedDocumentNode<GetAllTicketsListQuery, GetAllTicketsListQueryVariables> = gql`
 	query GetAllTicketsList {
 		getAllTicketsList {
 			_id
@@ -850,7 +949,13 @@ export const GET_ALL_TICKETS_LIST = gql`
  *         COMMENT         *
  *************************/
 
-export const GET_COMMENTS = gql`
+type GetCommentsQuery = {
+	getComments: Comments;
+};
+type GetCommentsQueryVariables = {
+	input: CommentsInquiry;
+};
+export const GET_COMMENTS: TypedDocumentNode<GetCommentsQuery, GetCommentsQueryVariables> = gql`
 	query GetComments($input: CommentsInquiry!) {
 		getComments(input: $input) {
 			list {
@@ -884,7 +989,14 @@ export const GET_COMMENTS = gql`
  *         FOLLOWERS         *
  *************************/
 
-export const GET_MEMBER_FOLLOWERS_LIST = gql`
+type GetMemberFollowersListQuery = {
+	getMemberFollowersList: Member[];
+};
+type GetMemberFollowersListQueryVariables = Record<string, never>;
+export const GET_MEMBER_FOLLOWERS_LIST: TypedDocumentNode<
+	GetMemberFollowersListQuery,
+	GetMemberFollowersListQueryVariables
+> = gql`
 	query GetMemberFollowersList {
 		getMemberFollowersList {
 			_id
@@ -920,7 +1032,14 @@ export const GET_MEMBER_FOLLOWERS_LIST = gql`
 	}
 `;
 
-export const GET_MEMBER_FOLLOWINGS_LIST = gql`
+type GetMemberFollowingsListQuery = {
+	getMemberFollowingsList: Member[];
+};
+type GetMemberFollowingsListQueryVariables = Record<string, never>;
+export const GET_MEMBER_FOLLOWINGS_LIST: TypedDocumentNode<
+	GetMemberFollowingsListQuery,
+	GetMemberFollowingsListQueryVariables
+> = gql`
 	query GetMemberFollowingsList {
 		getMemberFollowingsList {
 			_id
@@ -960,7 +1079,11 @@ export const GET_MEMBER_FOLLOWINGS_LIST = gql`
  *         FAQ             *
  *************************/
 
-export const GET_FAQS = gql`
+type GetFaqsQuery = {
+	getFaqs: FaqByGroup[];
+};
+type GetFaqsQueryVariables = Record<string, never>;
+export const GET_FAQS: TypedDocumentNode<GetFaqsQuery, GetFaqsQueryVariables> = gql`
 	query GetFaqs {
 		getFaqs {
 			faqGroup
@@ -981,7 +1104,13 @@ export const GET_FAQS = gql`
  *         NOTIFICATION     *
  *************************/
 
-export const GET_NOTIFICATIONS = gql`
+type GetNotificationsQuery = {
+	getNotifications: Notifications;
+};
+type GetNotificationsQueryVariables = {
+	input: NotificationsInquiry;
+};
+export const GET_NOTIFICATIONS: TypedDocumentNode<GetNotificationsQuery, GetNotificationsQueryVariables> = gql`
 	query GetNotifications($input: NotificationsInquiry!) {
 		getNotifications(input: $input) {
 			list {

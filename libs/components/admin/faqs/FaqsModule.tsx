@@ -1,18 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import { useTranslation } from 'next-i18next';
-import { Plus, X } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import { useTranslation } from "next-i18next";
+import { Plus, X } from "lucide-react";
 
-import { Separator } from '@/libs/components/ui/separator';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/libs/components/ui/tabs';
-import { Button } from '@/libs/components/ui/button';
-import { Card, CardContent } from '@/libs/components/ui/card';
-import FaqItem from '@/libs/components/admin/faqs/FaqItem';
-import FaqForm from '@/libs/components/admin/faqs/FaqForm';
+import { Separator } from "@/libs/components/ui/separator";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/libs/components/ui/tabs";
+import { Button } from "@/libs/components/ui/button";
+import { Card, CardContent } from "@/libs/components/ui/card";
+import FaqItem from "@/libs/components/admin/faqs/FaqItem";
+import FaqForm from "@/libs/components/admin/faqs/FaqForm";
 
-import { FaqUpdate } from '@/libs/types/faq/faq.update';
-import { FaqInput } from '@/libs/types/faq/faq.input';
-import { FaqByGroup } from '@/libs/types/faq/faq';
-import { FaqGroup, FaqStatus } from '@/libs/enums/faq.enum';
+import { FaqUpdate } from "@/libs/types/faq/faq.update";
+import { FaqInput } from "@/libs/types/faq/faq.input";
+import { FaqByGroup } from "@/libs/types/faq/faq";
+import { FaqGroup, FaqStatus } from "@/libs/enums/faq.enum";
 
 interface FaqsInquiryProps {
 	faqByGroup: FaqByGroup[];
@@ -30,12 +30,12 @@ const FaqsModule = ({
 	initialNewFaq = {
 		faqGroup: FaqGroup.ACCOUNT,
 		faqStatus: FaqStatus.ACTIVE,
-		faqQuestion: '',
-		faqAnswer: '',
+		faqQuestion: "",
+		faqAnswer: "",
 	},
 }: FaqsInquiryProps) => {
 	const { t } = useTranslation();
-	const [activeTab, setActiveTab] = useState<FaqGroup | ''>('');
+	const [activeTab, setActiveTab] = useState<FaqGroup | "">("");
 	const [isCreating, setIsCreating] = useState(false);
 	const [newFaq, setNewFaq] = useState<FaqInput>(initialNewFaq);
 
@@ -74,8 +74,8 @@ const FaqsModule = ({
 
 	return (
 		<div className="p-6 bg-background">
-			<h2 className="text-2xl font-bold mb-6 text-foreground">{t('FAQ Management')}</h2>
-			<div className="bg-card rounded-lg shadow border border-border">
+			<h2 className="text-2xl font-bold mb-6 text-foreground">{t("FAQ Management")}</h2>
+			<div className="bg-card rounded-lg shadow border  ">
 				<Separator className="bg-border" />
 
 				<div className="container max-w-4xl mx-auto my-10">
@@ -92,18 +92,18 @@ const FaqsModule = ({
 								<div className="space-y-4">
 									<div className="flex justify-between items-center">
 										<h3 className="text-lg font-semibold">
-											{group.faqGroup} {t('FAQs')}
+											{group.faqGroup} {t("FAQs")}
 										</h3>
-										<Button onClick={toggleCreateForm} variant={isCreating ? 'outline' : 'default'}>
+										<Button onClick={toggleCreateForm} variant={isCreating ? "outline" : "default"}>
 											{isCreating ? (
 												<>
 													<X className="w-4 h-4 mr-2" />
-													{t('Close')}
+													{t("Close")}
 												</>
 											) : (
 												<>
 													<Plus className="w-4 h-4 mr-2" />
-													{t('Add FAQ')}
+													{t("Add FAQ")}
 												</>
 											)}
 										</Button>
@@ -128,9 +128,9 @@ const FaqsModule = ({
 												/>
 												<div className="flex justify-end space-x-2 pt-4">
 													<Button variant="outline" onClick={cancelHandler}>
-														{t('Cancel')}
+														{t("Cancel")}
 													</Button>
-													<Button onClick={createHandler}>{t('Create FAQ')}</Button>
+													<Button onClick={createHandler}>{t("Create FAQ")}</Button>
 												</div>
 											</CardContent>
 										</Card>

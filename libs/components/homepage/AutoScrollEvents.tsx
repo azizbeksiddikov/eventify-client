@@ -1,16 +1,23 @@
-import { useState, useEffect, useRef, useCallback } from "react";
-import { useQuery } from "@apollo/client";
-import Link from "next/link";
-import { Calendar, MapPin, ChevronLeft, ChevronRight } from "lucide-react";
+"use client";
 
-import { REACT_APP_API_URL } from "@/libs/config";
-import { cn } from "@/libs/utils";
-import { GET_EVENTS } from "@/apollo/user/query";
-import { EventsInquiry } from "@/libs/types/event/event.input";
-import { EventStatus } from "@/libs/enums/event.enum";
-import { Event } from "@/libs/types/event/event";
+import { useState, useEffect, useRef, useCallback } from "react";
+import Link from "next/link";
+import { NEXT_APP_API_URL } from "@/libs/config";
+
+// Apollo
+import { useQuery } from "@apollo/client/react";
+import { GET_UNIQUE_EVENTS } from "@/apollo/user/query";
+
+// Types
 import { Direction } from "@/libs/enums/common.enum";
-import { useTranslation } from "next-i18next";
+import { EventStatus } from "@/libs/enums/event.enum";
+
+import { EventsInquiry } from "@/libs/types/event/event.input";
+import { Event } from "@/libs/types/event/event";
+
+// Styles
+import { Calendar, MapPin, ChevronLeft, ChevronRight } from "lucide-react";
+import { cn } from "@/libs/utils";
 
 interface AutoScrollEventsProps {
 	initialInput?: EventsInquiry;
@@ -25,21 +32,24 @@ const AutoScrollEvents = ({
 		search: { eventStatus: EventStatus.UPCOMING },
 	},
 }: AutoScrollEventsProps) => {
-	const { t } = useTranslation("common");
 	const [currentIndex, setCurrentIndex] = useState(0);
 	const [hoverPosition, setHoverPosition] = useState<number | null>(null);
 	const [isAutoScrolling, setIsAutoScrolling] = useState(true);
 	const containerRef = useRef<HTMLDivElement>(null);
 	const autoScrollIntervalRef = useRef<NodeJS.Timeout | null>(null);
-	const lastInteractionTimeRef = useRef<number>(Date.now());
+	const lastInteractionTimeRef = useRef<number>(new Date().getTime());
 
-	const { data: upcomingEvents, loading: upcomingEventsLoading } = useQuery(GET_EVENTS, {
-		fetchPolicy: "cache-and-network",
+	const {
+		data: upcomingEvents,
+		loading: upcomingEventsLoading,
+		error: upcomingEventsError,
+	} = useQuery(GET_UNIQUE_EVENTS, {
 		variables: { input: initialInput },
+		fetchPolicy: "cache-and-network",
 		notifyOnNetworkStatusChange: true,
 	});
 
-	const eventList: Event[] = upcomingEvents?.getEvents?.list || [];
+	const eventList: Event[] = upcomingEvents?.getUniqueEvents?.list || [];
 
 	// Handle keyboard navigation with proper dependencies
 	const navigationHandler = useCallback(
@@ -138,7 +148,8 @@ const AutoScrollEvents = ({
 		}).format(date);
 	}, []);
 
-	if (upcomingEventsLoading || !eventList.length) return null;
+	if (upcomingEventsLoading || !eventList.length) return <div>Loading...</div>;
+	if (upcomingEventsError) return <div>Error: {upcomingEventsError.message}</div>;
 
 	return (
 		<section
@@ -169,7 +180,7 @@ const AutoScrollEvents = ({
 					>
 						<div
 							className="absolute inset-0 bg-cover bg-center transition-transform duration-1000 ease-in-out"
-							style={{ backgroundImage: `url(${REACT_APP_API_URL}/${event.eventImages[0]})` }}
+							style={{ backgroundImage: `url(${NEXT_APP_API_URL}/${event.eventImages[0]})` }}
 							aria-hidden="true"
 						>
 							{/* Gradient overlays for navigation */}
@@ -216,7 +227,7 @@ const AutoScrollEvents = ({
 								className="inline-block bg-primary text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full font-medium hover:bg-primary/90 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
 								aria-label={`View details for ${event.eventName}`}
 							>
-								{t("View Details")}
+								{"View Details"}
 							</Link>
 						</div>
 					</div>

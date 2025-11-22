@@ -1,14 +1,14 @@
-import React from 'react';
-import { useTranslation } from 'next-i18next';
+import React from "react";
+import { useTranslation } from "next-i18next";
 
-import { Separator } from '@/libs/components/ui/separator';
-import PaginationComponent from '@/libs/components/common/PaginationComponent';
+import { Separator } from "@/libs/components/ui/separator";
+import PaginationComponent from "@/libs/components/common/PaginationComponent";
 
-import { EventUpdateInput } from '@/libs/types/event/event.update';
-import { EventsInquiry } from '@/libs/types/event/event.input';
-import { Events } from '@/libs/types/event/event';
-import { EventSearch } from './EventSearch';
-import { EventPanelList } from './EventList';
+import { EventUpdateInput } from "@/libs/types/event/event.update";
+import { EventsInquiry } from "@/libs/types/event/event.input";
+import { Events } from "@/libs/types/event/event";
+import { EventSearch } from "./EventSearch";
+import { EventPanelList } from "./EventList";
 
 interface EventsInquiryProps {
 	events: Events;
@@ -38,8 +38,8 @@ const EventsModule = ({
 
 	return (
 		<div className="p-6 bg-background">
-			<h2 className="text-2xl font-bold mb-6 text-foreground">{t('Event List')}</h2>
-			<div className="bg-card rounded-lg shadow border border-border">
+			<h2 className="text-2xl font-bold mb-6 text-foreground">{t("Event List")}</h2>
+			<div className="bg-card rounded-lg shadow border  ">
 				<EventSearch
 					initialInquiry={initialInquiry}
 					eventsInquiry={eventsInquiry}

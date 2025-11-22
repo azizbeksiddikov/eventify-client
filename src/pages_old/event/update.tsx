@@ -1,13 +1,13 @@
-import { useEffect, useState } from "react";
-import Image from "next/image";
-import { useRouter } from "next/router";
 import axios from "axios";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import Image from "next/image";
+import { ImageIcon, RefreshCw, CalendarIcon } from "lucide-react";
+import { format } from "date-fns";
+import { userVar } from "@/apollo/store";
+import { useTranslation } from "next-i18next";
 import { useMutation, useQuery, useReactiveVar } from "@apollo/client";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { useTranslation } from "next-i18next";
-import { userVar } from "@/apollo/store";
-import { format } from "date-fns";
-import { ImageIcon, RefreshCw, CalendarIcon, ArrowLeft } from "lucide-react";
 
 import { Button } from "@/libs/components/ui/button";
 import { Input } from "@/libs/components/ui/input";
@@ -20,16 +20,15 @@ import { ScrollArea } from "@/libs/components/ui/scroll-area";
 import withBasicLayout from "@/libs/components/layout/LayoutBasic";
 import { ImageCropper } from "@/libs/components/common/ImageCropper";
 
-import { EventCategory, EventStatus } from "@/libs/enums/event.enum";
-import { GET_MY_GROUPS } from "@/apollo/user/query";
-import { CREATE_EVENT } from "@/apollo/user/mutation";
-import { cn } from "@/libs/utils";
-import { EventInput } from "@/libs/types/event/event.input";
-import { Group } from "@/libs/types/group/group";
-import { smallError, smallSuccess } from "@/libs/alert";
-import { Message } from "@/libs/enums/common.enum";
 import { getJwtToken } from "@/libs/auth";
-import { imageTypes, REACT_APP_API_URL, REACT_APP_API_GRAPHQL_URL } from "@/libs/config";
+import { NEXT_APP_API_URL, NEXT_PUBLIC_API_GRAPHQL_URL, imageTypes } from "@/libs/config";
+import { UPDATE_EVENT_BY_ORGANIZER } from "@/apollo/user/mutation";
+import { cn } from "@/libs/utils";
+import { GET_EVENT } from "@/apollo/user/query";
+import { smallError, smallSuccess } from "@/libs/alert";
+import { EventCategory } from "@/libs/enums/event.enum";
+import { Message } from "@/libs/enums/common.enum";
+import { EventUpdateInput } from "@/libs/types/event/event.update";
 
 export const getStaticProps = async ({ locale }: { locale: string }) => ({
 	props: {
@@ -37,45 +36,64 @@ export const getStaticProps = async ({ locale }: { locale: string }) => ({
 	},
 });
 
-const EventCreatePage = () => {
+const EventUpdatePage = () => {
 	const router = useRouter();
 	const { t } = useTranslation("common");
 	const user = useReactiveVar(userVar);
 	const token = getJwtToken();
 
-	const [groups, setGroups] = useState<Group[]>([]);
+	const [eventId, setEventId] = useState<string | null>(null);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [imagePreview, setImagePreview] = useState<string | null>(null);
 	const [selectedCategories, setSelectedCategories] = useState<EventCategory[]>([]);
-	const [selectedGroup, setSelectedGroup] = useState<Group | null>(null);
+	const [formData, setFormData] = useState<EventUpdateInput | null>(null);
 	const [isCropperOpen, setIsCropperOpen] = useState(false);
 	const [tempImageUrl, setTempImageUrl] = useState<string | null>(null);
 
-	const [formData, setFormData] = useState<EventInput>({
-		eventName: "",
-		eventDesc: "",
-		eventImages: [],
-		eventStartAt: new Date(),
-		eventEndAt: new Date(),
-		eventCity: "",
-		eventAddress: "",
-		eventStatus: EventStatus.UPCOMING,
-		groupId: "",
-		eventCategories: [],
-	});
-
 	/** APOLLO REQUESTS **/
-	const [createEvent] = useMutation(CREATE_EVENT);
-
-	const { data: groupsData } = useQuery(GET_MY_GROUPS, {
+	const [updateEventByOrganizer] = useMutation(UPDATE_EVENT_BY_ORGANIZER);
+	const { data: eventData } = useQuery(GET_EVENT, {
+		variables: { input: eventId },
 		fetchPolicy: "cache-and-network",
-		skip: !user._id,
-		notifyOnNetworkStatusChange: true,
+		skip: !eventId,
 	});
 
+	/** LIFECYCLE */
 	useEffect(() => {
-		if (groupsData?.getMyGroups) setGroups(groupsData.getMyGroups);
-	}, [groupsData]);
+		if (eventData?.getEvent) {
+			const event = eventData.getEvent;
+
+			// Check if user is authorized to update the event
+			if (event.memberId !== user?._id) {
+				smallError(t("You are not authorized to update this event"));
+				router.push("/event/detail?eventId=" + event._id);
+				return;
+			}
+
+			setFormData({
+				_id: event._id,
+				eventName: event.eventName,
+				eventDesc: event.eventDesc,
+				eventCategories: event.eventCategories,
+				eventStartAt: new Date(event.eventStartAt),
+				eventEndAt: new Date(event.eventEndAt),
+				eventCity: event.eventCity,
+				eventAddress: event.eventAddress,
+				eventCapacity: event.eventCapacity,
+				eventPrice: event.eventPrice,
+				eventImages: event.eventImages,
+			});
+			setSelectedCategories(event.eventCategories);
+			setImagePreview(`${NEXT_APP_API_URL}/${event.eventImage}`);
+		}
+	}, [eventData]);
+
+	// Handle groupId from URL
+	useEffect(() => {
+		if (router.query.eventId) {
+			setEventId(router.query.eventId as string);
+		}
+	}, [router.query.eventId]);
 
 	/** HANDLERS */
 	const validateTime = (startTime: string, endTime: string) => {
@@ -90,12 +108,12 @@ const EventCreatePage = () => {
 
 	const startTimeChangeHandler = (hour: string, minute: string) => {
 		const newStartTime = `${hour}:${minute}`;
-		if (formData) setFormData((prev) => ({ ...prev, eventStartTime: newStartTime }));
+		setFormData((prev) => (prev ? { ...prev, eventStartTime: newStartTime } : null));
 	};
 
 	const endTimeHandler = (hour: string, minute: string) => {
 		const newEndTime = `${hour}:${minute}`;
-		if (formData) setFormData((prev) => ({ ...prev, eventEndTime: newEndTime }));
+		setFormData((prev) => (prev ? { ...prev, eventEndTime: newEndTime } : null));
 	};
 
 	const uploadImage = async (image: File) => {
@@ -121,7 +139,7 @@ const EventCreatePage = () => {
 			);
 			formData.append("0", image);
 
-			const response = await axios.post(`${REACT_APP_API_GRAPHQL_URL}`, formData, {
+			const response = await axios.post(`${NEXT_PUBLIC_API_GRAPHQL_URL}`, formData, {
 				headers: {
 					"Content-Type": "multipart/form-data",
 					"apollo-require-preflight": true,
@@ -130,10 +148,10 @@ const EventCreatePage = () => {
 			});
 
 			const responseImage = response.data.data.imageUploader;
-			const imageUrl = `${REACT_APP_API_URL}/${responseImage}`;
+			const imageUrl = `${NEXT_APP_API_URL}/${responseImage}`;
 
 			// Update form data and preview
-			setFormData((prev) => ({ ...prev, eventImage: responseImage }));
+			setFormData((prev) => (prev ? { ...prev, eventImage: responseImage } : null));
 			setImagePreview(imageUrl);
 
 			return imageUrl;
@@ -162,7 +180,7 @@ const EventCreatePage = () => {
 			}
 		} catch (err) {
 			console.error("Error handling cropped image:", err);
-			smallError(t("Failed to process image"));
+			smallError(t(Message.IMAGE_PROCESSING_FAILED));
 		}
 	};
 
@@ -171,35 +189,36 @@ const EventCreatePage = () => {
 		setIsSubmitting(true);
 
 		try {
+			if (!formData?._id) throw new Error(Message.EVENT_NOT_FOUND);
 			if (!user._id) throw new Error(Message.NOT_AUTHENTICATED);
-			if (!formData) throw new Error(Message.INVALID_FORM_DATA);
-			if (!formData?.groupId) throw new Error(Message.GROUP_NOT_FOUND);
-			if (!formData?.eventName) throw new Error(t(Message.EVENT_NAME_REQUIRED));
-			if (!formData?.eventDesc) throw new Error(t(Message.EVENT_DESCRIPTION_REQUIRED));
-			if (selectedCategories.length === 0) throw new Error(t(Message.EVENT_CATEGORY_REQUIRED));
-			if (!formData.eventStartAt) throw new Error(t(Message.EVENT_START_TIME_REQUIRED));
-			if (!formData.eventEndAt) throw new Error(t(Message.EVENT_END_TIME_REQUIRED));
-			if (!formData.eventCity) throw new Error(t(Message.EVENT_CITY_REQUIRED));
-			if (!formData.eventAddress) throw new Error(t(Message.EVENT_ADDRESS_REQUIRED));
-			if (!formData.eventCapacity) throw new Error(t(Message.EVENT_CAPACITY_REQUIRED));
-			if (formData.eventCapacity < 1) throw new Error(t(Message.EVENT_CAPACITY_MIN_REQUIRED));
-			if (!formData.eventPrice) formData.eventPrice = 0;
-			if (formData.eventPrice < 0) throw new Error(t(Message.EVENT_PRICE_MIN_REQUIRED));
-			if (!formData.eventImages.length) throw new Error(t(Message.EVENT_IMAGE_REQUIRED));
+			if (!formData.eventName) throw new Error(t("Event name is required"));
+			if (!formData.eventDesc) throw new Error(t("Event description is required"));
+			if (selectedCategories.length === 0) throw new Error(Message.GROUP_CATEGORY_REQUIRED);
+			if (!formData.eventStartAt) throw new Error(t("Start time is required"));
+			if (!formData.eventEndAt) throw new Error(t("End time is required"));
+			if (!formData.eventCity) throw new Error(t("City is required"));
+			if (!formData.eventAddress) throw new Error(t("Address is required"));
+			if (!formData.eventCapacity) throw new Error(t("Capacity is required"));
+			if (formData.eventCapacity < 1) throw new Error(t("Capacity must be at least 1"));
+			if (!formData.eventImages?.length) throw new Error(t("Event image is required"));
 
 			const updatedFormData = {
 				...formData,
 				eventCategories: selectedCategories,
 			};
 
-			const { data: createEventData } = await createEvent({
+			await updateEventByOrganizer({
 				variables: { input: updatedFormData },
 			});
 
-			await smallSuccess(t(Message.EVENT_CREATED_SUCCESSFULLY));
-			router.push(`/event/detail?eventId=${createEventData?.createEvent?._id}`);
-		} catch (error: any) {
-			console.log(error?.message);
+			await smallSuccess(t("Event updated successfully"));
+			router.push(`/event/detail?eventId=${formData._id}`);
+		} catch (error: unknown) {
+			if (error instanceof Error) {
+				smallError(error.message);
+			} else {
+				smallError(t("An unexpected error occurred"));
+			}
 		} finally {
 			setIsSubmitting(false);
 		}
@@ -211,7 +230,7 @@ const EventCreatePage = () => {
 		if (name === "eventCapacity" || name === "eventPrice") {
 			if (value === "") {
 				// Allow empty input for user convenience
-				setFormData((prev) => ({ ...prev, [name]: undefined }));
+				setFormData((prev) => (prev ? { ...prev, [name]: undefined } : null));
 				return;
 			}
 
@@ -223,9 +242,9 @@ const EventCreatePage = () => {
 				return;
 			}
 
-			setFormData((prev) => ({ ...prev, [name]: numberValue }));
+			setFormData((prev) => (prev ? { ...prev, [name]: numberValue } : null));
 		} else {
-			setFormData((prev) => ({ ...prev, [name]: value }));
+			setFormData((prev) => (prev ? { ...prev, [name]: value } : null));
 		}
 	};
 
@@ -239,85 +258,39 @@ const EventCreatePage = () => {
 		}
 	};
 
+	if (!formData) return null;
+
 	return (
 		<div className="min-h-screen bg-background">
 			<div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 				<div className="mb-8">
 					<Button
 						variant="outline"
-						onClick={() => router.push("/event")}
+						onClick={() => router.push(`/event/detail?eventId=${formData._id}`)}
 						className="flex items-center gap-2 text-primary hover:text-primary-foreground hover:bg-primary border-primary hover:border-primary/80 transition-colors duration-200"
 					>
-						<ArrowLeft className="h-4 w-4" />
-						{t("Back to Events")}
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="24"
+							height="24"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							strokeWidth="2"
+							strokeLinecap="round"
+							strokeLinejoin="round"
+							className="h-4 w-4"
+						>
+							<path d="m15 18-6-6 6-6" />
+						</svg>
+						{t("Back to Event")}
 					</Button>
 				</div>
 
 				<Card className="p-6 bg-card text-card-foreground">
-					<h1 className="text-3xl font-semibold text-foreground mb-6">{t("Create New Event")}</h1>
+					<h1 className="text-3xl font-semibold text-foreground mb-6">{t("Update Event")}</h1>
 
 					<form onSubmit={submitHandler} className="space-y-6">
-						{/* Group Selection */}
-						<div className="space-y-2">
-							<label htmlFor="groupId" className="text-sm font-medium text-foreground">
-								{t("Select Group")}
-							</label>
-							<Select
-								value={formData.groupId}
-								onValueChange={(value: string) => {
-									const selectedGroup = groups.find((group) => group._id === value);
-									if (selectedGroup) {
-										setSelectedGroup(selectedGroup);
-										setFormData((prev) => ({ ...prev, groupId: value }));
-									}
-								}}
-							>
-								<SelectTrigger className="w-full bg-input text-input-foreground border-input">
-									<SelectValue placeholder="Select a group">
-										{formData.groupId && (
-											<div className="flex items-center space-x-3">
-												<div className="relative h-8 w-8 rounded-full overflow-hidden">
-													<Image
-														src={`${REACT_APP_API_URL}/${selectedGroup?.groupImage}`}
-														alt="Group preview"
-														className="object-cover w-full h-full"
-														fill
-													/>
-												</div>
-												<span className="text-foreground">{selectedGroup?.groupName}</span>
-											</div>
-										)}
-									</SelectValue>
-								</SelectTrigger>
-								<SelectContent className="bg-popover text-popover-foreground border-border">
-									{groups.map((group: Group) => (
-										<SelectItem
-											key={group._id}
-											value={group._id}
-											className="py-3 hover:bg-accent hover:text-accent-foreground"
-										>
-											<div className="flex items-center space-x-4">
-												<div className="relative h-10 w-10 rounded-full overflow-hidden">
-													<Image
-														src={`${REACT_APP_API_URL}/${group.groupImage}`}
-														alt={group.groupName}
-														fill
-														className="object-cover w-full h-full"
-													/>
-												</div>
-												<div>
-													<div className="font-medium text-foreground">{group.groupName}</div>
-													<div className="text-xs text-muted-foreground">
-														{group.memberCount} {t("members")}
-													</div>
-												</div>
-											</div>
-										</SelectItem>
-									))}
-								</SelectContent>
-							</Select>
-						</div>
-
 						{/* Event Name */}
 						<div className="space-y-2">
 							<label htmlFor="eventName" className="text-sm font-medium text-foreground">
@@ -378,18 +351,11 @@ const EventCreatePage = () => {
 									{t("Start Time")}
 								</label>
 								<div className="flex gap-2">
-									<Select
-										value={formData.eventStartAt.getHours().toString().padStart(2, "0")}
-										onValueChange={(hour) => {
-											const currentTime = new Date(formData.eventStartAt);
-											currentTime.setHours(Number(hour));
-											setFormData((prev) => ({ ...prev, eventStartAt: currentTime }));
-										}}
-									>
+									<Select value={formData.eventStartAt?.toLocaleTimeString()}>
 										<SelectTrigger className="w-20 bg-input text-input-foreground border-input hover:bg-accent hover:text-accent-foreground transition-colors duration-200">
 											<SelectValue placeholder="HH" />
 										</SelectTrigger>
-										<SelectContent className="bg-popover text-popover-foreground border-border">
+										<SelectContent className="bg-popover text-popover-foreground  ">
 											<ScrollArea className="h-[200px]">
 												{[...Array(24)].map((_, i) => (
 													<SelectItem
@@ -403,18 +369,11 @@ const EventCreatePage = () => {
 											</ScrollArea>
 										</SelectContent>
 									</Select>
-									<Select
-										value={formData.eventStartAt.getMinutes().toString().padStart(2, "0")}
-										onValueChange={(minute) => {
-											const currentTime = new Date(formData.eventStartAt);
-											currentTime.setMinutes(Number(minute));
-											setFormData((prev) => ({ ...prev, eventStartAt: currentTime }));
-										}}
-									>
+									<Select value={formData.eventStartAt?.toLocaleTimeString()}>
 										<SelectTrigger className="w-20 bg-input text-input-foreground border-input hover:bg-accent hover:text-accent-foreground transition-colors duration-200">
 											<SelectValue placeholder="MM" />
 										</SelectTrigger>
-										<SelectContent className="bg-popover text-popover-foreground border-border">
+										<SelectContent className="bg-popover text-popover-foreground  ">
 											<ScrollArea className="h-[200px]">
 												{[...Array(12)].map((_, i) => {
 													const minute = (i * 5).toString().padStart(2, "0");
@@ -438,18 +397,11 @@ const EventCreatePage = () => {
 									{t("End Time")}
 								</label>
 								<div className="flex gap-2">
-									<Select
-										value={formData.eventEndAt.getHours().toString().padStart(2, "0")}
-										onValueChange={(hour) => {
-											const currentTime = new Date(formData.eventEndAt);
-											currentTime.setHours(Number(hour));
-											setFormData((prev) => ({ ...prev, eventEndAt: currentTime }));
-										}}
-									>
+									<Select value={formData.eventEndAt?.toLocaleTimeString()}>
 										<SelectTrigger className="w-20 bg-input text-input-foreground border-input hover:bg-accent hover:text-accent-foreground transition-colors duration-200">
 											<SelectValue placeholder="HH" />
 										</SelectTrigger>
-										<SelectContent className="bg-popover text-popover-foreground border-border">
+										<SelectContent className="bg-popover text-popover-foreground  ">
 											<ScrollArea className="h-[200px]">
 												{[...Array(24)].map((_, i) => (
 													<SelectItem
@@ -463,18 +415,11 @@ const EventCreatePage = () => {
 											</ScrollArea>
 										</SelectContent>
 									</Select>
-									<Select
-										value={formData.eventEndAt.getMinutes().toString().padStart(2, "0")}
-										onValueChange={(minute) => {
-											const currentTime = new Date(formData.eventEndAt);
-											currentTime.setMinutes(Number(minute));
-											setFormData((prev) => ({ ...prev, eventEndAt: currentTime }));
-										}}
-									>
+									<Select value={formData.eventEndAt?.toLocaleTimeString()}>
 										<SelectTrigger className="w-20 bg-input text-input-foreground border-input hover:bg-accent hover:text-accent-foreground transition-colors duration-200">
 											<SelectValue placeholder="MM" />
 										</SelectTrigger>
-										<SelectContent className="bg-popover text-popover-foreground border-border">
+										<SelectContent className="bg-popover text-popover-foreground  ">
 											<ScrollArea className="h-[200px]">
 												{[...Array(12)].map((_, i) => {
 													const minute = (i * 5).toString().padStart(2, "0");
@@ -529,13 +474,13 @@ const EventCreatePage = () => {
 						<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 							<div className="space-y-2">
 								<label htmlFor="eventCapacity" className="text-sm font-medium text-foreground">
-									{t("Capacity (number)")}
+									{t("Capacity")}
 								</label>
 								<Input
 									id="eventCapacity"
 									name="eventCapacity"
 									type="number"
-									value={formData.eventCapacity === undefined ? "" : String(formData.eventCapacity)}
+									value={formData.eventCapacity}
 									onChange={inputHandler}
 									placeholder={t("Enter event capacity")}
 									className="bg-input text-input-foreground border-input"
@@ -543,14 +488,14 @@ const EventCreatePage = () => {
 							</div>
 							<div className="space-y-2">
 								<label htmlFor="eventPrice" className="text-sm font-medium text-foreground">
-									{t("Price (number)")}
+									{t("Price")}
 								</label>
 								<Input
 									id="eventPrice"
 									name="eventPrice"
 									type="number"
-									// Convert to string and strip leading zeros when displaying
-									value={formData.eventPrice === undefined ? "" : String(formData.eventPrice)}
+									min="0"
+									value={formData.eventPrice}
 									onChange={inputHandler}
 									placeholder={t("Enter event price")}
 									className="bg-input text-input-foreground border-input"
@@ -559,20 +504,20 @@ const EventCreatePage = () => {
 						</div>
 
 						{/* Image Section */}
+
 						<div className="space-y-4">
 							<label className="text-sm font-medium text-foreground">{t("Event Image")}</label>
 							<div className="relative aspect-[16/9] w-full max-w-2xl mx-auto rounded-xl overflow-hidden bg-muted/50 rounded-t-xl">
 								{imagePreview ? (
 									<>
-										<Image src={imagePreview} alt="Event preview" className="w-full h-full" fill />
-
+										<Image src={imagePreview} alt="Group preview" className="object-contain" fill />
 										<label
 											htmlFor="image"
-											className="absolute inset-0 flex items-center justify-center bg-black/0 hover:bg-black/20 transition-colors duration-200 cursor-pointer"
+											className="absolute inset-0 flex items-center justify-center bg-black/0 hover:bg-black/20 transition-colors duration-200 cursor-pointer group"
 										>
-											<div className="flex items-center gap-2 bg-white/90 text-foreground px-4 py-2 rounded-lg opacity-0 hover:opacity-100 transition-opacity duration-200">
+											<div className="flex items-center gap-2 bg-white/90 text-foreground px-4 py-2 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200">
 												<RefreshCw className="h-4 w-4" />
-												<span className="font-medium">{t("Reset Image")}</span>
+												<span className="font-medium">{t("Change Image")}</span>
 											</div>
 										</label>
 									</>
@@ -616,17 +561,16 @@ const EventCreatePage = () => {
 								disabled={
 									isSubmitting ||
 									selectedCategories.length === 0 ||
-									!formData.groupId ||
 									!formData.eventCity ||
 									!formData.eventAddress ||
 									!formData.eventCapacity ||
-									!formData.eventImages.length ||
+									!formData.eventImages?.length ||
 									!formData.eventStartAt ||
 									!formData.eventEndAt
 								}
 								className="bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed px-8"
 							>
-								{isSubmitting ? t("Creating...") : t("Create Event")}
+								{isSubmitting ? t("Updating...") : t("Update Event")}
 							</Button>
 						</div>
 					</form>
@@ -636,4 +580,4 @@ const EventCreatePage = () => {
 	);
 };
 
-export default withBasicLayout(EventCreatePage);
+export default withBasicLayout(EventUpdatePage);

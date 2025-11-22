@@ -72,7 +72,7 @@ const EventsByCategory = ({
 							key={categoryData.category}
 							className="bg-card rounded-2xl shadow-sm overflow-hidden hover:shadow-md transition-all duration-200 animate-slideIn flex flex-col"
 						>
-							<div className="p-4 border-b border-border">
+							<div className="p-4 border-b  ">
 								<h3 className="text-lg font-semibold text-foreground">{categoryData.category}</h3>
 							</div>
 							<div className="p-4 flex-1">
@@ -82,7 +82,7 @@ const EventsByCategory = ({
 									))}
 								</div>
 							</div>
-							<div className="p-4 border-t border-border mt-auto">
+							<div className="p-4 border-t   mt-auto">
 								<Link
 									href={`/event?categories=${categoryData.category.toUpperCase()}`}
 									className="text-sm text-primary hover:text-primary/80 font-medium flex items-center gap-1 transition-colors duration-200"

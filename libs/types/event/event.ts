@@ -1,7 +1,7 @@
-import { EventStatus, EventCategory, EventType, RecurrenceType } from '@/libs/enums/event.enum';
-import { Member, TotalCounter } from '@/libs/types/member/member';
-import { Group } from '@/libs/types/group/group';
-import { MeLiked } from '@/libs/types/like/like';
+import { EventStatus, EventCategory, EventType, RecurrenceType } from "@/libs/enums/event.enum";
+import { Member, TotalCounter } from "@/libs/types/member/member";
+import { Group } from "@/libs/types/group/group";
+import { MeLiked } from "@/libs/types/like/like";
 
 export interface Event {
 	// ===== Basic Information =====

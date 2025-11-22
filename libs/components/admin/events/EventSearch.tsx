@@ -60,7 +60,7 @@ export function EventSearch({ initialInquiry, eventsInquiry, setEventsInquiry }:
 	};
 
 	return (
-		<div className="flex items-center gap-6 p-6 rounded-t-lg bg-card border border-border">
+		<div className="flex items-center gap-6 p-6 rounded-t-lg bg-card border  ">
 			{/* SEARCH */}
 			<Input
 				placeholder={t("Search events...")}
@@ -79,7 +79,7 @@ export function EventSearch({ initialInquiry, eventsInquiry, setEventsInquiry }:
 				<SelectTrigger className="w-[180px] bg-background text-foreground border-input focus:ring-primary">
 					<SelectValue placeholder={t("Filter by category")} />
 				</SelectTrigger>
-				<SelectContent className="bg-card text-foreground border-border">
+				<SelectContent className="bg-card text-foreground  ">
 					<SelectItem value="all">{t("All Categories")}</SelectItem>
 					{Object.values(EventCategory).map((value) => (
 						<SelectItem key={value} value={value}>
@@ -99,7 +99,7 @@ export function EventSearch({ initialInquiry, eventsInquiry, setEventsInquiry }:
 				<SelectTrigger className="w-[180px] bg-background text-foreground border-input focus:ring-primary">
 					<SelectValue placeholder={t("Filter by status")} />
 				</SelectTrigger>
-				<SelectContent className="bg-card text-foreground border-border">
+				<SelectContent className="bg-card text-foreground  ">
 					<SelectItem value="all">{t("All Statuses")}</SelectItem>
 					{Object.values(EventStatus).map((value) => (
 						<SelectItem key={value} value={value}>
@@ -119,7 +119,7 @@ export function EventSearch({ initialInquiry, eventsInquiry, setEventsInquiry }:
 				<SelectTrigger className="w-[180px] bg-background text-foreground border-input focus:ring-primary">
 					<SelectValue placeholder={t("Sort by")} />
 				</SelectTrigger>
-				<SelectContent className="bg-card text-foreground border-border">
+				<SelectContent className="bg-card text-foreground  ">
 					<SelectItem value="createdAt">{t("Created At")}</SelectItem>
 					<SelectItem value="eventDate">{t("Event Date")}</SelectItem>
 					<SelectItem value="attendeeCount">{t("Attendees")}</SelectItem>
@@ -137,7 +137,7 @@ export function EventSearch({ initialInquiry, eventsInquiry, setEventsInquiry }:
 				<SelectTrigger className="w-[180px] bg-background text-foreground border-input focus:ring-primary">
 					<SelectValue placeholder={t("Direction")} />
 				</SelectTrigger>
-				<SelectContent className="bg-card text-foreground border-border">
+				<SelectContent className="bg-card text-foreground  ">
 					<SelectItem value={Direction.ASC}>{t("Ascending")}</SelectItem>
 					<SelectItem value={Direction.DESC}>{t("Descending")}</SelectItem>
 				</SelectContent>

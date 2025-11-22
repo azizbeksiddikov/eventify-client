@@ -8,7 +8,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/libs/components/ui/avatar
 
 import { GroupMember } from "@/libs/types/groupMembers/groupMember";
 import { GroupMemberRole } from "@/libs/enums/group.enum";
-import { REACT_APP_API_URL } from "@/libs/config";
+import { NEXT_APP_API_URL } from "@/libs/config";
 
 interface GroupModeratorsProps {
 	groupModerators: GroupMember[];
@@ -18,7 +18,7 @@ const GroupModerators = ({ groupModerators }: GroupModeratorsProps) => {
 	const { t } = useTranslation("common");
 
 	return (
-		<Card className="p-8 bg-card hover:bg-secondary/15 transition-all duration-300 shadow-sm hover:shadow-md border border-border/50">
+		<Card className="p-8 bg-card hover:bg-secondary/15 transition-all duration-300 shadow-sm hover:shadow-md border  /50">
 			<h2 className="text-2xl font-semibold mb-6 text-card-foreground flex items-center gap-2">
 				<Users className="w-5 h-5 text-card-foreground" />
 				{t("Moderators")}
@@ -38,7 +38,7 @@ const GroupModerators = ({ groupModerators }: GroupModeratorsProps) => {
 										<Avatar className="h-16 w-16">
 											{moderator.memberData?.memberImage ? (
 												<AvatarImage
-													src={`${REACT_APP_API_URL}/${moderator.memberData.memberImage}`}
+													src={`${NEXT_APP_API_URL}/${moderator.memberData.memberImage}`}
 													alt={moderator.memberData.memberFullName ?? t("Owner avatar")}
 													className="rounded-full"
 												/>

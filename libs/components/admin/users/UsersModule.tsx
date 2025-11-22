@@ -1,14 +1,14 @@
-import React from 'react';
-import { useTranslation } from 'next-i18next';
+import React from "react";
+import { useTranslation } from "next-i18next";
 
-import { MemberPanelList } from '@/libs/components/admin/users/MemberList';
-import { MemberSearch } from '@/libs/components/admin/users/MemberSearch';
-import { Separator } from '@/libs/components/ui/separator';
-import PaginationComponent from '@/libs/components/common/PaginationComponent';
+import { MemberPanelList } from "@/libs/components/admin/users/MemberList";
+import { MemberSearch } from "@/libs/components/admin/users/MemberSearch";
+import { Separator } from "@/libs/components/ui/separator";
+import PaginationComponent from "@/libs/components/common/PaginationComponent";
 
-import { MembersInquiry } from '@/libs/types/member/member.input';
-import { Members } from '@/libs/types/member/member';
-import { MemberUpdateInput } from '@/libs/types/member/member.update';
+import { MembersInquiry } from "@/libs/types/member/member.input";
+import { Members } from "@/libs/types/member/member";
+import { MemberUpdateInput } from "@/libs/types/member/member.update";
 
 interface UsersModuleProps {
 	members: Members;
@@ -37,8 +37,8 @@ const UsersModule = ({
 
 	return (
 		<div className="p-6 bg-background">
-			<h2 className="text-2xl font-bold mb-6 text-foreground">{t('Member List')}</h2>
-			<div className="bg-card rounded-lg shadow border border-border">
+			<h2 className="text-2xl font-bold mb-6 text-foreground">{t("Member List")}</h2>
+			<div className="bg-card rounded-lg shadow border  ">
 				<MemberSearch
 					initialInquiry={initialInquiry}
 					membersInquiry={membersInquiry}

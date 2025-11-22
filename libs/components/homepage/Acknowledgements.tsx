@@ -1,39 +1,36 @@
-import { useTranslation } from 'next-i18next';
-import { Users, Heart, Code2 } from 'lucide-react';
+import { Users, Heart, Code2 } from "lucide-react";
 
 const Acknowledgements = () => {
-	const { t } = useTranslation('common');
-
 	return (
 		<section className="py-8 sm:py-12 md:py-16 lg:py-20 bg-muted">
 			<div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 px-4">
 				{/* Team & Community Section */}
 				<div className="bg-card rounded-lg sm:rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-all duration-200 animate-slideIn">
-					<div className="p-3 sm:p-4 border-b border-border">
+					<div className="p-3 sm:p-4 border-b  ">
 						<div className="flex items-center gap-1.5 sm:gap-2">
 							<div className="p-1.5 sm:p-2 rounded-lg bg-primary/5">
 								<Users className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
 							</div>
-							<h3 className="text-base sm:text-lg font-semibold text-card-foreground">{t('Team & Community')}</h3>
+							<h3 className="text-base sm:text-lg font-semibold text-card-foreground">{"Team & Community"}</h3>
 						</div>
 					</div>
 					<div className="p-3 sm:p-4">
 						<ul className="space-y-2 sm:space-y-3">
 							<li className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-muted-foreground">
 								<span className="w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full bg-primary" />
-								{t('Our dedicated development team')}
+								{"Our dedicated development team"}
 							</li>
 							<li className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-muted-foreground">
 								<span className="w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full bg-primary" />
-								{t('Early adopters and beta testers')}
+								{"Early adopters and beta testers"}
 							</li>
 							<li className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-muted-foreground">
 								<span className="w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full bg-primary" />
-								{t('Community moderators')}
+								{"Community moderators"}
 							</li>
 							<li className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-muted-foreground">
 								<span className="w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full bg-primary" />
-								{t('User feedback contributors')}
+								{"User feedback contributors"}
 							</li>
 						</ul>
 					</div>
@@ -41,31 +38,31 @@ const Acknowledgements = () => {
 
 				{/* Partners Section */}
 				<div className="bg-card rounded-lg sm:rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-all duration-200 animate-slideIn">
-					<div className="p-3 sm:p-4 border-b border-border">
+					<div className="p-3 sm:p-4 border-b  ">
 						<div className="flex items-center gap-1.5 sm:gap-2">
 							<div className="p-1.5 sm:p-2 rounded-lg bg-primary/5">
 								<Heart className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
 							</div>
-							<h3 className="text-base sm:text-lg font-semibold text-card-foreground">{t('Partners')}</h3>
+							<h3 className="text-base sm:text-lg font-semibold text-card-foreground">{"Partners"}</h3>
 						</div>
 					</div>
 					<div className="p-3 sm:p-4">
 						<ul className="space-y-2 sm:space-y-3">
 							<li className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-muted-foreground">
 								<span className="w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full bg-primary" />
-								{t('Technology partners')}
+								{"Technology partners"}
 							</li>
 							<li className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-muted-foreground">
 								<span className="w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full bg-primary" />
-								{t('Event organizers')}
+								{"Event organizers"}
 							</li>
 							<li className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-muted-foreground">
 								<span className="w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full bg-primary" />
-								{t('Venue partners')}
+								{"Venue partners"}
 							</li>
 							<li className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-muted-foreground">
 								<span className="w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full bg-primary" />
-								{t('Sponsors and supporters')}
+								{"Sponsors and supporters"}
 							</li>
 						</ul>
 					</div>
@@ -73,31 +70,31 @@ const Acknowledgements = () => {
 
 				{/* Open Source Section */}
 				<div className="bg-card rounded-lg sm:rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-all duration-200 animate-slideIn">
-					<div className="p-3 sm:p-4 border-b border-border">
+					<div className="p-3 sm:p-4 border-b  ">
 						<div className="flex items-center gap-1.5 sm:gap-2">
 							<div className="p-1.5 sm:p-2 rounded-lg bg-primary/5">
 								<Code2 className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
 							</div>
-							<h3 className="text-base sm:text-lg font-semibold text-card-foreground">{t('Open Source')}</h3>
+							<h3 className="text-base sm:text-lg font-semibold text-card-foreground">{"Open Source"}</h3>
 						</div>
 					</div>
 					<div className="p-3 sm:p-4">
 						<ul className="space-y-2 sm:space-y-3">
 							<li className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-muted-foreground">
 								<span className="w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full bg-primary" />
-								{t('Open source contributors')}
+								{"Open source contributors"}
 							</li>
 							<li className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-muted-foreground">
 								<span className="w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full bg-primary" />
-								{t('Library maintainers')}
+								{"Library maintainers"}
 							</li>
 							<li className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-muted-foreground">
 								<span className="w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full bg-primary" />
-								{t('Documentation writers')}
+								{"Documentation writers"}
 							</li>
 							<li className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-muted-foreground">
 								<span className="w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full bg-primary" />
-								{t('Bug reporters')}
+								{"Bug reporters"}
 							</li>
 						</ul>
 					</div>

@@ -1,8 +1,8 @@
-import { GroupCategory } from '@/libs/enums/group.enum';
-import { Member, TotalCounter } from '@/libs/types/member/member';
-import { MeLiked } from '@/libs/types/like/like';
-import { GroupMember } from '@/libs/types/groupMembers/groupMember';
-import { Event } from '@/libs/types/event/event';
+import { GroupCategory } from "@/libs/enums/group.enum";
+import { Member, TotalCounter } from "@/libs/types/member/member";
+import { MeLiked } from "@/libs/types/like/like";
+import { GroupMember } from "@/libs/types/groupMembers/groupMember";
+import { Event } from "@/libs/types/event/event";
 
 export interface MeJoined {
 	memberId: string;
@@ -31,6 +31,7 @@ export interface Group {
 	similarGroups?: Group[];
 	groupUpcomingEvents?: Event[];
 
+	meOwner?: boolean;
 	meLiked?: MeLiked[];
 	meJoined?: MeJoined[];
 }

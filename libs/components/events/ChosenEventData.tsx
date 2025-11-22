@@ -17,7 +17,7 @@ import {
 	DialogTitle,
 } from "@/libs/components/ui/dialog";
 
-import { REACT_APP_API_URL } from "@/libs/config";
+import { NEXT_APP_API_URL } from "@/libs/config";
 import { cn } from "@/libs/utils";
 import { TicketInput } from "@/libs/types/ticket/ticket.input";
 import { EventStatus } from "@/libs/enums/event.enum";
@@ -103,9 +103,9 @@ const ChosenEventData = ({
 								{event.eventName}
 							</h2>
 							{/* Event Image */}
-							<div className="relative aspect-[16/9] w-full group rounded-xl overflow-hidden border-border border-2">
+							<div className="relative aspect-[16/9] w-full group rounded-xl overflow-hidden   border-2">
 								<Image
-									src={`${REACT_APP_API_URL}/${event.eventImages[0]}`}
+									src={`${NEXT_APP_API_URL}/${event.eventImages[0]}`}
 									alt={event.eventName}
 									fill
 									className="object-contain transition-transform duration-500"

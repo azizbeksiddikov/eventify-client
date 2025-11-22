@@ -1,28 +1,28 @@
-import Image from 'next/image';
-import Link from 'next/link';
-import { useTranslation } from 'next-i18next';
-import { useApolloClient, useReactiveVar } from '@apollo/client';
-import { Heart, Calendar, Users, ExternalLink, Eye } from 'lucide-react';
-import { useMutation } from '@apollo/client';
-import { userVar } from '@/apollo/store';
+import Image from "next/image";
+import Link from "next/link";
+import { useTranslation } from "next-i18next";
+import { useApolloClient, useReactiveVar } from "@apollo/client";
+import { Heart, Calendar, Users, ExternalLink, Eye } from "lucide-react";
+import { useMutation } from "@apollo/client";
+import { userVar } from "@/apollo/store";
 
-import { Button } from '@/libs/components/ui/button';
-import { Card, CardContent, CardFooter, CardHeader } from '@/libs/components/ui/card';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/libs/components/ui/tooltip';
-import { Badge } from '@/libs/components/ui/badge';
+import { Button } from "@/libs/components/ui/button";
+import { Card, CardContent, CardFooter, CardHeader } from "@/libs/components/ui/card";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/libs/components/ui/tooltip";
+import { Badge } from "@/libs/components/ui/badge";
 
-import { REACT_APP_API_URL } from '@/libs/config';
+import { NEXT_APP_API_URL } from "@/libs/config";
 
-import { JOIN_GROUP, LEAVE_GROUP, LIKE_TARGET_GROUP } from '@/apollo/user/mutation';
-import { Group } from '@/libs/types/group/group';
-import { joinGroup, leaveGroup, likeGroup } from '@/libs/utils';
+import { JOIN_GROUP, LEAVE_GROUP, LIKE_TARGET_GROUP } from "@/apollo/user/mutation";
+import { Group } from "@/libs/types/group/group";
+import { joinGroup, leaveGroup, likeGroup } from "@/libs/utils";
 
 interface GroupCardProps {
 	group: Group;
 }
 
 const GroupCard = ({ group }: GroupCardProps) => {
-	const { t } = useTranslation('common');
+	const { t } = useTranslation("common");
 	const user = useReactiveVar(userVar);
 
 	/** APOLLO */
@@ -51,7 +51,7 @@ const GroupCard = ({ group }: GroupCardProps) => {
 				<div className="relative aspect-[16/9] w-full overflow-hidden rounded-t-xl">
 					<Link href={`/group/detail?groupId=${group._id}`}>
 						<Image
-							src={`${REACT_APP_API_URL}/${group.groupImage}`}
+							src={`${NEXT_APP_API_URL}/${group.groupImage}`}
 							alt={group.groupName}
 							fill
 							className="object-cover transition-transform duration-300"
@@ -103,17 +103,17 @@ const GroupCard = ({ group }: GroupCardProps) => {
 						{
 							icon: <Users className="h-3 w-3 text-primary" />,
 							value: group.memberCount || 0,
-							label: t('Total group members'),
+							label: t("Total group members"),
 						},
 						{
 							icon: <Calendar className="h-3 w-3 text-primary" />,
 							value: group.eventsCount || 0,
-							label: t('Total events organized'),
+							label: t("Total events organized"),
 						},
 						{
 							icon: <Heart className="h-3 w-3 text-primary" />,
 							value: group.groupLikes || 0,
-							label: t('Total likes received'),
+							label: t("Total likes received"),
 						},
 					].map((item, i) => (
 						<Tooltip key={i}>
@@ -134,39 +134,39 @@ const GroupCard = ({ group }: GroupCardProps) => {
 							<p className="text-xs text-foreground leading-snug line-clamp-2">{group.groupDesc}</p>
 						) : (
 							<p className="text-xs text-muted-foreground italic flex items-center justify-center py-1 w-full">
-								<span className="bg-muted/50 px-2 py-0.5 rounded-md">{t('No description available')}</span>
+								<span className="bg-muted/50 px-2 py-0.5 rounded-md">{t("No description available")}</span>
 							</p>
 						)}
 					</div>
 				</div>
 			</CardContent>
 
-			<CardFooter className="border-t border-border flex items-center justify-between gap-2 py-0 my-0">
+			<CardFooter className="border-t   flex items-center justify-between gap-2 py-0 my-0">
 				<Button
 					variant="ghost"
 					size="sm"
 					className={`h-7 px-2.5 text-xs font-medium transition-all ${
-						group?.meLiked?.[0]?.myFavorite ? 'text-rose-500' : ''
+						group?.meLiked?.[0]?.myFavorite ? "text-rose-500" : ""
 					}`}
 					onClick={() => likeGroupHandler(group._id)}
 				>
 					<Heart
 						className={`h-3 w-3 mr-1 transition-all ${
-							group?.meLiked?.[0]?.myFavorite ? 'fill-current stroke-current' : ''
+							group?.meLiked?.[0]?.myFavorite ? "fill-current stroke-current" : ""
 						}`}
 					/>
-					{group?.meLiked?.[0]?.myFavorite ? t('Liked') : t('Like')}
+					{group?.meLiked?.[0]?.myFavorite ? t("Liked") : t("Like")}
 				</Button>
 
 				<Button
-					variant={group?.meJoined?.[0]?.meJoined ? 'outline' : 'default'}
+					variant={group?.meJoined?.[0]?.meJoined ? "outline" : "default"}
 					size="sm"
 					className={`h-7 px-2.5 text-xs font-medium transition-all ${
-						group?.meJoined?.[0]?.meJoined ? 'border-primary/30 text-primary hover:bg-primary/5' : ''
+						group?.meJoined?.[0]?.meJoined ? "border-primary/30 text-primary hover:bg-primary/5" : ""
 					}`}
 					onClick={() => (group?.meJoined?.[0]?.meJoined ? leaveGroupHandler(group._id) : joinGroupHandler(group._id))}
 				>
-					{group?.meJoined?.[0]?.meJoined ? t('Leave') : t('Join')}
+					{group?.meJoined?.[0]?.meJoined ? t("Leave") : t("Join")}
 				</Button>
 
 				<Link href={`/group/detail?groupId=${group._id}`}>
@@ -176,7 +176,7 @@ const GroupCard = ({ group }: GroupCardProps) => {
 						className="h-7 px-2.5 rounded-lg text-xs hover:bg-primary/5 border-primary/30 text-primary transition-colors"
 					>
 						<ExternalLink className="h-3 w-3 mr-1" />
-						{t('View')}
+						{t("View")}
 					</Button>
 				</Link>
 			</CardFooter>

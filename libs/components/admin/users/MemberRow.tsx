@@ -10,7 +10,7 @@ import { Input } from "@/libs/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/libs/components/ui/select";
 import { TableCell, TableRow } from "@/libs/components/ui/table";
 
-import { REACT_APP_API_URL } from "@/libs/config";
+import { NEXT_APP_API_URL } from "@/libs/config";
 import { MemberStatus, MemberType } from "@/libs/enums/member.enum";
 import { Member } from "@/libs/types/member/member";
 import { MemberUpdateInput } from "@/libs/types/member/member.update";
@@ -76,7 +76,7 @@ const MemberRow = ({
 				<div className="flex items-center gap-2">
 					<Avatar className="h-8 w-8 flex items-center justify-center">
 						<AvatarImage
-							src={`${REACT_APP_API_URL}/${member?.memberImage}`}
+							src={`${NEXT_APP_API_URL}/${member?.memberImage}`}
 							alt={member.username}
 							className="rounded-full"
 						/>

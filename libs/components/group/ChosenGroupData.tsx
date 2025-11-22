@@ -1,16 +1,16 @@
-import { useRouter } from 'next/router';
-import Image from 'next/image';
-import { useTranslation } from 'next-i18next';
-import { Heart, Eye, Calendar, Bookmark, Users, Ticket, Pencil } from 'lucide-react';
+import { useRouter } from "next/router";
+import Image from "next/image";
+import { useTranslation } from "next-i18next";
+import { Heart, Eye, Calendar, Bookmark, Users, Ticket, Pencil } from "lucide-react";
 
-import { Button } from '@/libs/components/ui/button';
-import { Badge } from '@/libs/components/ui/badge';
-import { Card } from '@/libs/components/ui/card';
-import { Separator } from '@/libs/components/ui/separator';
+import { Button } from "@/libs/components/ui/button";
+import { Badge } from "@/libs/components/ui/badge";
+import { Card } from "@/libs/components/ui/card";
+import { Separator } from "@/libs/components/ui/separator";
 
-import { REACT_APP_API_URL } from '@/libs/config';
-import { cn } from '@/libs/utils';
-import { Group } from '@/libs/types/group/group';
+import { NEXT_APP_API_URL } from "@/libs/config";
+import { cn } from "@/libs/utils";
+import { Group } from "@/libs/types/group/group";
 
 interface ChosenGroupDataProps {
 	group: Group | null;
@@ -27,7 +27,7 @@ const ChosenGroupData = ({
 	joinGroupHandler,
 	leaveGroupHandler,
 }: ChosenGroupDataProps) => {
-	const { t } = useTranslation('common');
+	const { t } = useTranslation("common");
 	const router = useRouter();
 
 	if (!group) return null;
@@ -59,7 +59,7 @@ const ChosenGroupData = ({
 						onClick={() => router.push(`/group/update?groupId=${group._id}`)}
 					>
 						<Pencil className="h-4 w-4 mr-1.5" />
-						{t('Edit')}
+						{t("Edit")}
 					</Button>
 				)}
 
@@ -71,9 +71,9 @@ const ChosenGroupData = ({
 						</h2>
 
 						{/* Event Image */}
-						<div className="relative aspect-[16/9] w-full group rounded-xl overflow-hidden border-border border-2">
+						<div className="relative aspect-[16/9] w-full group rounded-xl overflow-hidden   border-2">
 							<Image
-								src={`${REACT_APP_API_URL}/${group.groupImage}`}
+								src={`${NEXT_APP_API_URL}/${group.groupImage}`}
 								alt={group.groupName}
 								fill
 								className="object-contain transition-transform duration-500"
@@ -86,7 +86,7 @@ const ChosenGroupData = ({
 									variant="secondary"
 									className="bg-primary text-primary-foreground backdrop-blur-sm shadow-md px-3 py-1 font-medium"
 								>
-									{group.memberCount} {t('members')}
+									{group.memberCount} {t("members")}
 								</Badge>
 							</div>
 							<div className="absolute bottom-4 right-4">
@@ -94,7 +94,7 @@ const ChosenGroupData = ({
 									variant="secondary"
 									className="bg-primary text-primary-foreground backdrop-blur-sm shadow-md px-3 py-1 font-medium"
 								>
-									{group.eventsCount} {t('events')}
+									{group.eventsCount} {t("events")}
 								</Badge>
 							</div>
 						</div>
@@ -122,12 +122,12 @@ const ChosenGroupData = ({
 								<div className="flex items-center gap-3 text-sm text-muted-foreground hover:text-foreground transition-colors bg-muted/40 hover:bg-muted/50 p-3 rounded-xl">
 									<Calendar className="h-5 w-5 flex-shrink-0 text-primary" />
 									<span className="font-medium">
-										{t('Created')}{' '}
-										{new Date(group.createdAt).toLocaleDateString('en-US', {
-											weekday: 'short',
-											month: 'short',
-											day: 'numeric',
-											year: 'numeric',
+										{t("Created")}{" "}
+										{new Date(group.createdAt).toLocaleDateString("en-US", {
+											weekday: "short",
+											month: "short",
+											day: "numeric",
+											year: "numeric",
 										})}
 									</span>
 								</div>
@@ -136,7 +136,7 @@ const ChosenGroupData = ({
 								<div className="flex items-center gap-3 text-sm text-muted-foreground hover:text-foreground transition-colors bg-muted/40 hover:bg-muted/50 p-3 rounded-xl">
 									<Users className="h-5 w-5 flex-shrink-0 text-primary" />
 									<span className="font-medium">
-										{group.memberCount} {t('members')}
+										{group.memberCount} {t("members")}
 									</span>
 								</div>
 
@@ -144,7 +144,7 @@ const ChosenGroupData = ({
 								<div className="flex items-center gap-3 text-sm text-muted-foreground hover:text-foreground transition-colors bg-muted/40 hover:bg-muted/50 p-3 rounded-xl">
 									<Ticket className="h-5 w-5 flex-shrink-0 text-primary" />
 									<span className="font-medium">
-										{group.eventsCount} {t('events')}
+										{group.eventsCount} {t("events")}
 									</span>
 								</div>
 							</div>
@@ -154,14 +154,14 @@ const ChosenGroupData = ({
 								<Button
 									onClick={() => likeGroupHandler(group._id)}
 									className={cn(
-										'flex h-auto items-center m-0 p-0 gap-2 transition-all duration-200 bg-muted/40 hover:bg-muted/50 rounded-xl',
-										isLiked ? 'text-destructive hover:text-destructive/90' : 'text-muted-foreground hover:text-primary',
+										"flex h-auto items-center m-0 p-0 gap-2 transition-all duration-200 bg-muted/40 hover:bg-muted/50 rounded-xl",
+										isLiked ? "text-destructive hover:text-destructive/90" : "text-muted-foreground hover:text-primary",
 									)}
 								>
 									<Heart
 										className={cn(
-											'h-5 w-5 transition-all duration-200',
-											isLiked ? 'fill-destructive text-destructive' : 'text-primary/70',
+											"h-5 w-5 transition-all duration-200",
+											isLiked ? "fill-destructive text-destructive" : "text-primary/70",
 										)}
 									/>
 									<span className="font-medium">{group.groupLikes}</span>
@@ -182,15 +182,15 @@ const ChosenGroupData = ({
 								size="lg"
 								disabled={isOwner}
 								className={cn(
-									'w-full transition-all duration-200',
+									"w-full transition-all duration-200",
 									isOwner
-										? 'bg-muted text-muted-foreground cursor-not-allowed'
+										? "bg-muted text-muted-foreground cursor-not-allowed"
 										: isJoined
-											? 'bg-destructive hover:bg-destructive/90 text-white'
-											: 'bg-primary hover:bg-primary/90 text-primary-foreground',
+											? "bg-destructive hover:bg-destructive/90 text-white"
+											: "bg-primary hover:bg-primary/90 text-primary-foreground",
 								)}
 							>
-								{isOwner ? t('Owner cannot leave group') : isJoined ? t('Leave Group') : t('Join Group')}
+								{isOwner ? t("Owner cannot leave group") : isJoined ? t("Leave Group") : t("Join Group")}
 							</Button>
 						</div>
 					</div>
@@ -202,7 +202,7 @@ const ChosenGroupData = ({
 			<div className="px-6 py-4">
 				<h3 className="text-sm font-medium mb-2 text-foreground/90 flex items-center gap-2">
 					<Bookmark className="w-4 h-4" />
-					{t('About')}
+					{t("About")}
 				</h3>
 				<p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">{group.groupDesc}</p>
 			</div>

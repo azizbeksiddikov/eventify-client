@@ -1,4 +1,4 @@
-import { REACT_APP_API_URL } from "./config";
+import { NEXT_APP_API_URL } from "./config";
 import { getJwtToken } from "./auth";
 
 /**
@@ -28,7 +28,7 @@ export async function uploadImage(file: File, target: string): Promise<string> {
 	}
 
 	try {
-		const response = await fetch(`${REACT_APP_API_URL}/upload/image`, {
+		const response = await fetch(`${NEXT_APP_API_URL}/upload/image`, {
 			method: "POST",
 			headers,
 			body: formData,
@@ -78,7 +78,7 @@ export async function uploadImages(files: File[], target: string): Promise<strin
 	}
 
 	try {
-		const response = await fetch(`${REACT_APP_API_URL}/upload/images`, {
+		const response = await fetch(`${NEXT_APP_API_URL}/upload/images`, {
 			method: "POST",
 			headers,
 			body: formData,

@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { ApolloClient, ApolloLink, InMemoryCache, from, NormalizedCacheObject, createHttpLink } from "@apollo/client";
+import { ApolloClient, ApolloLink, InMemoryCache, from, NormalizedCacheObject } from "@apollo/client";
 import { onError } from "@apollo/client/link/error";
 import { getJwtToken } from "@/libs/auth";
 import { TokenRefreshLink } from "apollo-link-token-refresh";
@@ -24,6 +24,10 @@ const tokenRefreshLink = new TokenRefreshLink({
 	},
 });
 
+// auth, add jwt from local storage to headers
+// add real link to the api
+// errors management
+
 function createIsomorphicLink() {
 	if (typeof window !== "undefined") {
 		const authLink = new ApolloLink((operation, forward) => {
@@ -39,7 +43,7 @@ function createIsomorphicLink() {
 
 		// @ts-ignore
 		const uploadLink = new createUploadLink({
-			uri: process.env.REACT_APP_API_GRAPHQL_URL,
+			uri: process.env.NEXT_PUBLIC_API_GRAPHQL_URL,
 		});
 
 		const errorLink = onError(({ graphQLErrors, networkError }) => {

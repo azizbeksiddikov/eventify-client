@@ -1,14 +1,14 @@
-import * as React from 'react';
-import { MoonIcon, SunIcon } from 'lucide-react';
-import { useTheme } from 'next-themes';
+import * as React from "react";
+import { MoonIcon, SunIcon } from "lucide-react";
+import { useTheme } from "next-themes";
 
-import { Button } from './button';
+import { Button } from "./button";
 
 export function ModeToggle() {
 	const { setTheme, resolvedTheme } = useTheme();
 
 	const toggleTheme = React.useCallback(() => {
-		setTheme(resolvedTheme === 'dark' ? 'light' : 'dark');
+		setTheme(resolvedTheme === "dark" ? "light" : "dark");
 	}, [resolvedTheme, setTheme]);
 
 	return (

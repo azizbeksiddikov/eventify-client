@@ -5,7 +5,7 @@ import { Crown, Users, User } from "lucide-react";
 import { Badge } from "@/libs/components/ui/badge";
 import { Card } from "@/libs/components/ui/card";
 
-import { REACT_APP_API_URL } from "@/libs/config";
+import { NEXT_APP_API_URL } from "@/libs/config";
 import { Member } from "@/libs/types/member/member";
 import { Avatar, AvatarImage, AvatarFallback } from "@/libs/components/ui/avatar";
 
@@ -18,7 +18,7 @@ const Owner = ({ member, title = "Group Owner" }: OwnerProps) => {
 	const { t } = useTranslation("common");
 
 	return (
-		<Card className="p-4 bg-card hover:bg-secondary/15 transition-all duration-300 shadow-sm hover:shadow-md border border-border/50">
+		<Card className="p-4 bg-card hover:bg-secondary/15 transition-all duration-300 shadow-sm hover:shadow-md border  /50">
 			<h2 className="text-lg font-semibold mb-3 text-card-foreground flex items-center gap-2">
 				<Users className="w-4 h-4 text-card-foreground" />
 				{title}
@@ -32,7 +32,7 @@ const Owner = ({ member, title = "Group Owner" }: OwnerProps) => {
 						<Avatar className="h-16 w-16">
 							{member?.memberImage ? (
 								<AvatarImage
-									src={`${REACT_APP_API_URL}/${member.memberImage}`}
+									src={`${NEXT_APP_API_URL}/${member.memberImage}`}
 									alt={member.memberFullName ?? t("Owner avatar")}
 									className="rounded-full"
 								/>

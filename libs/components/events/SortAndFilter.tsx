@@ -1,18 +1,18 @@
-import { useTranslation } from 'next-i18next';
-import { format } from 'date-fns';
-import { Calendar, ArrowUpDown, X } from 'lucide-react';
+import { useTranslation } from "next-i18next";
+import { format } from "date-fns";
+import { Calendar, ArrowUpDown, X } from "lucide-react";
 
-import { Popover, PopoverContent, PopoverTrigger } from '@/libs/components/ui/popover';
-import { Button, buttonVariants } from '@/libs/components/ui/button';
-import { Calendar as CalendarComponent } from '@/libs/components/ui/calendar';
-import { Input } from '@/libs/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/libs/components/ui/select';
+import { Popover, PopoverContent, PopoverTrigger } from "@/libs/components/ui/popover";
+import { Button, buttonVariants } from "@/libs/components/ui/button";
+import { Calendar as CalendarComponent } from "@/libs/components/ui/calendar";
+import { Input } from "@/libs/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/libs/components/ui/select";
 
-import { cn } from '@/libs/utils';
-import { smallError } from '@/libs/alert';
-import { eventsSortOptions } from '@/libs/config';
-import { EventsInquiry } from '@/libs/types/event/event.input';
-import { Direction, Message } from '@/libs/enums/common.enum';
+import { cn } from "@/libs/utils";
+import { smallError } from "@/libs/alert";
+import { eventsSortOptions } from "@/libs/config";
+import { EventsInquiry } from "@/libs/types/event/event.input";
+import { Direction, Message } from "@/libs/enums/common.enum";
 
 interface SortAndFilterProps {
 	updateURL: (search: EventsInquiry) => void;
@@ -21,7 +21,7 @@ interface SortAndFilterProps {
 }
 
 function SortAndFilter({ updateURL, eventsSearchFilters, initialSearch }: SortAndFilterProps) {
-	const { t } = useTranslation('common');
+	const { t } = useTranslation("common");
 
 	const searchHandler = (text: string) => {
 		updateURL({
@@ -100,16 +100,16 @@ function SortAndFilter({ updateURL, eventsSearchFilters, initialSearch }: SortAn
 	};
 
 	return (
-		<div className="rounded-2xl shadow-lg p-6 relative border-2 border-border/80 bg-background/70 backdrop-blur-md w-full max-w-5xl mx-auto">
+		<div className="rounded-2xl shadow-lg p-6 relative border-2  /80 bg-background/70 backdrop-blur-md w-full max-w-5xl mx-auto">
 			<div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 sm:gap-10">
 				{/* 🔍 Search Bar */}
 				<Input
-					placeholder={t('Search events') + '...'}
+					placeholder={t("Search events") + "..."}
 					value={eventsSearchFilters.search?.text}
 					onChange={(e) => searchHandler(e.target.value)}
 					className={cn(
-						buttonVariants({ variant: 'ghost', size: 'icon' }),
-						'w-full sm:w-auto bg-background/80 backdrop-blur-sm border-border/50 transition-colors hover:bg-accent/50',
+						buttonVariants({ variant: "ghost", size: "icon" }),
+						"w-full sm:w-auto bg-background/80 backdrop-blur-sm  /50 transition-colors hover:bg-accent/50",
 					)}
 				/>
 
@@ -120,16 +120,16 @@ function SortAndFilter({ updateURL, eventsSearchFilters, initialSearch }: SortAn
 						<PopoverTrigger asChild>
 							<Button
 								variant="outline"
-								className="w-full sm:w-auto bg-background/80 backdrop-blur-sm border-border/50 hover:bg-accent/50 transition-colors"
+								className="w-full sm:w-auto bg-background/80 backdrop-blur-sm  /50 hover:bg-accent/50 transition-colors"
 							>
 								<Calendar className="mr-2 h-4 w-4 text-muted-foreground" />
 								{eventsSearchFilters.search.eventStartDay
-									? format(eventsSearchFilters.search.eventStartDay, 'MMM d, yyyy')
-									: t('Start date')}
+									? format(eventsSearchFilters.search.eventStartDay, "MMM d, yyyy")
+									: t("Start date")}
 							</Button>
 						</PopoverTrigger>
 						<PopoverContent className="w-auto p-0 z-[1000]" align="start">
-							<div className="bg-background/95 backdrop-blur-md rounded-lg shadow-xl border border-border/50">
+							<div className="bg-background/95 backdrop-blur-md rounded-lg shadow-xl border  /50">
 								<CalendarComponent
 									mode="single"
 									selected={eventsSearchFilters.search.eventStartDay}
@@ -149,16 +149,16 @@ function SortAndFilter({ updateURL, eventsSearchFilters, initialSearch }: SortAn
 						<PopoverTrigger asChild>
 							<Button
 								variant="outline"
-								className="w-full sm:w-auto bg-background/80 backdrop-blur-sm border-border/50 hover:bg-accent/50 transition-colors"
+								className="w-full sm:w-auto bg-background/80 backdrop-blur-sm  /50 hover:bg-accent/50 transition-colors"
 							>
 								<Calendar className="mr-2 h-4 w-4 text-muted-foreground" />
 								{eventsSearchFilters.search.eventEndDay
-									? format(eventsSearchFilters.search.eventEndDay, 'MMM d, yyyy')
-									: t('End date')}
+									? format(eventsSearchFilters.search.eventEndDay, "MMM d, yyyy")
+									: t("End date")}
 							</Button>
 						</PopoverTrigger>
 						<PopoverContent className="w-auto p-0 z-[1000]" align="start">
-							<div className="bg-background/95 backdrop-blur-md rounded-lg shadow-xl border border-border/50">
+							<div className="bg-background/95 backdrop-blur-md rounded-lg shadow-xl border  /50">
 								<CalendarComponent
 									mode="single"
 									selected={eventsSearchFilters.search.eventEndDay}
@@ -181,7 +181,7 @@ function SortAndFilter({ updateURL, eventsSearchFilters, initialSearch }: SortAn
 					<Select value={eventsSearchFilters.sort} onValueChange={sortHandler}>
 						<SelectTrigger className="h-11 min-w-[120px]">
 							<ArrowUpDown className="text-muted-foreground mr-2" />
-							<SelectValue placeholder={t('Sort by')} />
+							<SelectValue placeholder={t("Sort by")} />
 						</SelectTrigger>
 						<SelectContent>
 							{eventsSortOptions.map((option) => (
@@ -196,13 +196,13 @@ function SortAndFilter({ updateURL, eventsSearchFilters, initialSearch }: SortAn
 						variant="outline"
 						size="icon"
 						onClick={toggleDirection}
-						className="w-14 h-11 bg-background/80 backdrop-blur-sm border-border/50 hover:bg-accent/50 transition-colors"
+						className="w-14 h-11 bg-background/80 backdrop-blur-sm  /50 hover:bg-accent/50 transition-colors"
 					>
 						<span
 							className={cn(
 								eventsSearchFilters.direction === Direction.ASC
-									? 'text-lg font-bold text-primary'
-									: 'text-muted-foreground',
+									? "text-lg font-bold text-primary"
+									: "text-muted-foreground",
 							)}
 						>
 							↑
@@ -210,8 +210,8 @@ function SortAndFilter({ updateURL, eventsSearchFilters, initialSearch }: SortAn
 						<span
 							className={cn(
 								eventsSearchFilters.direction === Direction.DESC
-									? 'text-lg font-bold text-primary'
-									: 'text-muted-foreground',
+									? "text-lg font-bold text-primary"
+									: "text-muted-foreground",
 							)}
 						>
 							↓
@@ -224,7 +224,7 @@ function SortAndFilter({ updateURL, eventsSearchFilters, initialSearch }: SortAn
 						className="h-11 hover:bg-accent hover:text-accent-foreground"
 					>
 						<X className="h-4 w-4 mr-2" />
-						{t('Clear')}
+						{t("Clear")}
 					</Button>
 				</div>
 			</div>

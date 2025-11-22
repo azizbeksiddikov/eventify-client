@@ -1,24 +1,24 @@
-import Image from 'next/image';
-import { useTranslation } from 'next-i18next';
-import Link from 'next/link';
+import Image from "next/image";
+import { useTranslation } from "next-i18next";
+import Link from "next/link";
 
-import { Users, Calendar } from 'lucide-react';
-import { Group } from '@/libs/types/group/group';
-import { Card } from '@/libs/components/ui/card';
-import { Badge } from '@/libs/components/ui/badge';
+import { Users, Calendar } from "lucide-react";
+import { Group } from "@/libs/types/group/group";
+import { Card } from "@/libs/components/ui/card";
+import { Badge } from "@/libs/components/ui/badge";
 
-import { REACT_APP_API_URL } from '@/libs/config';
+import { NEXT_APP_API_URL } from "@/libs/config";
 
 interface SimilarGroupsProps {
 	groups: Group[];
 	text?: string;
 }
 
-const SimilarGroups = ({ groups, text = 'Similar Groups' }: SimilarGroupsProps) => {
-	const { t } = useTranslation('common');
+const SimilarGroups = ({ groups, text = "Similar Groups" }: SimilarGroupsProps) => {
+	const { t } = useTranslation("common");
 
 	return (
-		<Card className="p-3 sm:p-4 lg:p-6 bg-card hover:bg-secondary/15 transition-all duration-300 shadow-sm hover:shadow-md border border-border/50">
+		<Card className="p-3 sm:p-4 lg:p-6 bg-card hover:bg-secondary/15 transition-all duration-300 shadow-sm hover:shadow-md border  /50">
 			<h2 className="text-lg sm:text-xl font-semibold mb-2 sm:mb-3 text-card-foreground flex items-center gap-2">
 				<Users className="w-4 h-4 text-card-foreground" />
 				{t(text)}
@@ -36,7 +36,7 @@ const SimilarGroups = ({ groups, text = 'Similar Groups' }: SimilarGroupsProps) 
 							<div className="flex-shrink-0">
 								<div className="w-12 h-12 sm:w-14 sm:h-14 lg:w-12 lg:h-12 xl:w-14 xl:h-14 rounded-md sm:rounded-lg overflow-hidden relative">
 									<Image
-										src={`${REACT_APP_API_URL}/${group.groupImage}`}
+										src={`${NEXT_APP_API_URL}/${group.groupImage}`}
 										alt={group.groupName}
 										fill
 										className="object-cover group-hover:scale-105 transition-transform duration-200"
@@ -56,13 +56,13 @@ const SimilarGroups = ({ groups, text = 'Similar Groups' }: SimilarGroupsProps) 
 									<div className="flex items-center gap-1">
 										<Users className="w-3 h-3 text-card-foreground/70" />
 										<span className="text-xs text-card-foreground/70">
-											{group.memberCount} {t('members')}
+											{group.memberCount} {t("members")}
 										</span>
 									</div>
 									<div className="flex items-center gap-1">
 										<Calendar className="w-3 h-3 text-card-foreground/70" />
 										<span className="text-xs text-card-foreground/70">
-											{group.eventsCount} {t('events')}
+											{group.eventsCount} {t("events")}
 										</span>
 									</div>
 								</div>
