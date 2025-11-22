@@ -1,40 +1,40 @@
-import { useRouter } from "next/router";
-import { useState, useEffect } from "react";
+import { useRouter } from 'next/router';
+import { useState, useEffect } from 'react';
 
-import { Button } from "@/libs/components/ui/button";
-import { Input } from "@/libs/components/ui/input";
-import { Textarea } from "@/libs/components/ui/textarea";
-import { Card } from "@/libs/components/ui/card";
-import { ImageIcon, RefreshCw } from "lucide-react";
-import withBasicLayout from "@/libs/components/layout/LayoutBasic";
-import { GroupCategory } from "@/libs/enums/group.enum";
-import { GroupUpdateInput } from "@/libs/types/group/group.update";
-import { ImageCropper } from "@/libs/components/common/ImageCropper";
+import { Button } from '@/libs/components/ui/button';
+import { Input } from '@/libs/components/ui/input';
+import { Textarea } from '@/libs/components/ui/textarea';
+import { Card } from '@/libs/components/ui/card';
+import { ImageIcon, RefreshCw } from 'lucide-react';
+import withBasicLayout from '@/libs/components/layout/LayoutBasic';
+import { GroupCategory } from '@/libs/enums/group.enum';
+import { GroupUpdateInput } from '@/libs/types/group/group.update';
+import { ImageCropper } from '@/libs/components/common/ImageCropper';
 
-import { useMutation, useReactiveVar, useQuery } from "@apollo/client";
-import { userVar } from "@/apollo/store";
-import { UPDATE_GROUP } from "@/apollo/user/mutation";
-import { smallError, smallSuccess } from "@/libs/alert";
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { Message } from "@/libs/enums/common.enum";
-import axios from "axios";
-import { getJwtToken } from "@/libs/auth";
-import { imageTypes, REACT_APP_API_URL } from "@/libs/config";
-import { REACT_APP_API_GRAPHQL_URL } from "@/libs/config";
-import { GET_GROUP } from "@/apollo/user/query";
-import { GroupMember } from "@/libs/types/groupMembers/groupMember";
-import Image from "next/image";
+import { useMutation, useReactiveVar, useQuery } from '@apollo/client';
+import { userVar } from '@/apollo/store';
+import { UPDATE_GROUP } from '@/apollo/user/mutation';
+import { smallError, smallSuccess } from '@/libs/alert';
+import { useTranslation } from 'next-i18next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { Message } from '@/libs/enums/common.enum';
+import axios from 'axios';
+import { getJwtToken } from '@/libs/auth';
+import { imageTypes, REACT_APP_API_URL } from '@/libs/config';
+import { REACT_APP_API_GRAPHQL_URL } from '@/libs/config';
+import { GET_GROUP } from '@/apollo/user/query';
+import { GroupMember } from '@/libs/types/groupMembers/groupMember';
+import Image from 'next/image';
 
 export const getStaticProps = async ({ locale }: { locale: string }) => ({
 	props: {
-		...(await serverSideTranslations(locale, ["common"])),
+		...(await serverSideTranslations(locale, ['common'])),
 	},
 });
 
 const GroupUpdatePage = () => {
 	const router = useRouter();
-	const { t } = useTranslation("common");
+	const { t } = useTranslation('common');
 	const user = useReactiveVar(userVar);
 	const token = getJwtToken();
 
@@ -50,7 +50,7 @@ const GroupUpdatePage = () => {
 	const [updateGroup] = useMutation(UPDATE_GROUP);
 	const { data: groupData, loading: groupLoading } = useQuery(GET_GROUP, {
 		variables: { input: groupId },
-		fetchPolicy: "cache-and-network",
+		fetchPolicy: 'cache-and-network',
 		skip: !groupId,
 	});
 
@@ -66,7 +66,7 @@ const GroupUpdatePage = () => {
 
 			if (!isOwner && !isModerator) {
 				smallError(t(Message.NOT_AUTHORIZED));
-				router.push("/group/detail?groupId=" + group._id);
+				router.push('/group/detail?groupId=' + group._id);
 				return;
 			}
 
@@ -94,29 +94,29 @@ const GroupUpdatePage = () => {
 		try {
 			const formData = new FormData();
 			formData.append(
-				"operations",
+				'operations',
 				JSON.stringify({
 					query: `mutation ImageUploader($file: Upload!, $target: String!) {
 						imageUploader(file: $file, target: $target) 
 				  }`,
 					variables: {
 						file: null,
-						target: "group",
+						target: 'group',
 					},
 				}),
 			);
 			formData.append(
-				"map",
+				'map',
 				JSON.stringify({
-					"0": ["variables.file"],
+					'0': ['variables.file'],
 				}),
 			);
-			formData.append("0", image);
+			formData.append('0', image);
 
 			const response = await axios.post(`${REACT_APP_API_GRAPHQL_URL}`, formData, {
 				headers: {
-					"Content-Type": "multipart/form-data",
-					"apollo-require-preflight": true,
+					'Content-Type': 'multipart/form-data',
+					'apollo-require-preflight': true,
 					Authorization: `Bearer ${token}`,
 				},
 			});
@@ -133,7 +133,7 @@ const GroupUpdatePage = () => {
 
 			return imageUrl;
 		} catch (err) {
-			console.error("Error uploading image:", err);
+			console.error('Error uploading image:', err);
 			smallError(t(Message.UPLOAD_FAILED));
 			return null;
 		}
@@ -156,7 +156,7 @@ const GroupUpdatePage = () => {
 				setTempImageUrl(null);
 			}
 		} catch (err) {
-			console.error("Error handling cropped image:", err);
+			console.error('Error handling cropped image:', err);
 			smallError(t(Message.IMAGE_PROCESSING_FAILED));
 		}
 	};
@@ -244,25 +244,25 @@ const GroupUpdatePage = () => {
 						>
 							<path d="m15 18-6-6 6-6" />
 						</svg>
-						{t("Back to Group")}
+						{t('Back to Group')}
 					</Button>
 				</div>
 
 				<Card className="p-6 bg-card text-card-foreground">
-					<h1 className="text-3xl font-semibold text-foreground mb-6">{t("Update Group")}</h1>
+					<h1 className="text-3xl font-semibold text-foreground mb-6">{t('Update Group')}</h1>
 
 					<form onSubmit={submitHandler} className="space-y-6">
 						{/* Group Name */}
 						<div className="space-y-2">
 							<label htmlFor="groupName" className="text-sm font-medium text-foreground">
-								{t("Group Name")}
+								{t('Group Name')}
 							</label>
 							<Input
 								id="groupName"
 								name="groupName"
 								value={formData.groupName}
 								onChange={inputHandler}
-								placeholder={t("Enter group name")}
+								placeholder={t('Enter group name')}
 								className="bg-input text-input-foreground border-input"
 								required
 							/>
@@ -271,14 +271,14 @@ const GroupUpdatePage = () => {
 						{/* Group Description */}
 						<div className="space-y-2">
 							<label htmlFor="groupDesc" className="text-sm font-medium text-foreground">
-								{t("Description")}
+								{t('Description')}
 							</label>
 							<Textarea
 								id="groupDesc"
 								name="groupDesc"
 								value={formData.groupDesc}
 								onChange={inputHandler}
-								placeholder={t("Enter group description")}
+								placeholder={t('Enter group description')}
 								className="min-h-[120px] bg-input text-input-foreground border-input"
 								required
 							/>
@@ -286,22 +286,22 @@ const GroupUpdatePage = () => {
 
 						{/* Categories */}
 						<div className="space-y-2">
-							<label className="text-sm font-medium text-foreground">{t("Categories (Select up to 3)")}</label>
+							<label className="text-sm font-medium text-foreground">{t('Categories (Select up to 3)')}</label>
 							<div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
 								{Object.values(GroupCategory).map((category) => (
 									<Button
 										key={category}
 										type="button"
-										variant={selectedCategories.includes(category) ? "default" : "outline"}
+										variant={selectedCategories.includes(category) ? 'default' : 'outline'}
 										onClick={() => categoryHandler(category)}
 										disabled={selectedCategories.length >= 3 && !selectedCategories.includes(category)}
 										className={`h-10 transition-all duration-200 ${
 											selectedCategories.includes(category)
-												? "bg-primary text-primary-foreground font-semibold shadow-sm hover:bg-primary/90"
-												: "bg-transparent text-foreground hover:bg-accent hover:text-accent-foreground"
+												? 'bg-primary text-primary-foreground font-semibold shadow-sm hover:bg-primary/90'
+												: 'bg-transparent text-foreground hover:bg-accent hover:text-accent-foreground'
 										} disabled:opacity-50 disabled:cursor-not-allowed`}
 									>
-										{category.charAt(0) + category.slice(1).toLowerCase().replace("_", " ")}
+										{category.charAt(0) + category.slice(1).toLowerCase().replace('_', ' ')}
 									</Button>
 								))}
 							</div>
@@ -309,7 +309,7 @@ const GroupUpdatePage = () => {
 
 						{/* Image Section */}
 						<div className="space-y-4">
-							<label className="text-sm font-medium text-foreground">{t("Group Image")}</label>
+							<label className="text-sm font-medium text-foreground">{t('Group Image')}</label>
 							<div className="relative aspect-[16/9] w-full max-w-2xl mx-auto rounded-xl overflow-hidden bg-muted/50 rounded-t-xl">
 								{imagePreview ? (
 									<>
@@ -320,7 +320,7 @@ const GroupUpdatePage = () => {
 										>
 											<div className="flex items-center gap-2 bg-white/90 text-foreground px-4 py-2 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200">
 												<RefreshCw className="h-4 w-4" />
-												<span className="font-medium">{t("Change Image")}</span>
+												<span className="font-medium">{t('Change Image')}</span>
 											</div>
 										</label>
 									</>
@@ -330,7 +330,7 @@ const GroupUpdatePage = () => {
 										className="absolute inset-0 flex flex-col items-center justify-center bg-muted/50 hover:bg-muted/60 transition-colors duration-200 cursor-pointer"
 									>
 										<ImageIcon className="h-12 w-12 text-muted-foreground mb-2" />
-										<span className="text-muted-foreground font-medium">{t("Click to upload image")}</span>
+										<span className="text-muted-foreground font-medium">{t('Click to upload image')}</span>
 									</label>
 								)}
 								<input
@@ -341,7 +341,7 @@ const GroupUpdatePage = () => {
 									onChange={imageChangeHandler}
 									className="hidden"
 								/>
-								<p className="text-sm text-muted-foreground mt-1">{t("Only JPG, JPEG, and PNG files are allowed")}</p>
+								<p className="text-sm text-muted-foreground mt-1">{t('Only JPG, JPEG, and PNG files are allowed')}</p>
 							</div>
 						</div>
 
@@ -353,7 +353,7 @@ const GroupUpdatePage = () => {
 								setTempImageUrl(null);
 							}}
 							onCropComplete={cropCompleteHandler}
-							imageUrl={tempImageUrl || ""}
+							imageUrl={tempImageUrl || ''}
 						/>
 
 						{/* Submit Button */}
@@ -364,7 +364,7 @@ const GroupUpdatePage = () => {
 								disabled={isSubmitting || selectedCategories.length === 0}
 								className="bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed px-8"
 							>
-								{isSubmitting ? t("Updating...") : t("Update Group")}
+								{isSubmitting ? t('Updating...') : t('Update Group')}
 							</Button>
 						</div>
 					</form>

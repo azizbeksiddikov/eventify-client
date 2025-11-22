@@ -1,30 +1,30 @@
-import { GetStaticProps } from "next";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/router";
-import { userVar } from "@/apollo/store";
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { useMutation, useReactiveVar, useApolloClient } from "@apollo/client";
-import { useQuery } from "@apollo/client";
+import { GetStaticProps } from 'next';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
+import { userVar } from '@/apollo/store';
+import { useTranslation } from 'next-i18next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { useMutation, useReactiveVar, useApolloClient } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 
-import withBasicLayout from "@/libs/components/layout/LayoutBasic";
-import PaginationComponent from "@/libs/components/common/PaginationComponent";
-import EventCard from "@/libs/components/common/EventCard";
-import SortAndFilter from "@/libs/components/events/SortAndFilter";
-import EventsHeader from "@/libs/components/events/EventsHeader";
-import CategoriesSidebar from "@/libs/components/events/CategoriesSidebar";
+import withBasicLayout from '@/libs/components/layout/LayoutBasic';
+import PaginationComponent from '@/libs/components/common/PaginationComponent';
+import EventCard from '@/libs/components/common/EventCard';
+import SortAndFilter from '@/libs/components/events/SortAndFilter';
+import EventsHeader from '@/libs/components/events/EventsHeader';
+import CategoriesSidebar from '@/libs/components/events/CategoriesSidebar';
 
-import { GET_EVENTS } from "@/apollo/user/query";
-import { LIKE_TARGET_EVENT } from "@/apollo/user/mutation";
-import { likeEvent, parseDate } from "@/libs/utils";
-import { EventCategory, EventStatus } from "@/libs/enums/event.enum";
-import { Event } from "@/libs/types/event/event";
-import { EventsInquiry } from "@/libs/types/event/event.input";
-import { Direction } from "@/libs/enums/common.enum";
+import { GET_EVENTS } from '@/apollo/user/query';
+import { LIKE_TARGET_EVENT } from '@/apollo/user/mutation';
+import { likeEvent, parseDate } from '@/libs/utils';
+import { EventCategory, EventStatus } from '@/libs/enums/event.enum';
+import { Event } from '@/libs/types/event/event';
+import { EventsInquiry } from '@/libs/types/event/event.input';
+import { Direction } from '@/libs/enums/common.enum';
 
 export const getStaticProps: GetStaticProps = async ({ locale }) => ({
 	props: {
-		...(await serverSideTranslations(locale || "en", ["common"])),
+		...(await serverSideTranslations(locale || 'en', ['common'])),
 	},
 });
 
@@ -36,10 +36,10 @@ const EventsPage = ({
 	initialSearch = {
 		page: 1,
 		limit: 6,
-		sort: "createdAt",
+		sort: 'createdAt',
 		direction: Direction.DESC,
 		search: {
-			text: "",
+			text: '',
 			eventCategories: [],
 			eventStatus: undefined,
 			eventStartDay: undefined,
@@ -48,22 +48,19 @@ const EventsPage = ({
 	},
 }: EventsPageProps) => {
 	const router = useRouter();
-	const { t } = useTranslation("common");
+	const { t } = useTranslation('common');
 	const user = useReactiveVar(userVar);
 	const [events, setEvents] = useState<Event[]>([]);
 
 	const readDate = (date: Date): string => {
-		return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, "0")}-${date
-			.getDate()
-			.toString()
-			.padStart(2, "0")}`;
+		return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
 	};
 
 	const readUrl = (): EventsInquiry => {
 		if (router?.query) {
 			const categories =
 				(router.query.categories as string)
-					?.split("-")
+					?.split('-')
 					.filter(Boolean)
 					.map((cat) => cat.toUpperCase() as EventCategory)
 					.filter((cat) => Object.values(EventCategory).includes(cat)) || [];
@@ -71,10 +68,10 @@ const EventsPage = ({
 			return {
 				page: Math.max(1, Number(router.query.page) || 1),
 				limit: Math.max(1, Number(router.query.limit) || 6),
-				sort: (router.query.sort as keyof Event) || "createdAt",
-				direction: router.query.direction === "1" ? Direction.ASC : Direction.DESC,
+				sort: (router.query.sort as keyof Event) || 'createdAt',
+				direction: router.query.direction === '1' ? Direction.ASC : Direction.DESC,
 				search: {
-					text: (router.query.text as string) || "",
+					text: (router.query.text as string) || '',
 					eventCategories: categories,
 					eventStatus: router.query.status as EventStatus,
 					eventStartDay: parseDate(router.query.startDate as string),
@@ -90,15 +87,15 @@ const EventsPage = ({
 		const query: Record<string, string> = {
 			page: Math.max(1, newSearch.page || 1).toString(),
 			limit: Math.max(1, newSearch.limit || 6).toString(),
-			sort: newSearch.sort || "createdAt",
-			direction: newSearch.direction === Direction.ASC ? "1" : "-1",
+			sort: newSearch.sort || 'createdAt',
+			direction: newSearch.direction === Direction.ASC ? '1' : '-1',
 		};
 
 		if (newSearch.search.text) {
 			query.text = newSearch.search.text;
 		}
 		if (newSearch.search.eventCategories?.length) {
-			query.categories = newSearch.search.eventCategories.join("-");
+			query.categories = newSearch.search.eventCategories.join('-');
 		}
 		if (newSearch.search.eventStatus) {
 			query.status = newSearch.search.eventStatus;
@@ -117,7 +114,7 @@ const EventsPage = ({
 	const [likeTargetEvent] = useMutation(LIKE_TARGET_EVENT);
 
 	const { data: getEventsData, refetch: getEventsRefetch } = useQuery(GET_EVENTS, {
-		fetchPolicy: "cache-and-network",
+		fetchPolicy: 'cache-and-network',
 		variables: {
 			input: eventsSearchFilters,
 		},
@@ -186,7 +183,7 @@ const EventsPage = ({
 							</>
 						) : (
 							<div className="py-16 text-center">
-								<p className="text-muted-foreground">{t("No events found. Try adjusting your filters.")}</p>
+								<p className="text-muted-foreground">{t('No events found. Try adjusting your filters.')}</p>
 							</div>
 						)}
 					</div>

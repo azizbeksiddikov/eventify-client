@@ -20,7 +20,7 @@ import { ScrollArea } from "@/libs/components/ui/scroll-area";
 import withBasicLayout from "@/libs/components/layout/LayoutBasic";
 import { ImageCropper } from "@/libs/components/common/ImageCropper";
 
-import { EventCategory, EventStatus, EventType } from "@/libs/enums/event.enum";
+import { EventCategory, EventStatus } from "@/libs/enums/event.enum";
 import { GET_MY_GROUPS } from "@/apollo/user/query";
 import { CREATE_EVENT } from "@/apollo/user/mutation";
 import { cn } from "@/libs/utils";
@@ -52,26 +52,15 @@ const EventCreatePage = () => {
 	const [tempImageUrl, setTempImageUrl] = useState<string | null>(null);
 
 	const [formData, setFormData] = useState<EventInput>({
-		eventType: EventType.ONCE,
 		eventName: "",
 		eventDesc: "",
 		eventImages: [],
-
-		// ===== Event Timestamps =====
 		eventStartAt: new Date(),
 		eventEndAt: new Date(),
-
-		// ===== Event Location =====
 		eventCity: "",
 		eventAddress: "",
-
-		// ===== Event Capacity and Price =====
-		eventCapacity: undefined,
-		eventPrice: 0,
-		groupId: "",
-
-		// ===== Event Status and Categories =====
 		eventStatus: EventStatus.UPCOMING,
+		groupId: "",
 		eventCategories: [],
 	});
 
@@ -89,6 +78,16 @@ const EventCreatePage = () => {
 	}, [groupsData]);
 
 	/** HANDLERS */
+	const validateTime = (startTime: string, endTime: string) => {
+		const [startHour, startMinute] = startTime.split(":").map(Number);
+		const [endHour, endMinute] = endTime.split(":").map(Number);
+
+		if (endHour < startHour || (endHour === startHour && endMinute <= startMinute)) {
+			return false;
+		}
+		return true;
+	};
+
 	const startTimeChangeHandler = (hour: string, minute: string) => {
 		const newStartTime = `${hour}:${minute}`;
 		if (formData) setFormData((prev) => ({ ...prev, eventStartTime: newStartTime }));
@@ -373,8 +372,128 @@ const EventCreatePage = () => {
 						</div>
 
 						{/* Event Date and Time */}
-						<div className="grid grid-cols-1 sm:grid-cols-3 gap-4"></div>
-						{/* TODO: Add Event Date and Time */}
+						<div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+							<div className="space-y-2">
+								<label htmlFor="eventStartAt" className="text-sm font-medium text-foreground">
+									{t("Start Time")}
+								</label>
+								<div className="flex gap-2">
+									<Select
+										value={formData.eventStartAt.getHours().toString().padStart(2, "0")}
+										onValueChange={(hour) => {
+											const currentTime = new Date(formData.eventStartAt);
+											currentTime.setHours(Number(hour));
+											setFormData((prev) => ({ ...prev, eventStartAt: currentTime }));
+										}}
+									>
+										<SelectTrigger className="w-20 bg-input text-input-foreground border-input hover:bg-accent hover:text-accent-foreground transition-colors duration-200">
+											<SelectValue placeholder="HH" />
+										</SelectTrigger>
+										<SelectContent className="bg-popover text-popover-foreground border-border">
+											<ScrollArea className="h-[200px]">
+												{[...Array(24)].map((_, i) => (
+													<SelectItem
+														key={i}
+														value={i.toString().padStart(2, "0")}
+														className="hover:bg-accent hover:text-accent-foreground transition-colors duration-200 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
+													>
+														{i.toString().padStart(2, "0")}
+													</SelectItem>
+												))}
+											</ScrollArea>
+										</SelectContent>
+									</Select>
+									<Select
+										value={formData.eventStartAt.getMinutes().toString().padStart(2, "0")}
+										onValueChange={(minute) => {
+											const currentTime = new Date(formData.eventStartAt);
+											currentTime.setMinutes(Number(minute));
+											setFormData((prev) => ({ ...prev, eventStartAt: currentTime }));
+										}}
+									>
+										<SelectTrigger className="w-20 bg-input text-input-foreground border-input hover:bg-accent hover:text-accent-foreground transition-colors duration-200">
+											<SelectValue placeholder="MM" />
+										</SelectTrigger>
+										<SelectContent className="bg-popover text-popover-foreground border-border">
+											<ScrollArea className="h-[200px]">
+												{[...Array(12)].map((_, i) => {
+													const minute = (i * 5).toString().padStart(2, "0");
+													return (
+														<SelectItem
+															key={minute}
+															value={minute}
+															className="hover:bg-accent hover:text-accent-foreground transition-colors duration-200 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
+														>
+															{minute}
+														</SelectItem>
+													);
+												})}
+											</ScrollArea>
+										</SelectContent>
+									</Select>
+								</div>
+							</div>
+							<div className="space-y-2">
+								<label htmlFor="eventEndAt" className="text-sm font-medium text-foreground">
+									{t("End Time")}
+								</label>
+								<div className="flex gap-2">
+									<Select
+										value={formData.eventEndAt.getHours().toString().padStart(2, "0")}
+										onValueChange={(hour) => {
+											const currentTime = new Date(formData.eventEndAt);
+											currentTime.setHours(Number(hour));
+											setFormData((prev) => ({ ...prev, eventEndAt: currentTime }));
+										}}
+									>
+										<SelectTrigger className="w-20 bg-input text-input-foreground border-input hover:bg-accent hover:text-accent-foreground transition-colors duration-200">
+											<SelectValue placeholder="HH" />
+										</SelectTrigger>
+										<SelectContent className="bg-popover text-popover-foreground border-border">
+											<ScrollArea className="h-[200px]">
+												{[...Array(24)].map((_, i) => (
+													<SelectItem
+														key={i}
+														value={i.toString().padStart(2, "0")}
+														className="hover:bg-accent hover:text-accent-foreground transition-colors duration-200 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
+													>
+														{i.toString().padStart(2, "0")}
+													</SelectItem>
+												))}
+											</ScrollArea>
+										</SelectContent>
+									</Select>
+									<Select
+										value={formData.eventEndAt.getMinutes().toString().padStart(2, "0")}
+										onValueChange={(minute) => {
+											const currentTime = new Date(formData.eventEndAt);
+											currentTime.setMinutes(Number(minute));
+											setFormData((prev) => ({ ...prev, eventEndAt: currentTime }));
+										}}
+									>
+										<SelectTrigger className="w-20 bg-input text-input-foreground border-input hover:bg-accent hover:text-accent-foreground transition-colors duration-200">
+											<SelectValue placeholder="MM" />
+										</SelectTrigger>
+										<SelectContent className="bg-popover text-popover-foreground border-border">
+											<ScrollArea className="h-[200px]">
+												{[...Array(12)].map((_, i) => {
+													const minute = (i * 5).toString().padStart(2, "0");
+													return (
+														<SelectItem
+															key={minute}
+															value={minute}
+															className="hover:bg-accent hover:text-accent-foreground transition-colors duration-200 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
+														>
+															{minute}
+														</SelectItem>
+													);
+												})}
+											</ScrollArea>
+										</SelectContent>
+									</Select>
+								</div>
+							</div>
+						</div>
 
 						{/* Location */}
 						<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -498,12 +617,12 @@ const EventCreatePage = () => {
 									isSubmitting ||
 									selectedCategories.length === 0 ||
 									!formData.groupId ||
-									!formData.eventStartAt ||
-									!formData.eventEndAt ||
 									!formData.eventCity ||
 									!formData.eventAddress ||
 									!formData.eventCapacity ||
-									!formData.eventImages.length
+									!formData.eventImages.length ||
+									!formData.eventStartAt ||
+									!formData.eventEndAt
 								}
 								className="bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed px-8"
 							>

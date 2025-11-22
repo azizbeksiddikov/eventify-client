@@ -1,26 +1,26 @@
-import { useEffect, useState } from "react";
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { useApolloClient, useMutation, useQuery, useReactiveVar } from "@apollo/client";
-import { useRouter } from "next/router";
+import { useEffect, useState } from 'react';
+import { useTranslation } from 'next-i18next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { useApolloClient, useMutation, useQuery, useReactiveVar } from '@apollo/client';
+import { useRouter } from 'next/router';
 
-import withBasicLayout from "@/libs/components/layout/LayoutBasic";
-import OrganizerCard from "@/libs/components/common/OrganizerCard";
-import OrganizersHeader from "@/libs/components/organizer/OrganizersHeader";
-import SortAndFilterOrganizers from "@/libs/components/organizer/SortAndFilterOrganizers";
-import PaginationComponent from "@/libs/components/common/PaginationComponent";
+import withBasicLayout from '@/libs/components/layout/LayoutBasic';
+import OrganizerCard from '@/libs/components/common/OrganizerCard';
+import OrganizersHeader from '@/libs/components/organizer/OrganizersHeader';
+import SortAndFilterOrganizers from '@/libs/components/organizer/SortAndFilterOrganizers';
+import PaginationComponent from '@/libs/components/common/PaginationComponent';
 
-import { GET_ORGANIZERS } from "@/apollo/user/query";
-import { SUBSCRIBE, UNSUBSCRIBE, LIKE_TARGET_MEMBER } from "@/apollo/user/mutation";
-import { Direction } from "@/libs/enums/common.enum";
-import { OrganizersInquiry } from "@/libs/types/member/member.input";
-import { Member } from "@/libs/types/member/member";
-import { userVar } from "@/apollo/store";
-import { followMember, likeMember, unfollowMember } from "@/libs/utils";
+import { GET_ORGANIZERS } from '@/apollo/user/query';
+import { SUBSCRIBE, UNSUBSCRIBE, LIKE_TARGET_MEMBER } from '@/apollo/user/mutation';
+import { Direction } from '@/libs/enums/common.enum';
+import { OrganizersInquiry } from '@/libs/types/member/member.input';
+import { Member } from '@/libs/types/member/member';
+import { userVar } from '@/apollo/store';
+import { followMember, likeMember, unfollowMember } from '@/libs/utils';
 
 export const getStaticProps = async ({ locale }: { locale: string }) => ({
 	props: {
-		...(await serverSideTranslations(locale, ["common"])),
+		...(await serverSideTranslations(locale, ['common'])),
 	},
 });
 
@@ -32,16 +32,16 @@ const OrganizersPage = ({
 	initialSearch = {
 		page: 1,
 		limit: 6,
-		sort: "createdAt",
+		sort: 'createdAt',
 		direction: Direction.DESC,
 		search: {
-			text: "",
+			text: '',
 		},
 	},
 }: OrganizersPageProps) => {
 	const router = useRouter();
 	const user = useReactiveVar(userVar);
-	const { t } = useTranslation("common");
+	const { t } = useTranslation('common');
 
 	const readUrl = (): OrganizersInquiry => {
 		if (router?.query) {
@@ -49,7 +49,7 @@ const OrganizersPage = ({
 				page: Math.max(1, Number(router.query.page) || initialSearch.page),
 				limit: Math.max(1, Number(router.query.limit) || initialSearch.limit),
 				sort: (router.query.sort as string) || initialSearch.sort,
-				direction: router.query.direction === "1" ? Direction.ASC : Direction.DESC,
+				direction: router.query.direction === '1' ? Direction.ASC : Direction.DESC,
 				search: {
 					text: (router.query.text as string) || initialSearch.search.text,
 				},
@@ -64,8 +64,8 @@ const OrganizersPage = ({
 		const query: Record<string, string> = {
 			page: Math.max(initialSearch.page, newSearch.page).toString(),
 			limit: Math.max(1, newSearch.limit).toString(),
-			sort: newSearch.sort || initialSearch.sort || "createdAt",
-			direction: newSearch.direction === Direction.ASC ? "1" : "-1",
+			sort: newSearch.sort || initialSearch.sort || 'createdAt',
+			direction: newSearch.direction === Direction.ASC ? '1' : '-1',
 		};
 
 		if (newSearch.search?.text) {
@@ -80,7 +80,7 @@ const OrganizersPage = ({
 	const [unsubscribe] = useMutation(UNSUBSCRIBE);
 
 	const { data: organizersData } = useQuery(GET_ORGANIZERS, {
-		fetchPolicy: "cache-and-network",
+		fetchPolicy: 'cache-and-network',
 		variables: {
 			input: organizerSearch,
 		},
@@ -143,7 +143,7 @@ const OrganizersPage = ({
 					</>
 				) : (
 					<div className="py-16 text-center">
-						<p className="text-muted-foreground">{t("No organizers found. Try adjusting your filters.")}</p>
+						<p className="text-muted-foreground">{t('No organizers found. Try adjusting your filters.')}</p>
 					</div>
 				)}
 			</div>

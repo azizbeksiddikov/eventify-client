@@ -1,34 +1,34 @@
-import React, { useEffect, useState } from "react";
-import withBasicLayout from "@/libs/components/layout/LayoutBasic";
-import { useRouter } from "next/router";
-import { Users, Users2, Calendar, HelpCircle } from "lucide-react";
-import { useMutation, useQuery, useReactiveVar } from "@apollo/client";
-import { userVar } from "@/apollo/store";
-import { MemberType } from "@/libs/enums/member.enum";
-import { smallError, smallSuccess } from "@/libs/alert";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/libs/components/ui/tabs";
+import React, { useEffect, useState } from 'react';
+import withBasicLayout from '@/libs/components/layout/LayoutBasic';
+import { useRouter } from 'next/router';
+import { Users, Users2, Calendar, HelpCircle } from 'lucide-react';
+import { useMutation, useQuery, useReactiveVar } from '@apollo/client';
+import { userVar } from '@/apollo/store';
+import { MemberType } from '@/libs/enums/member.enum';
+import { smallError, smallSuccess } from '@/libs/alert';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/libs/components/ui/tabs';
 
-import UsersModule from "@/libs/components/admin/users/UsersModule";
-import GroupsModule from "@/libs/components/admin/groups/GroupsModule";
-import EventsModule from "@/libs/components/admin/events/EventsModule";
-import FaqsModule from "@/libs/components/admin/faqs/FaqsModule";
+import UsersModule from '@/libs/components/admin/users/UsersModule';
+import GroupsModule from '@/libs/components/admin/groups/GroupsModule';
+import EventsModule from '@/libs/components/admin/events/EventsModule';
+import FaqsModule from '@/libs/components/admin/faqs/FaqsModule';
 
-import { useTranslation } from "next-i18next";
+import { useTranslation } from 'next-i18next';
 import {
 	GET_ALL_EVENTS_BY_ADMIN,
 	GET_ALL_GROUPS_BY_ADMIN,
 	GET_ALL_MEMBERS_BY_ADMIN,
 	GET_ALL_FAQS_BY_ADMIN,
-} from "@/apollo/admin/query";
-import { Members } from "@/libs/types/member/member";
-import { MembersInquiry } from "@/libs/types/member/member.input";
-import { Direction } from "@/libs/enums/common.enum";
-import { GroupsInquiry } from "@/libs/types/group/group.input";
-import { Groups } from "@/libs/types/group/group";
-import { getJwtToken } from "@/libs/auth";
-import { updateUserInfo } from "@/libs/auth";
-import { EventsInquiry } from "@/libs/types/event/event.input";
-import { Events } from "@/libs/types/event/event";
+} from '@/apollo/admin/query';
+import { Members } from '@/libs/types/member/member';
+import { MembersInquiry } from '@/libs/types/member/member.input';
+import { Direction } from '@/libs/enums/common.enum';
+import { GroupsInquiry } from '@/libs/types/group/group.input';
+import { Groups } from '@/libs/types/group/group';
+import { getJwtToken } from '@/libs/auth';
+import { updateUserInfo } from '@/libs/auth';
+import { EventsInquiry } from '@/libs/types/event/event.input';
+import { Events } from '@/libs/types/event/event';
 import {
 	REMOVE_EVENT_BY_ADMIN,
 	REMOVE_GROUP_BY_ADMIN,
@@ -39,14 +39,15 @@ import {
 	CREATE_FAQ,
 	UPDATE_FAQ,
 	REMOVE_FAQ,
-} from "@/apollo/admin/mutation";
-import { MemberUpdateInput } from "@/libs/types/member/member.update";
-import { GroupUpdateInput } from "@/libs/types/group/group.update";
-import { EventUpdateInput } from "@/libs/types/event/event.update";
-import { FaqByGroup } from "@/libs/types/faq/faq";
-import { FaqInput } from "@/libs/types/faq/faq.input";
-import { FaqUpdate } from "@/libs/types/faq/faq.update";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+} from '@/apollo/admin/mutation';
+import { MemberUpdateInput } from '@/libs/types/member/member.update';
+import { GroupUpdateInput } from '@/libs/types/group/group.update';
+import { EventUpdateInput } from '@/libs/types/event/event.update';
+import { FaqByGroup } from '@/libs/types/faq/faq';
+import { FaqInput } from '@/libs/types/faq/faq.input';
+import { FaqUpdate } from '@/libs/types/faq/faq.update';
+import useDeviceDetect from '@/libs/hooks/useDeviceDetect';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 
 interface AdminHomeProps {
 	initialMembersInquiry?: MembersInquiry;
@@ -57,7 +58,7 @@ interface AdminHomeProps {
 const defaultMembersInquiry: MembersInquiry = {
 	page: 1,
 	limit: 10,
-	sort: "createdAt",
+	sort: 'createdAt',
 	direction: Direction.DESC,
 	search: {
 		text: undefined,
@@ -69,10 +70,10 @@ const defaultMembersInquiry: MembersInquiry = {
 const defaultGroupsInquiry: GroupsInquiry = {
 	page: 1,
 	limit: 10,
-	sort: "createdAt",
+	sort: 'createdAt',
 	direction: Direction.DESC,
 	search: {
-		text: "",
+		text: '',
 		groupCategories: [],
 	},
 };
@@ -80,10 +81,10 @@ const defaultGroupsInquiry: GroupsInquiry = {
 const defaultEventsInquiry: EventsInquiry = {
 	page: 1,
 	limit: 10,
-	sort: "createdAt",
+	sort: 'createdAt',
 	direction: Direction.DESC,
 	search: {
-		text: "",
+		text: '',
 		eventCategories: [],
 		eventStatus: undefined,
 		eventStartDay: undefined,
@@ -93,7 +94,7 @@ const defaultEventsInquiry: EventsInquiry = {
 
 export const getStaticProps = async ({ locale }: { locale: string }) => ({
 	props: {
-		...(await serverSideTranslations(locale, ["common"])),
+		...(await serverSideTranslations(locale, ['common'])),
 	},
 });
 
@@ -106,11 +107,12 @@ const AdminHome = ({
 	const user = useReactiveVar(userVar);
 	const { t } = useTranslation();
 	const [loading, setLoading] = useState(true);
+	const device = useDeviceDetect();
 
 	const [membersInquiry, setMembersInquiry] = useState<MembersInquiry>(initialMembersInquiry);
 	const [groupsInquiry, setGroupsInquiry] = useState<GroupsInquiry>(initialGroupsInquiry);
 	const [eventsInquiry, setEventsInquiry] = useState<EventsInquiry>(initialEventsInquiry);
-	const [activeTab, setActiveTab] = useState<string>("users");
+	const [activeTab, setActiveTab] = useState<string>('users');
 
 	const [members, setMembers] = useState<Members>({
 		list: [],
@@ -141,7 +143,7 @@ const AdminHome = ({
 		variables: {
 			input: membersInquiry,
 		},
-		fetchPolicy: "cache-and-network",
+		fetchPolicy: 'cache-and-network',
 		skip: !user._id,
 	});
 
@@ -149,7 +151,7 @@ const AdminHome = ({
 		variables: {
 			input: groupsInquiry,
 		},
-		fetchPolicy: "cache-and-network",
+		fetchPolicy: 'cache-and-network',
 		skip: !user._id,
 	});
 
@@ -157,13 +159,13 @@ const AdminHome = ({
 		variables: {
 			input: eventsInquiry,
 		},
-		fetchPolicy: "cache-and-network",
+		fetchPolicy: 'cache-and-network',
 		skip: !user._id,
 	});
 
 	const { data: faqsData, refetch: refetchFaqs } = useQuery(GET_ALL_FAQS_BY_ADMIN, {
 		skip: !user._id,
-		fetchPolicy: "cache-and-network",
+		fetchPolicy: 'cache-and-network',
 	});
 
 	/** LIFECYCLE */
@@ -172,7 +174,7 @@ const AdminHome = ({
 		if (jwt) updateUserInfo(jwt);
 		setLoading(false);
 
-		const savedTab = localStorage.getItem("adminActiveTab");
+		const savedTab = localStorage.getItem('adminActiveTab');
 		if (savedTab) {
 			setActiveTab(savedTab);
 		}
@@ -182,8 +184,8 @@ const AdminHome = ({
 
 	useEffect(() => {
 		if (!loading && user.memberType !== MemberType.ADMIN) {
-			smallError("You are not authorized to access this page");
-			router.push("/").then();
+			smallError('You are not authorized to access this page');
+			router.push('/').then();
 		}
 	}, [loading, user, router]);
 
@@ -216,7 +218,7 @@ const AdminHome = ({
 		if (user._id && user.memberType === MemberType.ADMIN) {
 			await updateMember({ variables: { input: member } });
 			// refetchMembers(membersInquiry);
-			smallSuccess("Member updated successfully");
+			smallSuccess('Member updated successfully');
 		}
 	};
 
@@ -224,14 +226,14 @@ const AdminHome = ({
 		if (user._id && user.memberType === MemberType.ADMIN) {
 			await removeMember({ variables: { input: memberId } });
 			refetchMembers(membersInquiry);
-			smallSuccess("Member removed successfully");
+			smallSuccess('Member removed successfully');
 		}
 	};
 
 	const updateGroupHandler = async (group: GroupUpdateInput) => {
 		if (user._id && user.memberType === MemberType.ADMIN) {
 			await updateGroup({ variables: { input: group } });
-			smallSuccess("Group updated successfully");
+			smallSuccess('Group updated successfully');
 		}
 	};
 
@@ -239,14 +241,14 @@ const AdminHome = ({
 		if (user._id && user.memberType === MemberType.ADMIN) {
 			await removeGroup({ variables: { input: groupId } });
 			refetchGroups(groupsInquiry);
-			smallSuccess("Group removed successfully");
+			smallSuccess('Group removed successfully');
 		}
 	};
 
 	const updateEventHandler = async (event: EventUpdateInput) => {
 		if (user._id && user.memberType === MemberType.ADMIN) {
 			await updateEvent({ variables: { input: event } });
-			smallSuccess("Event updated successfully");
+			smallSuccess('Event updated successfully');
 		}
 	};
 
@@ -254,20 +256,20 @@ const AdminHome = ({
 		if (user._id && user.memberType === MemberType.ADMIN) {
 			await removeEvent({ variables: { input: eventId } });
 			refetchEvents(eventsInquiry);
-			smallSuccess("Event removed successfully");
+			smallSuccess('Event removed successfully');
 		}
 	};
 
 	const changeTabHandler = (value: string) => {
 		setActiveTab(value);
-		localStorage.setItem("adminActiveTab", value);
+		localStorage.setItem('adminActiveTab', value);
 	};
 
 	const createFaqHandler = async (faq: FaqInput) => {
 		if (user._id && user.memberType === MemberType.ADMIN) {
 			await createFaq({ variables: { input: faq } });
 			refetchFaqs();
-			smallSuccess("Faq created successfully");
+			smallSuccess('Faq created successfully');
 		}
 	};
 
@@ -275,7 +277,7 @@ const AdminHome = ({
 		if (user._id && user.memberType === MemberType.ADMIN) {
 			await updateFaq({ variables: { input: faq } });
 			refetchFaqs();
-			smallSuccess("Faq updated successfully");
+			smallSuccess('Faq updated successfully');
 		}
 	};
 
@@ -283,18 +285,18 @@ const AdminHome = ({
 		if (user._id && user.memberType === MemberType.ADMIN) {
 			await removeFaq({ variables: { input: faqId } });
 			refetchFaqs();
-			smallSuccess("Faq removed successfully");
+			smallSuccess('Faq removed successfully');
 		}
 	};
 
-	// Mobile view
-	// return (
-	// 	<div className="container mx-auto py-8">
-	// 		<div className="text-center text-2xl font-bold">{t("Please, enter from Desktop")}</div>
-	// 	</div>
-	// );
+	if (device === 'mobile') {
+		return (
+			<div className="container mx-auto py-8">
+				<div className="text-center text-2xl font-bold">{t('Please, enter from Desktop')}</div>
+			</div>
+		);
+	}
 
-	// Desktop view
 	return (
 		<div className="container mx-auto py-8">
 			<Tabs value={activeTab} onValueChange={changeTabHandler} className="w-full">
@@ -302,19 +304,19 @@ const AdminHome = ({
 				<TabsList className="grid w-full grid-cols-4 mb-8 h-12">
 					<TabsTrigger value="users" className="flex items-center gap-2">
 						<Users className="h-4 w-4" />
-						{t("Users")}
+						{t('Users')}
 					</TabsTrigger>
 					<TabsTrigger value="groups" className="flex items-center gap-2">
 						<Users2 className="h-4 w-4" />
-						{t("Groups")}
+						{t('Groups')}
 					</TabsTrigger>
 					<TabsTrigger value="events" className="flex items-center gap-2">
 						<Calendar className="h-4 w-4" />
-						{t("Events")}
+						{t('Events')}
 					</TabsTrigger>
 					<TabsTrigger value="faqs" className="flex items-center gap-2">
 						<HelpCircle className="h-4 w-4" />
-						{t("Faqs")}
+						{t('Faqs')}
 					</TabsTrigger>
 				</TabsList>
 				{/* TABS CONTENT */}

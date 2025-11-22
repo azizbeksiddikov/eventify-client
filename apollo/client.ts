@@ -1,6 +1,5 @@
 import { useMemo } from "react";
-import { ApolloClient, ApolloLink, InMemoryCache, from, NormalizedCacheObject } from "@apollo/client";
-import createUploadLink from "apollo-upload-client/public/createUploadLink.js";
+import { ApolloClient, ApolloLink, InMemoryCache, from, NormalizedCacheObject, createHttpLink } from "@apollo/client";
 import { onError } from "@apollo/client/link/error";
 import { getJwtToken } from "@/libs/auth";
 import { TokenRefreshLink } from "apollo-link-token-refresh";
