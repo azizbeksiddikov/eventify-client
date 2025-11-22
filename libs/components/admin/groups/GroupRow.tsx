@@ -1,18 +1,17 @@
-import { Avatar, AvatarFallback } from '@radix-ui/react-avatar';
-import { Edit, Group as GroupIcon, Save, Trash2, X } from 'lucide-react';
-import Link from 'next/link';
-import { useState } from 'react';
-import { useTranslation } from 'next-i18next';
+import { Avatar, AvatarImage, AvatarFallback } from "@/libs/components/ui/avatar";
+import { Edit, Group as GroupIcon, Save, Trash2, X } from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
+import { useTranslation } from "next-i18next";
 
-import { AvatarImage } from '@/libs/components/ui/avatar';
-import { Badge } from '@/libs/components/ui/badge';
-import { Button } from '@/libs/components/ui/button';
-import { Input } from '@/libs/components/ui/input';
-import { TableCell, TableRow } from '@/libs/components/ui/table';
+import { Badge } from "@/libs/components/ui/badge";
+import { Button } from "@/libs/components/ui/button";
+import { Input } from "@/libs/components/ui/input";
+import { TableCell, TableRow } from "@/libs/components/ui/table";
 
-import { REACT_APP_API_URL } from '@/libs/config';
-import { GroupUpdateInput } from '@/libs/types/group/group.update';
-import { Group } from '@/libs/types/group/group';
+import { REACT_APP_API_URL } from "@/libs/config";
+import { GroupUpdateInput } from "@/libs/types/group/group.update";
+import { Group } from "@/libs/types/group/group";
 
 interface GroupRowProps {
 	group: Group;
@@ -75,8 +74,8 @@ const GroupRow = ({
 						</Avatar>
 						{isEditing ? (
 							<Input
-								value={groupUpdateInput.groupName ?? group.groupName ?? ''}
-								onChange={(e) => inputHandler('groupName', e.target.value)}
+								value={groupUpdateInput.groupName ?? group.groupName ?? ""}
+								onChange={(e) => inputHandler("groupName", e.target.value)}
 								className="w-full bg-background text-foreground border-input focus:ring-primary"
 							/>
 						) : (
@@ -95,8 +94,8 @@ const GroupRow = ({
 			<TableCell>
 				{isEditing ? (
 					<Input
-						value={groupUpdateInput.groupDesc ?? group.groupDesc ?? ''}
-						onChange={(e) => inputHandler('groupDesc', e.target.value)}
+						value={groupUpdateInput.groupDesc ?? group.groupDesc ?? ""}
+						onChange={(e) => inputHandler("groupDesc", e.target.value)}
 						className="w-full bg-background text-foreground border-input focus:ring-primary"
 					/>
 				) : (
@@ -105,7 +104,7 @@ const GroupRow = ({
 							? group.groupDesc.length > 35
 								? `${group.groupDesc.slice(0, 35)}...`
 								: group.groupDesc
-							: t('N/A')}
+							: t("N/A")}
 					</span>
 				)}
 			</TableCell>

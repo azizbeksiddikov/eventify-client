@@ -1,9 +1,9 @@
-import { useTranslation } from 'next-i18next';
-import { Calendar, Users, Ticket, Heart, Star, User } from 'lucide-react';
+import { useTranslation } from "next-i18next";
+import { Calendar, Users, Ticket, Heart, Star, User } from "lucide-react";
 
-import { getMemberTypeColor, REACT_APP_API_URL } from '@/libs/config';
-import { Member } from '@/libs/types/member/member';
-import { Avatar, AvatarFallback, AvatarImage } from '@radix-ui/react-avatar';
+import { getMemberTypeColor, REACT_APP_API_URL } from "@/libs/config";
+import { Member } from "@/libs/types/member/member";
+import { Avatar, AvatarImage, AvatarFallback } from "@/libs/components/ui/avatar";
 
 interface ProfileHeaderProps {
 	member: Member;
@@ -15,27 +15,27 @@ export const ProfileHeader = ({ member, groupsCount, ticketsCount }: ProfileHead
 	const { t } = useTranslation();
 	const stats = [
 		{
-			label: t('Points'),
+			label: t("Points"),
 			value: member.memberPoints || 0,
 			icon: Star,
 		},
 		{
-			label: t('Groups'),
+			label: t("Groups"),
 			value: groupsCount || 0,
 			icon: Users,
 		},
 		{
-			label: t('Events'),
+			label: t("Events"),
 			value: member.memberEvents || 0,
 			icon: Calendar,
 		},
 		{
-			label: t('Tickets'),
+			label: t("Tickets"),
 			value: ticketsCount || 0,
 			icon: Ticket,
 		},
 		{
-			label: t('Likes'),
+			label: t("Likes"),
 			value: member.memberLikes || 0,
 			icon: Heart,
 		},
@@ -51,7 +51,7 @@ export const ProfileHeader = ({ member, groupsCount, ticketsCount }: ProfileHead
 							{member.memberImage ? (
 								<AvatarImage
 									src={`${REACT_APP_API_URL}/${member.memberImage}`}
-									alt={member.memberFullName ?? t('No image')}
+									alt={member.memberFullName ?? t("No image")}
 									className="rounded-full ring-4 ring-primary/10"
 								/>
 							) : (
@@ -98,7 +98,7 @@ export const ProfileHeader = ({ member, groupsCount, ticketsCount }: ProfileHead
 				{member.memberDesc && (
 					<div className="border-t border-border/50 pt-4">
 						<p className="text-card-foreground/80 text-base md:text-lg text-left leading-relaxed">
-							{member.memberDesc ?? t('No description')}
+							{member.memberDesc ?? t("No description")}
 						</p>
 					</div>
 				)}

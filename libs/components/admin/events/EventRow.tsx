@@ -1,9 +1,8 @@
-import { Avatar, AvatarFallback } from "@radix-ui/react-avatar";
 import { Calendar, Edit, Save, Trash2, X } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
-import { AvatarImage } from "@/libs/components/ui/avatar";
+import { Avatar, AvatarImage, AvatarFallback } from "@/libs/components/ui/avatar";
 import { Badge } from "@/libs/components/ui/badge";
 import { Button } from "@/libs/components/ui/button";
 import { Input } from "@/libs/components/ui/input";

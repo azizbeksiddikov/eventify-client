@@ -1,21 +1,20 @@
-import { Avatar, AvatarFallback } from '@radix-ui/react-avatar';
-import { Edit, Save, Trash2, User, X } from 'lucide-react';
-import Link from 'next/link';
-import { useState } from 'react';
-import { useTranslation } from 'next-i18next';
+import { Avatar, AvatarImage, AvatarFallback } from "@/libs/components/ui/avatar";
+import { Edit, Save, Trash2, User, X } from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
+import { useTranslation } from "next-i18next";
 
-import { AvatarImage } from '@/libs/components/ui/avatar';
-import { Badge } from '@/libs/components/ui/badge';
-import { Button } from '@/libs/components/ui/button';
-import { Input } from '@/libs/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/libs/components/ui/select';
-import { TableCell, TableRow } from '@/libs/components/ui/table';
+import { Badge } from "@/libs/components/ui/badge";
+import { Button } from "@/libs/components/ui/button";
+import { Input } from "@/libs/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/libs/components/ui/select";
+import { TableCell, TableRow } from "@/libs/components/ui/table";
 
-import { REACT_APP_API_URL } from '@/libs/config';
-import { MemberStatus, MemberType } from '@/libs/enums/member.enum';
-import { Member } from '@/libs/types/member/member';
-import { MemberUpdateInput } from '@/libs/types/member/member.update';
-import { formatPhoneNumber } from '@/libs/utils';
+import { REACT_APP_API_URL } from "@/libs/config";
+import { MemberStatus, MemberType } from "@/libs/enums/member.enum";
+import { Member } from "@/libs/types/member/member";
+import { MemberUpdateInput } from "@/libs/types/member/member.update";
+import { formatPhoneNumber } from "@/libs/utils";
 
 interface MemberRowProps {
 	member: Member;
@@ -102,12 +101,12 @@ const MemberRow = ({
 			<TableCell>
 				{isEditing ? (
 					<Input
-						value={memberUpdateInput.memberFullName ?? ''}
-						onChange={(e) => inputHandler('memberFullName', e.target.value)}
+						value={memberUpdateInput.memberFullName ?? ""}
+						onChange={(e) => inputHandler("memberFullName", e.target.value)}
 						className="h-8"
 					/>
 				) : (
-					<span className="text-foreground">{member.memberFullName || t('N/A')}</span>
+					<span className="text-foreground">{member.memberFullName || t("N/A")}</span>
 				)}
 			</TableCell>
 
@@ -115,12 +114,12 @@ const MemberRow = ({
 			<TableCell>
 				{isEditing ? (
 					<Input
-						value={memberUpdateInput.memberPhone ?? ''}
+						value={memberUpdateInput.memberPhone ?? ""}
 						onChange={(e) => phoneHandler(e.target.value)}
 						className="h-8"
 					/>
 				) : (
-					<span className="text-foreground">{member.memberPhone || t('N/A')}</span>
+					<span className="text-foreground">{member.memberPhone || t("N/A")}</span>
 				)}
 			</TableCell>
 
@@ -130,7 +129,7 @@ const MemberRow = ({
 					<Input
 						type="number"
 						value={memberUpdateInput.memberPoints ?? 0}
-						onChange={(e) => inputHandler('memberPoints', parseInt(e.target.value))}
+						onChange={(e) => inputHandler("memberPoints", parseInt(e.target.value))}
 						className="h-8"
 					/>
 				) : (
@@ -141,13 +140,13 @@ const MemberRow = ({
 			{/* MEMBER STATUS */}
 			<TableCell>
 				{isEditing ? (
-					<Select value={memberUpdateInput.memberStatus} onValueChange={(value) => inputHandler('memberStatus', value)}>
+					<Select value={memberUpdateInput.memberStatus} onValueChange={(value) => inputHandler("memberStatus", value)}>
 						<SelectTrigger className="h-8">
 							<SelectValue placeholder="Select status" />
 						</SelectTrigger>
 						<SelectContent>
-							<SelectItem value={MemberStatus.ACTIVE}>{t('ACTIVE')}</SelectItem>
-							<SelectItem value={MemberStatus.BLOCKED}>{t('BLOCKED')}</SelectItem>
+							<SelectItem value={MemberStatus.ACTIVE}>{t("ACTIVE")}</SelectItem>
+							<SelectItem value={MemberStatus.BLOCKED}>{t("BLOCKED")}</SelectItem>
 						</SelectContent>
 					</Select>
 				) : (
@@ -158,13 +157,13 @@ const MemberRow = ({
 			{/* MEMBER TYPE */}
 			<TableCell>
 				{isEditing ? (
-					<Select value={memberUpdateInput.memberType} onValueChange={(value) => inputHandler('memberType', value)}>
+					<Select value={memberUpdateInput.memberType} onValueChange={(value) => inputHandler("memberType", value)}>
 						<SelectTrigger className="h-8">
 							<SelectValue placeholder="Select type" />
 						</SelectTrigger>
 						<SelectContent>
-							<SelectItem value={MemberType.ORGANIZER}>{t('ORGANIZER')}</SelectItem>
-							<SelectItem value={MemberType.USER}>{t('USER')}</SelectItem>
+							<SelectItem value={MemberType.ORGANIZER}>{t("ORGANIZER")}</SelectItem>
+							<SelectItem value={MemberType.USER}>{t("USER")}</SelectItem>
 						</SelectContent>
 					</Select>
 				) : (
