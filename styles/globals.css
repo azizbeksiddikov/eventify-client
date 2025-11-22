@@ -1,6 +1,6 @@
-@import 'tw-animate-css';
+@import "tw-animate-css";
 
-@import 'tailwindcss';
+@import "tailwindcss";
 
 @plugin 'tailwindcss-animate';
 
