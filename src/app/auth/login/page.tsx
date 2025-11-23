@@ -1,32 +1,27 @@
-import React, { useCallback, useState } from 'react';
-import Link from 'next/link';
-import { useTranslation } from 'next-i18next';
-import { useRouter } from 'next/router';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { Eye, EyeOff } from 'lucide-react';
+"use client";
 
-import withAuthLayout from '@/libs/components/layout/LayoutAuth';
-import { Button } from '@/libs/components/ui/button';
-import { Input } from '@/libs/components/ui/input';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/libs/components/ui/card';
+import React, { useCallback, useState } from "react";
+import Link from "next/link";
+import { useTranslation } from "next-i18next";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Eye, EyeOff } from "lucide-react";
 
-import { LoginInput } from '@/libs/types/member/member.input';
-import { logIn } from '@/libs/auth';
-import { Message } from '@/libs/enums/common.enum';
-import { smallError } from '@/libs/alert';
+import { Button } from "@/libs/components/ui/button";
+import { Input } from "@/libs/components/ui/input";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/libs/components/ui/card";
 
-export const getStaticProps = async ({ locale }: { locale: string }) => ({
-	props: {
-		...(await serverSideTranslations(locale, ['common'])),
-	},
-});
+import { LoginInput } from "@/libs/types/member/member.input";
+import { logIn } from "@/libs/auth";
+import { Message } from "@/libs/enums/common.enum";
+import { smallError } from "@/libs/alert";
 
 const Login = () => {
 	const { t } = useTranslation();
 	const router = useRouter();
+	const searchParams = useSearchParams();
 	const [loginInput, setLoginInput] = useState<LoginInput>({
-		username: '',
-		memberPassword: '',
+		username: "",
+		memberPassword: "",
 	});
 	const [showPassword, setShowPassword] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
@@ -58,9 +53,10 @@ const Login = () => {
 		setIsLoading(true);
 		try {
 			await logIn(loginInput.username, loginInput.memberPassword);
-			await router.push(`${router.query.referrer ?? '/'}`);
+			const referrer = searchParams.get("referrer");
+			router.push(referrer || "/");
 		} catch (err: unknown) {
-			const error = err as Error;
+			const error = err instanceof Error ? err : new Error("Unknown error");
 			smallError(error.message);
 		} finally {
 			setIsLoading(false);
@@ -71,15 +67,15 @@ const Login = () => {
 		<div className="flex-1 my-10 flex items-center justify-center px-4 sm:px-6 lg:px-8">
 			<Card className="w-full max-w-md">
 				<CardHeader className="text-center">
-					<CardTitle className="text-3xl font-semibold">{t('Login')}</CardTitle>
+					<CardTitle className="text-3xl font-semibold">{t("Login")}</CardTitle>
 					<CardDescription>
-						{t('Or')}
+						{t("Or")}
 						<Link
 							href="/auth/signup"
 							className="font-medium text-primary hover:text-primary/80 transition-colors duration-300 underline"
 						>
-							{' '}
-							{t('create a new account')}
+							{" "}
+							{t("create a new account")}
 						</Link>
 					</CardDescription>
 				</CardHeader>
@@ -88,7 +84,7 @@ const Login = () => {
 						<div className="space-y-4">
 							<div className="space-y-2">
 								<label htmlFor="username" className="text-sm font-medium">
-									{t('Username')}
+									{t("Username")}
 								</label>
 								<Input
 									id="username"
@@ -97,23 +93,23 @@ const Login = () => {
 									autoComplete="username"
 									value={loginInput.username}
 									onChange={(e) => inputHandler(e.target.name, e.target.value)}
-									placeholder={t('Enter your username')}
+									placeholder={t("Enter your username")}
 								/>
 							</div>
 
 							<div className="space-y-2">
 								<label htmlFor="memberPassword" className="text-sm font-medium">
-									{t('Password')}
+									{t("Password")}
 								</label>
 								<div className="relative">
 									<Input
 										id="memberPassword"
 										name="memberPassword"
-										type={showPassword ? 'text' : 'password'}
+										type={showPassword ? "text" : "password"}
 										autoComplete="current-password"
 										value={loginInput.memberPassword}
 										onChange={(e) => inputHandler(e.target.name, e.target.value)}
-										placeholder={t('Enter your password')}
+										placeholder={t("Enter your password")}
 										className="pr-10"
 									/>
 									<Button
@@ -130,7 +126,7 @@ const Login = () => {
 						</div>
 
 						<Button type="submit" className="w-full" disabled={isLoading}>
-							{isLoading ? t('Signing in...') : t('Sign in')}
+							{isLoading ? t("Signing in...") : t("Sign in")}
 						</Button>
 					</form>
 				</CardContent>
@@ -139,4 +135,4 @@ const Login = () => {
 	);
 };
 
-export default withAuthLayout(Login);
+export default Login;

@@ -1,29 +1,23 @@
-import { useState } from 'react';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import Link from 'next/link';
-import { useRouter } from 'next/router';
-import { useTranslation } from 'next-i18next';
-import { Eye, EyeOff, User, Star } from 'lucide-react';
+"use client";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/libs/components/ui/card';
-import { RadioGroup, RadioGroupItem } from '@/libs/components/ui/radio-group';
-import { Button } from '@/libs/components/ui/button';
-import { Input } from '@/libs/components/ui/input';
-import { Label } from '@/libs/components/ui/label';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/libs/components/ui/tooltip';
+import { useState } from "react";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useTranslation } from "next-i18next";
+import { Eye, EyeOff, User, Star } from "lucide-react";
 
-import withAuthLayout from '@/libs/components/layout/LayoutAuth';
-import { MemberInput } from '@/libs/types/member/member.input';
-import { MemberType } from '@/libs/enums/member.enum';
-import { smallError } from '@/libs/alert';
-import { Message } from '@/libs/enums/common.enum';
-import { signUp } from '@/libs/auth';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/libs/components/ui/card";
+import { RadioGroup, RadioGroupItem } from "@/libs/components/ui/radio-group";
+import { Button } from "@/libs/components/ui/button";
+import { Input } from "@/libs/components/ui/input";
+import { Label } from "@/libs/components/ui/label";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/libs/components/ui/tooltip";
 
-export const getStaticProps = async ({ locale }: { locale: string }) => ({
-	props: {
-		...(await serverSideTranslations(locale, ['common'])),
-	},
-});
+import { MemberInput } from "@/libs/types/member/member.input";
+import { MemberType } from "@/libs/enums/member.enum";
+import { smallError } from "@/libs/alert";
+import { Message } from "@/libs/enums/common.enum";
+import { signUp } from "@/libs/auth";
 
 interface SignupForm extends MemberInput {
 	confirmPassword: string;
@@ -31,13 +25,14 @@ interface SignupForm extends MemberInput {
 
 const Signup = () => {
 	const router = useRouter();
-	const { t } = useTranslation('common');
+	const searchParams = useSearchParams();
+	const { t } = useTranslation("common");
 	const [formData, setFormData] = useState<SignupForm>({
-		username: '',
-		memberEmail: '',
-		memberPassword: '',
-		memberFullName: '',
-		confirmPassword: '',
+		username: "",
+		memberEmail: "",
+		memberPassword: "",
+		memberFullName: "",
+		confirmPassword: "",
 		memberType: MemberType.USER,
 	});
 	const [showPassword, setShowPassword] = useState(false);
@@ -47,7 +42,7 @@ const Signup = () => {
 	const inputHandler = (name: string, value: string) => {
 		setFormData((prev) => ({
 			...prev,
-			[name]: name === 'username' ? value.toLowerCase() : value,
+			[name]: name === "username" ? value.toLowerCase() : value,
 		}));
 	};
 
@@ -109,9 +104,12 @@ const Signup = () => {
 				formData.memberFullName,
 				formData.memberType ?? MemberType.USER,
 			);
-			await router.push(`${router.query.referrer ?? '/'}`);
+			const referrer = searchParams.get("referrer");
+			router.push(referrer || "/");
 		} catch (err: unknown) {
-			console.log('err', err);
+			const error = err instanceof Error ? err : new Error("Unknown error");
+			smallError(error.message);
+			console.log("err", err);
 		} finally {
 			setIsLoading(false);
 		}
@@ -121,14 +119,14 @@ const Signup = () => {
 		<div className="flex-1 my-10 flex items-center justify-center px-4 sm:px-6 lg:px-8">
 			<Card className="w-full max-w-md">
 				<CardHeader className="text-center">
-					<CardTitle className="text-3xl font-semibold">{t('Create your account')}</CardTitle>
+					<CardTitle className="text-3xl font-semibold">{t("Create your account")}</CardTitle>
 					<CardDescription>
-						{t('Or')}{' '}
+						{t("Or")}{" "}
 						<Link
 							href="/auth/login"
 							className="font-medium text-primary hover:text-primary/80 transition-colors duration-300 underline"
 						>
-							{t('sign in to your account')}
+							{t("sign in to your account")}
 						</Link>
 					</CardDescription>
 				</CardHeader>
@@ -136,7 +134,7 @@ const Signup = () => {
 					<form className="space-y-6" onSubmit={submitHandler}>
 						<div className="space-y-4">
 							<div className="space-y-2">
-								<Label className="text-sm font-medium block text-center mb-4">{t('Account Type')}</Label>
+								<Label className="text-sm font-medium block text-center mb-4">{t("Account Type")}</Label>
 								<TooltipProvider>
 									<RadioGroup
 										defaultValue={MemberType.USER}
@@ -151,19 +149,19 @@ const Signup = () => {
 														value={MemberType.USER}
 														id="user"
 														className="peer sr-only"
-														aria-label={t('User account type')}
+														aria-label={t("User account type")}
 													/>
 													<Label
 														htmlFor="user"
 														className="flex items-center gap-2 cursor-pointer rounded-lg border-2 border-muted p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
 													>
 														<User className="h-4 w-4" />
-														<span className="text-sm font-medium">{t('User')}</span>
+														<span className="text-sm font-medium">{t("User")}</span>
 													</Label>
 												</div>
 											</TooltipTrigger>
 											<TooltipContent>
-												<p>{t('Regular user account for attending events')}</p>
+												<p>{t("Regular user account for attending events")}</p>
 											</TooltipContent>
 										</Tooltip>
 
@@ -174,19 +172,19 @@ const Signup = () => {
 														value={MemberType.ORGANIZER}
 														id="organizer"
 														className="peer sr-only"
-														aria-label={t('Organizer account type')}
+														aria-label={t("Organizer account type")}
 													/>
 													<Label
 														htmlFor="organizer"
 														className="flex items-center gap-2 cursor-pointer rounded-lg border-2 border-muted p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
 													>
 														<Star className="h-4 w-4" />
-														<span className="text-sm font-medium">{t('Organizer')}</span>
+														<span className="text-sm font-medium">{t("Organizer")}</span>
 													</Label>
 												</div>
 											</TooltipTrigger>
 											<TooltipContent>
-												<p>{t('Create and manage your own events')}</p>
+												<p>{t("Create and manage your own events")}</p>
 											</TooltipContent>
 										</Tooltip>
 									</RadioGroup>
@@ -195,7 +193,7 @@ const Signup = () => {
 
 							<div className="space-y-2">
 								<Label htmlFor="username" className="text-sm font-medium">
-									{t('Username')}
+									{t("Username")}
 								</Label>
 								<Input
 									id="username"
@@ -204,14 +202,14 @@ const Signup = () => {
 									autoComplete="username"
 									value={formData.username}
 									onChange={(e) => inputHandler(e.target.name, e.target.value)}
-									placeholder={t('Enter your username')}
+									placeholder={t("Enter your username")}
 									tabIndex={3}
 								/>
 							</div>
 
 							<div className="space-y-2">
 								<Label htmlFor="memberEmail" className="text-sm font-medium">
-									{t('Email address')}
+									{t("Email address")}
 								</Label>
 								<Input
 									id="memberEmail"
@@ -220,14 +218,14 @@ const Signup = () => {
 									autoComplete="email"
 									value={formData.memberEmail}
 									onChange={(e) => inputHandler(e.target.name, e.target.value)}
-									placeholder={t('Enter your email')}
+									placeholder={t("Enter your email")}
 									tabIndex={4}
 								/>
 							</div>
 
 							<div className="space-y-2">
 								<Label htmlFor="memberFullName" className="text-sm font-medium">
-									{t('Full name')}
+									{t("Full name")}
 								</Label>
 								<Input
 									id="memberFullName"
@@ -236,24 +234,24 @@ const Signup = () => {
 									autoComplete="name"
 									value={formData.memberFullName}
 									onChange={(e) => inputHandler(e.target.name, e.target.value)}
-									placeholder={t('Enter your full name')}
+									placeholder={t("Enter your full name")}
 									tabIndex={5}
 								/>
 							</div>
 
 							<div className="space-y-2">
 								<Label htmlFor="memberPassword" className="text-sm font-medium">
-									{t('Password')}
+									{t("Password")}
 								</Label>
 								<div className="relative">
 									<Input
 										id="memberPassword"
 										name="memberPassword"
-										type={showPassword ? 'text' : 'password'}
+										type={showPassword ? "text" : "password"}
 										autoComplete="new-password"
 										value={formData.memberPassword}
 										onChange={(e) => inputHandler(e.target.name, e.target.value)}
-										placeholder={t('Enter your password')}
+										placeholder={t("Enter your password")}
 										className="pr-10"
 										tabIndex={6}
 									/>
@@ -272,17 +270,17 @@ const Signup = () => {
 
 							<div className="space-y-2">
 								<Label htmlFor="confirmPassword" className="text-sm font-medium">
-									{t('Confirm password')}
+									{t("Confirm password")}
 								</Label>
 								<div className="relative">
 									<Input
 										id="confirmPassword"
 										name="confirmPassword"
-										type={showConfirmPassword ? 'text' : 'password'}
+										type={showConfirmPassword ? "text" : "password"}
 										autoComplete="new-password"
 										value={formData.confirmPassword}
 										onChange={(e) => inputHandler(e.target.name, e.target.value)}
-										placeholder={t('Confirm your password')}
+										placeholder={t("Confirm your password")}
 										className="pr-10"
 										tabIndex={7}
 									/>
@@ -301,7 +299,7 @@ const Signup = () => {
 						</div>
 
 						<Button type="submit" className="w-full" disabled={isLoading} tabIndex={8}>
-							{isLoading ? t('Creating account...') : t('Create account')}
+							{isLoading ? t("Creating account...") : t("Create account")}
 						</Button>
 					</form>
 				</CardContent>
@@ -310,4 +308,4 @@ const Signup = () => {
 	);
 };
 
-export default withAuthLayout(Signup);
+export default Signup;
