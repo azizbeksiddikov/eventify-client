@@ -1,42 +1,36 @@
-import { useState, useEffect } from 'react';
-import { useQuery } from '@apollo/client';
-import { useTranslation } from 'next-i18next';
+"use client";
 
-import withBasicLayout from '@/libs/components/layout/LayoutBasic';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/libs/components/ui/tabs';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/libs/components/ui/accordion';
+import { useState, useMemo } from "react";
+import { useQuery } from "@apollo/client/react";
+import { useTranslation } from "next-i18next";
 
-import { GET_FAQS } from '@/apollo/user/query';
-import { FaqByGroup } from '@/libs/types/faq/faq';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/libs/components/ui/tabs";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/libs/components/ui/accordion";
+
+import { GET_FAQS } from "@/apollo/user/query";
+import { FaqByGroup } from "@/libs/types/faq/faq";
 
 const HelpPage = () => {
 	const { t } = useTranslation();
-	const [activeTab, setActiveTab] = useState<string>('');
-	const [faqByGroup, setFaqByGroup] = useState<FaqByGroup[]>([]);
 
 	/** APOLLO REQUESTS */
 	const { data: getFaqsData } = useQuery(GET_FAQS, {
-		fetchPolicy: 'cache-first',
+		fetchPolicy: "cache-first",
 		notifyOnNetworkStatusChange: true,
 	});
 
-	/** LIFECYCLES **/
-	useEffect(() => {
-		if (getFaqsData?.getFaqs) {
-			setFaqByGroup(getFaqsData.getFaqs);
-			if (getFaqsData.getFaqs[0]?.faqGroup) {
-				setActiveTab(getFaqsData.getFaqs[0].faqGroup);
-			}
-		}
-	}, [getFaqsData]);
+	const faqByGroup: FaqByGroup[] = useMemo(() => getFaqsData?.getFaqs || [], [getFaqsData?.getFaqs]);
+
+	const defaultTab = faqByGroup[0]?.faqGroup || "";
+	const [activeTab, setActiveTab] = useState<string>(defaultTab);
 
 	return (
 		<div className="max-w-4xl mx-auto my-10 px-4">
 			{/* Header Section */}
 			<div className="text-center mb-16">
-				<h1 className="text-3xl sm:text-4xl font-bold mb-4 text-foreground">{t('How can we help you?')}</h1>
+				<h1 className="text-3xl sm:text-4xl font-bold mb-4 text-foreground">{t("How can we help you?")}</h1>
 				<p className="text-base sm:text-lg text-muted-foreground">
-					{t('Find answers to common questions or get in touch with our support team.')}
+					{t("Find answers to common questions or get in touch with our support team.")}
 				</p>
 			</div>
 
@@ -81,4 +75,4 @@ const HelpPage = () => {
 	);
 };
 
-export default withBasicLayout(HelpPage);
+export default HelpPage;
