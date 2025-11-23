@@ -1,18 +1,19 @@
-import { useEffect, useState } from 'react';
-import { useTranslation } from 'next-i18next';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { useApolloClient, useMutation, useQuery, useReactiveVar } from '@apollo/client';
-import { Users, Ticket as TicketIcon, Settings, UserPlus, UserCheck } from 'lucide-react';
-import { useRouter } from 'next/router';
+"use client";
 
-import { userVar } from '@/apollo/store';
+import { useEffect, useState } from "react";
+import { useTranslation } from "next-i18next";
+import { useApolloClient, useMutation, useQuery, useReactiveVar } from "@apollo/client/react";
+import { Users, Ticket as TicketIcon, Settings, UserPlus, UserCheck } from "lucide-react";
+import { useRouter } from "next/navigation";
+
+import { userVar } from "@/apollo/store";
 import {
 	GET_JOINED_GROUPS,
 	GET_MEMBER,
 	GET_MEMBER_FOLLOWERS_LIST,
 	GET_MEMBER_FOLLOWINGS_LIST,
 	GET_ALL_TICKETS_LIST,
-} from '@/apollo/user/query';
+} from "@/apollo/user/query";
 import {
 	CANCEL_TICKET,
 	JOIN_GROUP,
@@ -22,37 +23,30 @@ import {
 	SUBSCRIBE,
 	UNSUBSCRIBE,
 	UPDATE_MEMBER,
-} from '@/apollo/user/mutation';
-import { getJwtToken, updateStorage, updateUserInfo } from '@/libs/auth';
-import { smallSuccess } from '@/libs/alert';
-import withBasicLayout from '@/libs/components/layout/LayoutBasic';
-import { ProfileHeader } from '@/libs/components/profile/ProfileHeader';
-import { ProfileTabs } from '@/libs/components/profile/ProfileTabs';
+} from "@/apollo/user/mutation";
+import { getJwtToken, updateStorage, updateUserInfo } from "@/libs/auth";
+import { smallSuccess } from "@/libs/alert";
+import { ProfileHeader } from "@/libs/components/profile/ProfileHeader";
+import { ProfileTabs } from "@/libs/components/profile/ProfileTabs";
 
-import { Member } from '@/libs/types/member/member';
-import { Group } from '@/libs/types/group/group';
-import { Ticket } from '@/libs/types/ticket/ticket';
-import { MemberUpdateInput } from '@/libs/types/member/member.update';
-import { followMember, joinGroup, leaveGroup, likeGroup, likeMember, unfollowMember } from '@/libs/utils';
-import { Message } from '@/libs/enums/common.enum';
-
-export const getStaticProps = async ({ locale }: { locale: string }) => ({
-	props: {
-		...(await serverSideTranslations(locale, ['common'])),
-	},
-});
+import { Member } from "@/libs/types/member/member";
+import { Group } from "@/libs/types/group/group";
+import { Ticket } from "@/libs/types/ticket/ticket";
+import { MemberUpdateInput } from "@/libs/types/member/member.update";
+import { followMember, joinGroup, leaveGroup, likeGroup, likeMember, unfollowMember } from "@/libs/utils";
+import { Message } from "@/libs/enums/common.enum";
 
 const ProfilePage = () => {
 	const user = useReactiveVar(userVar);
-	const { t } = useTranslation('common');
+	const { t } = useTranslation("common");
 	const router = useRouter();
 
 	const tabs = [
-		{ id: 'groups', label: t('Groups'), icon: Users },
-		{ id: 'tickets', label: t('Tickets'), icon: TicketIcon },
-		{ id: 'followers', label: t('Followers'), icon: UserCheck },
-		{ id: 'followings', label: t('Followings'), icon: UserPlus },
-		{ id: 'settings', label: t('Settings'), icon: Settings },
+		{ id: "groups", label: t("Groups"), icon: Users },
+		{ id: "tickets", label: t("Tickets"), icon: TicketIcon },
+		{ id: "followers", label: t("Followers"), icon: UserCheck },
+		{ id: "followings", label: t("Followings"), icon: UserPlus },
+		{ id: "settings", label: t("Settings"), icon: Settings },
 	];
 	const [activeTab, setActiveTab] = useState(tabs[0].id);
 
@@ -63,12 +57,12 @@ const ProfilePage = () => {
 	const [followers, setFollowers] = useState<Member[]>([]);
 
 	const [memberUpdateInput, setMemberUpdateInput] = useState<MemberUpdateInput>({
-		username: member?.username || '',
-		memberEmail: member?.memberEmail || '',
-		memberPhone: member?.memberPhone || '',
-		memberFullName: member?.memberFullName || '',
-		memberDesc: member?.memberDesc || '',
-		memberImage: member?.memberImage || '',
+		username: member?.username || "",
+		memberEmail: member?.memberEmail || "",
+		memberPhone: member?.memberPhone || "",
+		memberFullName: member?.memberFullName || "",
+		memberDesc: member?.memberDesc || "",
+		memberImage: member?.memberImage || "",
 	});
 
 	/** APOLLO */
@@ -82,32 +76,32 @@ const ProfilePage = () => {
 	const [cancelTicket] = useMutation(CANCEL_TICKET);
 
 	const { data: getMemberData, refetch: refetchMember } = useQuery(GET_MEMBER, {
-		fetchPolicy: 'cache-and-network',
+		fetchPolicy: "cache-and-network",
 		skip: !user?._id,
-		variables: { input: user?._id },
+		variables: { input: user._id! },
 		notifyOnNetworkStatusChange: true,
 	});
 
 	const { data: getJoinedGroupsData, refetch: refetchJoinedGroups } = useQuery(GET_JOINED_GROUPS, {
-		fetchPolicy: 'cache-and-network',
+		fetchPolicy: "cache-and-network",
 		skip: !user?._id,
 		notifyOnNetworkStatusChange: true,
 	});
 
 	const { data: getTicketsData, refetch: refetchTickets } = useQuery(GET_ALL_TICKETS_LIST, {
-		fetchPolicy: 'cache-and-network',
+		fetchPolicy: "cache-and-network",
 		skip: !user?._id,
 		notifyOnNetworkStatusChange: true,
 	});
 
 	const { data: getFollowingsData } = useQuery(GET_MEMBER_FOLLOWINGS_LIST, {
-		fetchPolicy: 'cache-and-network',
+		fetchPolicy: "cache-and-network",
 		skip: !user?._id,
 		notifyOnNetworkStatusChange: true,
 	});
 
 	const { data: getFollowersData } = useQuery(GET_MEMBER_FOLLOWERS_LIST, {
-		fetchPolicy: 'cache-and-network',
+		fetchPolicy: "cache-and-network",
 		skip: !user?._id,
 		notifyOnNetworkStatusChange: true,
 	});
@@ -116,7 +110,7 @@ const ProfilePage = () => {
 	useEffect(() => {
 		const jwt = getJwtToken();
 		if (!jwt) {
-			router.push('/auth/login');
+			router.push("/auth/login");
 			return;
 		}
 		updateUserInfo(jwt);
@@ -124,39 +118,40 @@ const ProfilePage = () => {
 
 	useEffect(() => {
 		if (getMemberData?.getMember) {
-			setMember(getMemberData.getMember);
+			const memberData = getMemberData.getMember;
+			setMember(memberData as Member);
 			setMemberUpdateInput({
-				username: getMemberData.getMember.username,
-				memberFullName: getMemberData.getMember.memberFullName,
-				memberEmail: getMemberData.getMember.memberEmail,
-				memberPhone: getMemberData.getMember.memberPhone,
-				memberDesc: getMemberData.getMember.memberDesc,
-				memberImage: getMemberData.getMember.memberImage,
+				username: memberData.username || "",
+				memberFullName: memberData.memberFullName || "",
+				memberEmail: memberData.memberEmail || "",
+				memberPhone: memberData.memberPhone || "",
+				memberDesc: memberData.memberDesc || "",
+				memberImage: memberData.memberImage || "",
 			});
 		}
 	}, [getMemberData]);
 
 	useEffect(() => {
 		if (getJoinedGroupsData?.getJoinedGroups) {
-			setGroups(getJoinedGroupsData.getJoinedGroups);
+			setGroups(getJoinedGroupsData.getJoinedGroups as Group[]);
 		}
 	}, [getJoinedGroupsData]);
 
 	useEffect(() => {
 		if (getFollowingsData?.getMemberFollowingsList) {
-			setFollowings(getFollowingsData.getMemberFollowingsList);
+			setFollowings(getFollowingsData.getMemberFollowingsList as Member[]);
 		}
 	}, [getFollowingsData]);
 
 	useEffect(() => {
 		if (getFollowersData?.getMemberFollowersList) {
-			setFollowers(getFollowersData.getMemberFollowersList);
+			setFollowers(getFollowersData.getMemberFollowersList as Member[]);
 		}
 	}, [getFollowersData]);
 
 	useEffect(() => {
 		if (getTicketsData?.getAllTicketsList) {
-			setTickets(getTicketsData.getAllTicketsList);
+			setTickets(getTicketsData.getAllTicketsList as Ticket[]);
 		}
 	}, [getTicketsData]);
 
@@ -177,22 +172,25 @@ const ProfilePage = () => {
 		try {
 			if (!user?._id) throw new Error(Message.NOT_AUTHENTICATED);
 
-			const excludedFields = ['_id', 'memberStatus', 'emailVerified'];
+			const excludedFields = ["_id", "memberStatus", "emailVerified"];
 			const cleanedMemberUpdateInput = Object.fromEntries(
 				Object.entries(memberUpdateInput).filter(([key]) => !excludedFields.includes(key)),
 			);
 
-			const result: any = await updateMember({
+			const result = await updateMember({
 				variables: { input: cleanedMemberUpdateInput },
 			});
 
-			const jwtToken = result.data.updateMember?.accessToken;
-			await updateStorage({ jwtToken });
-			updateUserInfo(jwtToken);
+			const jwtToken = result.data?.updateMember?.accessToken;
+			if (jwtToken) {
+				await updateStorage({ jwtToken });
+				updateUserInfo(jwtToken);
+			}
 
 			await smallSuccess(t(Message.MEMBER_UPDATED_SUCCESSFULLY));
-		} catch (err: any) {
-			console.log('ERROR, updateMemberHandler:', err.message);
+		} catch (err: unknown) {
+			const errorMessage = err instanceof Error ? err.message : "Unknown error";
+			console.log("ERROR, updateMemberHandler:", errorMessage);
 		}
 	};
 
@@ -220,8 +218,9 @@ const ProfilePage = () => {
 			await smallSuccess(t(Message.TICKET_CANCELLED_SUCCESSFULLY));
 			refetchMember();
 			refetchTickets();
-		} catch (err: any) {
-			console.log('ERROR, cancelTicketHandler:', err.message);
+		} catch (err: unknown) {
+			const errorMessage = err instanceof Error ? err.message : "Unknown error";
+			console.log("ERROR, cancelTicketHandler:", errorMessage);
 		}
 	};
 
@@ -255,4 +254,4 @@ const ProfilePage = () => {
 	);
 };
 
-export default withBasicLayout(ProfilePage);
+export default ProfilePage;
