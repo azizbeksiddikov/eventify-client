@@ -1,9 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useTranslation } from "next-i18next";
-import { useApolloClient, useReactiveVar } from "@apollo/client";
+import { useApolloClient, useReactiveVar } from "@apollo/client/react";
 import { Heart, Calendar, Users, ExternalLink, Eye } from "lucide-react";
-import { useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client/react";
 import { userVar } from "@/apollo/store";
 
 import { Button } from "@/libs/components/ui/button";

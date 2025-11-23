@@ -1,56 +1,98 @@
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+"use client";
+
+import { useRouter, useSearchParams } from "next/navigation";
+import { useState, useEffect } from "react";
 
 import { Button } from "@/libs/components/ui/button";
 import { Input } from "@/libs/components/ui/input";
 import { Textarea } from "@/libs/components/ui/textarea";
 import { Card } from "@/libs/components/ui/card";
 import { ImageIcon, RefreshCw } from "lucide-react";
-import withBasicLayout from "@/libs/components/layout/LayoutBasic";
 import { GroupCategory } from "@/libs/enums/group.enum";
-import { GroupInput } from "@/libs/types/group/group.input";
+import { GroupUpdateInput } from "@/libs/types/group/group.update";
 import { ImageCropper } from "@/libs/components/common/ImageCropper";
 
-import { useMutation, useReactiveVar } from "@apollo/client";
+import { useMutation, useReactiveVar, useQuery } from "@apollo/client/react";
 import { userVar } from "@/apollo/store";
-import { CREATE_GROUP } from "@/apollo/user/mutation";
+import { UPDATE_GROUP } from "@/apollo/user/mutation";
 import { smallError, smallSuccess } from "@/libs/alert";
 import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { Message } from "@/libs/enums/common.enum";
 import axios from "axios";
 import { getJwtToken } from "@/libs/auth";
 import { imageTypes, NEXT_APP_API_URL } from "@/libs/config";
 import { NEXT_PUBLIC_API_GRAPHQL_URL } from "@/libs/config";
+import { GET_GROUP } from "@/apollo/user/query";
 import Image from "next/image";
 
-export const getStaticProps = async ({ locale }: { locale: string }) => ({
-	props: {
-		...(await serverSideTranslations(locale, ["common"])),
-	},
-});
-
-const GroupCreatePage = () => {
+const GroupUpdatePage = () => {
 	const router = useRouter();
+	const searchParams = useSearchParams();
 	const { t } = useTranslation("common");
 	const user = useReactiveVar(userVar);
 	const token = getJwtToken();
 
+	const [groupId, setGroupId] = useState<string | null>(null);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [imagePreview, setImagePreview] = useState<string | null>(null);
 	const [selectedCategories, setSelectedCategories] = useState<GroupCategory[]>([]);
+	const [formData, setFormData] = useState<GroupUpdateInput | null>(null);
 	const [isCropperOpen, setIsCropperOpen] = useState(false);
 	const [tempImageUrl, setTempImageUrl] = useState<string | null>(null);
 
-	const [formData, setFormData] = useState<GroupInput>({
-		groupName: "",
-		groupDesc: "",
-		groupImage: "",
-		groupCategories: [],
+	/** APOLLO REQUESTS **/
+	const [updateGroup] = useMutation(UPDATE_GROUP);
+	const { data: groupData, loading: groupLoading } = useQuery(GET_GROUP, {
+		variables: { input: groupId! },
+		fetchPolicy: "cache-and-network",
+		skip: !groupId,
 	});
 
-	/** APOLLO REQUESTS **/
-	const [createGroup] = useMutation(CREATE_GROUP);
+	/** LIFECYCLE */
+	// Handle group data and authorization
+	useEffect(() => {
+		if (groupData?.getGroup) {
+			const group = groupData.getGroup;
+
+			// Check if user is authorized to update the group
+			const isOwner = group.memberId === user?._id;
+			const isModerator = group.groupModerators?.some(
+				(moderator) =>
+					moderator && typeof moderator === "object" && "memberId" in moderator && moderator.memberId === user?._id,
+			);
+
+			if (!isOwner && !isModerator) {
+				smallError(t(Message.NOT_AUTHORIZED));
+				if (group._id) {
+					router.push(`/groups/${group._id}`);
+				}
+				return;
+			}
+
+			if (group._id && group.groupName && group.groupDesc && group.groupImage) {
+				setFormData({
+					_id: group._id,
+					groupName: group.groupName,
+					groupDesc: group.groupDesc,
+					groupCategories: (group.groupCategories?.filter((cat): cat is GroupCategory => cat !== undefined) ||
+						[]) as GroupCategory[],
+					groupImage: group.groupImage,
+				});
+				setSelectedCategories(
+					(group.groupCategories?.filter((cat): cat is GroupCategory => cat !== undefined) || []) as GroupCategory[],
+				);
+				setImagePreview(`${NEXT_APP_API_URL}/${group.groupImage}`);
+			}
+		}
+	}, [groupData]);
+
+	// Handle groupId from URL
+	useEffect(() => {
+		const groupIdParam = searchParams.get("id");
+		if (groupIdParam) {
+			setGroupId(groupIdParam);
+		}
+	}, [searchParams]);
 
 	/** HANDLERS */
 	const uploadImage = async (image: File) => {
@@ -88,7 +130,10 @@ const GroupCreatePage = () => {
 			const imageUrl = `${NEXT_APP_API_URL}/${responseImage}`;
 
 			// Update form data and preview
-			setFormData((prev) => ({ ...prev, groupImage: responseImage }));
+			setFormData((prev: GroupUpdateInput | null) => {
+				if (!prev) return null;
+				return { ...prev, groupImage: responseImage };
+			});
 			setImagePreview(imageUrl);
 
 			return imageUrl;
@@ -126,7 +171,8 @@ const GroupCreatePage = () => {
 		setIsSubmitting(true);
 
 		try {
-			if (!user._id) throw new Error(Message.NOT_AUTHENTICATED);
+			if (!user._id || !token) throw new Error(Message.NOT_AUTHENTICATED);
+			if (!formData) throw new Error(t(Message.INVALID_FORM_DATA));
 			if (!formData.groupName) throw new Error(t(Message.GROUP_NAME_REQUIRED));
 			if (!formData.groupDesc) throw new Error(t(Message.GROUP_DESCRIPTION_REQUIRED));
 			if (selectedCategories.length === 0) throw new Error(t(Message.GROUP_CATEGORY_REQUIRED));
@@ -137,18 +183,15 @@ const GroupCreatePage = () => {
 				groupCategories: selectedCategories,
 			};
 
-			const response = await createGroup({
+			await updateGroup({
 				variables: { input: updatedFormData },
 			});
 
-			await smallSuccess(t(Message.GROUP_CREATED_SUCCESSFULLY));
-			router.push(`/group/detail?groupId=${response.data.createGroup._id}`);
+			await smallSuccess(t(Message.GROUP_UPDATED_SUCCESSFULLY));
+			router.push(`/groups/${formData._id}`);
 		} catch (error: unknown) {
-			if (error instanceof Error) {
-				smallError(error.message);
-			} else {
-				smallError(t(Message.SOMETHING_WENT_WRONG));
-			}
+			const errorMessage = error instanceof Error ? error.message : "Unknown error";
+			console.log(errorMessage);
 		} finally {
 			setIsSubmitting(false);
 		}
@@ -157,10 +200,13 @@ const GroupCreatePage = () => {
 	const inputHandler = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
 		const { name, value } = e.target;
 
-		setFormData((prev) => ({
-			...prev,
-			[name]: value,
-		}));
+		setFormData((prev) => {
+			if (!prev) return null;
+			return {
+				...prev,
+				[name]: value,
+			};
+		});
 	};
 
 	const categoryHandler = (category: GroupCategory) => {
@@ -173,13 +219,21 @@ const GroupCreatePage = () => {
 		}
 	};
 
+	if (groupLoading || !formData) {
+		return (
+			<div className="min-h-screen bg-background flex items-center justify-center">
+				<div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+			</div>
+		);
+	}
+
 	return (
 		<div className="min-h-screen bg-background">
 			<div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 				<div className="mb-8">
 					<Button
 						variant="outline"
-						onClick={() => router.push("/group")}
+						onClick={() => router.push(`/groups/${formData._id}`)}
 						className="flex items-center gap-2 text-primary hover:text-primary-foreground hover:bg-primary border-primary hover:border-primary/80 transition-colors duration-200"
 					>
 						<svg
@@ -196,12 +250,12 @@ const GroupCreatePage = () => {
 						>
 							<path d="m15 18-6-6 6-6" />
 						</svg>
-						{t("Back to Groups")}
+						{t("Back to Group")}
 					</Button>
 				</div>
 
 				<Card className="p-6 bg-card text-card-foreground">
-					<h1 className="text-3xl font-semibold text-foreground mb-6">{t("Create New Group")}</h1>
+					<h1 className="text-3xl font-semibold text-foreground mb-6">{t("Update Group")}</h1>
 
 					<form onSubmit={submitHandler} className="space-y-6">
 						{/* Group Name */}
@@ -292,7 +346,6 @@ const GroupCreatePage = () => {
 									accept={imageTypes}
 									onChange={imageChangeHandler}
 									className="hidden"
-									required
 								/>
 								<p className="text-sm text-muted-foreground mt-1">{t("Only JPG, JPEG, and PNG files are allowed")}</p>
 							</div>
@@ -317,7 +370,7 @@ const GroupCreatePage = () => {
 								disabled={isSubmitting || selectedCategories.length === 0}
 								className="bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed px-8"
 							>
-								{isSubmitting ? t("Creating...") : t("Create Group")}
+								{isSubmitting ? t("Updating...") : t("Update Group")}
 							</Button>
 						</div>
 					</form>
@@ -327,4 +380,4 @@ const GroupCreatePage = () => {
 	);
 };
 
-export default withBasicLayout(GroupCreatePage);
+export default GroupUpdatePage;

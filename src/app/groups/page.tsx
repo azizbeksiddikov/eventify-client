@@ -1,27 +1,21 @@
-import { useEffect, useState } from 'react';
-import { useQuery } from '@apollo/client';
-import { useTranslation } from 'next-i18next';
-import { useRouter } from 'next/router';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+"use client";
 
-import withBasicLayout from '@/libs/components/layout/LayoutBasic';
-import PaginationComponent from '@/libs/components/common/PaginationComponent';
-import GroupsHeader from '@/libs/components/group/GroupsHeader';
-import SortAndFilterGroups from '@/libs/components/group/SortAndFilterGroups';
-import CategoriesSidebarGroup from '@/libs/components/group/CategoriesSidebarGroup';
-import GroupCard from '@/libs/components/common/GroupCard';
+import { useEffect, useState } from "react";
+import { useQuery } from "@apollo/client/react";
+import { useTranslation } from "next-i18next";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
 
-import { GET_GROUPS } from '@/apollo/user/query';
-import { GroupCategory } from '@/libs/enums/group.enum';
-import { GroupsInquiry } from '@/libs/types/group/group.input';
-import { Direction } from '@/libs/enums/common.enum';
-import { Group } from '@/libs/types/group/group';
+import PaginationComponent from "@/libs/components/common/PaginationComponent";
+import GroupsHeader from "@/libs/components/group/GroupsHeader";
+import SortAndFilterGroups from "@/libs/components/group/SortAndFilterGroups";
+import CategoriesSidebarGroup from "@/libs/components/group/CategoriesSidebarGroup";
+import GroupCard from "@/libs/components/common/GroupCard";
 
-export const getStaticProps = async ({ locale }: { locale: string }) => ({
-	props: {
-		...(await serverSideTranslations(locale, ['common'])),
-	},
-});
+import { GET_GROUPS } from "@/apollo/user/query";
+import { GroupCategory } from "@/libs/enums/group.enum";
+import { GroupsInquiry } from "@/libs/types/group/group.input";
+import { Direction } from "@/libs/enums/common.enum";
+import { Group } from "@/libs/types/group/group";
 
 interface GroupsPageProps {
 	initialSearch?: GroupsInquiry;
@@ -31,35 +25,38 @@ const GroupsPage = ({
 	initialSearch = {
 		page: 1,
 		limit: 10,
-		sort: 'createdAt',
+		sort: "createdAt",
 		direction: Direction.DESC,
 		search: {
-			text: '',
+			text: "",
 			groupCategories: [],
 		},
 	},
 }: GroupsPageProps) => {
 	const router = useRouter();
-	const { t } = useTranslation('common');
+	const searchParams = useSearchParams();
+	const pathname = usePathname();
+	const { t } = useTranslation("common");
 
 	const [groups, setGroups] = useState<Group[]>([]);
 
 	const readUrl = (): GroupsInquiry => {
-		if (router?.query) {
+		if (searchParams) {
 			const categories =
-				(router.query.categories as string)
-					?.split('-')
+				searchParams
+					.get("categories")
+					?.split("-")
 					.filter(Boolean)
 					.map((cat) => cat.toUpperCase() as GroupCategory)
 					.filter((cat) => Object.values(GroupCategory).includes(cat)) || [];
 
 			return {
-				page: Math.max(1, Number(router.query.page) || initialSearch.page),
-				limit: Math.max(1, Number(router.query.limit) || initialSearch.limit),
-				sort: (router.query.sort as keyof Group) || initialSearch.sort,
-				direction: router.query.direction === '1' ? Direction.ASC : Direction.DESC,
+				page: Math.max(1, Number(searchParams.get("page")) || initialSearch.page),
+				limit: Math.max(1, Number(searchParams.get("limit")) || initialSearch.limit),
+				sort: (searchParams.get("sort") as keyof Group) || initialSearch.sort,
+				direction: searchParams.get("direction") === "1" ? Direction.ASC : Direction.DESC,
 				search: {
-					text: (router.query.text as string) || '',
+					text: searchParams.get("text") || "",
 					groupCategories: categories,
 				},
 			};
@@ -70,26 +67,26 @@ const GroupsPage = ({
 	const [groupsSearchFilters, setGroupsSearchFilters] = useState<GroupsInquiry>(() => readUrl());
 
 	const updateURL = (newSearch: GroupsInquiry) => {
-		const query: Record<string, string> = {
-			page: Math.max(1, newSearch.page || initialSearch.page).toString(),
-			limit: Math.max(1, newSearch.limit || initialSearch.limit).toString(),
-			sort: newSearch.sort || initialSearch.sort || 'createdAt',
-			direction: newSearch.direction === Direction.ASC ? '1' : '-1',
-		};
+		const params = new URLSearchParams();
+
+		params.set("page", Math.max(1, newSearch.page || initialSearch.page).toString());
+		params.set("limit", Math.max(1, newSearch.limit || initialSearch.limit).toString());
+		params.set("sort", newSearch.sort || initialSearch.sort || "createdAt");
+		params.set("direction", newSearch.direction === Direction.ASC ? "1" : "-1");
 
 		if (newSearch.search?.text) {
-			query.text = newSearch.search.text;
+			params.set("text", newSearch.search.text);
 		}
 		if (newSearch.search?.groupCategories?.length) {
-			query.categories = newSearch.search.groupCategories.join('-');
+			params.set("categories", newSearch.search.groupCategories.join("-"));
 		}
 
-		router.push({ query }, undefined, { shallow: true });
+		router.push(`${pathname}?${params.toString()}`);
 	};
 
 	/** APOLLO REQUESTS **/
 	const { data: getGroupsData, refetch: getGroupsRefetch } = useQuery(GET_GROUPS, {
-		fetchPolicy: 'cache-and-network',
+		fetchPolicy: "cache-and-network",
 		variables: { input: groupsSearchFilters },
 		notifyOnNetworkStatusChange: true,
 	});
@@ -98,10 +95,11 @@ const GroupsPage = ({
 
 	useEffect(() => {
 		setGroupsSearchFilters(readUrl());
-	}, [router]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [searchParams]);
 
 	useEffect(() => {
-		getGroupsRefetch({ inquiry: groupsSearchFilters }).then();
+		getGroupsRefetch({ input: groupsSearchFilters }).then();
 	}, [groupsSearchFilters]);
 
 	useEffect(() => {
@@ -156,7 +154,7 @@ const GroupsPage = ({
 							</>
 						) : (
 							<div className="py-16 text-center">
-								<p className="text-muted-foreground">{t('No groups found. Try adjusting your filters.')}</p>
+								<p className="text-muted-foreground">{t("No groups found. Try adjusting your filters.")}</p>
 							</div>
 						)}
 					</div>
@@ -166,4 +164,4 @@ const GroupsPage = ({
 	);
 };
 
-export default withBasicLayout(GroupsPage);
+export default GroupsPage;
