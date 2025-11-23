@@ -63,7 +63,7 @@ export const ProfileFollowings = ({ followings, likeMemberHandler, unsubscribeHa
 									<TableRow key={user._id} className="hover:bg-muted/50">
 										<TableCell>
 											{user.memberType === MemberType.ORGANIZER ? (
-												<Link href={`/organizer/detail?organizerId=${user._id}`}>
+												<Link href={`/organizers/${user._id}`}>
 													<div className="flex items-center gap-4 underline">
 														<Avatar className="h-10 w-10">
 															{user.memberImage ? (

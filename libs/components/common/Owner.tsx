@@ -24,7 +24,7 @@ const Owner = ({ member, title = "Group Owner" }: OwnerProps) => {
 				{title}
 			</h2>
 			<Link
-				href={`/organizer/detail?organizerId=${member._id}`}
+				href={`/organizers/${member._id}`}
 				className="block group hover:scale-105 transition-transform duration-300"
 			>
 				<div className="flex flex-row items-start gap-8">

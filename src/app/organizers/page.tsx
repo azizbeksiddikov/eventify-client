@@ -1,28 +1,22 @@
-import { useEffect, useState } from 'react';
-import { useTranslation } from 'next-i18next';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { useApolloClient, useMutation, useQuery, useReactiveVar } from '@apollo/client';
-import { useRouter } from 'next/router';
+"use client";
 
-import withBasicLayout from '@/libs/components/layout/LayoutBasic';
-import OrganizerCard from '@/libs/components/common/OrganizerCard';
-import OrganizersHeader from '@/libs/components/organizer/OrganizersHeader';
-import SortAndFilterOrganizers from '@/libs/components/organizer/SortAndFilterOrganizers';
-import PaginationComponent from '@/libs/components/common/PaginationComponent';
+import { useEffect, useState } from "react";
+import { useTranslation } from "next-i18next";
+import { useApolloClient, useMutation, useQuery, useReactiveVar } from "@apollo/client/react";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
 
-import { GET_ORGANIZERS } from '@/apollo/user/query';
-import { SUBSCRIBE, UNSUBSCRIBE, LIKE_TARGET_MEMBER } from '@/apollo/user/mutation';
-import { Direction } from '@/libs/enums/common.enum';
-import { OrganizersInquiry } from '@/libs/types/member/member.input';
-import { Member } from '@/libs/types/member/member';
-import { userVar } from '@/apollo/store';
-import { followMember, likeMember, unfollowMember } from '@/libs/utils';
+import OrganizerCard from "@/libs/components/common/OrganizerCard";
+import OrganizersHeader from "@/libs/components/organizer/OrganizersHeader";
+import SortAndFilterOrganizers from "@/libs/components/organizer/SortAndFilterOrganizers";
+import PaginationComponent from "@/libs/components/common/PaginationComponent";
 
-export const getStaticProps = async ({ locale }: { locale: string }) => ({
-	props: {
-		...(await serverSideTranslations(locale, ['common'])),
-	},
-});
+import { GET_ORGANIZERS } from "@/apollo/user/query";
+import { SUBSCRIBE, UNSUBSCRIBE, LIKE_TARGET_MEMBER } from "@/apollo/user/mutation";
+import { Direction } from "@/libs/enums/common.enum";
+import { OrganizersInquiry } from "@/libs/types/member/member.input";
+import { Member } from "@/libs/types/member/member";
+import { userVar } from "@/apollo/store";
+import { followMember, likeMember, unfollowMember } from "@/libs/utils";
 
 interface OrganizersPageProps {
 	initialSearch?: OrganizersInquiry;
@@ -32,47 +26,45 @@ const OrganizersPage = ({
 	initialSearch = {
 		page: 1,
 		limit: 6,
-		sort: 'createdAt',
+		sort: "createdAt",
 		direction: Direction.DESC,
 		search: {
-			text: '',
+			text: "",
 		},
 	},
 }: OrganizersPageProps) => {
 	const router = useRouter();
+	const searchParams = useSearchParams();
+	const pathname = usePathname();
 	const user = useReactiveVar(userVar);
-	const { t } = useTranslation('common');
+	const { t } = useTranslation("common");
 
 	const readUrl = (): OrganizersInquiry => {
-		if (router?.query) {
-			return {
-				page: Math.max(1, Number(router.query.page) || initialSearch.page),
-				limit: Math.max(1, Number(router.query.limit) || initialSearch.limit),
-				sort: (router.query.sort as string) || initialSearch.sort,
-				direction: router.query.direction === '1' ? Direction.ASC : Direction.DESC,
-				search: {
-					text: (router.query.text as string) || initialSearch.search.text,
-				},
-			};
-		}
-		return initialSearch;
+		return {
+			page: Math.max(1, Number(searchParams.get("page")) || initialSearch.page),
+			limit: Math.max(1, Number(searchParams.get("limit")) || initialSearch.limit),
+			sort: searchParams.get("sort") || initialSearch.sort,
+			direction: searchParams.get("direction") === "1" ? Direction.ASC : Direction.DESC,
+			search: {
+				text: searchParams.get("text") || initialSearch.search.text,
+			},
+		};
 	};
 
 	const [organizerSearch, setOrganizerSearch] = useState<OrganizersInquiry>(() => readUrl());
 
 	const updateURL = (newSearch: OrganizersInquiry) => {
-		const query: Record<string, string> = {
-			page: Math.max(initialSearch.page, newSearch.page).toString(),
-			limit: Math.max(1, newSearch.limit).toString(),
-			sort: newSearch.sort || initialSearch.sort || 'createdAt',
-			direction: newSearch.direction === Direction.ASC ? '1' : '-1',
-		};
+		const params = new URLSearchParams();
+		params.set("page", Math.max(initialSearch.page, newSearch.page).toString());
+		params.set("limit", Math.max(1, newSearch.limit).toString());
+		params.set("sort", newSearch.sort || initialSearch.sort || "createdAt");
+		params.set("direction", newSearch.direction === Direction.ASC ? "1" : "-1");
 
 		if (newSearch.search?.text) {
-			query.text = newSearch.search.text;
+			params.set("text", newSearch.search.text);
 		}
 
-		router.push({ query }, undefined, { shallow: true });
+		router.push(`${pathname}?${params.toString()}`);
 	};
 	/** APOLLO */
 	const [likeTargetMember] = useMutation(LIKE_TARGET_MEMBER);
@@ -80,7 +72,7 @@ const OrganizersPage = ({
 	const [unsubscribe] = useMutation(UNSUBSCRIBE);
 
 	const { data: organizersData } = useQuery(GET_ORGANIZERS, {
-		fetchPolicy: 'cache-and-network',
+		fetchPolicy: "cache-and-network",
 		variables: {
 			input: organizerSearch,
 		},
@@ -92,7 +84,8 @@ const OrganizersPage = ({
 	/** LIFECYCLE */
 	useEffect(() => {
 		setOrganizerSearch(readUrl());
-	}, [router]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [searchParams]);
 
 	/** HANDLERS */
 	const likeMemberHandler = async (memberId: string) => {
@@ -143,7 +136,7 @@ const OrganizersPage = ({
 					</>
 				) : (
 					<div className="py-16 text-center">
-						<p className="text-muted-foreground">{t('No organizers found. Try adjusting your filters.')}</p>
+						<p className="text-muted-foreground">{t("No organizers found. Try adjusting your filters.")}</p>
 					</div>
 				)}
 			</div>
@@ -151,4 +144,4 @@ const OrganizersPage = ({
 	);
 };
 
-export default withBasicLayout(OrganizersPage);
+export default OrganizersPage;

@@ -86,7 +86,7 @@ const MemberRow = ({
 					</Avatar>
 					{member.memberType === MemberType.ORGANIZER ? (
 						<Link
-							href={`/organizer/detail?organizerId=${member._id}`}
+							href={`/organizers/${member._id}`}
 							className="font-medium text-foreground underline hover:text-primary hover:underline"
 						>
 							{member.username}

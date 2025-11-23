@@ -130,7 +130,7 @@ const OrganizerCard = ({ organizer, likeMemberHandler, subscribeHandler, unsubsc
 				>
 					{organizer?.meFollowed?.[0]?.myFollowing ? t("Following") : t("Follow")}
 				</Button>
-				<Link href={`/organizer/detail?organizerId=${organizer._id}`}>
+				<Link href={`/organizers/${organizer._id}`}>
 					<Button
 						variant="outline"
 						size="sm"
