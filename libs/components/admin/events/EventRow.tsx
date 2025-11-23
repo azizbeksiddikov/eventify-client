@@ -114,7 +114,7 @@ const EventRow = ({
 						/>
 					) : (
 						<Link
-							href={`/event/detail?eventId=${event._id}`}
+							href={`/events/${event._id}`}
 							className="font-medium text-foreground underline hover:text-primary hover:underline"
 						>
 							{event.eventName}

@@ -4,9 +4,9 @@ import { Instagram, Linkedin, MapPin, Phone, Clock, Send } from "lucide-react";
 import { Logo } from "@/libs/components/common/Logo";
 
 const quickLinks = [
-	{ href: "/event", label: "Events" },
-	{ href: "/group", label: "Groups" },
-	{ href: "/organizer", label: "Organizers" },
+	{ href: "/events", label: "Events" },
+	{ href: "/groups", label: "Groups" },
+	{ href: "/organizers", label: "Organizers" },
 	{ href: "/help", label: "Help Center" },
 ];
 

@@ -1,16 +1,16 @@
-import { useTranslation } from 'next-i18next';
-import { Filter, X } from 'lucide-react';
-import { useMemo } from 'react';
+import { useTranslation } from "next-i18next";
+import { Filter, X } from "lucide-react";
+import { useMemo } from "react";
 
-import { Popover, PopoverContent, PopoverTrigger } from '@/libs/components/ui/popover';
-import { ScrollArea } from '@/libs/components/ui/scroll-area';
-import { Button } from '@/libs/components/ui/button';
-import { Checkbox } from '@/libs/components/ui/checkbox';
-import { Label } from '@/libs/components/ui/label';
+import { Popover, PopoverContent, PopoverTrigger } from "@/libs/components/ui/popover";
+import { ScrollArea } from "@/libs/components/ui/scroll-area";
+import { Button } from "@/libs/components/ui/button";
+import { Checkbox } from "@/libs/components/ui/checkbox";
+import { Label } from "@/libs/components/ui/label";
 
-import useDeviceDetect from '@/libs/hooks/useDeviceDetect';
-import type { EventsInquiry } from '@/libs/types/event/event.input';
-import { EventCategory } from '@/libs/enums/event.enum';
+import useDeviceDetect from "@/libs/hooks/useDeviceDetect";
+import type { EventsInquiry } from "@/libs/types/event/event.input";
+import { EventCategory } from "@/libs/enums/event.enum";
 
 interface CategoriesSidebarProps {
 	eventsSearchFilters: EventsInquiry;
@@ -19,7 +19,7 @@ interface CategoriesSidebarProps {
 }
 
 const CategoriesSidebar = ({ eventsSearchFilters, updateURL, initialSearch }: CategoriesSidebarProps) => {
-	const { t } = useTranslation('common');
+	const { t } = useTranslation("common");
 	const device = useDeviceDetect();
 
 	const hasSelectedCategories = useMemo(
@@ -28,7 +28,7 @@ const CategoriesSidebar = ({ eventsSearchFilters, updateURL, initialSearch }: Ca
 	);
 
 	const clearButtonClasses = useMemo(
-		() => `${hasSelectedCategories ? 'bg-primary text-primary-foreground' : 'opacity-50 cursor-not-allowed'}`,
+		() => `${hasSelectedCategories ? "bg-primary text-primary-foreground" : "opacity-50 cursor-not-allowed"}`,
 		[hasSelectedCategories],
 	);
 
@@ -51,7 +51,7 @@ const CategoriesSidebar = ({ eventsSearchFilters, updateURL, initialSearch }: Ca
 	const formatCategory = (category: string) => {
 		return t(category)
 			.toLowerCase()
-			.replace(/_/g, ' ')
+			.replace(/_/g, " ")
 			.replace(/\b\w/g, (char) => char.toUpperCase());
 	};
 
@@ -86,28 +86,28 @@ const CategoriesSidebar = ({ eventsSearchFilters, updateURL, initialSearch }: Ca
 		<Button
 			type="button"
 			onClick={clearAllHandler}
-			className={`${mobile ? 'h-8 px-3' : 'h-10 px-6'} bg-secondary/50 text-card-foreground ${mobile ? '' : 'my-4'} ${clearButtonClasses}`}
+			className={`${mobile ? "h-8 px-3" : "h-10 px-6"} bg-secondary/50 text-card-foreground ${mobile ? "" : "my-4"} ${clearButtonClasses}`}
 		>
 			<div className="flex items-center gap-1">
 				<X className="w-4 h-4" />
-				{t('Clear')}
+				{t("Clear")}
 			</div>
 		</Button>
 	);
 
-	if (device === 'mobile') {
+	if (device === "mobile") {
 		return (
 			<Popover>
 				<PopoverTrigger asChild>
 					<Button variant="outline" className="w-full justify-start">
 						<Filter className="mr-2 h-4 w-4" />
-						{t('Filter Categories')}
+						{t("Filter Categories")}
 					</Button>
 				</PopoverTrigger>
 				<PopoverContent className="w-[90vw] max-w-sm p-0">
 					<ScrollArea className="bg-primary/5 backdrop-blur-sm h-90 rounded-md p-4 border border-primary/20 shadow-sm sm:w-64">
 						<div className="flex items-center justify-between mb-4">
-							<h3 className="text-base font-semibold text-primary">{t('Categories')}</h3>
+							<h3 className="text-base font-semibold text-primary">{t("Categories")}</h3>
 							{renderClearButton(true)}
 						</div>
 						{renderCategoryItems()}
@@ -121,7 +121,7 @@ const CategoriesSidebar = ({ eventsSearchFilters, updateURL, initialSearch }: Ca
 		<div className="w-full md:w-72 shrink-0">
 			<div className="bg-primary/5 backdrop-blur-sm rounded-2xl shadow-sm border border-primary/20 p-6 pt-0">
 				<div className="flex items-center justify-between mb-4">
-					<h3 className="text-lg font-semibold text-primary">{t('Categories')}</h3>
+					<h3 className="text-lg font-semibold text-primary">{t("Categories")}</h3>
 					{renderClearButton()}
 				</div>
 				{renderCategoryItems()}

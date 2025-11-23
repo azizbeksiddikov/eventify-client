@@ -1,7 +1,7 @@
 import type React from "react";
 import { useState } from "react";
 import { useTranslation } from "next-i18next";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 import { CalendarIcon, SearchIcon } from "lucide-react";
 

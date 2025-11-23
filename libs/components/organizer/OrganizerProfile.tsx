@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useTranslation } from "next-i18next";
-import { useReactiveVar } from "@apollo/client";
+import { useReactiveVar } from "@apollo/client/react";
 import { Users, Heart, Eye, Mail, Phone, Calendar, Shield, Star, User as UserIcon } from "lucide-react";
 
 import { Badge } from "@/libs/components/ui/badge";

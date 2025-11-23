@@ -2,7 +2,7 @@ import Link from "next/link";
 import { useState, useCallback, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { useTranslation } from "next-i18next";
-import { useReactiveVar } from "@apollo/client";
+import { useReactiveVar } from "@apollo/client/react";
 import { Menu, X, Home, Calendar, Users, User2, HelpCircle, ShieldAlert } from "lucide-react";
 
 import { useRouter, withRouter } from "next/router";

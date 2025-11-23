@@ -27,9 +27,9 @@ import { MemberType } from "@/libs/enums/member.enum";
 
 const navLinks = [
 	{ href: "/", label: "Home" },
-	{ href: "/event", label: "Events" },
-	{ href: "/group", label: "Groups" },
-	{ href: "/organizer", label: "Organizers" },
+	{ href: "/events", label: "Events" },
+	{ href: "/groups", label: "Groups" },
+	{ href: "/organizers", label: "Organizers" },
 	{ href: "/help", label: "Help" },
 ];
 const adminLink = { href: "/_admin", label: "Admin" };

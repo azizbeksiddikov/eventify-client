@@ -1,10 +1,10 @@
 export enum MemberType {
-	USER = 'USER',
-	ADMIN = 'ADMIN',
-	ORGANIZER = 'ORGANIZER',
+	USER = "USER",
+	ADMIN = "ADMIN",
+	ORGANIZER = "ORGANIZER",
 }
 
 export enum MemberStatus {
-	ACTIVE = 'ACTIVE',
-	BLOCKED = 'BLOCKED',
+	ACTIVE = "ACTIVE",
+	BLOCKED = "BLOCKED",
 }

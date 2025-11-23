@@ -41,7 +41,7 @@ const EventCard = ({ event, likeEventHandler }: EventCardProps) => {
 		<Card className="pt-0  w-full h-full mx-auto shadow-md hover:shadow-lg transition-all duration-300 bg-card/60 flex flex-col group gap-0">
 			<CardHeader className="p-0 gap-0">
 				<div className="relative aspect-[16/9] w-full overflow-hidden rounded-t-xl">
-					<Link href={`/event/detail?eventId=${event._id}`}>
+					<Link href={`/events/${event._id}`}>
 						<Image
 							src={`${NEXT_APP_API_URL}/${event.eventImages[0]}`}
 							alt={event.eventName}

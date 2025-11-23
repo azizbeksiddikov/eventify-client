@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { useTranslation } from "next-i18next";
 import { useMutation, useQuery, useReactiveVar, useApolloClient } from "@apollo/client";
 import { userVar } from "@/apollo/store";
@@ -56,7 +56,7 @@ const EventsByCategory = ({
 					<h2>{t("Events by Category")}</h2>
 					<Button
 						type="submit"
-						onClick={() => router.push("/event")}
+						onClick={() => router.push("/events")}
 						className="h-14 px-8 bg-card text-card-foreground"
 					>
 						<div className="flex items-center gap-1 ">

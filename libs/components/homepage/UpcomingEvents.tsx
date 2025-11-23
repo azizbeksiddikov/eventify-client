@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client/react";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { useTranslation } from "next-i18next";
 import { MapPin, Clock, CalendarIcon, ChevronRight, ArrowRight } from "lucide-react";
 
@@ -47,7 +47,7 @@ export default function UpcomingEvents({
 				<div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 sm:mb-8 gap-4 sm:gap-0">
 					<h2 className="text-xl sm:text-2xl my-4">{t("Upcoming Events")}</h2>
 
-					<Button type="submit" onClick={() => router.push("/event")} className="h-10 sm:h-14 px-4 sm:px-8">
+					<Button type="submit" onClick={() => router.push("/events")} className="h-10 sm:h-14 px-4 sm:px-8">
 						<div className="flex items-center gap-1">
 							{t("View All Events")}
 							<ArrowRight className="w-3 h-3 sm:w-4 sm:h-4" />
@@ -122,7 +122,7 @@ export default function UpcomingEvents({
 									{filteredEvents.map((event: Event) => (
 										<li key={event._id} className="border-l-2 border-primary pl-2 sm:pl-3 py-1">
 											<Link
-												href={`/event/detail?eventId=${event._id}`}
+												href={`/events/${event._id}`}
 												className="block group hover:bg-muted -ml-2 sm:-ml-3 pl-2 sm:pl-3 pr-1 sm:pr-2 py-1.5 sm:py-2 rounded-r-lg transition-colors"
 											>
 												<div className="flex justify-between items-start">

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Image from "next/image";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { useTranslation } from "next-i18next";
 import { Heart, Eye, Calendar, Clock, MapPin, Users, Plus, Minus, Ticket, Pencil } from "lucide-react";
 

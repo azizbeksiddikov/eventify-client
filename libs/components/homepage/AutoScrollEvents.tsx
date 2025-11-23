@@ -223,7 +223,7 @@ const AutoScrollEvents = ({
 								</div>
 							</div>
 							<Link
-								href={`/event/detail?eventId=${event._id}`}
+								href={`/events/${event._id}`}
 								className="inline-block bg-primary text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full font-medium hover:bg-primary/90 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
 								aria-label={`View details for ${event.eventName}`}
 							>

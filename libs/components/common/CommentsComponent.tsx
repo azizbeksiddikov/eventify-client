@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect } from "react";
 import { useTranslation } from "next-i18next";
 import { userVar } from "@/apollo/store";
-import { useReactiveVar } from "@apollo/client";
-import { useMutation, useQuery } from "@apollo/client";
+import { useReactiveVar } from "@apollo/client/react";
+import { useMutation, useQuery } from "@apollo/client/react";
 import { MessageSquare, Plus, Pencil, Trash2, User, ChevronDown } from "lucide-react";
 
 import { Button } from "@/libs/components/ui/button";

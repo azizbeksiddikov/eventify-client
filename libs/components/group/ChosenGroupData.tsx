@@ -1,4 +1,4 @@
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useTranslation } from "next-i18next";
 import { Heart, Eye, Calendar, Bookmark, Users, Ticket, Pencil } from "lucide-react";

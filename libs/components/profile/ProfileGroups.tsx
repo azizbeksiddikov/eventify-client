@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
 import { useTranslation } from "next-i18next";
-import { useReactiveVar } from "@apollo/client";
+import { useReactiveVar } from "@apollo/client/react";
 import { Users, Heart, LogIn, LogOut, Calendar, Clock, Link as LinkIcon } from "lucide-react";
 
 import { Avatar, AvatarImage, AvatarFallback } from "@/libs/components/ui/avatar";

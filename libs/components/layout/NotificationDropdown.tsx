@@ -2,7 +2,7 @@
 
 import { useTranslation } from "next-i18next";
 import { useMutation, useQuery } from "@apollo/client/react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { BellIcon } from "lucide-react";
 import { format } from "date-fns";
 

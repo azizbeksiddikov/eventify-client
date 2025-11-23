@@ -121,7 +121,7 @@ export const ProfileTickets = ({ tickets, cancelTicketHandler }: ProfileTicketsP
 														{t("Cancel")}
 													</Button>
 												)}
-												<Link href={`/event/detail?eventId=${ticket.event?._id}`}>
+												<Link href={`/events/${ticket.event?._id}`}>
 													<Button
 														variant="ghost"
 														size="icon"

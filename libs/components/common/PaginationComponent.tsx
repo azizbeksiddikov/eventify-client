@@ -6,7 +6,7 @@ import {
 	PaginationLink,
 	PaginationNext,
 	PaginationPrevious,
-} from '@/libs/components/ui/pagination';
+} from "@/libs/components/ui/pagination";
 
 interface PaginationComponentProps {
 	totalItems: number;
@@ -33,7 +33,7 @@ const PaginationComponent = ({
 				<PaginationItem>
 					<PaginationPrevious
 						onClick={() => pageChangeHandler(currentPage - 1)}
-						className={currentPage === 1 ? 'pointer-events-none opacity-50' : ''}
+						className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
 					/>
 				</PaginationItem>
 
@@ -74,7 +74,7 @@ const PaginationComponent = ({
 				<PaginationItem>
 					<PaginationNext
 						onClick={() => pageChangeHandler(currentPage + 1)}
-						className={currentPage === totalPages ? 'pointer-events-none opacity-50' : ''}
+						className={currentPage === totalPages ? "pointer-events-none opacity-50" : ""}
 					/>
 				</PaginationItem>
 			</PaginationContent>
