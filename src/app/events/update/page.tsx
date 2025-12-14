@@ -25,6 +25,7 @@ import { smallError, smallSuccess } from "@/libs/alert";
 import { EventCategory } from "@/libs/enums/event.enum";
 import { Message } from "@/libs/enums/common.enum";
 import { EventUpdateInput } from "@/libs/types/event/event.update";
+import { getImageUrl } from "@/libs/utils";
 
 const EventUpdatePage = () => {
 	const router = useRouter();
@@ -76,7 +77,7 @@ const EventUpdatePage = () => {
 					eventImages: event.eventImages || [],
 				});
 				setSelectedCategories(event.eventCategories);
-				setImagePreview(`${NEXT_APP_API_URL}/${event.eventImages[0]}`);
+				setImagePreview(getImageUrl(event.eventImages[0], "event", event.origin));
 			}
 		}
 	}, [eventData]);

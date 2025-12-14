@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
-import { NEXT_APP_API_URL } from "@/libs/config";
 
 // Apollo
 import { useQuery } from "@apollo/client/react";
@@ -10,14 +9,14 @@ import { GET_UNIQUE_EVENTS } from "@/apollo/user/query";
 
 // Types
 import { Direction } from "@/libs/enums/common.enum";
-import { EventStatus } from "@/libs/enums/event.enum";
+import { EventStatus, EventLocationType } from "@/libs/enums/event.enum";
 
 import { EventsInquiry } from "@/libs/types/event/event.input";
 import { Event } from "@/libs/types/event/event";
 
 // Styles
 import { Calendar, MapPin, ChevronLeft, ChevronRight } from "lucide-react";
-import { cn } from "@/libs/utils";
+import { cn, getImageUrl } from "@/libs/utils";
 
 interface AutoScrollEventsProps {
 	initialInput?: EventsInquiry;
@@ -37,7 +36,8 @@ const AutoScrollEvents = ({
 	const [isAutoScrolling, setIsAutoScrolling] = useState(true);
 	const containerRef = useRef<HTMLDivElement>(null);
 	const autoScrollIntervalRef = useRef<NodeJS.Timeout | null>(null);
-	const lastInteractionTimeRef = useRef<number>(new Date().getTime());
+	const lastInteractionTimeRef = useRef<number>(0);
+	const resumeAutoScrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
 	const {
 		data: upcomingEvents,
@@ -51,16 +51,31 @@ const AutoScrollEvents = ({
 
 	const eventList: Event[] = upcomingEvents?.getUniqueEvents?.list || [];
 
+	// Handle click/interaction - stops auto-scroll temporarily
+	const handleUserInteraction = useCallback(() => {
+		lastInteractionTimeRef.current = Date.now();
+		setIsAutoScrolling(false);
+
+		// Clear existing intervals and timeouts
+		if (autoScrollIntervalRef.current) {
+			clearInterval(autoScrollIntervalRef.current);
+			autoScrollIntervalRef.current = null;
+		}
+		if (resumeAutoScrollTimeoutRef.current) {
+			clearTimeout(resumeAutoScrollTimeoutRef.current);
+			resumeAutoScrollTimeoutRef.current = null;
+		}
+
+		// Resume auto-scrolling after 4 seconds of inactivity
+		resumeAutoScrollTimeoutRef.current = setTimeout(() => {
+			setIsAutoScrolling(true);
+		}, 4000);
+	}, []);
+
 	// Handle keyboard navigation with proper dependencies
 	const navigationHandler = useCallback(
 		(direction: "prev" | "next") => {
-			setIsAutoScrolling(false);
-			lastInteractionTimeRef.current = Date.now();
-
-			if (autoScrollIntervalRef.current) {
-				clearInterval(autoScrollIntervalRef.current);
-				autoScrollIntervalRef.current = null;
-			}
+			handleUserInteraction();
 
 			setCurrentIndex((prevIndex) => {
 				if (direction === "prev") {
@@ -68,17 +83,8 @@ const AutoScrollEvents = ({
 				}
 				return (prevIndex + 1) % eventList.length;
 			});
-
-			// Restart auto-scroll after a delay of inactivity
-			setTimeout(() => {
-				if (!autoScrollIntervalRef.current && isAutoScrolling) {
-					autoScrollIntervalRef.current = setInterval(() => {
-						setCurrentIndex((prevIndex) => (prevIndex + 1) % eventList.length);
-					}, 4000);
-				}
-			}, 7000);
 		},
-		[eventList.length, isAutoScrolling],
+		[eventList.length, handleUserInteraction],
 	);
 
 	// Handle keyboard navigation
@@ -101,16 +107,13 @@ const AutoScrollEvents = ({
 		};
 	}, [keyDownHandler]);
 
-	// Auto-scroll functionality
+	// Auto-scroll functionality - changes every 3 seconds
 	useEffect(() => {
 		if (!eventList.length || !isAutoScrolling) return;
 
 		autoScrollIntervalRef.current = setInterval(() => {
-			// Check if there was recent user interaction
-			if (Date.now() - lastInteractionTimeRef.current > 5000) {
-				setCurrentIndex((prevIndex) => (prevIndex + 1) % eventList.length);
-			}
-		}, 5000);
+			setCurrentIndex((prevIndex) => (prevIndex + 1) % eventList.length);
+		}, 3000);
 
 		return () => {
 			if (autoScrollIntervalRef.current) {
@@ -119,6 +122,15 @@ const AutoScrollEvents = ({
 			}
 		};
 	}, [eventList.length, isAutoScrolling]);
+
+	// Cleanup on unmount
+	useEffect(() => {
+		return () => {
+			if (resumeAutoScrollTimeoutRef.current) {
+				clearTimeout(resumeAutoScrollTimeoutRef.current);
+			}
+		};
+	}, []);
 
 	const moveMouseHandler = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
 		if (!containerRef.current) return;
@@ -148,13 +160,21 @@ const AutoScrollEvents = ({
 		}).format(date);
 	}, []);
 
+	// Get event location with fallback
+	const getEventLocation = useCallback((event: Event) => {
+		if (event.eventAddress) return event.eventAddress;
+		if (event.eventCity) return event.eventCity;
+		if (event.locationType === EventLocationType.ONLINE) return "Online Event";
+		return "Location TBA";
+	}, []);
+
 	if (upcomingEventsLoading || !eventList.length) return <div>Loading...</div>;
 	if (upcomingEventsError) return <div>Error: {upcomingEventsError.message}</div>;
 
 	return (
 		<section
 			ref={containerRef}
-			className="relative h-[calc(100vh-5rem)] overflow-hidden w-full"
+			className="relative h-[50vh] sm:h-[60vh] md:h-[70vh] lg:h-[calc(100vh-5rem)] overflow-hidden w-full min-w-0"
 			onMouseMove={moveMouseHandler}
 			onContextMenu={(e) => {
 				e.preventDefault(); // Prevent the default context menu
@@ -180,7 +200,7 @@ const AutoScrollEvents = ({
 					>
 						<div
 							className="absolute inset-0 bg-cover bg-center transition-transform duration-1000 ease-in-out"
-							style={{ backgroundImage: `url(${NEXT_APP_API_URL}/${event.eventImages[0]})` }}
+							style={{ backgroundImage: `url(${getImageUrl(event.eventImages[0], "event", event.origin)})` }}
 							aria-hidden="true"
 						>
 							{/* Gradient overlays for navigation */}
@@ -193,39 +213,55 @@ const AutoScrollEvents = ({
 							<div className="absolute inset-0 bg-gradient-to-b from-black/90 via-black/40 to-black/70" />
 						</div>
 
-						<div className="absolute inset-0 flex items-center justify-center flex-col">
-							<div className="text-center text-white max-w-4xl px-4 sm:px-6 md:px-8 transform transition-all duration-1000 ease-in-out  backdrop-blur-xs my-2">
-								<div className="mb-4 flex flex-wrap justify-center gap-2">
+						<div className="absolute inset-0 flex items-center justify-center flex-col px-4">
+							<div className="text-center text-white max-w-4xl w-full px-2 sm:px-4 md:px-6 lg:px-8 transform transition-all duration-1000 ease-in-out my-2">
+								<div className="mb-3 sm:mb-4 flex flex-wrap justify-center gap-1.5 sm:gap-2">
 									{event.eventCategories.map((category, catIndex) => (
 										<span
 											key={catIndex}
-											className="block   text-white px-3 py-1.5 rounded-full text-sm font-medium hover:bg-gray-800/50 transition-colors duration-300"
+											className="block text-white bg-white/10 backdrop-blur-sm px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs sm:text-sm font-medium hover:bg-white/20 transition-colors duration-300 cursor-pointer"
+											onClick={handleUserInteraction}
 										>
 											#{category}
 										</span>
 									))}
 								</div>
-								<h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6   text-white px-4 py-3 rounded-lg">
+								<h2
+									className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold mb-3 sm:mb-4 md:mb-6 text-white px-2 sm:px-4 py-2 sm:py-3 rounded-lg cursor-pointer break-words"
+									onClick={handleUserInteraction}
+								>
 									{event.eventName}
 								</h2>
-								<p className="text-lg sm:text-xl mb-6 sm:mb-8 text-white max-w-2xl mx-auto   px-4 py-3 rounded-lg">
-									{event.eventDesc}
+								<p
+									className="text-sm sm:text-base md:text-lg lg:text-xl mb-4 sm:mb-6 md:mb-8 text-white max-w-2xl mx-auto px-2 sm:px-4 py-2 sm:py-3 rounded-lg cursor-pointer line-clamp-2 sm:line-clamp-3"
+									onClick={handleUserInteraction}
+								>
+									{event.eventDesc.length > 100 ? `${event.eventDesc.slice(0, 100)}...` : event.eventDesc}
 								</p>
-								<div className="flex flex-col sm:flex-row justify-center sm:space-x-6 space-y-3 sm:space-y-0 mb-2 sm:mb-4">
-									<span className="flex items-center justify-center sm:justify-start   px-4 py-2 rounded-full text-white">
-										<MapPin className="w-5 h-5 mr-2" />
-										<span>{event.eventAddress}</span>
+								<div className="flex flex-col sm:flex-row justify-center sm:space-x-4 md:space-x-6 space-y-2 sm:space-y-0 mb-3 sm:mb-4">
+									<span
+										className="flex items-center justify-center sm:justify-start bg-black/30 backdrop-blur-sm px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-white text-xs sm:text-sm"
+										onClick={handleUserInteraction}
+									>
+										<MapPin className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2 shrink-0" />
+										<span className="truncate">{getEventLocation(event)}</span>
 									</span>
-									<span className="flex items-center justify-center sm:justify-start   px-4 py-2 rounded-full text-white">
-										<Calendar className="w-5 h-5 mr-2" />
-										<time dateTime={new Date(event.eventStartAt).toISOString()}>{formatDate(event.eventStartAt)}</time>
+									<span
+										className="flex items-center justify-center sm:justify-start bg-black/30 backdrop-blur-sm px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-white text-xs sm:text-sm"
+										onClick={handleUserInteraction}
+									>
+										<Calendar className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2 shrink-0" />
+										<time dateTime={new Date(event.eventStartAt).toISOString()} className="truncate">
+											{formatDate(event.eventStartAt)}
+										</time>
 									</span>
 								</div>
 							</div>
 							<Link
 								href={`/events/${event._id}`}
-								className="inline-block bg-primary text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full font-medium hover:bg-primary/90 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
+								className="inline-block bg-primary text-white px-4 sm:px-6 md:px-8 py-2 sm:py-3 md:py-4 rounded-full text-sm sm:text-base font-medium hover:bg-primary/90 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
 								aria-label={`View details for ${event.eventName}`}
+								onClick={handleUserInteraction}
 							>
 								{"View Details"}
 							</Link>
@@ -275,18 +311,26 @@ const AutoScrollEvents = ({
 			</button>
 
 			{/* Carousel controls */}
-			<div className="absolute bottom-8 left-0 right-0 flex flex-col items-center space-y-4 z-20">
-				<div className="flex justify-center items-center space-x-2" role="tablist" aria-label="Event slides">
+			<div className="absolute bottom-4 sm:bottom-6 md:bottom-8 left-0 right-0 flex flex-col items-center space-y-3 sm:space-y-4 z-20">
+				<div
+					className="flex justify-center items-center space-x-1.5 sm:space-x-2"
+					role="tablist"
+					aria-label="Event slides"
+				>
 					{eventList.map((event, index) => (
 						<button
 							key={index}
 							className={cn(
-								" rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/50",
+								"rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/50",
 								index === currentIndex ? "bg-primary scale-125 w-2.5 h-2.5" : "bg-white/50 hover:bg-white/75 w-2 h-2",
 							)}
-							onClick={() => setCurrentIndex(index)}
+							onClick={() => {
+								handleUserInteraction();
+								setCurrentIndex(index);
+							}}
 							onContextMenu={(e) => {
 								e.preventDefault();
+								handleUserInteraction();
 								setCurrentIndex(index);
 								return false;
 							}}

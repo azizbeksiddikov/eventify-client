@@ -1,11 +1,13 @@
-import { Direction } from "@/libs/enums/common.enum";
-import { EventStatus, EventCategory, EventType, RecurrenceType } from "@/libs/enums/event.enum";
+import { Currency, Direction } from "@/libs/enums/common.enum";
+import { EventStatus, EventCategory, EventType, RecurrenceType, EventLocationType } from "@/libs/enums/event.enum";
 
 // ============== Event Creation Input ==============
 export interface EventInput {
+	// ===== Event Type =====
 	eventType?: EventType;
 
 	// ===== Basic Information =====
+	recurrenceId?: string;
 	eventName: string;
 	eventDesc: string;
 	eventImages: string[];
@@ -14,18 +16,35 @@ export interface EventInput {
 	eventStartAt: Date;
 	eventEndAt: Date;
 
-	// ===== Event Location =====
-	eventCity: string;
-	eventAddress: string;
+	// ===== Location Details =====
+	locationType: EventLocationType;
+	eventCity?: string;
+	eventAddress?: string;
 
-	// ===== Event Capacity and Price =====
+	// Coordinates
+	coordinateLatitude?: number;
+	coordinateLongitude?: number;
+
+	// ===== Event Details =====
 	eventCapacity?: number;
 	eventPrice?: number;
-	groupId?: string;
+	eventCurrency?: Currency;
 
-	// ===== Event Status and Categories =====
+	// ===== Type and Status =====
 	eventStatus?: EventStatus;
 	eventCategories: EventCategory[];
+	eventTags: string[];
+	isRealEvent?: boolean;
+
+	// ===== Internal References =====
+	groupId?: string;
+
+	// ===== External Source Information =====
+	origin?: string;
+	externalId?: string;
+	externalUrl?: string;
+
+	attendeeCount?: number;
 }
 
 // ============== Search Inputs ==============
@@ -41,14 +60,20 @@ export interface EISearch {
 
 // ============== Inquiry Inputs ==============
 export interface EventsInquiry {
+	// ===== Pagination =====
 	page: number;
 	limit?: number;
+
+	// ===== Sorting =====
 	sort?: string;
 	direction?: Direction;
+
+	// ===== Search =====
 	search: EISearch;
 }
 
 export interface OrdinaryEventInquiry {
+	// ===== Pagination =====
 	page: number;
 	limit: number;
 }
@@ -70,12 +95,20 @@ export interface EventRecurrenceInput {
 	eventName: string;
 	eventDesc: string;
 	eventImages: string[];
-	eventCity: string;
-	eventAddress: string;
+	locationType: EventLocationType;
+	eventCity?: string;
+	isRealEvent?: boolean;
+	eventAddress?: string;
+
+	// Coordinates
+	coordinateLatitude?: number;
+	coordinateLongitude?: number;
 	eventCapacity?: number;
 	eventPrice?: number;
+	eventCurrency?: Currency;
 	eventStatus?: EventStatus;
 	eventCategories: EventCategory[];
+	eventTags: string[];
 
 	// ===== First Occurrence Template =====
 	eventStartAt: Date;
@@ -88,6 +121,8 @@ export interface EventRecurrenceInput {
 export interface EventRecurrenceUpdateInput {
 	_id: string;
 	updateAllFuture?: boolean;
+
+	// ===== Recurrence Rules =====
 	recurrenceType?: RecurrenceType;
 	recurrenceInterval?: number;
 	recurrenceDaysOfWeek?: number[];
@@ -98,14 +133,23 @@ export interface EventRecurrenceUpdateInput {
 	eventName?: string;
 	eventDesc?: string;
 	eventImages?: string[];
+	locationType?: EventLocationType;
 	eventCity?: string;
 	eventAddress?: string;
+
+	// Coordinates
+	coordinateLatitude?: number;
+	coordinateLongitude?: number;
+
 	eventCapacity?: number;
 	eventPrice?: number;
+	eventCurrency?: Currency;
 	eventStatus?: EventStatus;
 	eventCategories?: EventCategory[];
+	eventTags?: string[];
 	eventStartAt?: Date;
 	eventEndAt?: Date;
 	groupId?: string;
-	isActive?: boolean; // todo: make it false when deleted or cancelled
+	isRealEvent?: boolean;
+	isActive?: boolean;
 }

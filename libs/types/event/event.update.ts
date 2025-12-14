@@ -1,4 +1,5 @@
-import { EventStatus, EventCategory } from '@/libs/enums/event.enum';
+import { Currency } from "@/libs/enums/common.enum";
+import { EventStatus, EventCategory, EventLocationType } from "@/libs/enums/event.enum";
 
 export interface EventUpdateInput {
 	// ===== Identification =====
@@ -16,12 +17,27 @@ export interface EventUpdateInput {
 	eventStartAt?: Date;
 	eventEndAt?: Date;
 
+	// ===== Location Details =====
+	locationType?: EventLocationType;
+
+	// ===== Event Details =====
 	eventCity?: string;
 	eventAddress?: string;
+
+	// Coordinates
+	coordinateLatitude?: number;
+	coordinateLongitude?: number;
 	eventCapacity?: number;
 	eventPrice?: number;
+	eventCurrency?: Currency;
 
 	// ===== Type and Status =====
 	eventStatus?: EventStatus;
 	eventCategories?: EventCategory[];
+	eventTags?: string[];
+
+	// ===== External Source Information =====
+	externalId?: string;
+	externalUrl?: string;
+	isRealEvent?: boolean;
 }

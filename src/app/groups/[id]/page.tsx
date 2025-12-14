@@ -61,10 +61,10 @@ const GroupDetailPage = () => {
 	if (!groupId) return null;
 	if (!group) return null;
 	return (
-		<div className="mx-4">
+		<div>
 			<ChosenGroupHeader />
 
-			<div className="max-w-7xl mx-auto pb-10">
+			<div className="content-container pb-10">
 				<div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
 					<div className="lg:col-span-3">
 						<ChosenGroupData

@@ -1,28 +1,139 @@
-import numeral from 'numeral';
-import { clsx, type ClassValue } from 'clsx';
-import { twMerge } from 'tailwind-merge';
-import { Message } from '@/libs/enums/common.enum';
-import { smallError, smallInfo, smallSuccess } from '@/libs/alert';
-import { TFunction } from 'i18next';
-import { gql } from '@apollo/client';
+import numeral from "numeral";
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
+import { Message } from "@/libs/enums/common.enum";
+import { smallError, smallInfo, smallSuccess } from "@/libs/alert";
+import { TFunction } from "i18next";
+import { gql } from "@apollo/client";
+import { NEXT_APP_API_URL } from "@/libs/config";
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
 }
 
-export const formatterStr = (value: number | undefined): string => {
-	return numeral(value).format('0,0') != '0' ? numeral(value).format('0,0') : '';
+/**
+ * Generate SVG placeholder image with custom text
+ * Uses theme colors for a consistent look with better styling
+ * Font size scales with image dimensions for better readability
+ */
+function generatePlaceholder(text: string, width: number, height: number, bgColor: string, textColor: string): string {
+	// Calculate font size based on dimensions - use ~60% of the smaller dimension
+	// This ensures text remains readable even when the SVG is scaled down for small avatars
+	// Ensure minimum font size of 16px and maximum of 120px for readability
+	const minDimension = Math.min(width, height);
+	const calculatedFontSize = Math.max(16, Math.min(120, Math.round(minDimension * 0.6)));
+
+	const svg = `
+		<svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
+			<defs>
+				<linearGradient id="grad-${text}" x1="0%" y1="0%" x2="100%" y2="100%">
+					<stop offset="0%" style="stop-color:${bgColor};stop-opacity:1" />
+					<stop offset="100%" style="stop-color:${bgColor};stop-opacity:0.85" />
+				</linearGradient>
+			</defs>
+			<rect width="100%" height="100%" fill="url(#grad-${text})"/>
+			<text 
+				x="50%" 
+				y="50%" 
+				dominant-baseline="middle" 
+				text-anchor="middle" 
+				font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" 
+				font-size="${calculatedFontSize}" 
+				font-weight="600"
+				fill="${textColor}"
+				opacity="0.9"
+			>${text}</text>
+		</svg>
+	`;
+	return `data:image/svg+xml;base64,${btoa(svg)}`;
+}
+
+/**
+ * Placeholder images for different types
+ * Colors match the theme's primary purple/violet palette
+ */
+const PLACEHOLDER_IMAGES = {
+	event: generatePlaceholder("Event", 600, 400, "#9333ea", "#faf5ff"), // Purple gradient
+	group: generatePlaceholder("Group", 600, 400, "#7c3aed", "#f5f3ff"), // Violet gradient
+	member: generatePlaceholder("Member", 400, 400, "#8b5cf6", "#faf5ff"), // Purple-violet gradient
+	other: generatePlaceholder("Other", 400, 400, "#8b5cf6", "#faf5ff"), // Purple-violet gradient
 };
 
-export const formatDateHandler = (dateString: string | Date) => {
-	const d = new Date(dateString);
-	const pad = (n: number) => n.toString().padStart(2, '0');
-	return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+/**
+ * Get the proper image URL for an event based on its origin
+ */
+export function getImageUrl(imageUrl: string, type: "event" | "group" | "member" | "other", origin?: string): string {
+	if (!imageUrl) return PLACEHOLDER_IMAGES[type];
+
+	// If origin is not 'internal', use the original image URL directly
+	if (type === "event" && origin && origin !== "internal") return imageUrl;
+
+	console.log("imageUrl", `${NEXT_APP_API_URL}/${imageUrl}`);
+	return `${NEXT_APP_API_URL}/${imageUrl}`;
+}
+
+export const formatterStr = (value: number | undefined): string => {
+	return numeral(value).format("0,0") != "0" ? numeral(value).format("0,0") : "";
+};
+
+/**
+ * Timezone utilities for Seoul (UTC+9)
+ */
+const SEOUL_TIMEZONE = "Asia/Seoul";
+
+/**
+ * Convert any date to Seoul timezone
+ */
+export const toSeoulDate = (date: string | Date): Date => {
+	const d = new Date(date);
+	// Return date in Seoul timezone
+	return new Date(d.toLocaleString("en-US", { timeZone: SEOUL_TIMEZONE }));
+};
+
+/**
+ * Format date in Seoul timezone
+ * example: "December 15, 2025"
+ */
+export const formatSeoulDate = (
+	date: string | Date,
+	options: Intl.DateTimeFormatOptions = {
+		year: "numeric",
+		month: "long",
+		day: "numeric",
+	},
+): string => {
+	const d = new Date(date);
+	return d.toLocaleDateString("en-US", { ...options, timeZone: SEOUL_TIMEZONE });
+};
+
+/**
+ * Format time in Seoul timezone
+ * example: "10:00"
+ */
+export const formatSeoulTime = (date: string | Date, format: "12" | "24" = "24"): string => {
+	const d = new Date(date);
+	return d.toLocaleTimeString("en-US", {
+		timeZone: SEOUL_TIMEZONE,
+		hour: "2-digit",
+		minute: "2-digit",
+		hour12: format === "12",
+	});
+};
+
+/**
+ * Format date and time in Seoul timezone
+ * example: "December 15, 2025 10:00"
+ */
+export const formatSeoulDateTime = (date: string | Date): string => {
+	const d = new Date(date);
+	const dateStr = formatSeoulDate(d);
+	const timeStr = formatSeoulTime(d);
+	return `${dateStr} ${timeStr}`;
 };
 
 export const formatPhoneNumber = (value: string) => {
 	// Remove all non-digit characters
-	const numbers = value.replace(/\D/g, '');
+	const numbers = value.replace(/\D/g, "");
 
 	// Format the number as XXX-XXXX-XXXX
 	// 012-3456-78910
@@ -36,12 +147,13 @@ export const formatPhoneNumber = (value: string) => {
 };
 
 export const readDate = (date: Date): string => {
-	return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
+	const seoulDate = new Date(date.toLocaleString("en-US", { timeZone: SEOUL_TIMEZONE }));
+	return `${seoulDate.getFullYear()}-${(seoulDate.getMonth() + 1).toString().padStart(2, "0")}-${seoulDate.getDate().toString().padStart(2, "0")}`;
 };
 
 export const parseDate = (dateStr: string | undefined): Date | undefined => {
 	if (!dateStr) return undefined;
-	const date = dateStr.split('-').map(Number);
+	const date = dateStr.split("-").map(Number);
 	if (isNaN(date[0]) || isNaN(date[1]) || isNaN(date[2])) return undefined;
 	return new Date(date[0], date[1] - 1, date[2]);
 };
@@ -57,8 +169,8 @@ export const likeEvent = async (
 	cache: any,
 ) => {
 	try {
-		if (!likeRefId || likeRefId === '') return;
-		if (!memberId || memberId === '') throw new Error(Message.NOT_AUTHENTICATED);
+		if (!likeRefId || likeRefId === "") return;
+		if (!memberId || memberId === "") throw new Error(Message.NOT_AUTHENTICATED);
 
 		const eventKey = `Event:${likeRefId}`;
 
@@ -85,7 +197,7 @@ export const likeEvent = async (
 						return newLikeState ? existing + 1 : existing - 1;
 					},
 					meLiked() {
-						return newLikeState ? [{ memberId, likeRefId, myFavorite: true, __typename: 'MeLiked' }] : [];
+						return newLikeState ? [{ memberId, likeRefId, myFavorite: true, __typename: "MeLiked" }] : [];
 					},
 				},
 			});
@@ -115,7 +227,7 @@ export const likeEvent = async (
 								return currentLikeState ? existing + 1 : existing - 1;
 							},
 							meLiked() {
-								return currentLikeState ? [{ memberId, likeRefId, myFavorite: true, __typename: 'MeLiked' }] : [];
+								return currentLikeState ? [{ memberId, likeRefId, myFavorite: true, __typename: "MeLiked" }] : [];
 							},
 						},
 					});
@@ -140,8 +252,8 @@ export const likeMember = async (
 	cache: any,
 ) => {
 	try {
-		if (!likeRefId || likeRefId === '') return;
-		if (!memberId || memberId === '') throw new Error(Message.NOT_AUTHENTICATED);
+		if (!likeRefId || likeRefId === "") return;
+		if (!memberId || memberId === "") throw new Error(Message.NOT_AUTHENTICATED);
 
 		const memberKey = `Member:${likeRefId}`;
 
@@ -168,7 +280,7 @@ export const likeMember = async (
 						return newLikeState ? existing + 1 : existing - 1;
 					},
 					meLiked() {
-						return newLikeState ? [{ memberId, likeRefId, myFavorite: true, __typename: 'MeLiked' }] : [];
+						return newLikeState ? [{ memberId, likeRefId, myFavorite: true, __typename: "MeLiked" }] : [];
 					},
 				},
 			});
@@ -198,13 +310,13 @@ export const likeMember = async (
 								return currentLikeState ? existing + 1 : existing - 1;
 							},
 							meLiked() {
-								return currentLikeState ? [{ memberId, likeRefId, myFavorite: true, __typename: 'MeLiked' }] : [];
+								return currentLikeState ? [{ memberId, likeRefId, myFavorite: true, __typename: "MeLiked" }] : [];
 							},
 						},
 					});
 				}
 				smallError(err.message);
-				console.log('ERROR, likeMemberHandler:', err.message);
+				console.log("ERROR, likeMemberHandler:", err.message);
 			} finally {
 				delete debounceTimers[likeRefId];
 				delete clickCounts[likeRefId];
@@ -224,8 +336,8 @@ export const likeGroup = async (
 	cache: any,
 ) => {
 	try {
-		if (!likeRefId || likeRefId === '') return;
-		if (!memberId || memberId === '') throw new Error(Message.NOT_AUTHENTICATED);
+		if (!likeRefId || likeRefId === "") return;
+		if (!memberId || memberId === "") throw new Error(Message.NOT_AUTHENTICATED);
 
 		const groupKey = `Group:${likeRefId}`;
 
@@ -252,7 +364,7 @@ export const likeGroup = async (
 						return newLikeState ? existing + 1 : existing - 1;
 					},
 					meLiked() {
-						return newLikeState ? [{ memberId, likeRefId, myFavorite: true, __typename: 'MeLiked' }] : [];
+						return newLikeState ? [{ memberId, likeRefId, myFavorite: true, __typename: "MeLiked" }] : [];
 					},
 				},
 			});
@@ -282,13 +394,13 @@ export const likeGroup = async (
 								return currentLikeState ? existing + 1 : existing - 1;
 							},
 							meLiked() {
-								return currentLikeState ? [{ memberId, likeRefId, myFavorite: true, __typename: 'MeLiked' }] : [];
+								return currentLikeState ? [{ memberId, likeRefId, myFavorite: true, __typename: "MeLiked" }] : [];
 							},
 						},
 					});
 				}
 				smallError(err.message);
-				console.log('ERROR, likeGroupHandler:', err.message);
+				console.log("ERROR, likeGroupHandler:", err.message);
 			} finally {
 				delete debounceTimers[likeRefId];
 				delete clickCounts[likeRefId];
@@ -310,16 +422,16 @@ export const followMember = async (
 ) => {
 	try {
 		if (!followRefId) return;
-		if (!memberId || memberId === '') throw new Error(Message.NOT_AUTHENTICATED);
+		if (!memberId || memberId === "") throw new Error(Message.NOT_AUTHENTICATED);
 
 		await followTargetMember({
 			variables: { input: followRefId },
 		});
 
-		await smallSuccess(t('Member subscribed successfully'));
+		await smallSuccess(t("Member subscribed successfully"));
 	} catch (err: any) {
 		smallError(err.message);
-		console.log('ERROR, subscribeHandler:', err.message);
+		console.log("ERROR, subscribeHandler:", err.message);
 	}
 };
 
@@ -331,16 +443,16 @@ export const unfollowMember = async (
 ) => {
 	try {
 		if (!followRefId) return;
-		if (!memberId || memberId === '') throw new Error(Message.NOT_AUTHENTICATED);
+		if (!memberId || memberId === "") throw new Error(Message.NOT_AUTHENTICATED);
 
 		await unfollowTargetMember({
 			variables: { input: followRefId },
 		});
 
-		await smallInfo(t('Member unsubscribed successfully'));
+		await smallInfo(t("Member unsubscribed successfully"));
 	} catch (err: any) {
 		smallError(err.message);
-		console.log('ERROR, unsubscribeHandler:', err.message);
+		console.log("ERROR, unsubscribeHandler:", err.message);
 	}
 };
 
@@ -353,16 +465,16 @@ export const joinGroup = async (
 ) => {
 	try {
 		if (!groupId) return;
-		if (!memberId || memberId === '') throw new Error(Message.NOT_AUTHENTICATED);
+		if (!memberId || memberId === "") throw new Error(Message.NOT_AUTHENTICATED);
 
 		await joinTargetGroup({
 			variables: { input: groupId },
 		});
 
-		await smallSuccess(t('Group joined successfully'));
+		await smallSuccess(t("Group joined successfully"));
 	} catch (err: any) {
 		smallError(err.message);
-		console.log('ERROR, joinGroupHandler:', err.message);
+		console.log("ERROR, joinGroupHandler:", err.message);
 	}
 };
 
@@ -374,15 +486,15 @@ export const leaveGroup = async (
 ) => {
 	try {
 		if (!groupId) return;
-		if (!memberId || memberId === '') throw new Error(Message.NOT_AUTHENTICATED);
+		if (!memberId || memberId === "") throw new Error(Message.NOT_AUTHENTICATED);
 
 		await leaveTargetGroup({
 			variables: { input: groupId },
 		});
 
-		await smallSuccess(t('Group left successfully'));
+		await smallSuccess(t("Group left successfully"));
 	} catch (err: any) {
 		smallError(err.message);
-		console.log('ERROR, leaveGroupHandler:', err.message);
+		console.log("ERROR, leaveGroupHandler:", err.message);
 	}
 };

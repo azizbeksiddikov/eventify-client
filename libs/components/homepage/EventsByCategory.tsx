@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "next-i18next";
-import { useMutation, useQuery, useReactiveVar, useApolloClient } from "@apollo/client";
+import { useMutation, useQuery, useReactiveVar, useApolloClient } from "@apollo/client/react";
 import { userVar } from "@/apollo/store";
 import { ArrowRight } from "lucide-react";
 
@@ -33,12 +33,12 @@ const EventsByCategory = ({
 	/** APOLLO */
 	const [likeTargetEvent] = useMutation(LIKE_TARGET_EVENT);
 
-	const { data } = useQuery(GET_EVENTS_BY_CATEGORY, {
+	const { data, loading } = useQuery(GET_EVENTS_BY_CATEGORY, {
 		fetchPolicy: "cache-and-network",
 		variables: { input: initialInput },
 		notifyOnNetworkStatusChange: true,
 	});
-	const eventsByCategory: CategoryEvents[] = data?.getEventsByCategory?.categoryEvents;
+	const eventsByCategory: CategoryEvents[] = data?.getEventsByCategory || [];
 
 	/** HANDLERS **/
 	const likeEventHandler = async (eventId: string) => {
@@ -50,50 +50,93 @@ const EventsByCategory = ({
 	};
 
 	return (
-		<section className="bg-secondary/50 py-20">
-			<div className="max-w-7xl mx-auto px-4">
-				<div className="flex items-center justify-between mb-8">
-					<h2>{t("Events by Category")}</h2>
+		<section className="bg-secondary/50 py-8 sm:py-12 md:py-16 lg:py-20 w-full">
+			<div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-10">
+				<div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 sm:mb-8">
+					<h2 className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold text-foreground">
+						{t("Events by Category")}
+					</h2>
 					<Button
 						type="submit"
 						onClick={() => router.push("/events")}
-						className="h-14 px-8 bg-card text-card-foreground"
+						className="h-9 sm:h-10 md:h-12 px-3 sm:px-4 md:px-6 text-xs sm:text-sm md:text-base bg-card text-card-foreground hover:bg-card/90"
 					>
-						<div className="flex items-center gap-1 ">
-							{t("View All")}
-							<ArrowRight className="w-4 h-4" />
-						</div>
+						<ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
 					</Button>
 				</div>
 
-				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-					{eventsByCategory?.map((categoryData: CategoryEvents) => (
-						<div
-							key={categoryData.category}
-							className="bg-card rounded-2xl shadow-sm overflow-hidden hover:shadow-md transition-all duration-200 animate-slideIn flex flex-col"
-						>
-							<div className="p-4 border-b  ">
-								<h3 className="text-lg font-semibold text-foreground">{categoryData.category}</h3>
-							</div>
-							<div className="p-4 flex-1">
-								<div className="space-y-4">
-									{categoryData.events.map((event: Event) => (
-										<SmallEventCard key={event._id} event={event} likeEventHandler={likeEventHandler} />
+				{loading ? (
+					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+						{[1, 2, 3].map((index) => (
+							<div
+								key={index}
+								className="bg-card rounded-xl shadow-sm overflow-hidden animate-pulse border border-border/50"
+							>
+								<div className="p-4 border-b">
+									<div className="h-6 bg-muted rounded w-32"></div>
+								</div>
+								<div className="p-4 space-y-4">
+									{[1, 2, 3].map((i) => (
+										<div key={i} className="flex gap-3">
+											<div className="w-12 h-12 sm:w-16 sm:h-16 bg-muted rounded-lg shrink-0"></div>
+											<div className="flex-1 space-y-2">
+												<div className="h-4 bg-muted rounded w-3/4"></div>
+												<div className="h-3 bg-muted rounded w-1/2"></div>
+											</div>
+										</div>
 									))}
 								</div>
+								<div className="p-4 border-t">
+									<div className="h-4 bg-muted rounded w-40"></div>
+								</div>
 							</div>
-							<div className="p-4 border-t   mt-auto">
-								<Link
-									href={`/event?categories=${categoryData.category.toUpperCase()}`}
-									className="text-sm text-primary hover:text-primary/80 font-medium flex items-center gap-1 transition-colors duration-200"
-								>
-									{t("View All")} {categoryData.category} {t("events")}
-									<ArrowRight className="w-3 h-3" />
-								</Link>
-							</div>
+						))}
+					</div>
+				) : eventsByCategory.length === 0 ? (
+					<div className="flex flex-col items-center justify-center py-12 sm:py-16 text-center px-4">
+						<div className="bg-muted/50 rounded-full p-6 sm:p-8 mb-4 sm:mb-6">
+							<ArrowRight className="w-12 h-12 sm:w-16 sm:h-16 text-muted-foreground/50" />
 						</div>
-					))}
-				</div>
+						<h3 className="text-lg sm:text-xl font-semibold text-foreground mb-2">{t("No Events Available")}</h3>
+						<p className="text-sm sm:text-base text-muted-foreground max-w-md">
+							{t("There are no events in these categories yet. Check back later or explore other categories.")}
+						</p>
+					</div>
+				) : (
+					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+						{eventsByCategory?.map((categoryData: CategoryEvents) => (
+							<div
+								key={categoryData.category}
+								className="bg-card/60 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 flex flex-col overflow-hidden border border-border/50"
+							>
+								<div className="p-3 sm:p-4 border-b">
+									<h3 className="text-base sm:text-lg font-semibold text-foreground">{categoryData.category}</h3>
+								</div>
+								<div className="p-3 sm:p-4 flex-1">
+									{categoryData.events.length === 0 ? (
+										<div className="flex flex-col items-center justify-center py-6 text-center">
+											<p className="text-xs sm:text-sm text-muted-foreground">{t("No events in this category")}</p>
+										</div>
+									) : (
+										<div className="space-y-2 sm:space-y-3">
+											{categoryData.events.map((event: Event) => (
+												<SmallEventCard key={event._id} event={event} likeEventHandler={likeEventHandler} />
+											))}
+										</div>
+									)}
+								</div>
+								<div className="p-2.5 sm:p-3 border-t mt-auto">
+									<Link
+										href={`/event?categories=${categoryData.category.toUpperCase()}`}
+										className="text-xs sm:text-sm text-primary hover:text-primary/80 font-medium flex items-center justify-center gap-1 transition-colors duration-200"
+									>
+										<ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+									</Link>
+								</div>
+							</div>
+						))}
+					</div>
+				)}
 			</div>
 		</section>
 	);

@@ -24,6 +24,48 @@ const nextConfig = {
 			{
 				protocol: "http",
 				hostname: "localhost",
+				port: "3007",
+				pathname: "/**",
+			},
+			// External event sources
+			{
+				protocol: "https",
+				hostname: "*.meetup.com",
+				pathname: "/**",
+			},
+			{
+				protocol: "https",
+				hostname: "secure.meetupstatic.com",
+				pathname: "/**",
+			},
+			{
+				protocol: "https",
+				hostname: "*.lu.ma",
+				pathname: "/**",
+			},
+			{
+				protocol: "https",
+				hostname: "images.lumacdn.com",
+				pathname: "/**",
+			},
+			{
+				protocol: "https",
+				hostname: "*.eventbrite.com",
+				pathname: "/**",
+			},
+			{
+				protocol: "https",
+				hostname: "img.evbuc.com",
+				pathname: "/**",
+			},
+			{
+				protocol: "https",
+				hostname: "**.amazonaws.com",
+				pathname: "/**",
+			},
+			{
+				protocol: "https",
+				hostname: "**.cloudfront.net",
 				pathname: "/**",
 			},
 		],

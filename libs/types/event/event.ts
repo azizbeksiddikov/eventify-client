@@ -1,7 +1,8 @@
-import { EventStatus, EventCategory, EventType, RecurrenceType } from "@/libs/enums/event.enum";
+import { EventStatus, EventCategory, EventType, RecurrenceType, EventLocationType } from "@/libs/enums/event.enum";
 import { Member, TotalCounter } from "@/libs/types/member/member";
 import { Group } from "@/libs/types/group/group";
 import { MeLiked } from "@/libs/types/like/like";
+import { Currency } from "@/libs/enums/common.enum";
 
 export interface Event {
 	// ===== Basic Information =====
@@ -16,36 +17,43 @@ export interface Event {
 	eventStartAt: Date;
 	eventEndAt: Date;
 
-	// ===== Event Location =====
-	eventCity: string;
-	eventAddress: string;
+	// ===== Location Details =====
+	locationType: EventLocationType;
+	eventCity?: string;
+	eventAddress?: string;
 
-	// ===== Event Capacity and Price =====
+	// Coordinates
+	coordinateLatitude?: number;
+	coordinateLongitude?: number;
+
+	// ===== Event Details =====
 	eventCapacity?: number;
-	eventPrice?: number;
+	eventPrice: number;
+	eventCurrency?: Currency;
 
 	// ===== Type and Status =====
 	eventStatus: EventStatus;
 	eventCategories: EventCategory[];
+	eventTags: string[];
 
-	// ===== References =====
+	// ===== Internal References =====
 	groupId?: string;
-	memberId: string;
+	memberId?: string;
 
-	// ===== Origin =====
-	origin: string;
+	// ===== External Source Information =====
+	origin: string; // 'internal' | 'meetup.com' | 'luma.com' | 'eventbrite.com', etc.
+	externalId?: string; // Original event ID from external platform
+	externalUrl?: string; // Link to original event page
 
-	// ===== Statistics =====
+	isRealEvent: boolean;
 	attendeeCount: number;
 	eventLikes: number;
 	eventViews: number;
-
-	// ===== Timestamps =====
 	createdAt: Date;
 	updatedAt: Date;
 
 	// ===== Aggregated Fields =====
-	memberData?: Member;
+	memberData?: Member | null;
 	hostingGroup?: Group;
 	meLiked?: MeLiked[];
 	similarEvents?: Event[];
@@ -76,11 +84,18 @@ export interface EventRecurrence {
 	eventName: string;
 	eventDesc: string;
 	eventImages: string[];
-	eventAddress: string;
-	eventCity: string;
+	locationType: EventLocationType;
+	eventCity?: string;
+	eventAddress?: string;
+
+	// Coordinates
+	coordinateLatitude?: number;
+	coordinateLongitude?: number;
 	eventCapacity?: number;
 	eventPrice: number;
+	eventCurrency?: Currency;
 	eventCategories: EventCategory[];
+	eventTags: string[];
 	eventStatus: EventStatus;
 
 	// ===== First Occurrence Template =====
@@ -96,6 +111,7 @@ export interface EventRecurrence {
 
 	// ===== Status =====
 	isActive: boolean;
+	isRealEvent: boolean;
 
 	// ===== Timestamps =====
 	createdAt: Date;

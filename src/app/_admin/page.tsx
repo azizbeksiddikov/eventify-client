@@ -257,7 +257,7 @@ const AdminHome = ({
 	}
 
 	return (
-		<div className="container mx-auto py-8">
+		<div className="content-container py-8">
 			<Tabs value={activeTab} onValueChange={changeTabHandler} className="w-full">
 				{/* TABS LIST */}
 				<TabsList className="grid w-full grid-cols-4 mb-8 h-12">

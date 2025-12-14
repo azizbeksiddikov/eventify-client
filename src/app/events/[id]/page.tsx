@@ -129,10 +129,10 @@ const ChosenEvent = () => {
 	if (!eventId) return null;
 
 	return (
-		<div className="mx-4">
+		<div>
 			<ChosenEventHeader />
 
-			<div className="max-w-7xl mx-auto pb-10">
+			<div className="content-container pb-10">
 				<div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
 					<div className="lg:col-span-3">
 						<ChosenEventData

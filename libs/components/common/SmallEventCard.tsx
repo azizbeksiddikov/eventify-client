@@ -2,10 +2,10 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { NEXT_APP_API_URL } from "@/libs/config";
 import { MapPin, Calendar, Heart, Eye } from "lucide-react";
 import { Button } from "@/libs/components/ui/button";
 import type { Event } from "@/libs/types/event/event";
+import { getImageUrl, formatSeoulDate } from "@/libs/utils";
 
 interface EventCardProps {
 	event: Event;
@@ -14,40 +14,40 @@ interface EventCardProps {
 
 const SmallEventCard = ({ event, likeEventHandler }: EventCardProps) => {
 	return (
-		<div className="p-2 sm:p-3 lg:p-2 xl:p-3 rounded-lg hover:bg-secondary/20 hover:border-l-2 sm:hover:border-l-4 hover:border-l-primary transition-all duration-300">
-			<div className="flex items-center gap-2 sm:gap-3 lg:gap-2 xl:gap-3">
+		<div className="p-1.5 rounded-md hover:bg-accent/5 transition-all duration-200">
+			<div className="flex items-center gap-2">
 				{/* Image and Description Column */}
-				<Link href={`/events/${event._id}`} className="flex-1 flex items-center gap-2 sm:gap-3 lg:gap-2 xl:gap-3 group">
+				<Link href={`/events/${event._id}`} className="flex-1 flex items-center gap-2 group">
 					{/* Image */}
-					<div className="flex-shrink-0">
-						<div className="w-12 h-12 sm:w-16 sm:h-16 lg:w-14 lg:h-14 xl:w-16 xl:h-16 rounded-md sm:rounded-lg overflow-hidden relative">
+					<div className="shrink-0">
+						<div className="w-12 h-12 rounded-md overflow-hidden relative">
 							<Image
-								src={`${NEXT_APP_API_URL}/${event.eventImages[0]}`}
+								src={getImageUrl(event.eventImages[0], "event", event.origin)}
 								alt={event.eventName}
 								className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
-								width={80}
-								height={80}
+								width={48}
+								height={48}
 							/>
-							<div className="absolute inset-0 bg-gradient-to-t from-background/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+							<div className="absolute inset-0 bg-linear-to-t from-background/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
 						</div>
 					</div>
 
 					{/* Description */}
 					<div className="flex-1 min-w-0">
-						<h4 className="text-sm sm:text-base lg:text-sm xl:text-base font-semibold text-card-foreground group-hover:text-card-foreground transition-colors duration-200 line-clamp-1">
+						<h4 className="text-xs sm:text-sm font-semibold text-card-foreground group-hover:text-card-foreground transition-colors duration-200 line-clamp-1">
 							{event.eventName}
 						</h4>
-						<div className="mt-1 sm:mt-2 flex flex-col xs:flex-row items-start xs:items-center gap-1 xs:gap-2 sm:gap-3 lg:gap-2 xl:gap-3 text-xs sm:text-sm lg:text-xs xl:text-sm text-card-foreground/70">
+						<div className="mt-0.5 flex flex-col gap-0.5 text-[10px] text-card-foreground/70">
 							<div className="flex items-center">
-								<Calendar className="w-3 h-3 mr-1 text-card-foreground/70" />
-								{new Date(event.eventStartAt).toLocaleDateString("en-US", {
+								<Calendar className="w-2.5 h-2.5 mr-0.5 text-card-foreground/70 shrink-0" />
+								{formatSeoulDate(event.eventStartAt, {
 									month: "short",
 									day: "numeric",
 									year: "numeric",
 								})}
 							</div>
 							<div className="flex items-center">
-								<MapPin className="w-3 h-3 mr-1 text-card-foreground/70" />
+								<MapPin className="w-2.5 h-2.5 mr-0.5 text-card-foreground/70 shrink-0" />
 								<span className="line-clamp-1">{event.eventCity}</span>
 							</div>
 						</div>
@@ -55,20 +55,19 @@ const SmallEventCard = ({ event, likeEventHandler }: EventCardProps) => {
 				</Link>
 
 				{/* Views and Like Column */}
-				<div className="flex flex-col items-end gap-1 sm:gap-2">
+				<div className="flex flex-col items-end gap-1">
 					<div className="flex items-center">
-						<Eye className="w-3 h-3 mr-1 text-card-foreground/70" />
-						<span className="text-xs sm:text-sm lg:text-xs xl:text-sm text-card-foreground/70">
-							{event.eventViews.toLocaleString()}
-						</span>
+						<Eye className="w-2.5 h-2.5 mr-0.5 text-card-foreground/70 shrink-0" />
+						<span className="text-[10px] text-card-foreground/70">{event.eventViews.toLocaleString()}</span>
 					</div>
 					<Button
 						variant="ghost"
 						onClick={() => likeEventHandler(event?._id)}
-						className="h-8 w-8 p-0 text-card-foreground/70 hover:text-primary transition-colors duration-200 hover:bg-primary/10 flex items-center justify-center "
+						className="h-5 w-5 p-0 text-card-foreground/70 hover:text-primary transition-colors duration-200 hover:bg-primary/10 flex items-center justify-center"
+						aria-label={event?.meLiked?.[0]?.myFavorite ? "Liked" : "Like"}
 					>
 						<Heart
-							className={`h-3.5 w-3.5 transition-all duration-200 ${
+							className={`w-2.5 h-2.5 transition-all duration-200 ${
 								event?.meLiked?.[0]?.myFavorite ? "fill-primary text-primary" : ""
 							}`}
 						/>

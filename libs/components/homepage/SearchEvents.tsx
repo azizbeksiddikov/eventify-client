@@ -29,44 +29,45 @@ const SearchEvents = () => {
 		if (startDate) query.startDate = readDate(startDate);
 		if (endDate) query.endDate = readDate(endDate);
 
-		router.push({
-			pathname: "/event",
-			query,
-		});
+		router.push(`/events?${new URLSearchParams(query).toString()}`);
 	};
 
 	return (
-		<div className="bg-secondary/70 py-8 sm:py-10 md:py-16 lg:py-20 xl:py-24 shadow-lg">
+		<div className="bg-secondary/70 py-6 sm:py-8 md:py-12 lg:py-16 xl:py-20 shadow-lg w-full">
 			<div className="px-4 sm:px-6 md:px-8 lg:px-10 max-w-7xl mx-auto">
-				<h2 className="text-2xl sm:text-3xl md:text-4xl mb-4 sm:mb-6 md:mb-8 text-center">{t("Find Events")}</h2>
-				<Card className="p-4 sm:p-5 md:p-6 lg:p-8 w-full max-w-5xl mx-auto border-2 border-primary/20 shadow-md">
+				<h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl mb-4 sm:mb-6 md:mb-8 text-center font-bold">
+					{t("Find Events")}
+				</h2>
+				<Card className="p-3 sm:p-4 md:p-6 lg:p-8 w-full max-w-5xl mx-auto border-2 border-primary/20 shadow-md">
 					<form
 						onSubmit={searchHandler}
-						className="flex flex-col sm:flex-col md:flex-row items-stretch md:items-center gap-3 sm:gap-4"
+						className="flex flex-col md:flex-row items-stretch md:items-center gap-3 sm:gap-4"
 					>
-						<div className="flex-1 relative">
+						<div className="flex-1 relative w-full">
 							<Input
 								type="text"
 								placeholder={t("Search Events")}
-								className="w-full h-10 sm:h-12 md:h-14 text-base sm:text-lg pl-10 rounded-md focus:ring-2 focus:ring-primary/50 transition-all"
+								className="w-full h-10 sm:h-11 md:h-12 lg:h-14 text-sm sm:text-base md:text-lg pl-9 sm:pl-10 rounded-md focus:ring-2 focus:ring-primary/50 transition-all"
 								value={text}
 								onChange={(e) => setText(e.target.value)}
 							/>
-							<SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 sm:h-5 w-4 sm:w-5 text-muted-foreground" />
+							<SearchIcon className="absolute left-2.5 sm:left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5 text-muted-foreground pointer-events-none" />
 						</div>
 
-						<div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
+						<div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 w-full md:w-auto">
 							<Popover>
 								<PopoverTrigger asChild>
 									<Button
 										variant="outline"
-										className="h-10 sm:h-12 md:h-14 justify-start text-left font-normal border border-input hover:bg-accent/50 transition-colors text-xs sm:text-sm md:text-base"
+										className="h-10 sm:h-11 md:h-12 lg:h-14 justify-start text-left font-normal border border-input hover:bg-accent/50 transition-colors text-xs sm:text-sm md:text-base w-full sm:w-auto"
 									>
-										<CalendarIcon className="mr-2 h-3 sm:h-4 w-3 sm:w-4" />
-										{startDate ? format(startDate, "PPP") : <span>{t("Start date")}</span>}
+										<CalendarIcon className="mr-1.5 sm:mr-2 h-3 w-3 sm:h-3.5 sm:w-3.5 md:h-4 md:w-4 shrink-0" />
+										<span className="truncate">
+											{startDate ? format(startDate, "PPP") : <span>{t("Start date")}</span>}
+										</span>
 									</Button>
 								</PopoverTrigger>
-								<PopoverContent className="w-auto p-0">
+								<PopoverContent className="w-auto p-0" align="start">
 									<Calendar mode="single" selected={startDate} onSelect={setStartDate} initialFocus />
 								</PopoverContent>
 							</Popover>
@@ -74,20 +75,20 @@ const SearchEvents = () => {
 								<PopoverTrigger asChild>
 									<Button
 										variant="outline"
-										className="h-10 sm:h-12 md:h-14 justify-start text-left font-normal border border-input hover:bg-accent/50 transition-colors text-xs sm:text-sm md:text-base"
+										className="h-10 sm:h-11 md:h-12 lg:h-14 justify-start text-left font-normal border border-input hover:bg-accent/50 transition-colors text-xs sm:text-sm md:text-base w-full sm:w-auto"
 									>
-										<CalendarIcon className="mr-2 h-3 sm:h-4 w-3 sm:w-4" />
-										{endDate ? format(endDate, "PPP") : <span>{t("End date")}</span>}
+										<CalendarIcon className="mr-1.5 sm:mr-2 h-3 w-3 sm:h-3.5 sm:w-3.5 md:h-4 md:w-4 shrink-0" />
+										<span className="truncate">{endDate ? format(endDate, "PPP") : <span>{t("End date")}</span>}</span>
 									</Button>
 								</PopoverTrigger>
-								<PopoverContent className="w-auto p-0">
+								<PopoverContent className="w-auto p-0" align="start">
 									<Calendar mode="single" selected={endDate} onSelect={setEndDate} initialFocus />
 								</PopoverContent>
 							</Popover>
 						</div>
 						<Button
 							type="submit"
-							className="h-10 sm:h-12 md:h-14 px-4 sm:px-6 md:px-8 bg-primary text-primary-foreground hover:bg-primary/90 transition-colors font-medium text-sm sm:text-base"
+							className="h-10 sm:h-11 md:h-12 lg:h-14 px-4 sm:px-5 md:px-6 lg:px-8 bg-primary text-primary-foreground hover:bg-primary/90 transition-colors font-medium text-sm sm:text-base w-full md:w-auto"
 						>
 							{t("Search")}
 						</Button>

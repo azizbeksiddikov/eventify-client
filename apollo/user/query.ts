@@ -63,6 +63,7 @@ export const GET_ORGANIZERS: TypedDocumentNode<GetOrganizersQuery, GetOrganizers
 				memberPhone
 				memberFullName
 				memberType
+				memberPoints
 				memberDesc
 				memberImage
 				memberStatus
@@ -73,7 +74,6 @@ export const GET_ORGANIZERS: TypedDocumentNode<GetOrganizersQuery, GetOrganizers
 				memberViews
 				createdAt
 				updatedAt
-				eventsOrganizedCount
 				meLiked {
 					memberId
 					likeRefId
@@ -84,6 +84,10 @@ export const GET_ORGANIZERS: TypedDocumentNode<GetOrganizersQuery, GetOrganizers
 					followerId
 					myFollowing
 				}
+				memberRank
+				memberGroups
+				memberEvents
+				eventsOrganizedCount
 			}
 			metaCounter {
 				total
@@ -215,6 +219,10 @@ export const GET_GROUPS: TypedDocumentNode<GetGroupsQuery, GetGroupsQueryVariabl
 					memberFollowings
 					memberFollowers
 					memberViews
+					memberRank
+					memberGroups
+					memberEvents
+					eventsOrganizedCount
 					createdAt
 					updatedAt
 				}
@@ -423,15 +431,22 @@ export const GET_EVENTS: TypedDocumentNode<GetEventsQuery, GetEventsQueryVariabl
 				eventImages
 				eventStartAt
 				eventEndAt
+				locationType
 				eventCity
 				eventAddress
+				coordinateLatitude
+				coordinateLongitude
 				eventCapacity
 				eventPrice
 				eventStatus
 				eventCategories
+				eventTags
 				groupId
 				memberId
 				origin
+				externalId
+				externalUrl
+				isRealEvent
 				attendeeCount
 				eventLikes
 				eventViews
@@ -442,6 +457,7 @@ export const GET_EVENTS: TypedDocumentNode<GetEventsQuery, GetEventsQueryVariabl
 					likeRefId
 					myFavorite
 				}
+				eventCurrency
 			}
 			metaCounter {
 				total
@@ -468,15 +484,22 @@ export const GET_UNIQUE_EVENTS: TypedDocumentNode<GetUniqueEventsQuery, GetUniqu
 				eventImages
 				eventStartAt
 				eventEndAt
+				locationType
 				eventCity
 				eventAddress
+				coordinateLatitude
+				coordinateLongitude
 				eventCapacity
 				eventPrice
 				eventStatus
 				eventCategories
+				eventTags
 				groupId
 				memberId
 				origin
+				externalId
+				externalUrl
+				isRealEvent
 				attendeeCount
 				eventLikes
 				eventViews
@@ -487,6 +510,7 @@ export const GET_UNIQUE_EVENTS: TypedDocumentNode<GetUniqueEventsQuery, GetUniqu
 					likeRefId
 					myFavorite
 				}
+				eventCurrency
 			}
 			metaCounter {
 				total
@@ -665,15 +689,22 @@ export const GET_EVENTS_BY_CATEGORY: TypedDocumentNode<GetEventsByCategoryQuery,
 					eventImages
 					eventStartAt
 					eventEndAt
+					locationType
 					eventCity
 					eventAddress
+					coordinateLatitude
+					coordinateLongitude
 					eventCapacity
 					eventPrice
 					eventStatus
 					eventCategories
+					eventTags
 					groupId
 					memberId
 					origin
+					externalId
+					externalUrl
+					isRealEvent
 					attendeeCount
 					eventLikes
 					eventViews
@@ -684,30 +715,7 @@ export const GET_EVENTS_BY_CATEGORY: TypedDocumentNode<GetEventsByCategoryQuery,
 						likeRefId
 						myFavorite
 					}
-					memberData {
-						_id
-						username
-						memberEmail
-						memberPhone
-						memberFullName
-						memberType
-						memberStatus
-						emailVerified
-						memberDesc
-						memberImage
-						memberPoints
-						memberLikes
-						memberFollowings
-						memberFollowers
-						memberViews
-						memberRank
-						memberGroups
-						memberEvents
-						eventsOrganizedCount
-						createdAt
-						updatedAt
-						accessToken
-					}
+					eventCurrency
 				}
 			}
 		}

@@ -20,10 +20,10 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="en" suppressHydrationWarning>
-			<body className={`antialiased`}>
+			<body className="antialiased w-full">
 				<Providers>
 					<ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-						<div className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+						<div className="flex-1 w-full">
 							<Header />
 							{children}
 							<Footer />

@@ -12,8 +12,8 @@ const quickLinks = [
 
 const Footer = () => {
 	return (
-		<footer>
-			<div className="my-8 grid grid-cols-3 gap-12">
+		<footer className="bg-background border-t w-full">
+			<div className="content-container my-8 grid grid-cols-3 gap-12">
 				{/* Company Info & Social */}
 				<div className="space-y-8">
 					<Link href="/" className="flex items-center gap-3 hover:scale-95 transition-transform">
@@ -25,21 +25,21 @@ const Footer = () => {
 						<Link
 							href="https://instagram.com/siddikov_aziz"
 							target="_blank"
-							className="p-2 md:p-3 rounded-full bg-background/50 hover:bg-primary transition-all hover:scale-110 border  /20"
+							className="p-2 md:p-3 rounded-full bg-background/50 hover:bg-primary transition-all hover:scale-110 border border-border/20"
 						>
 							<Instagram className="w-4 h-4 md:w-5 md:h-5" />
 						</Link>
 						<Link
 							href="https://linkedin.com/in/azbek"
 							target="_blank"
-							className="p-2 md:p-3 rounded-full bg-background/50 hover:bg-primary transition-all hover:scale-110 border  /20"
+							className="p-2 md:p-3 rounded-full bg-background/50 hover:bg-primary transition-all hover:scale-110 border border-border/20"
 						>
 							<Linkedin className="w-4 h-4 md:w-5 md:h-5" />
 						</Link>
 						<Link
 							href="https://t.me/siddikov_a"
 							target="_blank"
-							className="p-2 md:p-3 rounded-full bg-background/50 hover:bg-primary transition-all hover:scale-110 border  /20"
+							className="p-2 md:p-3 rounded-full bg-background/50 hover:bg-primary transition-all hover:scale-110 border border-border/20"
 						>
 							<Send className="w-4 h-4 md:w-5 md:h-5" />
 						</Link>
@@ -84,9 +84,9 @@ const Footer = () => {
 				</div>
 			</div>
 
-			<hr />
+			<hr className="border-t" />
 			{/* Bottom Bar */}
-			<div className="mt-4 mb-12">
+			<div className="content-container mt-4 mb-12">
 				<div className="flex flex-row justify-between items-center gap-6">
 					<p>© {"2025 Eventify. All rights reserved"}.</p>
 					<div className="flex items-center gap-8">

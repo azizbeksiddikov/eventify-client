@@ -12,7 +12,7 @@ import { Badge } from "@/libs/components/ui/badge";
 import { Event } from "@/libs/types/event/event";
 import { EventStatus } from "@/libs/enums/event.enum";
 
-import { NEXT_APP_API_URL } from "@/libs/config";
+import { getImageUrl, formatSeoulDate, formatSeoulTime } from "@/libs/utils";
 
 interface EventCardProps {
 	event: Event;
@@ -43,7 +43,7 @@ const EventCard = ({ event, likeEventHandler }: EventCardProps) => {
 				<div className="relative aspect-[16/9] w-full overflow-hidden rounded-t-xl">
 					<Link href={`/events/${event._id}`}>
 						<Image
-							src={`${NEXT_APP_API_URL}/${event.eventImages[0]}`}
+							src={getImageUrl(event.eventImages[0], "event", event.origin)}
 							alt={event.eventName}
 							fill
 							className="object-cover transition-transform duration-300"
@@ -87,14 +87,14 @@ const EventCard = ({ event, likeEventHandler }: EventCardProps) => {
 
 					<div className="space-y-1.5">
 						<div className="flex items-center gap-2 text-sm text-muted-foreground h-5">
-							<MapPin className="w-4 h-4 flex-shrink-0" />
+							<MapPin className="w-4 h-4 shrink-0" />
 							<span className="line-clamp-1">{event.eventCity || event.eventAddress}</span>
 						</div>
 						<div className="flex items-center gap-2 text-sm text-muted-foreground h-5">
-							<Calendar className="w-4 h-4 flex-shrink-0" />
+							<Calendar className="w-4 h-4 shrink-0" />
 							<span>
-								{format(new Date(event.eventStartAt), "MMM d")} • {format(new Date(event.eventStartAt), "HH:mm")} -{" "}
-								{format(new Date(event.eventEndAt), "HH:mm")}
+								{formatSeoulDate(event.eventStartAt, { month: "short", day: "numeric" })} •{" "}
+								{formatSeoulTime(event.eventStartAt)} - {formatSeoulTime(event.eventEndAt)}
 							</span>
 						</div>
 					</div>
@@ -147,20 +147,20 @@ const EventCard = ({ event, likeEventHandler }: EventCardProps) => {
 				</div>
 			</CardContent>
 
-			<CardFooter className="border-t   flex items-center justify-between gap-2 py-0 my-0">
+			<CardFooter className="border-t flex items-center justify-between gap-2 py-0 my-0">
 				<Button
 					variant="ghost"
 					size="sm"
-					className={`h-8 px-3 font-medium transition-all ${event?.meLiked?.[0]?.myFavorite ? "text-rose-500" : ""}`}
+					className={`h-8 w-8 p-0 transition-all ${event?.meLiked?.[0]?.myFavorite ? "text-rose-500" : ""}`}
 					onClick={() => likeEventHandler(event._id)}
+					aria-label={event?.meLiked?.[0]?.myFavorite ? t("Liked") : t("Like")}
 				>
 					<Heart
-						className={`h-3.5 w-3.5 mr-1 transition-all ${event?.meLiked?.[0]?.myFavorite ? "fill-current stroke-current" : ""}`}
+						className={`h-4 w-4 transition-all ${event?.meLiked?.[0]?.myFavorite ? "fill-current stroke-current" : ""}`}
 					/>
-					{event?.meLiked?.[0]?.myFavorite ? t("Liked") : t("Like")}
 				</Button>
 
-				<Link href={`/event/detail?eventId=${event._id}`}>
+				<Link href={`/events/${event._id}`}>
 					<Button
 						variant="outline"
 						size="sm"
