@@ -94,8 +94,8 @@ const Header = () => {
 					<span className="text-lg sm:text-xl font-semibold text-foreground">Eventify</span>
 				</Link>
 
-				{/* Desktop Navigation - Hidden on mobile/tablet, shown on lg screens */}
-				<nav className="hidden lg:flex items-center gap-6 xl:gap-8">
+				{/* Navigation - Hidden on mobile, shown on md+ (tablets and up) */}
+				<nav className="hidden md:flex items-center gap-4 lg:gap-6 xl:gap-8">
 					{navLinks.map((link, index) => (
 						<Link
 							key={index}
