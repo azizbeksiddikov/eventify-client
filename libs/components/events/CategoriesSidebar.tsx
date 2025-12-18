@@ -3,12 +3,10 @@ import { Filter, X } from "lucide-react";
 import { useMemo } from "react";
 
 import { Popover, PopoverContent, PopoverTrigger } from "@/libs/components/ui/popover";
-import { ScrollArea } from "@/libs/components/ui/scroll-area";
 import { Button } from "@/libs/components/ui/button";
 import { Checkbox } from "@/libs/components/ui/checkbox";
 import { Label } from "@/libs/components/ui/label";
 
-import useDeviceDetect from "@/libs/hooks/useDeviceDetect";
 import type { EventsInquiry } from "@/libs/types/event/event.input";
 import { EventCategory } from "@/libs/enums/event.enum";
 
@@ -20,7 +18,6 @@ interface CategoriesSidebarProps {
 
 const CategoriesSidebar = ({ eventsSearchFilters, updateURL, initialSearch }: CategoriesSidebarProps) => {
 	const { t } = useTranslation("common");
-	const device = useDeviceDetect();
 
 	const hasSelectedCategories = useMemo(
 		() => eventsSearchFilters?.search?.eventCategories && eventsSearchFilters.search.eventCategories.length > 0,
@@ -82,6 +79,31 @@ const CategoriesSidebar = ({ eventsSearchFilters, updateURL, initialSearch }: Ca
 		</div>
 	);
 
+	const renderSelectedCategories = () => {
+		const selected = eventsSearchFilters.search?.eventCategories ?? [];
+		if (selected.length === 0) return null;
+
+		return (
+			<div>
+				<div className="text-xs font-semibold text-muted-foreground mb-2">{t("Selected")}</div>
+				<div className="flex flex-wrap gap-2">
+					{selected.map((category) => (
+						<Button
+							key={category}
+							type="button"
+							variant="secondary"
+							onClick={() => changeCategoryHandler(category)}
+							className="h-8 px-2.5 rounded-full bg-background/70 hover:bg-accent/70"
+						>
+							<span className="text-xs">{formatCategory(category)}</span>
+							<X className="ml-1.5 h-3.5 w-3.5 opacity-80" />
+						</Button>
+					))}
+				</div>
+			</div>
+		);
+	};
+
 	const renderClearButton = (mobile = false) => (
 		<Button
 			type="button"
@@ -95,38 +117,53 @@ const CategoriesSidebar = ({ eventsSearchFilters, updateURL, initialSearch }: Ca
 		</Button>
 	);
 
-	if (device === "mobile") {
-		return (
-			<Popover>
-				<PopoverTrigger asChild>
-					<Button variant="outline" className="w-full justify-start">
-						<Filter className="mr-2 h-4 w-4" />
-						{t("Filter Categories")}
-					</Button>
-				</PopoverTrigger>
-				<PopoverContent className="w-[90vw] max-w-sm p-0">
-					<ScrollArea className="bg-primary/5 backdrop-blur-sm h-90 rounded-md p-4 border border-primary/20 shadow-sm sm:w-64">
-						<div className="flex items-center justify-between mb-4">
-							<h3 className="text-base font-semibold text-primary">{t("Categories")}</h3>
-							{renderClearButton(true)}
-						</div>
-						{renderCategoryItems()}
-					</ScrollArea>
-				</PopoverContent>
-			</Popover>
-		);
-	}
-
 	return (
-		<div className="w-full md:w-72 shrink-0">
-			<div className="bg-primary/5 backdrop-blur-sm rounded-2xl shadow-sm border border-primary/20 p-6 pt-0">
-				<div className="flex items-center justify-between mb-4">
-					<h3 className="text-lg font-semibold text-primary">{t("Categories")}</h3>
-					{renderClearButton()}
-				</div>
-				{renderCategoryItems()}
+		<>
+			{/* Mobile / Tablet: simple dropdown (scrollable when opened) */}
+			<div className="w-full lg:hidden">
+				<Popover>
+					<PopoverTrigger asChild>
+						<Button variant="outline" className="w-full justify-between bg-background/70">
+							<div className="flex items-center">
+								<Filter className="mr-2 h-4 w-4" />
+								<span>{t("Categories")}</span>
+							</div>
+							<span className="text-xs text-muted-foreground">
+								{eventsSearchFilters.search?.eventCategories?.length
+									? `${eventsSearchFilters.search.eventCategories.length}`
+									: ""}
+							</span>
+						</Button>
+					</PopoverTrigger>
+					<PopoverContent className="w-[90vw] max-w-sm p-0 bg-primary/5 backdrop-blur-sm border border-primary/20 shadow-sm rounded-md">
+						<div className="p-4">
+							<div className="flex items-center justify-between mb-4">
+								<h3 className="text-base font-semibold text-primary">{t("Categories")}</h3>
+								{renderClearButton(true)}
+							</div>
+
+							<div className="max-h-[60vh] overflow-y-auto pr-1">{renderCategoryItems()}</div>
+						</div>
+					</PopoverContent>
+				</Popover>
+				{eventsSearchFilters.search?.eventCategories?.length ? (
+					<div className="mt-3 bg-primary/5 backdrop-blur-sm border border-primary/20 shadow-sm rounded-md p-3">
+						{renderSelectedCategories()}
+					</div>
+				) : null}
 			</div>
-		</div>
+
+			{/* Desktop: sidebar */}
+			<div className="hidden lg:block lg:w-72 shrink-0">
+				<div className="bg-primary/5 backdrop-blur-sm rounded-2xl shadow-sm border border-primary/20 p-6 pt-0">
+					<div className="flex items-center justify-between mb-4">
+						<h3 className="text-lg font-semibold text-primary">{t("Categories")}</h3>
+						{renderClearButton()}
+					</div>
+					{renderCategoryItems()}
+				</div>
+			</div>
+		</>
 	);
 };
 

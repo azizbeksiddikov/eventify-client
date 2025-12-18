@@ -100,32 +100,36 @@ function SortAndFilter({ updateURL, eventsSearchFilters, initialSearch }: SortAn
 	};
 
 	return (
-		<div className="rounded-2xl shadow-lg p-6 relative border-2  /80 bg-background/70 backdrop-blur-md w-full max-w-5xl mx-auto">
-			<div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 sm:gap-10">
-				{/* 🔍 Search Bar */}
-				<Input
-					placeholder={t("Search events") + "..."}
-					value={eventsSearchFilters.search?.text}
-					onChange={(e) => searchHandler(e.target.value)}
-					className={cn(
-						buttonVariants({ variant: "ghost", size: "icon" }),
-						"w-full sm:w-auto bg-background/80 backdrop-blur-sm  /50 transition-colors hover:bg-accent/50",
-					)}
-				/>
+		<div className="rounded-2xl shadow-lg p-4 sm:p-6 relative border-2 /80 bg-background/70 backdrop-blur-md w-full max-w-5xl mx-auto">
+			<div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+				{/* Left: search + dates */}
+				<div className="min-w-0 grid gap-3 sm:gap-4 sm:grid-cols-2 lg:flex lg:items-center lg:gap-4 lg:flex-1">
+					{/* 🔍 Search Bar */}
+					<div className="sm:col-span-2 min-w-0 lg:flex-none">
+						<Input
+							placeholder={t("Search events") + "..."}
+							value={eventsSearchFilters.search?.text}
+							onChange={(e) => searchHandler(e.target.value)}
+							className={cn(
+								buttonVariants({ variant: "ghost", size: "icon" }),
+								"w-full lg:w-80 bg-background/80 backdrop-blur-sm /50 transition-colors hover:bg-accent/50",
+							)}
+						/>
+					</div>
 
-				{/* Date Pickers */}
-				<div className="flex flex-wrap gap-4">
 					{/* Start Date */}
 					<Popover>
 						<PopoverTrigger asChild>
 							<Button
 								variant="outline"
-								className="w-full sm:w-auto bg-background/80 backdrop-blur-sm  /50 hover:bg-accent/50 transition-colors"
+								className="w-full lg:w-auto justify-start bg-background/80 backdrop-blur-sm /50 hover:bg-accent/50 transition-colors"
 							>
 								<Calendar className="mr-2 h-4 w-4 text-muted-foreground" />
-								{eventsSearchFilters.search.eventStartDay
-									? format(eventsSearchFilters.search.eventStartDay, "MMM d, yyyy")
-									: t("Start date")}
+								<span className="truncate">
+									{eventsSearchFilters.search.eventStartDay
+										? format(eventsSearchFilters.search.eventStartDay, "MMM d, yyyy")
+										: t("Start date")}
+								</span>
 							</Button>
 						</PopoverTrigger>
 						<PopoverContent className="w-auto p-0 z-[1000]" align="start">
@@ -149,12 +153,14 @@ function SortAndFilter({ updateURL, eventsSearchFilters, initialSearch }: SortAn
 						<PopoverTrigger asChild>
 							<Button
 								variant="outline"
-								className="w-full sm:w-auto bg-background/80 backdrop-blur-sm  /50 hover:bg-accent/50 transition-colors"
+								className="w-full lg:w-auto justify-start bg-background/80 backdrop-blur-sm /50 hover:bg-accent/50 transition-colors"
 							>
 								<Calendar className="mr-2 h-4 w-4 text-muted-foreground" />
-								{eventsSearchFilters.search.eventEndDay
-									? format(eventsSearchFilters.search.eventEndDay, "MMM d, yyyy")
-									: t("End date")}
+								<span className="truncate">
+									{eventsSearchFilters.search.eventEndDay
+										? format(eventsSearchFilters.search.eventEndDay, "MMM d, yyyy")
+										: t("End date")}
+								</span>
 							</Button>
 						</PopoverTrigger>
 						<PopoverContent className="w-auto p-0 z-[1000]" align="start">
@@ -176,10 +182,10 @@ function SortAndFilter({ updateURL, eventsSearchFilters, initialSearch }: SortAn
 					</Popover>
 				</div>
 
-				{/* 🔽 Sort + Direction + Clear */}
-				<div className="flex flex-wrap sm:flex-nowrap gap-4 items-center">
+				{/* Right: sort + direction + clear */}
+				<div className="grid grid-cols-2 gap-3 sm:gap-4 sm:grid-cols-3 lg:flex lg:items-center lg:justify-end lg:gap-4 lg:flex-none">
 					<Select value={eventsSearchFilters.sort} onValueChange={sortHandler}>
-						<SelectTrigger className="h-11 min-w-[120px]">
+						<SelectTrigger className="h-11 w-full col-span-2 sm:col-span-1 sm:min-w-[160px]">
 							<ArrowUpDown className="text-muted-foreground mr-2" />
 							<SelectValue placeholder={t("Sort by")} />
 						</SelectTrigger>
@@ -196,7 +202,7 @@ function SortAndFilter({ updateURL, eventsSearchFilters, initialSearch }: SortAn
 						variant="outline"
 						size="icon"
 						onClick={toggleDirection}
-						className="w-14 h-11 bg-background/80 backdrop-blur-sm  /50 hover:bg-accent/50 transition-colors"
+						className="w-full lg:w-14 h-11 bg-background/80 backdrop-blur-sm /50 hover:bg-accent/50 transition-colors"
 					>
 						<span
 							className={cn(
@@ -221,7 +227,7 @@ function SortAndFilter({ updateURL, eventsSearchFilters, initialSearch }: SortAn
 					<Button
 						variant="outline"
 						onClick={clearAllHandler}
-						className="h-11 hover:bg-accent hover:text-accent-foreground"
+						className="w-full lg:w-auto h-11 hover:bg-accent hover:text-accent-foreground"
 					>
 						<X className="h-4 w-4 mr-2" />
 						{t("Clear")}

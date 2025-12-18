@@ -34,8 +34,8 @@ const EventsPage = ({
 		search: {
 			text: "",
 			eventCategories: [],
-			eventStatus: undefined,
-			eventStartDay: undefined,
+			eventStatus: EventStatus.UPCOMING,
+			eventStartDay: new Date(),
 			eventEndDay: undefined,
 		},
 	},
@@ -147,9 +147,11 @@ const EventsPage = ({
 	return (
 		<div>
 			<EventsHeader />
-			<SortAndFilter updateURL={updateURL} eventsSearchFilters={eventsSearchFilters} initialSearch={initialSearch} />
+			<div className="px-4 sm:px-6 lg:px-8">
+				<SortAndFilter updateURL={updateURL} eventsSearchFilters={eventsSearchFilters} initialSearch={initialSearch} />
+			</div>
 
-			<div className=" max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 mb-10">
+			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 mb-10">
 				<div className="flex flex-col lg:flex-row gap-8">
 					{/* Categories Sidebar */}
 					<CategoriesSidebar
