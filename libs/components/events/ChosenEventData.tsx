@@ -2,7 +2,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "next-i18next";
-import { Heart, Eye, Calendar, Clock, MapPin, Users, Plus, Minus, Ticket, Pencil } from "lucide-react";
+import { Heart, Calendar, Clock, MapPin, Users, Plus, Minus, Ticket, Pencil, ExternalLink } from "lucide-react";
 
 import { Button } from "@/libs/components/ui/button";
 import { Badge } from "@/libs/components/ui/badge";
@@ -22,6 +22,7 @@ import { TicketInput } from "@/libs/types/ticket/ticket.input";
 import { EventStatus } from "@/libs/enums/event.enum";
 import { Event } from "@/libs/types/event/event";
 import { format } from "date-fns";
+import { Currency } from "@/libs/enums/common.enum";
 
 interface ChosenEventDataProps {
 	event: Event | null;
@@ -46,9 +47,27 @@ const ChosenEventData = ({
 
 	if (!event) return null;
 
+	const isExternalEvent = Boolean(event.externalUrl) || (event.origin && event.origin !== "internal");
+
+	const formatPrice = (price: number, currency?: Currency) => {
+		if (!price || price === 0) return t("Free");
+		if (currency) {
+			try {
+				return new Intl.NumberFormat(undefined, { style: "currency", currency }).format(price);
+			} catch {
+				// ignore
+			}
+		}
+		return String(price);
+	};
+
 	const quantityHandler = (change: number) => {
 		const newQuantity = ticketInput!.ticketQuantity + change;
-		if (newQuantity < 1 || newQuantity > (event.eventCapacity || 0)) return;
+		const maxQty =
+			typeof event.eventCapacity === "number" && event.eventCapacity > 0
+				? Math.max(0, event.eventCapacity - (event.attendeeCount || 0))
+				: 99;
+		if (newQuantity < 1 || newQuantity > maxQty) return;
 		setTicketInput({ ...ticketInput, ticketQuantity: newQuantity });
 	};
 
@@ -98,11 +117,11 @@ const ChosenEventData = ({
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-4 sm:p-6 pb-4">
 						{/* Event Name and Image */}
 						<div className="relative w-full flex flex-col justify-start items-start">
-							<h2 className="text-xl sm:text-2xl md:text-3xl font-semibold tracking-tight bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent mb-3 text-left">
+							<h2 className="text-lg sm:text-xl md:text-2xl font-semibold tracking-tight text-foreground mb-3 text-left">
 								{event.eventName}
 							</h2>
 							{/* Event Image */}
-							<div className="relative aspect-[16/9] w-full group rounded-xl overflow-hidden border-2">
+							<div className="relative aspect-video w-full group rounded-xl overflow-hidden border-2">
 								<Image
 									src={getImageUrl(event.eventImages[0], "event", event.origin)}
 									alt={event.eventName}
@@ -111,8 +130,8 @@ const ChosenEventData = ({
 									sizes="(max-width: 640px) 100vw, (max-width: 768px) 100vw, 50vw"
 								/>
 
-								<div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-								<div className="absolute bottom-0 left-0 right-0 h-[25%] bg-gradient-to-t from-black/60 to-transparent rounded-b-xl" />
+								<div className="absolute inset-0 bg-linear-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+								<div className="absolute bottom-0 left-0 right-0 h-[25%] bg-linear-to-t from-black/60 to-transparent rounded-b-xl" />
 								<div className="absolute bottom-4 left-4">
 									<Badge
 										variant="secondary"
@@ -121,12 +140,22 @@ const ChosenEventData = ({
 										{event.eventStatus}
 									</Badge>
 								</div>
+								{event.isRealEvent === false && (
+									<div className="absolute top-4 left-4">
+										<Badge
+											variant="secondary"
+											className="bg-red-500/90 text-white backdrop-blur-sm shadow-md px-2 sm:px-3 py-1 font-medium"
+										>
+											{t("Fake")}
+										</Badge>
+									</div>
+								)}
 								<div className="absolute bottom-4 right-4">
 									<Badge
 										variant="secondary"
 										className="bg-primary text-primary-foreground backdrop-blur-sm shadow-md px-2 sm:px-3 py-1 font-medium"
 									>
-										${event.eventPrice}
+										{formatPrice(event.eventPrice, event.eventCurrency)}
 									</Badge>
 								</div>
 							</div>
@@ -152,8 +181,8 @@ const ChosenEventData = ({
 								<div className="space-y-3">
 									{/* Event Date */}
 									<div className="flex items-center gap-3 text-muted-foreground hover:text-foreground transition-colors bg-muted/40 hover:bg-muted/50 p-2 sm:p-3 rounded-xl">
-										<Calendar className="h-5 w-5 flex-shrink-0 text-primary" />
-										<span className="font-medium">
+										<Calendar className="h-5 w-5 shrink-0 text-primary" />
+										<span className="text-sm font-medium">
 											{new Date(event.eventStartAt).toLocaleDateString("en-US", {
 												weekday: "short",
 												month: "short",
@@ -165,27 +194,34 @@ const ChosenEventData = ({
 
 									{/* Event Time */}
 									<div className="flex items-center gap-3 text-muted-foreground hover:text-foreground transition-colors bg-muted/40 hover:bg-muted/50 p-2 sm:p-3 rounded-xl">
-										<Clock className="h-5 w-5 flex-shrink-0 text-primary" />
-										<span className="font-medium">
+										<Clock className="h-5 w-5 shrink-0 text-primary" />
+										<span className="text-sm font-medium">
 											{format(new Date(event.eventStartAt), "HH:mm")} - {format(new Date(event.eventEndAt), "HH:mm")}
 										</span>
 									</div>
 
 									{/* Event Location */}
 									<div className="flex items-center gap-3 text-muted-foreground hover:text-foreground transition-colors bg-muted/40 hover:bg-muted/50 p-2 sm:p-3 rounded-xl">
-										<MapPin className="h-5 w-5 flex-shrink-0 text-primary" />
-										<span className="line-clamp-1 font-medium">{event.eventAddress}</span>
+										<MapPin className="h-5 w-5 shrink-0 text-primary" />
+										<span className="line-clamp-1 text-sm font-medium">
+											{event.locationType === "ONLINE"
+												? t("Online")
+												: [event.eventCity, event.eventAddress].filter(Boolean).join(" • ") || t("Offline")}
+										</span>
 									</div>
+
 									<div className="flex items-center gap-3 text-muted-foreground hover:text-foreground transition-colors bg-muted/40 hover:bg-muted/50 p-2 sm:p-3 rounded-xl">
-										<Users className="h-5 w-5 flex-shrink-0 text-primary" />
-										<span className="font-medium">
-											{event.eventCapacity} {t("capacity")}
+										<Users className="h-5 w-5 shrink-0 text-primary" />
+										<span className="text-sm font-medium">
+											{typeof event.eventCapacity === "number" && event.eventCapacity > 0
+												? `${event.attendeeCount ?? 0}/${event.eventCapacity} ${t("Attendees / capacity")}`
+												: `${event.attendeeCount ?? 0} ${t("attendees")}`}
 										</span>
 									</div>
 								</div>
 
 								{/* Event Likes and Views */}
-								<div className="grid grid-cols-3 gap-2 h-10">
+								<div className="grid grid-cols-2 gap-2 h-10">
 									{/* Event Likes */}
 									<Button
 										onClick={() => likeEventHandler(event._id)}
@@ -202,65 +238,79 @@ const ChosenEventData = ({
 												isLiked ? "fill-destructive text-destructive" : "text-primary/70",
 											)}
 										/>
-										<span className="font-medium">{event.eventLikes}</span>
+										<span className="text-sm font-medium">{event.eventLikes}</span>
 									</Button>
-
-									{/* Event Views */}
-									<div className="flex items-center justify-center gap-2 text-muted-foreground bg-muted/40 hover:bg-muted/50 transition-colors rounded-xl">
-										<Eye className="h-5 w-5 text-primary/70" />
-										<span className="font-medium">{event.eventViews}</span>
-									</div>
 
 									{/* Event Remaining Capacity */}
 									<div className="flex items-center justify-center gap-2 text-muted-foreground bg-muted/40 hover:bg-muted/50 transition-colors rounded-xl">
 										<Ticket className="h-5 w-5 text-primary/70" />
-										<span className="font-medium">{(event.eventCapacity || 0) - event.attendeeCount}</span>
+										<span className="text-sm font-medium">
+											{typeof event.eventCapacity === "number" && event.eventCapacity > 0
+												? Math.max(0, event.eventCapacity - (event.attendeeCount || 0))
+												: "—"}
+										</span>
 									</div>
 								</div>
 							</div>
 
 							{/* Ticket Purchase */}
-							<div className="bg-accent/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-								{/* Ticket Quantity and Total Price */}
-								<div className="flex items-center justify-between">
-									<div className="flex items-center gap-2">
-										<Button
-											variant="outline"
-											size="icon"
-											className="h-8 w-8 hover:bg-primary/10 hover:text-primary transition-colors border-primary/20"
-											onClick={() => quantityHandler(-1)}
-										>
-											<Minus className="h-3 w-3" />
-										</Button>
-
-										<div className="w-8 text-center font-medium">{ticketInput!.ticketQuantity}</div>
-
-										<Button
-											variant="outline"
-											size="icon"
-											className="h-8 w-8 hover:bg-primary/10 hover:text-primary transition-colors border-primary/20"
-											onClick={() => quantityHandler(1)}
-										>
-											<Plus className="h-3 w-3" />
-										</Button>
+							{isExternalEvent ? (
+								<div className="bg-accent/30 rounded-xl p-3 sm:p-4 flex flex-col gap-2">
+									<div className="text-sm text-muted-foreground">
+										{t("Tickets are available on the original event page.")}
 									</div>
-									<div className="flex items-center gap-2">
-										<div className="text-muted-foreground">{t("Total")}</div>
-										<div className="font-semibold text-primary">
-											${((event.eventPrice || 0) * ticketInput!.ticketQuantity).toFixed(2)}
+									{event.externalUrl && (
+										<a href={event.externalUrl} target="_blank" rel="noreferrer" className="w-full">
+											<Button variant="outline" className="w-full border-primary/30 text-primary hover:bg-primary/5">
+												<ExternalLink className="w-4 h-4 mr-2" />
+												{t("Open original event")}
+											</Button>
+										</a>
+									)}
+								</div>
+							) : (
+								<div className="bg-accent/30 rounded-xl p-3 sm:p-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between md:gap-4">
+									{/* Ticket Quantity and Total Price */}
+									<div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between md:flex-1 md:min-w-0">
+										<div className="flex items-center gap-2">
+											<Button
+												variant="outline"
+												size="icon"
+												className="h-8 w-8 hover:bg-primary/10 hover:text-primary transition-colors border-primary/20"
+												onClick={() => quantityHandler(-1)}
+											>
+												<Minus className="h-3 w-3" />
+											</Button>
+
+											<div className="w-8 text-center font-medium">{ticketInput!.ticketQuantity}</div>
+
+											<Button
+												variant="outline"
+												size="icon"
+												className="h-8 w-8 hover:bg-primary/10 hover:text-primary transition-colors border-primary/20"
+												onClick={() => quantityHandler(1)}
+											>
+												<Plus className="h-3 w-3" />
+											</Button>
+										</div>
+										<div className="flex items-baseline justify-between sm:justify-end gap-2">
+											<div className="text-sm text-muted-foreground">{t("Total")}</div>
+											<div className="text-sm font-semibold text-primary whitespace-nowrap">
+												{formatPrice((event.eventPrice || 0) * ticketInput!.ticketQuantity, event.eventCurrency)}
+											</div>
 										</div>
 									</div>
-								</div>
 
-								{/* Buy Ticket Button */}
-								<Button
-									onClick={purchaseHandler}
-									size="sm"
-									className="h-8 bg-primary hover:bg-primary/90 text-primary-foreground px-4 sm:px-6 shadow-sm hover:shadow transition-all duration-200 w-full sm:w-auto"
-								>
-									{t("Buy Ticket")}
-								</Button>
-							</div>
+									{/* Buy Ticket Button */}
+									<Button
+										onClick={purchaseHandler}
+										size="sm"
+										className="h-9 bg-primary hover:bg-primary/90 text-primary-foreground px-4 sm:px-6 shadow-sm hover:shadow transition-all duration-200 w-full md:w-auto md:flex-none"
+									>
+										{t("Buy Ticket")}
+									</Button>
+								</div>
+							)}
 						</div>
 					</div>
 				</div>
@@ -268,8 +318,8 @@ const ChosenEventData = ({
 				{/* Section: Description */}
 				<Separator />
 				<div className="px-4 sm:px-6 py-4">
-					<h3 className="font-medium mb-2 text-foreground/90">{t("Description")}</h3>
-					<p className="text-muted-foreground leading-relaxed">{event.eventDesc}</p>
+					<h3 className="text-sm font-semibold mb-2 text-foreground/90">{t("Description")}</h3>
+					<p className="text-sm text-muted-foreground leading-relaxed">{event.eventDesc}</p>
 				</div>
 			</Card>
 
@@ -281,18 +331,18 @@ const ChosenEventData = ({
 					</DialogHeader>
 					<div className="space-y-4 py-4">
 						<div className="flex justify-between items-center">
-							<span className="text-muted-foreground">{t("Price per ticket")}</span>
-							<span className="font-medium">${event.eventPrice}</span>
+							<span className="text-sm text-muted-foreground">{t("Price per ticket")}</span>
+							<span className="text-sm font-medium">{formatPrice(event.eventPrice, event.eventCurrency)}</span>
 						</div>
 						<div className="flex justify-between items-center">
-							<span className="text-muted-foreground">{t("Number of tickets")}</span>
-							<span className="font-medium">{ticketInput!.ticketQuantity}</span>
+							<span className="text-sm text-muted-foreground">{t("Number of tickets")}</span>
+							<span className="text-sm font-medium">{ticketInput!.ticketQuantity}</span>
 						</div>
 						<Separator />
 						<div className="flex justify-between items-center">
-							<span className="font-medium">{t("Total amount")}</span>
-							<span className="font-semibold text-primary">
-								${((event.eventPrice || 0) * ticketInput!.ticketQuantity).toFixed(2)}
+							<span className="text-sm font-medium">{t("Total amount")}</span>
+							<span className="text-sm font-semibold text-primary">
+								{formatPrice((event.eventPrice || 0) * ticketInput!.ticketQuantity, event.eventCurrency)}
 							</span>
 						</div>
 					</div>

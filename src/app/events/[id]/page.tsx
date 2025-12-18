@@ -29,6 +29,7 @@ const ChosenEvent = () => {
 
 	const eventId = params?.id as string | undefined;
 	const [event, setEvent] = useState<Event | null>(null);
+	const isExternalEvent = Boolean(event?.externalUrl) || (event?.origin ? event.origin !== "internal" : false);
 	const [ticketInput, setTicketInput] = useState<TicketInput>({
 		eventId: eventId ?? "",
 		ticketPrice: 0,
@@ -52,7 +53,11 @@ const ChosenEvent = () => {
 	/** APOLLO REQUESTS **/
 	const [likeTargetEvent] = useMutation(LIKE_TARGET_EVENT);
 	const [createTicket] = useMutation(CREATE_TICKET);
-	const { data: getEventData, refetch: refetchEvent } = useQuery(GET_EVENT, {
+	const {
+		data: getEventData,
+		loading: eventLoading,
+		refetch: refetchEvent,
+	} = useQuery(GET_EVENT, {
 		fetchPolicy: "cache-and-network",
 		skip: !eventId,
 		variables: { input: eventId || "" },
@@ -60,7 +65,7 @@ const ChosenEvent = () => {
 	});
 	const { data: getTicketsData, refetch: refetchTickets } = useQuery(GET_MY_TICKETS, {
 		fetchPolicy: "cache-and-network",
-		skip: !ticketInquiry.search.eventId || !user._id,
+		skip: !ticketInquiry.search.eventId || !user._id || isExternalEvent,
 		variables: { input: ticketInquiry },
 		notifyOnNetworkStatusChange: true,
 	});
@@ -112,6 +117,7 @@ const ChosenEvent = () => {
 		try {
 			if (!user._id) throw new Error(Message.NOT_AUTHENTICATED);
 			if (!eventId) throw new Error(Message.EVENT_NOT_FOUND);
+			if (isExternalEvent) throw new Error(Message.BAD_REQUEST);
 
 			await createTicket({ variables: { input: ticketInput } });
 			if (eventId) {
@@ -133,6 +139,15 @@ const ChosenEvent = () => {
 			<ChosenEventHeader />
 
 			<div className="content-container pb-10">
+				{eventLoading && !event ? (
+					<div className="rounded-xl border bg-card/60 shadow-sm p-6 animate-pulse">
+						<div className="h-6 w-48 bg-muted/60 rounded mb-4" />
+						<div className="h-40 w-full bg-muted/60 rounded mb-4" />
+						<div className="h-4 w-full bg-muted/60 rounded mb-2" />
+						<div className="h-4 w-5/6 bg-muted/60 rounded" />
+					</div>
+				) : null}
+
 				<div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
 					<div className="lg:col-span-3">
 						<ChosenEventData
@@ -144,14 +159,16 @@ const ChosenEvent = () => {
 							ticketInput={ticketInput}
 						/>
 						{/* My Tickets */}
-						<MyTickets myTickets={myTickets} ticketInquiry={ticketInquiry} setTicketInquiry={setTicketInquiry} />
+						{!isExternalEvent && (
+							<MyTickets myTickets={myTickets} ticketInquiry={ticketInquiry} setTicketInquiry={setTicketInquiry} />
+						)}
 					</div>
 
 					<ChosenEventOther event={event} likeEventHandler={likeEventHandler} />
 				</div>
 
 				{/* Comments Section */}
-				{eventId && <CommentsComponent commentRefId={eventId} commentGroup={CommentGroup.EVENT} />}
+				{eventId && !isExternalEvent && <CommentsComponent commentRefId={eventId} commentGroup={CommentGroup.EVENT} />}
 			</div>
 		</div>
 	);

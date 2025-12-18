@@ -109,7 +109,11 @@ const EventsPage = ({
 	/** APOLLO REQUESTS **/
 	const [likeTargetEvent] = useMutation(LIKE_TARGET_EVENT);
 
-	const { data: getEventsData, refetch: getEventsRefetch } = useQuery(GET_EVENTS, {
+	const {
+		data: getEventsData,
+		loading: eventsLoading,
+		refetch: getEventsRefetch,
+	} = useQuery(GET_EVENTS, {
 		fetchPolicy: "cache-and-network",
 		variables: {
 			input: eventsSearchFilters,
@@ -127,7 +131,7 @@ const EventsPage = ({
 
 	useEffect(() => {
 		getEventsRefetch({ input: eventsSearchFilters }).then();
-	}, [eventsSearchFilters]);
+	}, [eventsSearchFilters, getEventsRefetch]);
 
 	useEffect(() => {
 		if (getEventsData) {
@@ -162,7 +166,13 @@ const EventsPage = ({
 
 					{/* Events Grid */}
 					<div className="flex-1">
-						{events.length > 0 ? (
+						{eventsLoading && events.length === 0 ? (
+							<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+								{Array.from({ length: 6 }).map((_, idx) => (
+									<div key={idx} className="h-[340px] rounded-xl border bg-card/60 shadow-sm animate-pulse" />
+								))}
+							</div>
+						) : events.length > 0 ? (
 							<>
 								<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
 									{events.map((event) => (

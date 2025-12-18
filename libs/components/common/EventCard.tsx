@@ -32,6 +32,23 @@ const EventCard = ({ event, likeEventHandler }: EventCardProps) => {
 		}).format(date);
 	};
 
+	const formatLocalTime = (value: Date) => {
+		const date = value instanceof Date ? value : new Date(value);
+		return new Intl.DateTimeFormat(undefined, { hour: "2-digit", minute: "2-digit" }).format(date);
+	};
+
+	const isSameLocalDay = (a: Date, b: Date) =>
+		a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+
+	const formatLocalRange = (start: Date, end: Date) => {
+		const s = start instanceof Date ? start : new Date(start);
+		const e = end instanceof Date ? end : new Date(end);
+		if (isSameLocalDay(s, e)) {
+			return `${formatLocalDateTime(s)} - ${formatLocalTime(e)}`;
+		}
+		return `${formatLocalDateTime(s)} - ${formatLocalDateTime(e)}`;
+	};
+
 	const formatPrice = (price: number, currency?: Currency) => {
 		if (!price || price === 0) return t("Free");
 		if (currency) {
@@ -63,22 +80,21 @@ const EventCard = ({ event, likeEventHandler }: EventCardProps) => {
 		<Card className="w-full h-full mx-auto py-0 ui-card group gap-0">
 			<CardHeader className="p-0 gap-0">
 				<div className="relative aspect-video w-full overflow-hidden rounded-t-xl">
-					<Link href={`/events/${event._id}`}>
-						<Image
-							src={getImageUrl(event.eventImages[0], "event", event.origin)}
-							alt={event.eventName}
-							fill
-							className="object-cover transition-transform duration-300"
-						/>
-					</Link>
+					<Image
+						src={getImageUrl(event.eventImages[0], "event", event.origin)}
+						alt={event.eventName}
+						fill
+						className="object-cover transition-transform duration-300"
+					/>
+					<Link href={`/events/${event._id}`} aria-label={event.eventName} className="absolute inset-0 z-1" />
 					{event.isRealEvent === false && (
-						<div className="absolute top-2 left-2">
+						<div className="absolute top-2 left-2 z-2">
 							<Badge variant="secondary" className="bg-red-500/90 text-white shadow-sm text-[10px] px-2 py-0.5">
 								{t("Fake")}
 							</Badge>
 						</div>
 					)}
-					<div className="absolute bottom-2 left-2 flex items-center gap-1.5">
+					<div className="absolute bottom-2 left-2 flex items-center gap-1.5 z-2">
 						<Badge
 							variant="secondary"
 							className={`${getStatusColor(event.eventStatus)} backdrop-blur-sm shadow-sm text-xs px-2 py-0.5`}
@@ -86,7 +102,7 @@ const EventCard = ({ event, likeEventHandler }: EventCardProps) => {
 							{event.eventStatus}
 						</Badge>
 					</div>
-					<div className="absolute bottom-2 right-2">
+					<div className="absolute bottom-2 right-2 z-2">
 						<Badge variant="secondary" className="bg-background/80 backdrop-blur-sm shadow-sm text-xs px-2 py-0.5">
 							<DollarSign className="w-3.5 h-3.5 mr-1" />
 							{formatPrice(event.eventPrice, event.eventCurrency)}
@@ -122,9 +138,7 @@ const EventCard = ({ event, likeEventHandler }: EventCardProps) => {
 						</div>
 						<div className="flex items-center gap-2 text-muted-foreground">
 							<Calendar className="w-2.5 h-2.5 shrink-0" />
-							<span>
-								{formatLocalDateTime(event.eventStartAt)} - {formatLocalDateTime(event.eventEndAt)}
-							</span>
+							<span>{formatLocalRange(event.eventStartAt, event.eventEndAt)}</span>
 						</div>
 					</div>
 				</div>

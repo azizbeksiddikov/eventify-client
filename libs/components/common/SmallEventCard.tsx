@@ -13,6 +13,14 @@ interface EventCardProps {
 }
 
 const SmallEventCard = ({ event, likeEventHandler }: EventCardProps) => {
+	const locationText =
+		event.locationType === "ONLINE"
+			? "Online"
+			: [event.eventCity, event.eventAddress].filter(Boolean).join(" • ") ||
+				event.eventCity ||
+				event.eventAddress ||
+				"";
+
 	return (
 		<div className="p-1.5 rounded-md hover:bg-accent/5 transition-all duration-200">
 			<div className="flex items-center gap-2">
@@ -48,7 +56,7 @@ const SmallEventCard = ({ event, likeEventHandler }: EventCardProps) => {
 							</div>
 							<div className="flex items-center">
 								<MapPin className="w-2.5 h-2.5 mr-0.5 text-card-foreground/70 shrink-0" />
-								<span className="line-clamp-1">{event.eventCity}</span>
+								<span className="line-clamp-1">{locationText}</span>
 							</div>
 						</div>
 					</div>

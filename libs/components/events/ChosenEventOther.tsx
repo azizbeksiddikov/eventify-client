@@ -45,7 +45,7 @@ const ChosenEventOther = ({ event, likeEventHandler }: ChosenEventOtherProps) =>
 								fill
 								className="object-cover group-hover:scale-105 transition-transform duration-200"
 							/>
-							<div className="absolute inset-0 bg-gradient-to-t from-background/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+							<div className="absolute inset-0 bg-linear-to-t from-background/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
 						</div>
 						<h3 className="font-semibold text-card-foreground group-hover:text-primary transition-colors duration-200">
 							{event.hostingGroup.groupName}
@@ -83,9 +83,18 @@ const ChosenEventOther = ({ event, likeEventHandler }: ChosenEventOtherProps) =>
 					{t("Similar Events")}
 				</h2>
 				<div className="space-y-2 sm:space-y-3">
-					{event?.similarEvents?.map((similarEvent) => (
-						<SmallEventCard key={similarEvent._id} event={similarEvent} likeEventHandler={likeEventHandler} />
-					))}
+					{event?.similarEvents && event.similarEvents.length > 0 ? (
+						event.similarEvents.map((similarEvent) => (
+							<SmallEventCard key={similarEvent._id} event={similarEvent} likeEventHandler={likeEventHandler} />
+						))
+					) : (
+						<div className="py-6">
+							<div className="rounded-lg border border-dashed bg-muted/20 px-4 py-4 text-center">
+								<div className="text-sm font-medium text-foreground/90">{t("No similar events found")}</div>
+								<div className="mt-1 text-xs text-muted-foreground">{t("Try checking back later.")}</div>
+							</div>
+						</div>
+					)}
 				</div>
 			</Card>
 		</div>
