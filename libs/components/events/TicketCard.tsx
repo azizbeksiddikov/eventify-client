@@ -1,13 +1,13 @@
-import { useTranslation } from 'next-i18next';
-import { Ticket as TicketIcon } from 'lucide-react';
+import { useTranslation } from "next-i18next";
+import { Ticket as TicketIcon } from "lucide-react";
 
-import { Badge } from '@/libs/components/ui/badge';
-import { Card, CardContent } from '@/libs/components/ui/card';
-import { Separator } from '@/libs/components/ui/separator';
+import { Badge } from "@/libs/components/ui/badge";
+import { Card, CardContent } from "@/libs/components/ui/card";
+import { Separator } from "@/libs/components/ui/separator";
 
-import { formatDateHandler } from '@/libs/utils';
-import { Ticket } from '@/libs/types/ticket/ticket';
-import { TicketStatus } from '@/libs/enums/ticket.enum';
+import { formatSeoulDateTime } from "@/libs/utils";
+import { Ticket } from "@/libs/types/ticket/ticket";
+import { TicketStatus } from "@/libs/enums/ticket.enum";
 
 interface TicketCardProps {
 	ticket: Ticket;
@@ -15,18 +15,18 @@ interface TicketCardProps {
 }
 
 const TicketCard = ({ ticket, showSeparator = true }: TicketCardProps) => {
-	const { t } = useTranslation('common');
+	const { t } = useTranslation("common");
 
 	const getStatusVariant = (status: TicketStatus) => {
 		switch (status) {
 			case TicketStatus.PURCHASED:
-				return 'default';
+				return "default";
 			case TicketStatus.CANCELLED:
-				return 'destructive';
+				return "destructive";
 			case TicketStatus.USED:
-				return 'secondary';
+				return "secondary";
 			default:
-				return 'secondary';
+				return "secondary";
 		}
 	};
 
@@ -40,7 +40,7 @@ const TicketCard = ({ ticket, showSeparator = true }: TicketCardProps) => {
 							<TicketIcon className="h-6 w-6 text-muted-foreground" />
 						</div>
 						<div className="flex flex-col ml-3">
-							<div className="text-sm font-medium truncate max-w-[180px]">{ticket.event?.eventName || 'Event'}</div>
+							<div className="text-sm font-medium truncate max-w-[180px]">{ticket.event?.eventName || "Event"}</div>
 							<Badge variant={getStatusVariant(ticket.ticketStatus)} className="h-5 w-fit mt-1">
 								{ticket.ticketStatus}
 							</Badge>
@@ -52,17 +52,17 @@ const TicketCard = ({ ticket, showSeparator = true }: TicketCardProps) => {
 						<div className="grid grid-cols-3 gap-4 text-center sm:text-left">
 							{/* Price */}
 							<div className="flex flex-col">
-								<span className="inline text-sm text-muted-foreground/60">{t('Price per ticket')}</span>
+								<span className="inline text-sm text-muted-foreground/60">{t("Price per ticket")}</span>
 								<span className="text-base font-medium mt-0 sm:mt-1">${ticket.ticketPrice}</span>
 							</div>
 							{/* Quantity */}
 							<div className="flex flex-col">
-								<span className="inline text-sm text-muted-foreground/60">{t('Quantity')}</span>
+								<span className="inline text-sm text-muted-foreground/60">{t("Quantity")}</span>
 								<span className="text-base font-medium mt-0 sm:mt-1">{ticket.ticketQuantity}</span>
 							</div>
 							{/* Total */}
 							<div className="flex flex-col">
-								<span className="inline text-sm text-muted-foreground/60">{t('Total cost')}</span>
+								<span className="inline text-sm text-muted-foreground/60">{t("Total cost")}</span>
 								<span className="text-base font-medium mt-0 sm:mt-1">${ticket.totalPrice}</span>
 							</div>
 						</div>
@@ -70,8 +70,8 @@ const TicketCard = ({ ticket, showSeparator = true }: TicketCardProps) => {
 
 					{/* Timestamp - hidden on small screens */}
 					<div className="hidden lg:block min-w-40 text-right">
-						<div className="text-xs text-muted-foreground/60">{t('Last change')}</div>
-						<div className="text-sm text-muted-foreground/60 mt-1">{formatDateHandler(ticket.createdAt)}</div>
+						<div className="text-xs text-muted-foreground/60">{t("Last change")}</div>
+						<div className="text-sm text-muted-foreground/60 mt-1">{formatSeoulDateTime(ticket.createdAt)}</div>
 					</div>
 				</CardContent>
 			</Card>

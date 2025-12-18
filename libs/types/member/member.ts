@@ -1,8 +1,8 @@
-import { MemberType, MemberStatus } from '@/libs/enums/member.enum';
-import { MeFollowed } from '@/libs/types/follow/follow';
-import { Group } from '@/libs/types/group/group';
-import { MeLiked } from '@/libs/types/like/like';
-import { Event } from '@/libs/types/event/event';
+import { MemberType, MemberStatus } from "@/libs/enums/member.enum";
+import { MeFollowed } from "@/libs/types/follow/follow";
+import { Group } from "@/libs/types/group/group";
+import { MeLiked } from "@/libs/types/like/like";
+import { Event } from "@/libs/types/event/event";
 
 export interface Member {
 	_id: string;

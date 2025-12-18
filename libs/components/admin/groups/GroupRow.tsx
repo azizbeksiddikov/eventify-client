@@ -64,7 +64,7 @@ const GroupRow = ({
 
 			{/* AVATAR + GROUP NAME */}
 			<TableCell>
-				<Link href={`/group/detail?groupId=${group._id}`}>
+				<Link href={`/groups?${group._id}`}>
 					<div className="flex items-center gap-2">
 						<Avatar className="h-8 w-8 border border-input flex items-center justify-center ">
 							<AvatarImage src={`${NEXT_APP_API_URL}/${group.groupImage}`} alt={group.groupName} />
@@ -80,7 +80,7 @@ const GroupRow = ({
 							/>
 						) : (
 							<Link
-								href={`/group/detail?groupId=${group._id}`}
+								href={`/groups?${group._id}`}
 								className="font-medium text-foreground underline hover:text-primary hover:underline"
 							>
 								{group.groupName}

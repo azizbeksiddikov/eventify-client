@@ -21,7 +21,7 @@ const OrganizerCard = ({ organizer, likeMemberHandler, subscribeHandler, unsubsc
 	const { t } = useTranslation("common");
 
 	return (
-		<Card className="w-full mx-auto shadow-sm hover:shadow-md transition-all duration-300 bg-card/60 flex flex-col h-full group overflow-hidden">
+		<Card className="min-w-[340px] py-2 ui-card group gap-0">
 			{/* Header */}
 			<CardHeader className="py-2 shrink-0">
 				<div className="flex flex-row gap-2 items-center">
@@ -52,7 +52,7 @@ const OrganizerCard = ({ organizer, likeMemberHandler, subscribeHandler, unsubsc
 			</CardHeader>
 
 			{/* Content */}
-			<CardContent className="space-y-2 pb-2 flex-1 min-h-0">
+			<CardContent className="space-y-2 pt-2 px-3 pb-0 flex-1 min-h-0">
 				<div className="grid grid-cols-3 gap-1 p-1.5 bg-muted/50 rounded-lg">
 					<Tooltip>
 						<TooltipTrigger asChild>
@@ -84,7 +84,7 @@ const OrganizerCard = ({ organizer, likeMemberHandler, subscribeHandler, unsubsc
 				</div>
 				<div className="px-0.5">
 					<div className="relative">
-						<div className="bg-muted/30 p-1.5 rounded-md min-h-[32px]">
+						<div className="bg-muted/30 px-2 py-2 rounded-md min-h-[36px]">
 							{organizer.memberDesc ? (
 								<p className="text-[10px] text-foreground leading-relaxed line-clamp-2">{organizer.memberDesc}</p>
 							) : (
@@ -98,24 +98,31 @@ const OrganizerCard = ({ organizer, likeMemberHandler, subscribeHandler, unsubsc
 			</CardContent>
 
 			{/* Footer */}
-			<CardFooter className="border-t flex items-center justify-between gap-1.5 p-1.5">
-				<Button
-					variant="ghost"
-					size="sm"
-					className={`h-6 w-6 p-0 transition-all ${organizer?.meLiked?.[0]?.myFavorite ? "text-rose-500" : ""}`}
-					onClick={() => likeMemberHandler(organizer._id)}
-					aria-label={organizer?.meLiked?.[0]?.myFavorite ? t("Liked") : t("Like")}
-				>
-					<Heart
-						className={`h-3 w-3 transition-all ${
-							organizer?.meLiked?.[0]?.myFavorite ? "fill-current stroke-current" : ""
+			<CardFooter className="border-t flex items-center justify-around gap-2 px-10 py-3">
+				<div className="ui-like-pill">
+					<Button
+						variant="ghost"
+						size="sm"
+						className={`h-9 w-9 p-0 transition-colors ${
+							organizer?.meLiked?.[0]?.myFavorite
+								? "text-rose-500 hover:text-rose-500"
+								: "text-muted-foreground hover:text-foreground"
 						}`}
-					/>
-				</Button>
+						onClick={() => likeMemberHandler(organizer._id)}
+						aria-label={organizer?.meLiked?.[0]?.myFavorite ? t("Liked") : t("Like")}
+					>
+						<Heart
+							className={`w-4 h-4 transition-all ${
+								organizer?.meLiked?.[0]?.myFavorite ? "fill-current stroke-current" : ""
+							}`}
+						/>
+					</Button>
+					<span className="text-sm font-medium text-muted-foreground tabular-nums">{organizer.memberLikes || 0}</span>
+				</div>
 				<Button
 					variant={organizer?.meFollowed?.[0]?.myFollowing ? "outline" : "default"}
 					size="sm"
-					className={`h-6 px-2 text-[10px] font-medium transition-all ${
+					className={`h-9 px-3 text-sm font-medium transition-colors ${
 						organizer?.meFollowed?.[0]?.myFollowing ? "border-primary/30 text-primary hover:bg-primary/5" : ""
 					}`}
 					onClick={() =>

@@ -12,7 +12,7 @@ const quickLinks = [
 
 const Footer = () => {
 	return (
-		<footer className="bg-background border-t w-full text-xs sm:text-sm">
+		<footer className="bg-background border-t w-full text-sm md:text-base">
 			<div className="content-container my-8 grid grid-cols-1 gap-10 md:grid-cols-3 md:gap-12">
 				{/* Company Info & Social */}
 				<div className="space-y-6 md:space-y-8">
@@ -20,7 +20,7 @@ const Footer = () => {
 						<Logo className="h-8 w-8" />
 						<span className="text-xl font-bold">Eventify</span>
 					</Link>
-					<p className="text-xs leading-6 text-muted-foreground sm:text-sm md:text-base md:leading-7">
+					<p className="leading-6 text-muted-foreground md:leading-7">
 						{"Discover and create amazing events. Connect with people who share your interests and passions."}
 					</p>
 					<div className="flex flex-wrap items-center gap-2 md:gap-4">
@@ -56,7 +56,7 @@ const Footer = () => {
 							<li key={index}>
 								<Link
 									href={link.href}
-									className="flex items-center hover:text-primary transition-colors group group-hover:gap-6"
+									className="flex items-center hover:text-primary transition-colors group group-hover:gap-6 text-sm md:text-base"
 								>
 									<span className="w-2 h-2 rounded-full bg-primary hidden group-hover:block" />
 									<span className="group-hover:translate-x-2 transition-transform">{link.label}</span>
@@ -78,9 +78,7 @@ const Footer = () => {
 						</div>
 						<div className="flex items-center gap-4">
 							<Phone className="w-5 h-5 text-primary shrink-0" />
-							<p className="text-xs leading-6 text-muted-foreground sm:text-sm md:text-base md:leading-7">
-								010-7305-6799
-							</p>
+							<p className="text-sm leading-6 text-muted-foreground md:text-base md:leading-7">010-7305-6799</p>
 						</div>
 						<div className="flex items-center gap-4">
 							<Clock className="w-5 h-5 text-primary shrink-0" />
@@ -96,10 +94,8 @@ const Footer = () => {
 			{/* Bottom Bar */}
 			<div className="content-container mt-4 mb-12">
 				<div className="flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-center">
-					<p className="text-xs text-muted-foreground sm:text-sm md:text-base">
-						© {"2025 Eventify. All rights reserved"}.
-					</p>
-					<div className="flex flex-wrap items-center gap-x-8 gap-y-2 text-xs text-muted-foreground sm:text-sm md:text-base">
+					<p className="text-sm text-muted-foreground md:text-base">© {"2025 Eventify. All rights reserved"}.</p>
+					<div className="flex flex-wrap items-center gap-x-8 gap-y-2 text-sm text-muted-foreground md:text-base">
 						<p>{"Privacy Policy"}</p>
 						<p>{"Terms of Service"}</p>
 					</div>

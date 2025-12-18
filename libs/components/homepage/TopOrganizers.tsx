@@ -62,14 +62,12 @@ const TopOrganizers = ({
 	return (
 		<section className="bg-secondary/50 py-8 sm:py-12 md:py-16 lg:py-20 w-full">
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-10">
-				<div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 sm:mb-8">
-					<h2 className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold text-foreground">
-						{t("Top Organizers")}
-					</h2>
+				<div className="flex flex-row items-center justify-start gap-3 mb-6 sm:mb-8">
+					<h2 className="text-foreground">{t("Top Organizers")}</h2>
 					<Button
 						type="submit"
 						onClick={() => router.push("/organizers")}
-						className="h-9 sm:h-10 md:h-12 px-3 sm:px-4 md:px-6 text-xs sm:text-sm md:text-base bg-card text-card-foreground hover:bg-card/90"
+						className="shrink-0 h-9 sm:h-10 md:h-12 px-3 sm:px-4 md:px-6 bg-card text-card-foreground hover:bg-card/90"
 					>
 						<ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
 					</Button>

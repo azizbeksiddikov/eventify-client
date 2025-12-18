@@ -79,15 +79,39 @@
 
 	html,
 	body {
-		@apply bg-background text-foreground text-base;
+		@apply bg-background text-foreground font-sans text-base leading-normal;
 		margin: 0;
 		padding: 0;
 		width: 100%;
 	}
 
+	/* Default body text — let most elements inherit from `body` */
 	p,
-	span {
-		@apply text-xs sm:text-sm;
+	span,
+	a,
+	li,
+	label,
+	input,
+	textarea,
+	select {
+		@apply text-inherit;
+	}
+
+	small {
+		@apply text-sm;
+	}
+
+	/* Standard headings (use real heading tags instead of per-component text-* most of the time) */
+	h1 {
+		@apply text-3xl sm:text-4xl font-bold tracking-tight;
+	}
+
+	h2 {
+		@apply text-2xl sm:text-3xl font-bold tracking-tight;
+	}
+
+	h3 {
+		@apply text-xl sm:text-2xl font-semibold tracking-tight;
 	}
 }
 
@@ -97,6 +121,33 @@
 	/* ===== LAYOUT ===== */
 	.content-container {
 		@apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+	}
+
+	/* ===== STANDARD TYPOGRAPHY HELPERS (prefer these over repeating text-* classes) ===== */
+	.ui-title {
+		@apply text-foreground font-semibold tracking-tight;
+	}
+
+	.ui-title-lg {
+		@apply text-foreground font-bold tracking-tight;
+	}
+
+	.ui-text {
+		@apply text-foreground;
+	}
+
+	.ui-muted {
+		@apply text-muted-foreground;
+	}
+
+	/* ===== COMMON CARD PATTERNS ===== */
+	.ui-card {
+		@apply w-full mx-auto bg-card/60 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col h-full overflow-hidden;
+	}
+
+	/* Like pill used across cards */
+	.ui-like-pill {
+		@apply flex items-center gap-1.5 rounded-full bg-muted/40 px-2 py-1;
 	}
 
 	/* ===== CALENDAR STYLES ===== */

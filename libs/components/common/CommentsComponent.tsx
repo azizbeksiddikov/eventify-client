@@ -23,7 +23,7 @@ import { CREATE_COMMENT, UPDATE_COMMENT } from "@/apollo/user/mutation";
 import { smallSuccess } from "@/libs/alert";
 import { Message, Direction } from "@/libs/enums/common.enum";
 import { NEXT_APP_API_URL } from "@/libs/config";
-import { formatDateHandler } from "@/libs/utils";
+import { formatSeoulDateTime } from "@/libs/utils";
 import type { Comment, Comments } from "@/libs/types/comment/comment";
 import { CommentGroup, CommentStatus } from "@/libs/enums/comment.enum";
 import { CommentInput, CommentsInquiry } from "@/libs/types/comment/comment.input";
@@ -305,7 +305,7 @@ const CommentsComponent = ({ commentRefId, commentGroup, initialCommentsInquiry 
 														<h4 className="font-medium text-foreground/90 text-sm">{memberName}</h4>
 														<div className="flex items-center justify-end">
 															<span className="text-xs text-muted-foreground/80">
-																{formatDateHandler(comment.createdAt)}
+																{formatSeoulDateTime(comment.createdAt)}
 															</span>
 															{isOwner && (
 																<div className="flex items-center space-x-2 ml-4">

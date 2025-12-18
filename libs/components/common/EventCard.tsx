@@ -1,4 +1,3 @@
-import { format } from "date-fns";
 import Image from "next/image";
 import Link from "next/link";
 import { useTranslation } from "next-i18next";
@@ -38,9 +37,9 @@ const EventCard = ({ event, likeEventHandler }: EventCardProps) => {
 	};
 
 	return (
-		<Card className="pt-0  w-full h-full mx-auto shadow-md hover:shadow-lg transition-all duration-300 bg-card/60 flex flex-col group gap-0">
+		<Card className="pt-0 w-full h-full mx-auto shadow-sm hover:shadow-md transition-all duration-300 bg-card/60 flex flex-col group gap-0">
 			<CardHeader className="p-0 gap-0">
-				<div className="relative aspect-[16/9] w-full overflow-hidden rounded-t-xl">
+				<div className="relative aspect-video w-full overflow-hidden rounded-t-xl">
 					<Link href={`/events/${event._id}`}>
 						<Image
 							src={getImageUrl(event.eventImages[0], "event", event.origin)}
@@ -49,35 +48,38 @@ const EventCard = ({ event, likeEventHandler }: EventCardProps) => {
 							className="object-cover transition-transform duration-300"
 						/>
 					</Link>
-					<div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-						<Badge variant="secondary" className="bg-background/80 backdrop-blur-sm shadow-sm">
-							<Eye className="w-4 h-4 mr-1.5" />
+					<div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+						<Badge variant="secondary" className="bg-background/80 backdrop-blur-sm shadow-sm text-xs px-2 py-0.5">
+							<Eye className="w-3.5 h-3.5 mr-1" />
 							{event.eventViews || 0}
 						</Badge>
 					</div>
-					<div className="absolute bottom-3 left-3">
-						<Badge variant="secondary" className={`${getStatusColor(event.eventStatus)} backdrop-blur-sm shadow-sm`}>
+					<div className="absolute bottom-2 left-2">
+						<Badge
+							variant="secondary"
+							className={`${getStatusColor(event.eventStatus)} backdrop-blur-sm shadow-sm text-xs px-2 py-0.5`}
+						>
 							{event.eventStatus}
 						</Badge>
 					</div>
-					<div className="absolute bottom-3 right-3">
-						<Badge variant="secondary" className="bg-background/80 backdrop-blur-sm shadow-sm">
-							<DollarSign className="w-4 h-4 mr-1.5" />
+					<div className="absolute bottom-2 right-2">
+						<Badge variant="secondary" className="bg-background/80 backdrop-blur-sm shadow-sm text-xs px-2 py-0.5">
+							<DollarSign className="w-3.5 h-3.5 mr-1" />
 							{event.eventPrice}
 						</Badge>
 					</div>
 				</div>
 			</CardHeader>
 
-			<CardContent className="space-y-3 p-3 flex-1 flex flex-col">
-				<div className="space-y-2">
-					<h3 className="text-lg font-semibold text-foreground line-clamp-1 h-6">{event.eventName}</h3>
+			<CardContent className="space-y-2 p-2 sm:p-3 flex-1 flex flex-col">
+				<div className="space-y-1.5">
+					<h3 className="text-base sm:text-lg font-semibold text-foreground line-clamp-1 h-6">{event.eventName}</h3>
 
 					<div className="flex items-center gap-1 overflow-hidden whitespace-nowrap text-ellipsis">
 						{event.eventCategories?.map((category, index) => (
 							<span
 								key={index}
-								className="truncate text-xs text-primary/90 bg-primary/10 px-1.5 sm:px-2 py-0.5 rounded-full"
+								className="truncate text-[10px] sm:text-xs text-primary/90 bg-primary/10 px-1.5 sm:px-2 py-0.5 rounded-full"
 								title={`#${category}`}
 							>
 								#{category}
@@ -85,13 +87,13 @@ const EventCard = ({ event, likeEventHandler }: EventCardProps) => {
 						))}
 					</div>
 
-					<div className="space-y-1.5">
-						<div className="flex items-center gap-2 text-sm text-muted-foreground h-5">
-							<MapPin className="w-4 h-4 shrink-0" />
+					<div className="space-y-1">
+						<div className="flex items-center gap-1.5 text-xs sm:text-sm text-muted-foreground h-5">
+							<MapPin className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
 							<span className="line-clamp-1">{event.eventCity || event.eventAddress}</span>
 						</div>
-						<div className="flex items-center gap-2 text-sm text-muted-foreground h-5">
-							<Calendar className="w-4 h-4 shrink-0" />
+						<div className="flex items-center gap-1.5 text-xs sm:text-sm text-muted-foreground h-5">
+							<Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
 							<span>
 								{formatSeoulDate(event.eventStartAt, { month: "short", day: "numeric" })} •{" "}
 								{formatSeoulTime(event.eventStartAt)} - {formatSeoulTime(event.eventEndAt)}
@@ -100,12 +102,12 @@ const EventCard = ({ event, likeEventHandler }: EventCardProps) => {
 					</div>
 				</div>
 
-				<div className="grid grid-cols-3 gap-1.5 p-2 bg-muted/50 rounded-lg mt-1">
+				<div className="grid grid-cols-3 gap-1 p-1.5 bg-muted/50 rounded-lg mt-1">
 					<Tooltip>
 						<TooltipTrigger asChild>
-							<div className="flex items-center justify-center gap-1.5 p-1.5 rounded-md bg-card/70 hover:bg-card transition-colors cursor-help">
-								<Users className="h-3.5 w-3.5 text-primary" />
-								<p className="text-xs font-medium">{event.attendeeCount || 0}</p>
+							<div className="flex items-center justify-center gap-1 p-1 rounded-md bg-card/70 hover:bg-card transition-colors cursor-help">
+								<Users className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-primary" />
+								<p className="text-[10px] sm:text-xs font-medium">{event.attendeeCount || 0}</p>
 							</div>
 						</TooltipTrigger>
 						<TooltipContent side="bottom">{t("Total attendees")}</TooltipContent>
@@ -113,9 +115,9 @@ const EventCard = ({ event, likeEventHandler }: EventCardProps) => {
 
 					<Tooltip>
 						<TooltipTrigger asChild>
-							<div className="flex items-center justify-center gap-1.5 p-1.5 rounded-md bg-card/70 hover:bg-card transition-colors cursor-help">
-								<UserPlus className="h-3.5 w-3.5 text-primary" />
-								<p className="text-xs font-medium">{event.eventCapacity || 0}</p>
+							<div className="flex items-center justify-center gap-1 p-1 rounded-md bg-card/70 hover:bg-card transition-colors cursor-help">
+								<UserPlus className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-primary" />
+								<p className="text-[10px] sm:text-xs font-medium">{event.eventCapacity || 0}</p>
 							</div>
 						</TooltipTrigger>
 						<TooltipContent side="bottom">{t("Event capacity")}</TooltipContent>
@@ -123,9 +125,9 @@ const EventCard = ({ event, likeEventHandler }: EventCardProps) => {
 
 					<Tooltip>
 						<TooltipTrigger asChild>
-							<div className="flex items-center justify-center gap-1.5 p-1.5 rounded-md bg-card/70 hover:bg-card transition-colors cursor-help">
-								<Heart className="h-3.5 w-3.5 text-primary" />
-								<p className="text-xs font-medium">{event.eventLikes || 0}</p>
+							<div className="flex items-center justify-center gap-1 p-1 rounded-md bg-card/70 hover:bg-card transition-colors cursor-help">
+								<Heart className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-primary" />
+								<p className="text-[10px] sm:text-xs font-medium">{event.eventLikes || 0}</p>
 							</div>
 						</TooltipTrigger>
 						<TooltipContent side="bottom">{t("Total likes received")}</TooltipContent>
@@ -134,11 +136,11 @@ const EventCard = ({ event, likeEventHandler }: EventCardProps) => {
 
 				<div className="px-0.5 mt-1">
 					<div className="relative">
-						<div className="bg-muted/30 p-2 rounded-lg min-h-[48px] flex items-center">
+						<div className="bg-muted/30 p-1.5 sm:p-2 rounded-lg min-h-[42px] sm:min-h-[48px] flex items-center">
 							{event.eventDesc ? (
-								<p className="text-xs text-foreground leading-relaxed line-clamp-2">{event.eventDesc}</p>
+								<p className="text-[10px] sm:text-xs text-foreground leading-relaxed line-clamp-2">{event.eventDesc}</p>
 							) : (
-								<p className="text-xs text-muted-foreground italic flex items-center justify-center py-1 w-full">
+								<p className="text-[10px] sm:text-xs text-muted-foreground italic flex items-center justify-center py-1 w-full">
 									<span className="bg-muted/50 px-2 py-0.5 rounded-md">{t("No description available")}</span>
 								</p>
 							)}
