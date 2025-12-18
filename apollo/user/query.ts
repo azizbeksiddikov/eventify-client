@@ -536,15 +536,22 @@ export const GET_EVENT: TypedDocumentNode<GetEventQuery, GetEventQueryVariables>
 			eventImages
 			eventStartAt
 			eventEndAt
+			locationType
 			eventCity
 			eventAddress
+			coordinateLatitude
+			coordinateLongitude
 			eventCapacity
 			eventPrice
 			eventStatus
 			eventCategories
+			eventTags
 			groupId
 			memberId
 			origin
+			externalId
+			externalUrl
+			isRealEvent
 			attendeeCount
 			eventLikes
 			eventViews
@@ -573,54 +580,6 @@ export const GET_EVENT: TypedDocumentNode<GetEventQuery, GetEventQueryVariables>
 				createdAt
 				updatedAt
 				accessToken
-				meLiked {
-					memberId
-					likeRefId
-					myFavorite
-				}
-				organizedEvents {
-					_id
-					eventType
-					recurrenceId
-					eventName
-					eventDesc
-					eventImages
-					eventStartAt
-					eventEndAt
-					eventCity
-					eventAddress
-					eventCapacity
-					eventPrice
-					eventStatus
-					eventCategories
-					groupId
-					memberId
-					origin
-					attendeeCount
-					eventLikes
-					eventViews
-					createdAt
-					updatedAt
-				}
-				organizedGroups {
-					_id
-					groupName
-					groupDesc
-					groupImage
-					memberId
-					groupCategories
-					groupViews
-					groupLikes
-					memberCount
-					eventsCount
-					createdAt
-					updatedAt
-				}
-				meFollowed {
-					followingId
-					followerId
-					myFollowing
-				}
 			}
 			hostingGroup {
 				_id
@@ -650,21 +609,29 @@ export const GET_EVENT: TypedDocumentNode<GetEventQuery, GetEventQueryVariables>
 				eventImages
 				eventStartAt
 				eventEndAt
+				locationType
 				eventCity
 				eventAddress
+				coordinateLatitude
+				coordinateLongitude
 				eventCapacity
 				eventPrice
 				eventStatus
 				eventCategories
+				eventTags
 				groupId
 				memberId
 				origin
+				externalId
+				externalUrl
+				isRealEvent
 				attendeeCount
 				eventLikes
 				eventViews
 				createdAt
 				updatedAt
 			}
+			eventCurrency
 		}
 	}
 `;
@@ -808,44 +775,28 @@ export const GET_VISITED: TypedDocumentNode<GetVisitedQuery, GetVisitedQueryVari
 				eventImages
 				eventStartAt
 				eventEndAt
+				locationType
 				eventCity
 				eventAddress
+				coordinateLatitude
+				coordinateLongitude
 				eventCapacity
 				eventPrice
 				eventStatus
 				eventCategories
+				eventTags
 				groupId
 				memberId
 				origin
+				externalId
+				externalUrl
+				isRealEvent
 				attendeeCount
 				eventLikes
 				eventViews
 				createdAt
 				updatedAt
-				memberData {
-					_id
-					username
-					memberEmail
-					memberPhone
-					memberFullName
-					memberType
-					memberStatus
-					emailVerified
-					memberDesc
-					memberImage
-					memberPoints
-					memberLikes
-					memberFollowings
-					memberFollowers
-					memberViews
-					memberRank
-					memberGroups
-					memberEvents
-					eventsOrganizedCount
-					createdAt
-					updatedAt
-					accessToken
-				}
+				eventCurrency
 			}
 			metaCounter {
 				total
@@ -867,9 +818,6 @@ type GetMyTicketsQueryVariables = {
 export const GET_MY_TICKETS: TypedDocumentNode<GetMyTicketsQuery, GetMyTicketsQueryVariables> = gql`
 	query GetMyTickets($input: TicketInquiry!) {
 		getMyTickets(input: $input) {
-			metaCounter {
-				total
-			}
 			list {
 				_id
 				eventId
@@ -904,6 +852,10 @@ export const GET_MY_TICKETS: TypedDocumentNode<GetMyTicketsQuery, GetMyTicketsQu
 					createdAt
 					updatedAt
 				}
+				ticketCurrency
+			}
+			metaCounter {
+				total
 			}
 		}
 	}
@@ -949,6 +901,7 @@ export const GET_ALL_TICKETS_LIST: TypedDocumentNode<GetAllTicketsListQuery, Get
 				createdAt
 				updatedAt
 			}
+			ticketCurrency
 		}
 	}
 `;

@@ -94,6 +94,11 @@
 @layer utilities {
 	/* Keep only essential utilities that can't be easily replaced with Tailwind */
 
+	/* ===== LAYOUT ===== */
+	.content-container {
+		@apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+	}
+
 	/* ===== CALENDAR STYLES ===== */
 	.rdp-root {
 		width: 100%;

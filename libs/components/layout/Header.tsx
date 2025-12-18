@@ -13,9 +13,8 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@/libs/components/ui/dropdown-menu";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetClose } from "@/libs/components/ui/sheet";
+import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/libs/components/ui/sheet";
 import { ModeToggle } from "@/libs/components/ui/mode-toggle";
-import { Languages } from "lucide-react";
 import { Logo } from "@/libs/components/common/Logo";
 import { UserNav } from "@/libs/components/layout/UserNav";
 import { NotificationDropdown } from "@/libs/components/layout/NotificationDropdown";
@@ -35,29 +34,24 @@ const navLinks = [
 ];
 const adminLink = { href: "/_admin", label: "Admin", icon: ShieldAlert };
 
+const languages = [
+	// Using lipis/flag-icons (CSS sprites) instead of emoji flags for cross-browser consistency.
+	// https://github.com/lipis/flag-icons
+	{ code: "en", name: "English", flagIcon: "us" },
+	{ code: "ru", name: "Russian", flagIcon: "ru" },
+	{ code: "uz", name: "Uzbek", flagIcon: "uz" },
+	{ code: "ko", name: "Korean", flagIcon: "kr" },
+];
+
 const Header = () => {
 	const pathname = usePathname();
 	const authMember = useReactiveVar(userVar) as unknown as Member;
 	const router = useRouter();
-	const [currentLanguage, setCurrentLanguage] = useState<string>(() => {
-		// Initialize from localStorage only on client-side
-		if (typeof window !== "undefined") {
-			const locale = localStorage.getItem("locale");
-			if (!locale) {
-				localStorage.setItem("locale", "en");
-				return "en";
-			}
-			return locale;
-		}
-		return "en";
-	});
+	// Important: keep the very first render deterministic so SSR === first client render.
+	// We'll sync from localStorage after mount to avoid hydration mismatches (e.g. fi-us vs fi-kr).
+	const [currentLanguage, setCurrentLanguage] = useState<string>("en");
 
-	const languages = [
-		{ code: "en", name: "English", flag: "🇺🇸" },
-		{ code: "ru", name: "Russian", flag: "🇷🇺" },
-		{ code: "uz", name: "Uzbek", flag: "🇺🇿" },
-		{ code: "ko", name: "Korean", flag: "🇰🇷" },
-	];
+	const selectedLanguage = languages.find((l) => l.code === currentLanguage) ?? languages[0];
 
 	/** LIFECYCLES **/
 
@@ -65,6 +59,17 @@ const Header = () => {
 	useEffect(() => {
 		const jwt = getValidJwtToken();
 		if (jwt) updateUserInfo(jwt);
+	}, []);
+
+	// Sync language from localStorage after mount (client-only).
+	useEffect(() => {
+		const stored = localStorage.getItem("locale");
+		if (!stored) {
+			localStorage.setItem("locale", "en");
+			return;
+		}
+		if (stored !== currentLanguage) setCurrentLanguage(stored);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	/** HANDLERS **/
@@ -133,7 +138,12 @@ const Header = () => {
 						<DropdownMenuTrigger
 							className={cn(buttonVariants({ variant: "ghost", size: "icon" }), "h-9 w-9 lg:h-10 lg:w-10")}
 						>
-							<Languages className="h-4 w-4 lg:h-5 lg:w-5" />
+							<span
+								className={cn("fi", `fi-${selectedLanguage.flagIcon}`, "rounded-[2px]")}
+								style={{ width: 22, height: 16 }}
+								aria-hidden
+							/>
+							<span className="sr-only">Current language: {selectedLanguage.name}</span>
 						</DropdownMenuTrigger>
 						<DropdownMenuContent align="end">
 							{languages.map((language) => (
@@ -143,7 +153,11 @@ const Header = () => {
 									onClick={() => languageHandler(language.code)}
 								>
 									<div className="flex items-center gap-2">
-										<span className="text-lg">{language.flag}</span>
+										<span
+											className={cn("fi", `fi-${language.flagIcon}`, "rounded-[2px]")}
+											style={{ width: 22, height: 16 }}
+											aria-hidden
+										/>
 										<span>{language.name}</span>
 									</div>
 								</DropdownMenuItem>
@@ -178,7 +192,7 @@ const Header = () => {
 						<UserNav authMember={authMember} />
 					) : (
 						<Link href="/auth/login">
-							<Button variant="ghost" size="sm" className="text-xs h-8 px-2">
+							<Button variant="outline" className="text-xs sm:text-sm h-8 px-3">
 								{"Login"}
 							</Button>
 						</Link>
@@ -192,121 +206,161 @@ const Header = () => {
 								<span className="sr-only">Open menu</span>
 							</Button>
 						</SheetTrigger>
-						<SheetContent side="right" className="w-[300px] sm:w-[350px]">
-							<SheetHeader>
-								<SheetTitle className="flex items-center justify-between">
-									<span>Menu</span>
-									<div className="flex items-center gap-2">
-										<ModeToggle />
-										<DropdownMenu>
-											<DropdownMenuTrigger
-												className={cn(buttonVariants({ variant: "ghost", size: "icon" }), "h-9 w-9")}
+						<SheetContent side="right" className="min-w-[330px] w-[300px] sm:w-[350px]">
+							<div className="flex h-full flex-col">
+								{/* 0. Menu + X (X is rendered by SheetContent itself) */}
+								<SheetHeader className="gap-0 border-b p-0">
+									<div className="flex items-center justify-between px-4 pt-4 pb-3">
+										<div className="w-10" />
+										<SheetTitle className="text-base">Menu</SheetTitle>
+										<SheetClose asChild>
+											<Button
+												variant="ghost"
+												size="icon"
+												className="h-10 w-10 opacity-80 hover:opacity-100"
+												aria-label="Close menu"
 											>
-												<Languages className="h-4 w-4" />
-											</DropdownMenuTrigger>
-											<DropdownMenuContent align="end">
-												{languages.map((language) => (
-													<DropdownMenuItem
-														key={language.code}
-														className={cn(
-															currentLanguage === language.code ? "bg-accent" : "",
-															"cursor-pointer w-full",
-														)}
-														onClick={() => languageHandler(language.code)}
-													>
-														<div className="flex items-center gap-2">
-															<span className="text-lg">{language.flag}</span>
-															<span>{language.name}</span>
-														</div>
-													</DropdownMenuItem>
-												))}
-											</DropdownMenuContent>
-										</DropdownMenu>
+												<X className="h-5 w-5" />
+											</Button>
+										</SheetClose>
 									</div>
-								</SheetTitle>
-							</SheetHeader>
 
-							{/* Mobile Navigation Links */}
-							<nav className="flex flex-col space-y-1 mt-6">
-								{navLinks.map((link, index) => {
-									const Icon = link.icon;
-									return (
+									{/* 1. Notification, Mode, Language */}
+									<div className={cn("grid items-center px-4 pb-4", authMember._id ? "grid-cols-3" : "grid-cols-2")}>
+										{authMember._id && (
+											<div className="flex items-center justify-center">
+												<NotificationDropdown />
+											</div>
+										)}
+
+										<div className="flex items-center justify-center">
+											<ModeToggle />
+										</div>
+
+										<div className="flex items-center justify-center">
+											<DropdownMenu>
+												<DropdownMenuTrigger
+													className={cn(buttonVariants({ variant: "ghost", size: "icon" }), "h-9 w-9")}
+												>
+													<span
+														className={cn("fi", `fi-${selectedLanguage.flagIcon}`, "rounded-[2px]")}
+														style={{ width: 22, height: 16 }}
+														aria-hidden
+													/>
+													<span className="sr-only">Current language: {selectedLanguage.name}</span>
+												</DropdownMenuTrigger>
+												<DropdownMenuContent align="end">
+													{languages.map((language) => (
+														<DropdownMenuItem
+															key={language.code}
+															className={cn(
+																currentLanguage === language.code ? "bg-accent" : "",
+																"cursor-pointer w-full",
+															)}
+															onClick={() => languageHandler(language.code)}
+														>
+															<div className="flex items-center gap-2">
+																<span
+																	className={cn("fi", `fi-${language.flagIcon}`, "rounded-[2px]")}
+																	style={{ width: 22, height: 16 }}
+																	aria-hidden
+																/>
+																<span>{language.name}</span>
+															</div>
+														</DropdownMenuItem>
+													))}
+												</DropdownMenuContent>
+											</DropdownMenu>
+										</div>
+									</div>
+								</SheetHeader>
+
+								{/* 2. Links to different pages */}
+								<nav className="flex flex-1 flex-col space-y-1 overflow-auto px-2 pt-4 pb-2">
+									{navLinks.map((link, index) => {
+										const Icon = link.icon;
+										return (
+											<Link
+												key={index}
+												href={link.href}
+												onClick={() => setIsMobileMenuOpen(false)}
+												className={cn(
+													"flex items-center gap-3 min-h-12 px-4 rounded-lg transition-colors duration-200 group relative",
+													pathname === link.href
+														? "bg-primary/10 text-primary font-medium"
+														: "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
+												)}
+											>
+												<Icon
+													className={cn(
+														"h-5 w-5 transition-colors duration-200",
+														pathname === link.href ? "text-primary" : "text-muted-foreground group-hover:text-primary",
+													)}
+												/>
+												<span
+													className={cn(
+														"text-sm font-medium transition-colors duration-200",
+														pathname === link.href ? "text-primary" : "text-muted-foreground group-hover:text-primary",
+													)}
+												>
+													{link.label}
+												</span>
+												{pathname === link.href && (
+													<div className="absolute right-0 top-0 h-full w-1.5 bg-primary rounded-full" />
+												)}
+											</Link>
+										);
+									})}
+									{authMember.memberType === MemberType.ADMIN && (
 										<Link
-											key={index}
-											href={link.href}
+											href={adminLink.href}
 											onClick={() => setIsMobileMenuOpen(false)}
 											className={cn(
-												"flex items-center gap-3 h-12 px-4 rounded-lg transition-colors duration-200 group relative",
-												pathname === link.href
+												"flex items-center gap-3 min-h-12 px-4 rounded-lg transition-colors duration-200 group relative",
+												pathname === adminLink.href
 													? "bg-primary/10 text-primary font-medium"
 													: "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
 											)}
 										>
-											<Icon
+											<adminLink.icon
 												className={cn(
 													"h-5 w-5 transition-colors duration-200",
-													pathname === link.href ? "text-primary" : "text-muted-foreground group-hover:text-primary",
+													pathname === adminLink.href
+														? "text-primary"
+														: "text-muted-foreground group-hover:text-primary",
 												)}
 											/>
 											<span
 												className={cn(
 													"text-sm font-medium transition-colors duration-200",
-													pathname === link.href ? "text-primary" : "text-muted-foreground group-hover:text-primary",
+													pathname === adminLink.href
+														? "text-primary"
+														: "text-muted-foreground group-hover:text-primary",
 												)}
 											>
-												{link.label}
+												{adminLink.label}
 											</span>
-											{pathname === link.href && (
+											{pathname === adminLink.href && (
 												<div className="absolute right-0 top-0 h-full w-1.5 bg-primary rounded-full" />
 											)}
 										</Link>
-									);
-								})}
-								{authMember.memberType === MemberType.ADMIN && (
-									<Link
-										href={adminLink.href}
-										onClick={() => setIsMobileMenuOpen(false)}
-										className={cn(
-											"flex items-center gap-3 h-12 px-4 rounded-lg transition-colors duration-200 group relative",
-											pathname === adminLink.href
-												? "bg-primary/10 text-primary font-medium"
-												: "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
-										)}
-									>
-										<adminLink.icon
-											className={cn(
-												"h-5 w-5 transition-colors duration-200",
-												pathname === adminLink.href ? "text-primary" : "text-muted-foreground group-hover:text-primary",
-											)}
-										/>
-										<span
-											className={cn(
-												"text-sm font-medium transition-colors duration-200",
-												pathname === adminLink.href ? "text-primary" : "text-muted-foreground group-hover:text-primary",
-											)}
-										>
-											{adminLink.label}
-										</span>
-										{pathname === adminLink.href && (
-											<div className="absolute right-0 top-0 h-full w-1.5 bg-primary rounded-full" />
-										)}
-									</Link>
-								)}
-							</nav>
+									)}
+								</nav>
 
-							{/* Mobile Auth Buttons */}
-							{!authMember._id && (
-								<div className="flex flex-col gap-2 mt-6 pt-6 border-t">
-									<Link href="/auth/login" onClick={() => setIsMobileMenuOpen(false)}>
-										<Button variant="outline" className="w-full text-sm h-10">
-											{"Login"}
-										</Button>
-									</Link>
-									<Link href="/auth/signup" onClick={() => setIsMobileMenuOpen(false)}>
-										<Button className="w-full text-sm h-10">{"Sign Up"}</Button>
-									</Link>
-								</div>
-							)}
+								{/* 3. Login/Signup */}
+								{!authMember._id && (
+									<div className="flex flex-col gap-2 border-t px-4 pt-3 pb-[calc(env(safe-area-inset-bottom)+1.25rem)]">
+										<Link href="/auth/login" onClick={() => setIsMobileMenuOpen(false)}>
+											<Button variant="outline" className="w-full text-sm h-10">
+												{"Login"}
+											</Button>
+										</Link>
+										<Link href="/auth/signup" onClick={() => setIsMobileMenuOpen(false)}>
+											<Button className="w-full text-sm h-10">{"Sign Up"}</Button>
+										</Link>
+									</div>
+								)}
+							</div>
 						</SheetContent>
 					</Sheet>
 				</div>

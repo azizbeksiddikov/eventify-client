@@ -379,20 +379,28 @@ export const CREATE_EVENT: TypedDocumentNode<CreateEventMutation, CreateEventMut
 			eventImages
 			eventStartAt
 			eventEndAt
+			locationType
 			eventCity
 			eventAddress
+			coordinateLatitude
+			coordinateLongitude
 			eventCapacity
 			eventPrice
 			eventStatus
 			eventCategories
+			eventTags
 			groupId
 			memberId
 			origin
+			externalId
+			externalUrl
+			isRealEvent
 			attendeeCount
 			eventLikes
 			eventViews
 			createdAt
 			updatedAt
+			eventCurrency
 		}
 	}
 `;
@@ -432,6 +440,12 @@ export const CREATE_RECURRING_EVENT: TypedDocumentNode<
 			isActive
 			createdAt
 			updatedAt
+			locationType
+			coordinateLatitude
+			coordinateLongitude
+			eventCurrency
+			eventTags
+			isRealEvent
 		}
 	}
 `;
@@ -456,20 +470,28 @@ export const UPDATE_EVENT_BY_ORGANIZER: TypedDocumentNode<
 			eventImages
 			eventStartAt
 			eventEndAt
+			locationType
 			eventCity
 			eventAddress
+			coordinateLatitude
+			coordinateLongitude
 			eventCapacity
 			eventPrice
 			eventStatus
 			eventCategories
+			eventTags
 			groupId
 			memberId
 			origin
+			externalId
+			externalUrl
+			isRealEvent
 			attendeeCount
 			eventLikes
 			eventViews
 			createdAt
 			updatedAt
+			eventCurrency
 		}
 	}
 `;
@@ -517,6 +539,7 @@ export const CREATE_TICKET: TypedDocumentNode<CreateTicketMutation, CreateTicket
 			totalPrice
 			createdAt
 			updatedAt
+			ticketCurrency
 		}
 	}
 `;
@@ -531,8 +554,15 @@ export const CANCEL_TICKET: TypedDocumentNode<CancelTicketMutation, CancelTicket
 	mutation CancelTicket($input: String!) {
 		cancelTicket(input: $input) {
 			_id
+			eventId
+			memberId
 			ticketStatus
+			ticketPrice
+			ticketQuantity
+			totalPrice
+			createdAt
 			updatedAt
+			ticketCurrency
 		}
 	}
 `;

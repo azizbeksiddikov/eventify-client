@@ -106,20 +106,28 @@ export const GET_ALL_EVENTS_BY_ADMIN: TypedDocumentNode<GetAllEventsByAdminQuery
 					eventImages
 					eventStartAt
 					eventEndAt
+					locationType
 					eventCity
 					eventAddress
+					coordinateLatitude
+					coordinateLongitude
 					eventCapacity
 					eventPrice
 					eventStatus
 					eventCategories
+					eventTags
 					groupId
 					memberId
 					origin
+					externalId
+					externalUrl
+					isRealEvent
 					attendeeCount
 					eventLikes
 					eventViews
 					createdAt
 					updatedAt
+					eventCurrency
 				}
 				metaCounter {
 					total

@@ -7,6 +7,7 @@ import { ThemeProvider } from "./theme-provider";
 import Header from "@/libs/components/layout/Header";
 import Footer from "@/libs/components/layout/Footer";
 import "./globals.css";
+import "flag-icons/css/flag-icons.min.css";
 
 export const metadata: Metadata = {
 	title: "Create Next App",
