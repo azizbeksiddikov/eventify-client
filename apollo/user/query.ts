@@ -322,6 +322,7 @@ export const GET_GROUP: TypedDocumentNode<GetGroupQuery, GetGroupQueryVariables>
 			groupViews
 			groupLikes
 			memberCount
+			eventsCount
 			createdAt
 			updatedAt
 			memberData {
@@ -341,6 +342,9 @@ export const GET_GROUP: TypedDocumentNode<GetGroupQuery, GetGroupQueryVariables>
 				memberFollowers
 				memberViews
 				memberRank
+				memberGroups
+				memberEvents
+				eventsOrganizedCount
 				createdAt
 				updatedAt
 			}
@@ -356,8 +360,6 @@ export const GET_GROUP: TypedDocumentNode<GetGroupQuery, GetGroupQueryVariables>
 				joinDate
 				meJoined
 			}
-			meOwner
-			eventsCount
 			groupUpcomingEvents {
 				_id
 				eventType
