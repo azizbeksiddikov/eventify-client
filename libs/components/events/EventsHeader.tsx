@@ -20,7 +20,7 @@ const EventsHeader = () => {
 			smallError(t("Only organizers can create events"));
 			return;
 		}
-		router.push("/event/create");
+		router.push("/events/create");
 	};
 	return (
 		<section className="bg-linear-to-b from-muted-foreground/10 to-background py-8">

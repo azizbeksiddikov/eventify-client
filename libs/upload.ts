@@ -1,5 +1,5 @@
 import { NEXT_APP_API_URL } from "./config";
-import { getJwtToken } from "./auth";
+import { getValidJwtToken } from "./auth";
 
 /**
  * Upload a single image file to the server
@@ -9,38 +9,38 @@ import { getJwtToken } from "./auth";
  * @throws Error if upload fails
  */
 export async function uploadImage(file: File, target: string): Promise<string> {
-	if (!file) {
-		throw new Error("File is required");
-	}
-
-	if (!target) {
-		throw new Error("Target parameter is required");
-	}
-
 	const formData = new FormData();
 	formData.append("file", file);
 	formData.append("target", target);
 
-	const token = getJwtToken();
-	const headers: HeadersInit = {};
-	if (token) {
-		headers["Authorization"] = `Bearer ${token}`;
-	}
+	const token = getValidJwtToken();
+	if (!token) throw new Error("Authentication required. Please log in to upload images.");
+
+	const headers: HeadersInit = {
+		Authorization: `Bearer ${token}`,
+	};
+	const uploadUrl = `${NEXT_APP_API_URL}/upload/image`;
 
 	try {
-		const response = await fetch(`${NEXT_APP_API_URL}/upload/image`, {
+		const response = await fetch(uploadUrl, {
 			method: "POST",
 			headers,
 			body: formData,
 		});
 
 		if (!response.ok) {
-			const errorData = await response.json().catch(() => ({ message: "Upload failed" }));
+			const errorText = await response.text();
+			let errorData;
+			try {
+				errorData = JSON.parse(errorText);
+			} catch {
+				errorData = { message: errorText || "Upload failed" };
+			}
 			throw new Error(errorData.message || `Upload failed with status ${response.status}`);
 		}
 
 		const data = await response.json();
-		return data.url;
+		return data.url as string;
 	} catch (error) {
 		if (error instanceof Error) {
 			throw error;
@@ -71,26 +71,38 @@ export async function uploadImages(files: File[], target: string): Promise<strin
 	});
 	formData.append("target", target);
 
-	const token = getJwtToken();
-	const headers: HeadersInit = {};
-	if (token) {
-		headers["Authorization"] = `Bearer ${token}`;
-	}
+	const token = getValidJwtToken();
+	if (!token) throw new Error("Authentication required. Please log in to upload images.");
+
+	const headers: HeadersInit = {
+		Authorization: `Bearer ${token}`,
+	};
+
+	const uploadUrl = `${NEXT_APP_API_URL}/upload/images`;
 
 	try {
-		const response = await fetch(`${NEXT_APP_API_URL}/upload/images`, {
+		const response = await fetch(uploadUrl, {
 			method: "POST",
 			headers,
 			body: formData,
 		});
 
 		if (!response.ok) {
-			const errorData = await response.json().catch(() => ({ message: "Upload failed" }));
+			const errorText = await response.text();
+			let errorData;
+			try {
+				errorData = JSON.parse(errorText);
+			} catch {
+				errorData = { message: errorText || "Upload failed" };
+			}
 			throw new Error(errorData.message || `Upload failed with status ${response.status}`);
 		}
 
 		const data = await response.json();
-		return data.urls;
+		if (Array.isArray(data)) {
+			return data;
+		}
+		return data.urls as string[];
 	} catch (error) {
 		if (error instanceof Error) {
 			throw error;

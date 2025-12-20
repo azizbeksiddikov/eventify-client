@@ -1,11 +1,11 @@
 import { MemberType } from "./enums/member.enum";
 
-export const NEXT_APP_API_URL = `${process.env.NEXT_APP_API_URL}`;
-export const NEXT_PUBLIC_API_GRAPHQL_URL = `${process.env.NEXT_PUBLIC_API_GRAPHQL_URL}`;
+export const NEXT_APP_API_URL = process.env.NEXT_APP_API_URL;
+export const NEXT_PUBLIC_API_GRAPHQL_URL = process.env.NEXT_PUBLIC_API_GRAPHQL_URL;
 
 export const eventsSortOptions = [
 	{ value: "createdAt", label: "Newest" },
-	{ value: "eventDate", label: "Event Date" },
+	{ value: "eventStartAt", label: "Event Date" },
 	{ value: "eventPrice", label: "Price" },
 	{ value: "attendeeCount", label: "Popularity" },
 ];

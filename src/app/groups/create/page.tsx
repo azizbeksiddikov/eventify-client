@@ -18,17 +18,14 @@ import { CREATE_GROUP } from "@/apollo/user/mutation";
 import { smallError, smallSuccess } from "@/libs/alert";
 import { useTranslation } from "next-i18next";
 import { Message } from "@/libs/enums/common.enum";
-import axios from "axios";
-import { getJwtToken } from "@/libs/auth";
 import { imageTypes, NEXT_APP_API_URL } from "@/libs/config";
-import { NEXT_PUBLIC_API_GRAPHQL_URL } from "@/libs/config";
+import { uploadImage } from "@/libs/upload";
 import Image from "next/image";
 
 const GroupCreatePage = () => {
 	const router = useRouter();
 	const { t } = useTranslation("common");
 	const user = useReactiveVar(userVar);
-	const token = getJwtToken();
 
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -47,38 +44,9 @@ const GroupCreatePage = () => {
 	const [createGroup] = useMutation(CREATE_GROUP);
 
 	/** HANDLERS */
-	const uploadImage = async (image: File) => {
+	const handleImageUpload = async (image: File) => {
 		try {
-			const formData = new FormData();
-			formData.append(
-				"operations",
-				JSON.stringify({
-					query: `mutation ImageUploader($file: Upload!, $target: String!) {
-						imageUploader(file: $file, target: $target) 
-				  }`,
-					variables: {
-						file: null,
-						target: "group",
-					},
-				}),
-			);
-			formData.append(
-				"map",
-				JSON.stringify({
-					"0": ["variables.file"],
-				}),
-			);
-			formData.append("0", image);
-
-			const response = await axios.post(`${NEXT_PUBLIC_API_GRAPHQL_URL}`, formData, {
-				headers: {
-					"Content-Type": "multipart/form-data",
-					"apollo-require-preflight": true,
-					Authorization: `Bearer ${token}`,
-				},
-			});
-
-			const responseImage = response.data.data.imageUploader;
+			const responseImage = await uploadImage(image, "group");
 			const imageUrl = `${NEXT_APP_API_URL}/${responseImage}`;
 
 			// Update form data and preview
@@ -104,7 +72,7 @@ const GroupCreatePage = () => {
 
 	const cropCompleteHandler = async (croppedFile: File) => {
 		try {
-			const imageUrl = await uploadImage(croppedFile);
+			const imageUrl = await handleImageUpload(croppedFile);
 			if (imageUrl) {
 				setImagePreview(imageUrl);
 				setTempImageUrl(null);
@@ -138,6 +106,10 @@ const GroupCreatePage = () => {
 			await smallSuccess(t(Message.GROUP_CREATED_SUCCESSFULLY));
 			if (response.data?.createGroup?._id) {
 				router.push(`/groups/${response.data.createGroup._id}`);
+				// Scroll to top after navigation (with small delay to ensure page has loaded)
+				setTimeout(() => {
+					window.scrollTo({ top: 0, behavior: "smooth" });
+				}, 100);
 			}
 		} catch (error: unknown) {
 			if (error instanceof Error) {
@@ -258,7 +230,7 @@ const GroupCreatePage = () => {
 						{/* Image Section */}
 						<div className="space-y-4">
 							<label className="text-sm font-medium text-foreground">{t("Group Image")}</label>
-							<div className="relative aspect-[16/9] w-full max-w-2xl mx-auto rounded-xl overflow-hidden bg-muted/50 rounded-t-xl">
+							<div className="relative aspect-video w-full max-w-2xl mx-auto rounded-xl overflow-hidden bg-muted/50">
 								{imagePreview ? (
 									<>
 										<Image src={imagePreview} alt="Group preview" className="object-contain" fill />

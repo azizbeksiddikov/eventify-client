@@ -20,12 +20,12 @@ const ChosenEventHeader = () => {
 			smallError(t("Only organizers can create events"));
 			return;
 		}
-		router.push("/event/create");
+		router.push("/events/create");
 	};
 
 	return (
 		<section className="bg-gradient-to-b from-muted-foreground/10 to-background py-8">
-			<div className="flex flex-col md:flex-row items-center justify-between mb-6 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 gap-3">
+			<div className="flex flex-col md:flex-row items-center justify-between mb-6 max-w-7xl mx-auto px-6 sm:px-12 lg:px-20 gap-3">
 				<Button
 					type="button"
 					onClick={() => router.push("/events")}

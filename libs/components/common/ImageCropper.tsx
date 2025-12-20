@@ -1,11 +1,11 @@
-import { useRef, useState, useEffect } from 'react';
-import Image from 'next/image';
-import { useTranslation } from 'next-i18next';
-import ReactCrop, { type Crop, centerCrop, makeAspectCrop } from 'react-image-crop';
-import 'react-image-crop/dist/ReactCrop.css';
+import { useRef, useState, useEffect } from "react";
+import Image from "next/image";
+import { useTranslation } from "next-i18next";
+import ReactCrop, { type Crop, centerCrop, makeAspectCrop } from "react-image-crop";
+import "react-image-crop/dist/ReactCrop.css";
 
-import { Button } from '@/libs/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/libs/components/ui/dialog';
+import { Button } from "@/libs/components/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/libs/components/ui/dialog";
 
 interface ImageCropperProps {
 	isOpen: boolean;
@@ -19,7 +19,7 @@ interface ImageCropperProps {
 function createInitialCrop(mediaWidth: number, mediaHeight: number, aspect: number): Crop {
 	const crop = makeAspectCrop(
 		{
-			unit: '%',
+			unit: "%",
 			width: 90,
 		},
 		aspect,
@@ -37,14 +37,14 @@ export const ImageCropper = ({
 	isCircular = false,
 	quality = 0.92,
 }: ImageCropperProps) => {
-	const { t } = useTranslation('common');
+	const { t } = useTranslation("common");
 	const imgRef = useRef<HTMLImageElement>(null);
 
 	const isCircularOutput = isCircular;
 	const cropperAspect = isCircular ? 1 : 16 / 9;
 
 	const [crop, setCrop] = useState<Crop>({
-		unit: '%', // Changed to percentage-based for better scaling
+		unit: "%", // Changed to percentage-based for better scaling
 		x: 0,
 		y: 0,
 		width: 0,
@@ -58,11 +58,19 @@ export const ImageCropper = ({
 		renderedHeight: number;
 	} | null>(null);
 
-	// Reset states when dialog closes or imageUrl changes
+	// Reset states when dialog closes or imageUrl becomes empty
 	useEffect(() => {
+		// Only reset if dialog is closed or imageUrl is empty
 		if (!isOpen || !imageUrl) {
-			setImgDimensions(null);
-			setCrop({ unit: '%', x: 0, y: 0, width: 0, height: 0 });
+			// Schedule state reset to avoid synchronous setState in effect
+			const timeoutId = setTimeout(() => {
+				setImgDimensions(null);
+				setCrop({ unit: "%", x: 0, y: 0, width: 0, height: 0 });
+			}, 0);
+
+			return () => {
+				clearTimeout(timeoutId);
+			};
 		}
 	}, [isOpen, imageUrl]);
 
@@ -70,9 +78,9 @@ export const ImageCropper = ({
 		const { naturalWidth, naturalHeight, width: renderedWidth, height: renderedHeight } = imgElement;
 
 		if (naturalWidth === 0 || naturalHeight === 0) {
-			console.error('Image could not be loaded or is empty (zero natural dimensions).');
+			console.error("Image could not be loaded or is empty (zero natural dimensions).");
 			setImgDimensions(null);
-			setCrop({ unit: '%', x: 0, y: 0, width: 0, height: 0 });
+			setCrop({ unit: "%", x: 0, y: 0, width: 0, height: 0 });
 			return;
 		}
 
@@ -90,24 +98,24 @@ export const ImageCropper = ({
 
 	const getCroppedImg = async (): Promise<Blob> => {
 		if (!imgRef.current || !imgDimensions) {
-			throw new Error('Image reference or dimensions not available');
+			throw new Error("Image reference or dimensions not available");
 		}
 
 		if (!crop || crop.width === 0 || crop.height === 0) {
-			throw new Error('Invalid crop dimensions');
+			throw new Error("Invalid crop dimensions");
 		}
 
-		const canvas = document.createElement('canvas');
-		const ctx = canvas.getContext('2d');
+		const canvas = document.createElement("canvas");
+		const ctx = canvas.getContext("2d");
 
 		if (!ctx) {
-			throw new Error('Failed to get 2D rendering context');
+			throw new Error("Failed to get 2D rendering context");
 		}
 
 		// Calculate the pixel values based on percentages if using percentage units
 		let cropX, cropY, cropWidth, cropHeight;
 
-		if (crop.unit === '%') {
+		if (crop.unit === "%") {
 			// Convert percentage to pixels based on the rendered dimensions
 			cropX = (crop.x * imgDimensions.renderedWidth) / 100;
 			cropY = (crop.y * imgDimensions.renderedHeight) / 100;
@@ -136,7 +144,7 @@ export const ImageCropper = ({
 		canvas.height = Math.round(cropHeightNatural);
 
 		// Apply high-quality rendering settings
-		ctx.imageSmoothingQuality = 'high';
+		ctx.imageSmoothingQuality = "high";
 		ctx.imageSmoothingEnabled = true;
 
 		// Draw the cropped portion of the image onto the canvas
@@ -154,18 +162,18 @@ export const ImageCropper = ({
 
 		// Handle circular cropping if needed
 		if (isCircularOutput) {
-			const circleCanvas = document.createElement('canvas');
-			const circleCtx = circleCanvas.getContext('2d');
+			const circleCanvas = document.createElement("canvas");
+			const circleCtx = circleCanvas.getContext("2d");
 
 			if (!circleCtx) {
-				throw new Error('Failed to get 2D context for circular crop');
+				throw new Error("Failed to get 2D context for circular crop");
 			}
 
 			const size = Math.min(canvas.width, canvas.height);
 			circleCanvas.width = size;
 			circleCanvas.height = size;
 
-			circleCtx.imageSmoothingQuality = 'high';
+			circleCtx.imageSmoothingQuality = "high";
 			circleCtx.imageSmoothingEnabled = true;
 
 			// Create circular clipping path
@@ -181,8 +189,8 @@ export const ImageCropper = ({
 
 			return new Promise((resolve, reject) => {
 				circleCanvas.toBlob(
-					(blob) => (blob ? resolve(blob) : reject(new Error('Circular canvas is empty after processing'))),
-					'image/jpeg',
+					(blob) => (blob ? resolve(blob) : reject(new Error("Circular canvas is empty after processing"))),
+					"image/jpeg",
 					quality,
 				);
 			});
@@ -191,8 +199,8 @@ export const ImageCropper = ({
 		// Return the rectangular cropped image
 		return new Promise((resolve, reject) => {
 			canvas.toBlob(
-				(blob) => (blob ? resolve(blob) : reject(new Error('Canvas is empty after processing'))),
-				'image/jpeg',
+				(blob) => (blob ? resolve(blob) : reject(new Error("Canvas is empty after processing"))),
+				"image/jpeg",
 				quality,
 			);
 		});
@@ -200,12 +208,12 @@ export const ImageCropper = ({
 
 	const performCropHandler = async () => {
 		if (!imgRef.current || !imgDimensions) {
-			console.error('Image reference or dimensions not available for cropping.');
+			console.error("Image reference or dimensions not available for cropping.");
 			return;
 		}
 
 		if (!crop || crop.width === 0 || crop.height === 0) {
-			console.error('Crop is not set or has zero dimensions.');
+			console.error("Crop is not set or has zero dimensions.");
 			return;
 		}
 
@@ -213,14 +221,14 @@ export const ImageCropper = ({
 			const croppedImageBlob = await getCroppedImg();
 			const outputFileName = `cropped_${Date.now()}.jpg`;
 			const croppedFile = new File([croppedImageBlob], outputFileName, {
-				type: 'image/jpeg',
+				type: "image/jpeg",
 				lastModified: Date.now(),
 			});
 
 			onCropComplete(croppedFile);
 			onClose();
 		} catch (err) {
-			console.error('Error during image cropping:', err);
+			console.error("Error during image cropping:", err);
 			// Optionally, display an error message to the user
 		}
 	};
@@ -235,12 +243,15 @@ export const ImageCropper = ({
 		<Dialog open={isOpen} onOpenChange={onClose}>
 			<DialogContent className="sm:max-w-[600px] w-[90vw]">
 				<DialogHeader>
-					<DialogTitle>{t('cropImage.title', 'Crop Image')}</DialogTitle>
+					<DialogTitle>{t("cropImage.title", "Crop Image")}</DialogTitle>
+					<DialogDescription>
+						{t("cropImage.description", "Adjust the crop area to select the desired portion of the image.")}
+					</DialogDescription>
 				</DialogHeader>
 				<div className="mt-4">
 					<div
 						className="relative w-full min-h-[200px] flex justify-center items-center bg-muted rounded-lg overflow-hidden"
-						style={{ maxHeight: 'clamp(200px, calc(80vh - 200px), 600px)' }}
+						style={{ maxHeight: "clamp(200px, calc(80vh - 200px), 600px)" }}
 					>
 						{imageUrl ? (
 							<ReactCrop
@@ -253,17 +264,17 @@ export const ImageCropper = ({
 								<div className="max-w-full max-h-[calc(80vh-200px)]">
 									<Image
 										ref={imgRef}
-										src={imageUrl || '/placeholder.svg'}
-										alt={t('cropImage.altPreview', 'Crop preview')}
+										src={imageUrl || "/placeholder.svg"}
+										alt={t("cropImage.altPreview", "Crop preview")}
 										width={1000}
 										height={1000}
 										unoptimized={true}
 										onLoadingComplete={imageReadyHandler}
 										style={{
-											maxWidth: '100%',
-											maxHeight: 'calc(80vh - 200px)',
-											objectFit: 'contain',
-											display: 'block',
+											maxWidth: "100%",
+											maxHeight: "calc(80vh - 200px)",
+											objectFit: "contain",
+											display: "block",
 										}}
 										priority={isOpen}
 									/>
@@ -271,16 +282,16 @@ export const ImageCropper = ({
 							</ReactCrop>
 						) : (
 							<p className="text-muted-foreground p-4 text-center">
-								{t('cropImage.noImage', 'No image loaded. Please provide an image URL.')}
+								{t("cropImage.noImage", "No image loaded. Please provide an image URL.")}
 							</p>
 						)}
 					</div>
 					<div className="mt-6 flex justify-end gap-3">
 						<Button variant="outline" onClick={onClose}>
-							{t('common.cancel', 'Cancel')}
+							{t("common.cancel", "Cancel")}
 						</Button>
 						<Button onClick={performCropHandler} disabled={!canCrop}>
-							{t('cropImage.cropAndSave', 'Crop')}
+							{t("cropImage.cropAndSave", "Crop")}
 						</Button>
 					</div>
 				</div>

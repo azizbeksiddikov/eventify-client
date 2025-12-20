@@ -153,9 +153,12 @@ export const readDate = (date: Date): string => {
 
 export const parseDate = (dateStr: string | undefined): Date | undefined => {
 	if (!dateStr) return undefined;
-	const date = dateStr.split("-").map(Number);
-	if (isNaN(date[0]) || isNaN(date[1]) || isNaN(date[2])) return undefined;
-	return new Date(date[0], date[1] - 1, date[2]);
+	const parts = dateStr.split("-").map(Number);
+	if (parts.length !== 3 || parts.some(isNaN)) return undefined;
+
+	// Return a date at noon UTC to avoid timezone shifting issues when converting back to string or sending to API
+	// 12:00 UTC is safe for all timezones between UTC-12 and UTC+12 to stay on the same calendar day
+	return new Date(Date.UTC(parts[0], parts[1] - 1, parts[2], 12, 0, 0));
 };
 
 export const likeEvent = async (

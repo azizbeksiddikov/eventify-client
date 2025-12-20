@@ -108,7 +108,7 @@ const ChosenEventData = ({
 							variant="secondary"
 							size="sm"
 							className="absolute top-4 right-4 z-10 h-9 bg-background/80 backdrop-blur-sm shadow-sm hover:bg-background/90 hover:scale-105 transition-all duration-200"
-							onClick={() => router.push(`/event/update?eventId=${event._id}`)}
+							onClick={() => router.push(`/events/update/${event._id}`)}
 						>
 							<Pencil className="h-4 w-4 mr-1.5" />
 							{t("Edit")}
@@ -270,46 +270,48 @@ const ChosenEventData = ({
 									)}
 								</div>
 							) : (
-								<div className="bg-accent/30 rounded-xl p-3 sm:p-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between md:gap-4">
-									{/* Ticket Quantity and Total Price */}
-									<div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between md:flex-1 md:min-w-0">
-										<div className="flex items-center gap-2">
-											<Button
-												variant="outline"
-												size="icon"
-												className="h-8 w-8 hover:bg-primary/10 hover:text-primary transition-colors border-primary/20"
-												onClick={() => quantityHandler(-1)}
-											>
-												<Minus className="h-3 w-3" />
-											</Button>
+								<div className="bg-accent/30 rounded-xl p-3 sm:p-4">
+									<div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
+										{/* Ticket Quantity and Total Price */}
+										<div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between xl:flex-1 xl:min-w-0">
+											<div className="flex items-center gap-2">
+												<Button
+													variant="outline"
+													size="icon"
+													className="h-8 w-8 hover:bg-primary/10 hover:text-primary transition-colors border-primary/20"
+													onClick={() => quantityHandler(-1)}
+												>
+													<Minus className="h-3 w-3" />
+												</Button>
 
-											<div className="w-8 text-center font-medium">{ticketInput!.ticketQuantity}</div>
+												<div className="w-8 text-center font-medium">{ticketInput!.ticketQuantity}</div>
 
-											<Button
-												variant="outline"
-												size="icon"
-												className="h-8 w-8 hover:bg-primary/10 hover:text-primary transition-colors border-primary/20"
-												onClick={() => quantityHandler(1)}
-											>
-												<Plus className="h-3 w-3" />
-											</Button>
-										</div>
-										<div className="flex items-baseline justify-between sm:justify-end gap-2">
-											<div className="text-sm text-muted-foreground">{t("Total")}</div>
-											<div className="text-sm font-semibold text-primary whitespace-nowrap">
-												{formatPrice((event.eventPrice || 0) * ticketInput!.ticketQuantity, event.eventCurrency)}
+												<Button
+													variant="outline"
+													size="icon"
+													className="h-8 w-8 hover:bg-primary/10 hover:text-primary transition-colors border-primary/20"
+													onClick={() => quantityHandler(1)}
+												>
+													<Plus className="h-3 w-3" />
+												</Button>
+											</div>
+											<div className="flex items-center gap-2">
+												<span className="text-sm text-muted-foreground">{t("Total")}</span>
+												<span className="text-sm font-semibold text-primary">
+													{formatPrice((event.eventPrice || 0) * ticketInput!.ticketQuantity, event.eventCurrency)}
+												</span>
 											</div>
 										</div>
-									</div>
 
-									{/* Buy Ticket Button */}
-									<Button
-										onClick={purchaseHandler}
-										size="sm"
-										className="h-9 bg-primary hover:bg-primary/90 text-primary-foreground px-4 sm:px-6 shadow-sm hover:shadow transition-all duration-200 w-full md:w-auto md:flex-none"
-									>
-										{t("Buy Ticket")}
-									</Button>
+										{/* Buy Ticket Button */}
+										<Button
+											onClick={purchaseHandler}
+											size="sm"
+											className="h-9 bg-primary hover:bg-primary/90 text-primary-foreground px-4 sm:px-6 shadow-sm hover:shadow transition-all duration-200 w-full sm:w-auto"
+										>
+											{t("Buy Ticket")}
+										</Button>
+									</div>
 								</div>
 							)}
 						</div>

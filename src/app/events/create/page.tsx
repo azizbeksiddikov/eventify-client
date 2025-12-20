@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import axios from "axios";
 import { useMutation, useQuery, useReactiveVar } from "@apollo/client/react";
 import { useTranslation } from "next-i18next";
 import { userVar } from "@/apollo/store";
@@ -15,49 +14,86 @@ import { Textarea } from "@/libs/components/ui/textarea";
 import { Card } from "@/libs/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/libs/components/ui/select";
 import { ScrollArea } from "@/libs/components/ui/scroll-area";
+import { Checkbox } from "@/libs/components/ui/checkbox";
 import { ImageCropper } from "@/libs/components/common/ImageCropper";
 
-import { EventCategory, EventStatus } from "@/libs/enums/event.enum";
+import { EventCategory, EventStatus, EventType, EventLocationType, RecurrenceType } from "@/libs/enums/event.enum";
 import { GET_MY_GROUPS } from "@/apollo/user/query";
-import { CREATE_EVENT } from "@/apollo/user/mutation";
-import { EventInput } from "@/libs/types/event/event.input";
+import { CREATE_EVENT, CREATE_RECURRING_EVENT } from "@/apollo/user/mutation";
+import { EventInput, EventRecurrenceInput } from "@/libs/types/event/event.input";
 import { Group } from "@/libs/types/group/group";
 import { smallError, smallSuccess } from "@/libs/alert";
-import { Message } from "@/libs/enums/common.enum";
-import { getJwtToken } from "@/libs/auth";
-import { imageTypes, NEXT_APP_API_URL, NEXT_PUBLIC_API_GRAPHQL_URL } from "@/libs/config";
+import { Message, Currency } from "@/libs/enums/common.enum";
+import { imageTypes, NEXT_APP_API_URL } from "@/libs/config";
+import { uploadImage } from "@/libs/upload";
 
 const EventCreatePage = () => {
 	const router = useRouter();
 	const { t } = useTranslation("common");
 	const user = useReactiveVar(userVar);
-	const token = getJwtToken();
 
 	const [groups, setGroups] = useState<Group[]>([]);
-	const [isSubmitting, setIsSubmitting] = useState(false);
-	const [imagePreview, setImagePreview] = useState<string | null>(null);
-	const [selectedCategories, setSelectedCategories] = useState<EventCategory[]>([]);
-	const [selectedGroup, setSelectedGroup] = useState<Group | null>(null);
-	const [isCropperOpen, setIsCropperOpen] = useState(false);
-	const [tempImageUrl, setTempImageUrl] = useState<string | null>(null);
 
+	// UI State
+	const [uiState, setUiState] = useState({
+		isSubmitting: false,
+		imagePreview: null as string | null,
+		isCropperOpen: false,
+		tempImageUrl: null as string | null,
+	});
+
+	// Form Selection State
+	const [formSelection, setFormSelection] = useState({
+		selectedCategories: [] as EventCategory[],
+		selectedGroup: null as Group | null,
+		eventType: EventType.ONCE as EventType,
+		locationType: EventLocationType.OFFLINE as EventLocationType,
+		eventTags: "",
+	});
+
+	// Recurring Event State
+	const [recurrenceState, setRecurrenceState] = useState({
+		recurrenceType: "" as RecurrenceType | "",
+		recurrenceInterval: undefined as number | undefined,
+		recurrenceDaysOfWeek: [] as number[],
+		recurrenceDayOfMonth: undefined as number | undefined,
+		recurrenceEndDate: undefined as Date | undefined,
+	});
+
+	// Main Form Data
 	const [formData, setFormData] = useState<EventInput>({
+		eventType: EventType.ONCE,
 		eventName: "",
 		eventDesc: "",
 		eventImages: [],
 		eventStartAt: new Date(),
 		eventEndAt: new Date(),
+		locationType: EventLocationType.OFFLINE,
 		eventCity: "",
 		eventAddress: "",
 		eventStatus: EventStatus.UPCOMING,
 		groupId: "",
 		eventCategories: [],
+		eventTags: [],
+		eventCurrency: Currency.USD,
+		isRealEvent: true,
 	});
+
+	// Sync locationType with formData
+	useEffect(() => {
+		setFormData((prev) => ({ ...prev, locationType: formSelection.locationType }));
+	}, [formSelection.locationType]);
+
+	// Sync eventType with formData
+	useEffect(() => {
+		setFormData((prev) => ({ ...prev, eventType: formSelection.eventType }));
+	}, [formSelection.eventType]);
 
 	/** APOLLO REQUESTS **/
 	const [createEvent] = useMutation(CREATE_EVENT);
+	const [createRecurringEvent] = useMutation(CREATE_RECURRING_EVENT);
 
-	const { data: groupsData } = useQuery(GET_MY_GROUPS, {
+	const { data: groupsData, loading: groupsLoading } = useQuery(GET_MY_GROUPS, {
 		fetchPolicy: "cache-and-network",
 		skip: !user._id,
 		notifyOnNetworkStatusChange: true,
@@ -68,63 +104,15 @@ const EventCreatePage = () => {
 	}, [groupsData]);
 
 	/** HANDLERS */
-	const validateTime = (startTime: string, endTime: string) => {
-		const [startHour, startMinute] = startTime.split(":").map(Number);
-		const [endHour, endMinute] = endTime.split(":").map(Number);
 
-		if (endHour < startHour || (endHour === startHour && endMinute <= startMinute)) {
-			return false;
-		}
-		return true;
-	};
-
-	const startTimeChangeHandler = (hour: string, minute: string) => {
-		const newStartTime = `${hour}:${minute}`;
-		if (formData) setFormData((prev) => ({ ...prev, eventStartTime: newStartTime }));
-	};
-
-	const endTimeHandler = (hour: string, minute: string) => {
-		const newEndTime = `${hour}:${minute}`;
-		if (formData) setFormData((prev) => ({ ...prev, eventEndTime: newEndTime }));
-	};
-
-	const uploadImage = async (image: File) => {
+	const handleImageUpload = async (image: File) => {
 		try {
-			const formData = new FormData();
-			formData.append(
-				"operations",
-				JSON.stringify({
-					query: `mutation ImageUploader($file: Upload!, $target: String!) {
-						imageUploader(file: $file, target: $target) 
-				  }`,
-					variables: {
-						file: null,
-						target: "event",
-					},
-				}),
-			);
-			formData.append(
-				"map",
-				JSON.stringify({
-					"0": ["variables.file"],
-				}),
-			);
-			formData.append("0", image);
-
-			const response = await axios.post(`${NEXT_PUBLIC_API_GRAPHQL_URL}`, formData, {
-				headers: {
-					"Content-Type": "multipart/form-data",
-					"apollo-require-preflight": true,
-					Authorization: `Bearer ${token}`,
-				},
-			});
-
-			const responseImage = response.data.data.imageUploader;
+			const responseImage = await uploadImage(image, "event");
 			const imageUrl = `${NEXT_APP_API_URL}/${responseImage}`;
 
 			// Update form data and preview
-			setFormData((prev) => ({ ...prev, eventImage: responseImage }));
-			setImagePreview(imageUrl);
+			setFormData((prev) => ({ ...prev, eventImages: [responseImage] }));
+			setUiState((prev) => ({ ...prev, imagePreview: imageUrl }));
 
 			return imageUrl;
 		} catch (err) {
@@ -138,17 +126,15 @@ const EventCreatePage = () => {
 		const file = e.target.files?.[0];
 		if (file) {
 			const imageUrl = URL.createObjectURL(file);
-			setTempImageUrl(imageUrl);
-			setIsCropperOpen(true);
+			setUiState((prev) => ({ ...prev, tempImageUrl: imageUrl, isCropperOpen: true }));
 		}
 	};
 
 	const cropCompleteHandler = async (croppedFile: File) => {
 		try {
-			const imageUrl = await uploadImage(croppedFile);
+			const imageUrl = await handleImageUpload(croppedFile);
 			if (imageUrl) {
-				setImagePreview(imageUrl);
-				setTempImageUrl(null);
+				setUiState((prev) => ({ ...prev, imagePreview: imageUrl, tempImageUrl: null }));
 			}
 		} catch (err) {
 			console.error("Error handling cropped image:", err);
@@ -158,40 +144,120 @@ const EventCreatePage = () => {
 
 	const submitHandler = async (e: React.FormEvent) => {
 		e.preventDefault();
-		setIsSubmitting(true);
+		setUiState((prev) => ({ ...prev, isSubmitting: true }));
 
 		try {
 			if (!user._id) throw new Error(Message.NOT_AUTHENTICATED);
 			if (!formData) throw new Error(Message.INVALID_FORM_DATA);
-			if (!formData?.groupId) throw new Error(Message.GROUP_NOT_FOUND);
-			if (!formData?.eventName) throw new Error(t(Message.EVENT_NAME_REQUIRED));
-			if (!formData?.eventDesc) throw new Error(t(Message.EVENT_DESCRIPTION_REQUIRED));
-			if (selectedCategories.length === 0) throw new Error(t(Message.EVENT_CATEGORY_REQUIRED));
-			if (!formData.eventStartAt) throw new Error(t(Message.EVENT_START_TIME_REQUIRED));
-			if (!formData.eventEndAt) throw new Error(t(Message.EVENT_END_TIME_REQUIRED));
-			if (!formData.eventCity) throw new Error(t(Message.EVENT_CITY_REQUIRED));
-			if (!formData.eventAddress) throw new Error(t(Message.EVENT_ADDRESS_REQUIRED));
-			if (!formData.eventCapacity) throw new Error(t(Message.EVENT_CAPACITY_REQUIRED));
-			if (formData.eventCapacity < 1) throw new Error(t(Message.EVENT_CAPACITY_MIN_REQUIRED));
-			if (!formData.eventPrice) formData.eventPrice = 0;
-			if (formData.eventPrice < 0) throw new Error(t(Message.EVENT_PRICE_MIN_REQUIRED));
-			if (!formData.eventImages.length) throw new Error(t(Message.EVENT_IMAGE_REQUIRED));
 
-			const updatedFormData = {
-				...formData,
-				eventCategories: selectedCategories,
+			// Validate in order of form appearance
+			if (!formData?.groupId) throw new Error(t("Please select a group"));
+			if (!formData?.eventName || formData.eventName.trim() === "") throw new Error(t("Please enter event name"));
+			if (!formData?.eventDesc || formData.eventDesc.trim() === "")
+				throw new Error(t("Please enter event description"));
+			if (formSelection.selectedCategories.length === 0) throw new Error(t("Please select at least one category"));
+			if (!formSelection.eventTags || formSelection.eventTags.trim() === "")
+				throw new Error(t("Please enter event tags"));
+			if (!formData.eventStartAt) throw new Error(t("Please select event start date and time"));
+			if (!formData.eventEndAt) throw new Error(t("Please select event end date and time"));
+			if (formData.eventEndAt <= formData.eventStartAt) {
+				throw new Error(t("End date and time must be after start date and time"));
+			}
+			if (formSelection.locationType === EventLocationType.OFFLINE) {
+				if (!formData.eventAddress || formData.eventAddress.trim() === "")
+					throw new Error(t("Please enter event address"));
+			}
+			if (formData.eventCapacity !== undefined && formData.eventCapacity < 1) {
+				throw new Error(t("Event capacity must be at least 1"));
+			}
+			if (formData.eventPrice !== undefined && formData.eventPrice < 0) throw new Error(t("Price cannot be negative"));
+			if (!formData.eventImages.length) throw new Error(t("Please upload an event image"));
+
+			// Parse event tags from comma-separated string
+			const tagsArray = formSelection.eventTags
+				.split(",")
+				.map((tag) => tag.trim())
+				.filter((tag) => tag.length > 0);
+
+			// Set default price to 0 if not provided
+			if (formData.eventPrice === undefined) formData.eventPrice = 0;
+
+			// 2. Prepare Shared Data (fields common to both inputs)
+			const commonData = {
+				eventName: formData.eventName,
+				eventDesc: formData.eventDesc,
+				eventImages: formData.eventImages,
+				eventStartAt: formData.eventStartAt,
+				eventEndAt: formData.eventEndAt,
+				locationType: formSelection.locationType,
+				eventCity: formData.eventCity,
+				eventAddress: formData.eventAddress,
+				eventCapacity: formData.eventCapacity,
+				eventPrice: formData.eventPrice,
+				eventCurrency: formData.eventCurrency,
+				eventStatus: formData.eventStatus,
+				eventCategories: formSelection.selectedCategories,
+				eventTags: tagsArray,
+				isRealEvent: formData.isRealEvent ?? true,
+				groupId: formData.groupId,
 			};
 
-			const { data: createEventData } = await createEvent({
-				variables: { input: updatedFormData },
-			});
+			if (formSelection.eventType === EventType.RECURRING) {
+				// Validate recurring event fields
+				if (!recurrenceState.recurrenceType) throw new Error(t("Please select recurrence type"));
+				if (recurrenceState.recurrenceType === RecurrenceType.INTERVAL && !recurrenceState.recurrenceInterval) {
+					throw new Error(t("Please enter recurrence interval"));
+				}
+				if (
+					recurrenceState.recurrenceType === RecurrenceType.DAYS_OF_WEEK &&
+					recurrenceState.recurrenceDaysOfWeek.length === 0
+				) {
+					throw new Error(t("Please select at least one day of week"));
+				}
+				if (recurrenceState.recurrenceType === RecurrenceType.DAY_OF_MONTH && !recurrenceState.recurrenceDayOfMonth) {
+					throw new Error(t("Please enter day of month"));
+				}
 
-			await smallSuccess(t(Message.EVENT_CREATED_SUCCESSFULLY));
-			router.push(`/events/${createEventData?.createEvent?._id}`);
-		} catch (error: any) {
-			console.log(error?.message);
+				const recurringEventInput: EventRecurrenceInput = {
+					...commonData,
+					recurrenceType: recurrenceState.recurrenceType as RecurrenceType,
+					recurrenceInterval: recurrenceState.recurrenceInterval,
+					recurrenceDaysOfWeek:
+						recurrenceState.recurrenceType === RecurrenceType.DAYS_OF_WEEK
+							? recurrenceState.recurrenceDaysOfWeek
+							: undefined,
+					recurrenceDayOfMonth:
+						recurrenceState.recurrenceType === RecurrenceType.DAY_OF_MONTH
+							? recurrenceState.recurrenceDayOfMonth
+							: undefined,
+					recurrenceEndDate: recurrenceState.recurrenceEndDate,
+				};
+
+				await createRecurringEvent({
+					variables: { input: recurringEventInput },
+				});
+
+				await smallSuccess(t(Message.EVENT_CREATED_SUCCESSFULLY));
+				router.push(`/events`);
+			} else {
+				const eventInput: EventInput = {
+					...commonData,
+					eventType: EventType.ONCE,
+				};
+
+				const { data: createEventData } = await createEvent({
+					variables: { input: eventInput },
+				});
+
+				await smallSuccess(t(Message.EVENT_CREATED_SUCCESSFULLY));
+				router.push(`/events/${createEventData?.createEvent?._id}`);
+			}
+		} catch (error: unknown) {
+			const errorMessage = error instanceof Error ? error.message : t("Failed to create event");
+			smallError(errorMessage);
+			console.log(errorMessage);
 		} finally {
-			setIsSubmitting(false);
+			setUiState((prev) => ({ ...prev, isSubmitting: false }));
 		}
 	};
 
@@ -213,6 +279,12 @@ const EventCreatePage = () => {
 				return;
 			}
 
+			// Prevent negative values for price
+			if (name === "eventPrice" && numberValue < 0) {
+				smallError(t("Price cannot be negative"));
+				return;
+			}
+
 			setFormData((prev) => ({ ...prev, [name]: numberValue }));
 		} else {
 			setFormData((prev) => ({ ...prev, [name]: value }));
@@ -220,14 +292,82 @@ const EventCreatePage = () => {
 	};
 
 	const categoryHandler = (category: EventCategory) => {
-		if (selectedCategories.includes(category)) {
+		if (formSelection.selectedCategories.includes(category)) {
 			// If category is already selected, remove it
-			setSelectedCategories((prev) => prev.filter((c) => c !== category));
-		} else if (selectedCategories.length < 3) {
+			setFormSelection((prev) => ({
+				...prev,
+				selectedCategories: prev.selectedCategories.filter((c) => c !== category),
+			}));
+		} else if (formSelection.selectedCategories.length < 3) {
 			// If category is not selected and we haven't reached the limit, add it
-			setSelectedCategories((prev) => [...prev, category]);
+			setFormSelection((prev) => ({
+				...prev,
+				selectedCategories: [...prev.selectedCategories, category],
+			}));
 		}
 	};
+
+	// Show loading state while fetching groups
+	if (groupsLoading) {
+		return (
+			<div className="min-h-screen bg-background">
+				<div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+					<div className="mb-8">
+						<Button
+							variant="outline"
+							onClick={() => router.push("/events")}
+							className="flex items-center gap-2 text-primary hover:text-primary-foreground hover:bg-primary border-primary hover:border-primary/80 transition-colors duration-200"
+						>
+							<ArrowLeft className="h-4 w-4" />
+							{t("Back to Events")}
+						</Button>
+					</div>
+
+					<Card className="p-6 bg-card text-card-foreground">
+						<div className="text-center py-8">
+							<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+							<p className="text-muted-foreground">{t("Loading...")}</p>
+						</div>
+					</Card>
+				</div>
+			</div>
+		);
+	}
+
+	// Check if user has no groups (only after loading is complete)
+	if (groups.length === 0 && groupsData) {
+		return (
+			<div className="min-h-screen bg-background">
+				<div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+					<div className="mb-8">
+						<Button
+							variant="outline"
+							onClick={() => router.push("/events")}
+							className="flex items-center gap-2 text-primary hover:text-primary-foreground hover:bg-primary border-primary hover:border-primary/80 transition-colors duration-200"
+						>
+							<ArrowLeft className="h-4 w-4" />
+							{t("Back to Events")}
+						</Button>
+					</div>
+
+					<Card className="p-6 bg-card text-card-foreground">
+						<div className="text-center py-8">
+							<h2 className="text-2xl font-semibold text-foreground mb-4">{t("No Groups Found")}</h2>
+							<p className="text-muted-foreground mb-6">
+								{t("You need to create a group first before creating events.")}
+							</p>
+							<Button
+								onClick={() => router.push("/groups/create")}
+								className="bg-primary text-primary-foreground hover:bg-primary/90"
+							>
+								{t("Create Group")}
+							</Button>
+						</div>
+					</Card>
+				</div>
+			</div>
+		);
+	}
 
 	return (
 		<div className="min-h-screen bg-background">
@@ -247,17 +387,45 @@ const EventCreatePage = () => {
 					<h1 className="text-3xl font-semibold text-foreground mb-6">{t("Create New Event")}</h1>
 
 					<form onSubmit={submitHandler} className="space-y-6">
+						{/* Event Type Selection */}
+						<div className="space-y-2">
+							<label className="text-sm font-medium text-foreground">{t("Event Type")} (opt)</label>
+							<Select
+								value={formSelection.eventType}
+								onValueChange={(value: EventType) => {
+									setFormSelection((prev) => ({ ...prev, eventType: value }));
+									if (value === EventType.ONCE) {
+										// Reset recurring fields when switching to ONCE
+										setRecurrenceState({
+											recurrenceType: "",
+											recurrenceInterval: undefined,
+											recurrenceDaysOfWeek: [],
+											recurrenceDayOfMonth: undefined,
+											recurrenceEndDate: undefined,
+										});
+									}
+								}}
+							>
+								<SelectTrigger className="w-full bg-input text-input-foreground border-input">
+									<SelectValue />
+								</SelectTrigger>
+								<SelectContent className="bg-popover text-popover-foreground">
+									<SelectItem value={EventType.ONCE}>{t("One-time Event")}</SelectItem>
+									<SelectItem value={EventType.RECURRING}>{t("Recurring Event")}</SelectItem>
+								</SelectContent>
+							</Select>
+						</div>
 						{/* Group Selection */}
 						<div className="space-y-2">
 							<label htmlFor="groupId" className="text-sm font-medium text-foreground">
-								{t("Select Group")}
+								{t("Select Group")} (opt)
 							</label>
 							<Select
 								value={formData.groupId}
 								onValueChange={(value: string) => {
 									const selectedGroup = groups.find((group) => group._id === value);
 									if (selectedGroup) {
-										setSelectedGroup(selectedGroup);
+										setFormSelection((prev) => ({ ...prev, selectedGroup }));
 										setFormData((prev) => ({ ...prev, groupId: value }));
 									}
 								}}
@@ -268,13 +436,13 @@ const EventCreatePage = () => {
 											<div className="flex items-center space-x-3">
 												<div className="relative h-8 w-8 rounded-full overflow-hidden">
 													<Image
-														src={`${NEXT_APP_API_URL}/${selectedGroup?.groupImage}`}
+														src={`${NEXT_APP_API_URL}/${formSelection.selectedGroup?.groupImage}`}
 														alt="Group preview"
 														className="object-cover w-full h-full"
 														fill
 													/>
 												</div>
-												<span className="text-foreground">{selectedGroup?.groupName}</span>
+												<span className="text-foreground">{formSelection.selectedGroup?.groupName}</span>
 											</div>
 										)}
 									</SelectValue>
@@ -311,7 +479,7 @@ const EventCreatePage = () => {
 						{/* Event Name */}
 						<div className="space-y-2">
 							<label htmlFor="eventName" className="text-sm font-medium text-foreground">
-								{t("Event Name")}
+								{t("Event Name")} *
 							</label>
 							<Input
 								id="eventName"
@@ -326,7 +494,7 @@ const EventCreatePage = () => {
 						{/* Event Description */}
 						<div className="space-y-2">
 							<label htmlFor="eventDesc" className="text-sm font-medium text-foreground">
-								{t("Description")}
+								{t("Description")} *
 							</label>
 							<Textarea
 								id="eventDesc"
@@ -340,17 +508,20 @@ const EventCreatePage = () => {
 
 						{/* Categories */}
 						<div className="space-y-2">
-							<label className="text-sm font-medium text-foreground">{t("Categories (Select up to 3)")}</label>
+							<label className="text-sm font-medium text-foreground">{t("Categories (Select up to 3)")} *</label>
 							<div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
 								{Object.values(EventCategory).map((category) => (
 									<Button
 										key={category}
 										type="button"
-										variant={selectedCategories.includes(category) ? "default" : "outline"}
+										variant={formSelection.selectedCategories.includes(category) ? "default" : "outline"}
 										onClick={() => categoryHandler(category)}
-										disabled={selectedCategories.length >= 3 && !selectedCategories.includes(category)}
+										disabled={
+											formSelection.selectedCategories.length >= 3 &&
+											!formSelection.selectedCategories.includes(category)
+										}
 										className={`h-10 transition-all duration-200 ${
-											selectedCategories.includes(category)
+											formSelection.selectedCategories.includes(category)
 												? "bg-primary text-primary-foreground font-semibold shadow-sm hover:bg-primary/90"
 												: "bg-transparent text-foreground hover:bg-accent hover:text-accent-foreground"
 										} disabled:opacity-50 disabled:cursor-not-allowed`}
@@ -361,165 +532,479 @@ const EventCreatePage = () => {
 							</div>
 						</div>
 
-						{/* Event Date and Time */}
-						<div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-							<div className="space-y-2">
-								<label htmlFor="eventStartAt" className="text-sm font-medium text-foreground">
-									{t("Start Time")}
-								</label>
-								<div className="flex gap-2">
+						{/* Event Tags */}
+						<div className="space-y-2">
+							<label htmlFor="eventTags" className="text-sm font-medium text-foreground">
+								{t("Tags")} * <span className="text-muted-foreground text-xs">({t("comma-separated")})</span>
+							</label>
+							<Input
+								id="eventTags"
+								name="eventTags"
+								value={formSelection.eventTags}
+								onChange={(e) => setFormSelection((prev) => ({ ...prev, eventTags: e.target.value }))}
+								placeholder={t("e.g., networking, workshop, conference")}
+								className="bg-input text-input-foreground border-input"
+							/>
+						</div>
+
+						{/* Is Real Event */}
+						<div className="flex items-center space-x-2">
+							<Checkbox
+								id="isRealEvent"
+								checked={formData.isRealEvent ?? true}
+								onCheckedChange={(checked) => {
+									setFormData((prev) => ({ ...prev, isRealEvent: checked as boolean }));
+								}}
+							/>
+							<label
+								htmlFor="isRealEvent"
+								className="text-sm font-medium text-foreground cursor-pointer leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+							>
+								{t("Real Event")}
+							</label>
+						</div>
+
+						{/* Recurring Event Fields */}
+						{formSelection.eventType === EventType.RECURRING && (
+							<div className="space-y-4 p-4 border rounded-lg bg-muted/30">
+								<h3 className="text-lg font-semibold text-foreground">{t("Recurrence Settings")}</h3>
+
+								{/* Recurrence Type */}
+								<div className="space-y-2">
+									<label className="text-sm font-medium text-foreground">{t("Recurrence Type")} *</label>
 									<Select
-										value={formData.eventStartAt.getHours().toString().padStart(2, "0")}
-										onValueChange={(hour) => {
-											const currentTime = new Date(formData.eventStartAt);
-											currentTime.setHours(Number(hour));
-											setFormData((prev) => ({ ...prev, eventStartAt: currentTime }));
+										value={recurrenceState.recurrenceType}
+										onValueChange={(value: RecurrenceType) => {
+											setRecurrenceState((prev) => ({
+												...prev,
+												recurrenceType: value,
+												recurrenceInterval: undefined,
+												recurrenceDaysOfWeek: [],
+												recurrenceDayOfMonth: undefined,
+											}));
 										}}
 									>
-										<SelectTrigger className="w-20 bg-input text-input-foreground border-input hover:bg-accent hover:text-accent-foreground transition-colors duration-200">
-											<SelectValue placeholder="HH" />
+										<SelectTrigger className="w-full bg-input text-input-foreground border-input">
+											<SelectValue placeholder={t("Select recurrence type")} />
 										</SelectTrigger>
-										<SelectContent className="bg-popover text-popover-foreground  ">
-											<ScrollArea className="h-[200px]">
-												{[...Array(24)].map((_, i) => (
-													<SelectItem
-														key={i}
-														value={i.toString().padStart(2, "0")}
-														className="hover:bg-accent hover:text-accent-foreground transition-colors duration-200 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
-													>
-														{i.toString().padStart(2, "0")}
-													</SelectItem>
-												))}
-											</ScrollArea>
-										</SelectContent>
-									</Select>
-									<Select
-										value={formData.eventStartAt.getMinutes().toString().padStart(2, "0")}
-										onValueChange={(minute) => {
-											const currentTime = new Date(formData.eventStartAt);
-											currentTime.setMinutes(Number(minute));
-											setFormData((prev) => ({ ...prev, eventStartAt: currentTime }));
-										}}
-									>
-										<SelectTrigger className="w-20 bg-input text-input-foreground border-input hover:bg-accent hover:text-accent-foreground transition-colors duration-200">
-											<SelectValue placeholder="MM" />
-										</SelectTrigger>
-										<SelectContent className="bg-popover text-popover-foreground  ">
-											<ScrollArea className="h-[200px]">
-												{[...Array(12)].map((_, i) => {
-													const minute = (i * 5).toString().padStart(2, "0");
-													return (
-														<SelectItem
-															key={minute}
-															value={minute}
-															className="hover:bg-accent hover:text-accent-foreground transition-colors duration-200 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
-														>
-															{minute}
-														</SelectItem>
-													);
-												})}
-											</ScrollArea>
+										<SelectContent className="bg-popover text-popover-foreground">
+											<SelectItem value={RecurrenceType.INTERVAL}>{t("Every N days")}</SelectItem>
+											<SelectItem value={RecurrenceType.DAYS_OF_WEEK}>{t("Weekly on specific days")}</SelectItem>
+											<SelectItem value={RecurrenceType.DAY_OF_MONTH}>{t("Monthly on specific day")}</SelectItem>
 										</SelectContent>
 									</Select>
 								</div>
+
+								{/* Recurrence Interval */}
+								{recurrenceState.recurrenceType === RecurrenceType.INTERVAL && (
+									<div className="space-y-2">
+										<label htmlFor="recurrenceInterval" className="text-sm font-medium text-foreground">
+											{t("Repeat every (days)")} *
+										</label>
+										<Input
+											id="recurrenceInterval"
+											type="number"
+											min="1"
+											value={
+												recurrenceState.recurrenceInterval === undefined
+													? ""
+													: String(recurrenceState.recurrenceInterval)
+											}
+											onChange={(e) =>
+												setRecurrenceState((prev) => ({
+													...prev,
+													recurrenceInterval: e.target.value ? Number(e.target.value) : undefined,
+												}))
+											}
+											placeholder={t("e.g., 7 for weekly")}
+											className="bg-input text-input-foreground border-input"
+										/>
+									</div>
+								)}
+
+								{/* Days of Week */}
+								{recurrenceState.recurrenceType === RecurrenceType.DAYS_OF_WEEK && (
+									<div className="space-y-2">
+										<label className="text-sm font-medium text-foreground">{t("Days of Week")} *</label>
+										<div className="grid grid-cols-7 gap-2">
+											{[
+												{ value: 0, label: t("Sun") },
+												{ value: 1, label: t("Mon") },
+												{ value: 2, label: t("Tue") },
+												{ value: 3, label: t("Wed") },
+												{ value: 4, label: t("Thu") },
+												{ value: 5, label: t("Fri") },
+												{ value: 6, label: t("Sat") },
+											].map((day) => (
+												<Button
+													key={day.value}
+													type="button"
+													variant={recurrenceState.recurrenceDaysOfWeek.includes(day.value) ? "default" : "outline"}
+													onClick={() => {
+														if (recurrenceState.recurrenceDaysOfWeek.includes(day.value)) {
+															setRecurrenceState((prev) => ({
+																...prev,
+																recurrenceDaysOfWeek: prev.recurrenceDaysOfWeek.filter((d) => d !== day.value),
+															}));
+														} else {
+															setRecurrenceState((prev) => ({
+																...prev,
+																recurrenceDaysOfWeek: [...prev.recurrenceDaysOfWeek, day.value],
+															}));
+														}
+													}}
+													className={`h-10 ${
+														recurrenceState.recurrenceDaysOfWeek.includes(day.value)
+															? "bg-primary text-primary-foreground"
+															: "bg-transparent"
+													}`}
+												>
+													{day.label}
+												</Button>
+											))}
+										</div>
+									</div>
+								)}
+
+								{/* Day of Month */}
+								{recurrenceState.recurrenceType === RecurrenceType.DAY_OF_MONTH && (
+									<div className="space-y-2">
+										<label htmlFor="recurrenceDayOfMonth" className="text-sm font-medium text-foreground">
+											{t("Day of Month")} *
+										</label>
+										<Input
+											id="recurrenceDayOfMonth"
+											type="number"
+											min="1"
+											max="31"
+											value={
+												recurrenceState.recurrenceDayOfMonth === undefined
+													? ""
+													: String(recurrenceState.recurrenceDayOfMonth)
+											}
+											onChange={(e) =>
+												setRecurrenceState((prev) => ({
+													...prev,
+													recurrenceDayOfMonth: e.target.value ? Number(e.target.value) : undefined,
+												}))
+											}
+											placeholder={t("e.g., 15 for 15th of each month")}
+											className="bg-input text-input-foreground border-input"
+										/>
+									</div>
+								)}
+
+								{/* Recurrence End Date */}
+								<div className="space-y-2">
+									<label htmlFor="recurrenceEndDate" className="text-sm font-medium text-foreground">
+										{t("Recurrence End Date")} (opt)
+									</label>
+									<Input
+										id="recurrenceEndDate"
+										type="date"
+										value={
+											recurrenceState.recurrenceEndDate
+												? new Date(recurrenceState.recurrenceEndDate).toISOString().split("T")[0]
+												: ""
+										}
+										onChange={(e) =>
+											setRecurrenceState((prev) => ({
+												...prev,
+												recurrenceEndDate: e.target.value ? new Date(e.target.value) : undefined,
+											}))
+										}
+										min={new Date().toISOString().split("T")[0]}
+										className="bg-input text-input-foreground border-input"
+									/>
+								</div>
 							</div>
-							<div className="space-y-2">
-								<label htmlFor="eventEndAt" className="text-sm font-medium text-foreground">
-									{t("End Time")}
-								</label>
-								<div className="flex gap-2">
-									<Select
-										value={formData.eventEndAt.getHours().toString().padStart(2, "0")}
-										onValueChange={(hour) => {
-											const currentTime = new Date(formData.eventEndAt);
-											currentTime.setHours(Number(hour));
-											setFormData((prev) => ({ ...prev, eventEndAt: currentTime }));
+						)}
+
+						{/* Event Date and Time */}
+						<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+							{/* Start Date and Time */}
+							<div className="space-y-4">
+								<div className="space-y-2">
+									<label htmlFor="eventStartDate" className="text-sm font-medium text-foreground">
+										{t("Start Date")} *
+									</label>
+									<Input
+										id="eventStartDate"
+										type="date"
+										value={new Date(formData.eventStartAt).toISOString().split("T")[0]}
+										onChange={(e) => {
+											const selectedDate = e.target.value ? new Date(e.target.value) : new Date();
+											const currentTime = new Date(formData.eventStartAt);
+											selectedDate.setHours(currentTime.getHours());
+											selectedDate.setMinutes(currentTime.getMinutes());
+											const newStartDate = selectedDate;
+
+											// If end date is before or equal to new start date, adjust it
+											if (formData.eventEndAt <= newStartDate) {
+												const newEndDate = new Date(newStartDate);
+												newEndDate.setHours(newEndDate.getHours() + 1); // Add 1 hour to end date
+												setFormData((prev) => ({ ...prev, eventStartAt: newStartDate, eventEndAt: newEndDate }));
+											} else {
+												setFormData((prev) => ({ ...prev, eventStartAt: newStartDate }));
+											}
 										}}
-									>
-										<SelectTrigger className="w-20 bg-input text-input-foreground border-input hover:bg-accent hover:text-accent-foreground transition-colors duration-200">
-											<SelectValue placeholder="HH" />
-										</SelectTrigger>
-										<SelectContent className="bg-popover text-popover-foreground  ">
-											<ScrollArea className="h-[200px]">
-												{[...Array(24)].map((_, i) => (
-													<SelectItem
-														key={i}
-														value={i.toString().padStart(2, "0")}
-														className="hover:bg-accent hover:text-accent-foreground transition-colors duration-200 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
-													>
-														{i.toString().padStart(2, "0")}
-													</SelectItem>
-												))}
-											</ScrollArea>
-										</SelectContent>
-									</Select>
-									<Select
-										value={formData.eventEndAt.getMinutes().toString().padStart(2, "0")}
-										onValueChange={(minute) => {
-											const currentTime = new Date(formData.eventEndAt);
-											currentTime.setMinutes(Number(minute));
-											setFormData((prev) => ({ ...prev, eventEndAt: currentTime }));
-										}}
-									>
-										<SelectTrigger className="w-20 bg-input text-input-foreground border-input hover:bg-accent hover:text-accent-foreground transition-colors duration-200">
-											<SelectValue placeholder="MM" />
-										</SelectTrigger>
-										<SelectContent className="bg-popover text-popover-foreground  ">
-											<ScrollArea className="h-[200px]">
-												{[...Array(12)].map((_, i) => {
-													const minute = (i * 5).toString().padStart(2, "0");
-													return (
+										min={new Date().toISOString().split("T")[0]}
+										className="bg-input text-input-foreground border-input"
+									/>
+								</div>
+								<div className="space-y-2">
+									<label htmlFor="eventStartTime" className="text-sm font-medium text-foreground">
+										{t("Start Time")} *
+									</label>
+									<div className="flex gap-2">
+										<Select
+											value={formData.eventStartAt.getHours().toString().padStart(2, "0")}
+											onValueChange={(hour) => {
+												const currentTime = new Date(formData.eventStartAt);
+												currentTime.setHours(Number(hour));
+												const newStartDate = currentTime;
+
+												// If end date is before or equal to new start date, adjust it
+												if (formData.eventEndAt <= newStartDate) {
+													const newEndDate = new Date(newStartDate);
+													newEndDate.setHours(newEndDate.getHours() + 1); // Add 1 hour to end date
+													setFormData((prev) => ({ ...prev, eventStartAt: newStartDate, eventEndAt: newEndDate }));
+												} else {
+													setFormData((prev) => ({ ...prev, eventStartAt: newStartDate }));
+												}
+											}}
+										>
+											<SelectTrigger className="w-20 bg-input text-input-foreground border-input hover:bg-accent hover:text-accent-foreground transition-colors duration-200">
+												<SelectValue placeholder="HH" />
+											</SelectTrigger>
+											<SelectContent className="bg-popover text-popover-foreground  ">
+												<ScrollArea className="h-[200px]">
+													{[...Array(24)].map((_, i) => (
 														<SelectItem
-															key={minute}
-															value={minute}
+															key={i}
+															value={i.toString().padStart(2, "0")}
 															className="hover:bg-accent hover:text-accent-foreground transition-colors duration-200 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
 														>
-															{minute}
+															{i.toString().padStart(2, "0")}
 														</SelectItem>
-													);
-												})}
-											</ScrollArea>
-										</SelectContent>
-									</Select>
+													))}
+												</ScrollArea>
+											</SelectContent>
+										</Select>
+										<Select
+											value={formData.eventStartAt.getMinutes().toString().padStart(2, "0")}
+											onValueChange={(minute) => {
+												const currentTime = new Date(formData.eventStartAt);
+												currentTime.setMinutes(Number(minute));
+												const newStartDate = currentTime;
+
+												// If end date is before or equal to new start date, adjust it
+												if (formData.eventEndAt <= newStartDate) {
+													const newEndDate = new Date(newStartDate);
+													newEndDate.setMinutes(newEndDate.getMinutes() + 30); // Add 30 minutes to end date
+													setFormData((prev) => ({ ...prev, eventStartAt: newStartDate, eventEndAt: newEndDate }));
+												} else {
+													setFormData((prev) => ({ ...prev, eventStartAt: newStartDate }));
+												}
+											}}
+										>
+											<SelectTrigger className="w-20 bg-input text-input-foreground border-input hover:bg-accent hover:text-accent-foreground transition-colors duration-200">
+												<SelectValue placeholder="MM" />
+											</SelectTrigger>
+											<SelectContent className="bg-popover text-popover-foreground  ">
+												<ScrollArea className="h-[200px]">
+													{[...Array(12)].map((_, i) => {
+														const minute = (i * 5).toString().padStart(2, "0");
+														return (
+															<SelectItem
+																key={minute}
+																value={minute}
+																className="hover:bg-accent hover:text-accent-foreground transition-colors duration-200 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
+															>
+																{minute}
+															</SelectItem>
+														);
+													})}
+												</ScrollArea>
+											</SelectContent>
+										</Select>
+									</div>
+								</div>
+							</div>
+							{/* End Date and Time */}
+							<div className="space-y-4">
+								<div className="space-y-2">
+									<label htmlFor="eventEndDate" className="text-sm font-medium text-foreground">
+										{t("End Date")} *
+									</label>
+									<Input
+										id="eventEndDate"
+										type="date"
+										value={new Date(formData.eventEndAt).toISOString().split("T")[0]}
+										onChange={(e) => {
+											const selectedDate = e.target.value ? new Date(e.target.value) : new Date();
+											const currentTime = new Date(formData.eventEndAt);
+											selectedDate.setHours(currentTime.getHours());
+											selectedDate.setMinutes(currentTime.getMinutes());
+											const newEndDate = selectedDate;
+
+											// If end date is before or equal to start date, adjust it
+											if (newEndDate <= formData.eventStartAt) {
+												const adjustedEndDate = new Date(formData.eventStartAt);
+												adjustedEndDate.setHours(adjustedEndDate.getHours() + 1); // Add 1 hour to start date
+												setFormData((prev) => ({ ...prev, eventEndAt: adjustedEndDate }));
+											} else {
+												setFormData((prev) => ({ ...prev, eventEndAt: newEndDate }));
+											}
+										}}
+										min={new Date(formData.eventStartAt).toISOString().split("T")[0]}
+										className={`bg-input text-input-foreground border-input ${
+											formData.eventEndAt <= formData.eventStartAt ? "border-destructive" : ""
+										}`}
+									/>
+									{formData.eventEndAt <= formData.eventStartAt && (
+										<p className="text-sm text-destructive mt-1">
+											{t("End date and time must be after start date and time")}
+										</p>
+									)}
+								</div>
+								<div className="space-y-2">
+									<label htmlFor="eventEndTime" className="text-sm font-medium text-foreground">
+										{t("End Time")} *
+									</label>
+									<div className="flex gap-2">
+										<Select
+											value={formData.eventEndAt.getHours().toString().padStart(2, "0")}
+											onValueChange={(hour) => {
+												const currentTime = new Date(formData.eventEndAt);
+												currentTime.setHours(Number(hour));
+												const newEndDate = currentTime;
+
+												// If end date is before or equal to start date, adjust it
+												if (newEndDate <= formData.eventStartAt) {
+													const adjustedEndDate = new Date(formData.eventStartAt);
+													adjustedEndDate.setHours(adjustedEndDate.getHours() + 1); // Add 1 hour to start date
+													setFormData((prev) => ({ ...prev, eventEndAt: adjustedEndDate }));
+												} else {
+													setFormData((prev) => ({ ...prev, eventEndAt: newEndDate }));
+												}
+											}}
+										>
+											<SelectTrigger className="w-20 bg-input text-input-foreground border-input hover:bg-accent hover:text-accent-foreground transition-colors duration-200">
+												<SelectValue placeholder="HH" />
+											</SelectTrigger>
+											<SelectContent className="bg-popover text-popover-foreground  ">
+												<ScrollArea className="h-[200px]">
+													{[...Array(24)].map((_, i) => (
+														<SelectItem
+															key={i}
+															value={i.toString().padStart(2, "0")}
+															className="hover:bg-accent hover:text-accent-foreground transition-colors duration-200 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
+														>
+															{i.toString().padStart(2, "0")}
+														</SelectItem>
+													))}
+												</ScrollArea>
+											</SelectContent>
+										</Select>
+										<Select
+											value={formData.eventEndAt.getMinutes().toString().padStart(2, "0")}
+											onValueChange={(minute) => {
+												const currentTime = new Date(formData.eventEndAt);
+												currentTime.setMinutes(Number(minute));
+												const newEndDate = currentTime;
+
+												// If end date is before or equal to start date, adjust it
+												if (newEndDate <= formData.eventStartAt) {
+													const adjustedEndDate = new Date(formData.eventStartAt);
+													adjustedEndDate.setMinutes(adjustedEndDate.getMinutes() + 30); // Add 30 minutes to start date
+													setFormData((prev) => ({ ...prev, eventEndAt: adjustedEndDate }));
+												} else {
+													setFormData((prev) => ({ ...prev, eventEndAt: newEndDate }));
+												}
+											}}
+										>
+											<SelectTrigger className="w-20 bg-input text-input-foreground border-input hover:bg-accent hover:text-accent-foreground transition-colors duration-200">
+												<SelectValue placeholder="MM" />
+											</SelectTrigger>
+											<SelectContent className="bg-popover text-popover-foreground  ">
+												<ScrollArea className="h-[200px]">
+													{[...Array(12)].map((_, i) => {
+														const minute = (i * 5).toString().padStart(2, "0");
+														return (
+															<SelectItem
+																key={minute}
+																value={minute}
+																className="hover:bg-accent hover:text-accent-foreground transition-colors duration-200 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
+															>
+																{minute}
+															</SelectItem>
+														);
+													})}
+												</ScrollArea>
+											</SelectContent>
+										</Select>
+									</div>
 								</div>
 							</div>
 						</div>
 
-						{/* Location */}
-						<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-							<div className="space-y-2">
-								<label htmlFor="eventCity" className="text-sm font-medium text-foreground">
-									{t("City")}
-								</label>
-								<Input
-									id="eventCity"
-									name="eventCity"
-									value={formData.eventCity}
-									onChange={inputHandler}
-									placeholder={t("Enter city")}
-									className="bg-input text-input-foreground border-input"
-								/>
-							</div>
-							<div className="space-y-2">
-								<label htmlFor="eventAddress" className="text-sm font-medium text-foreground">
-									{t("Address")}
-								</label>
-								<Input
-									id="eventAddress"
-									name="eventAddress"
-									value={formData.eventAddress}
-									onChange={inputHandler}
-									placeholder={t("Enter address")}
-									className="bg-input text-input-foreground border-input"
-								/>
-							</div>
+						{/* Location Type */}
+						<div className="space-y-2">
+							<label className="text-sm font-medium text-foreground">{t("Location Type")} *</label>
+							<Select
+								value={formSelection.locationType}
+								onValueChange={(value: EventLocationType) => {
+									setFormSelection((prev) => ({ ...prev, locationType: value }));
+								}}
+							>
+								<SelectTrigger className="w-full bg-input text-input-foreground border-input">
+									<SelectValue />
+								</SelectTrigger>
+								<SelectContent className="bg-popover text-popover-foreground">
+									<SelectItem value={EventLocationType.ONLINE}>{t("Online")}</SelectItem>
+									<SelectItem value={EventLocationType.OFFLINE}>{t("Offline")}</SelectItem>
+								</SelectContent>
+							</Select>
 						</div>
+
+						{/* Location - Only show for offline events */}
+						{formSelection.locationType === EventLocationType.OFFLINE && (
+							<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+								<div className="space-y-2">
+									<label htmlFor="eventCity" className="text-sm font-medium text-foreground">
+										{t("City")} (opt)
+									</label>
+									<Input
+										id="eventCity"
+										name="eventCity"
+										value={formData.eventCity || ""}
+										onChange={inputHandler}
+										placeholder={t("Enter city")}
+										className="bg-input text-input-foreground border-input"
+									/>
+								</div>
+								<div className="space-y-2">
+									<label htmlFor="eventAddress" className="text-sm font-medium text-foreground">
+										{t("Address")} *
+									</label>
+									<Input
+										id="eventAddress"
+										name="eventAddress"
+										value={formData.eventAddress || ""}
+										onChange={inputHandler}
+										placeholder={t("Enter address")}
+										className="bg-input text-input-foreground border-input"
+									/>
+								</div>
+							</div>
+						)}
 
 						{/* Capacity and Price */}
 						<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 							<div className="space-y-2">
 								<label htmlFor="eventCapacity" className="text-sm font-medium text-foreground">
-									{t("Capacity (number)")}
+									{t("Capacity (number)")} (opt)
 								</label>
 								<Input
 									id="eventCapacity"
@@ -533,28 +1018,52 @@ const EventCreatePage = () => {
 							</div>
 							<div className="space-y-2">
 								<label htmlFor="eventPrice" className="text-sm font-medium text-foreground">
-									{t("Price (number)")}
+									{t("Price")} (opt)
 								</label>
-								<Input
-									id="eventPrice"
-									name="eventPrice"
-									type="number"
-									// Convert to string and strip leading zeros when displaying
-									value={formData.eventPrice === undefined ? "" : String(formData.eventPrice)}
-									onChange={inputHandler}
-									placeholder={t("Enter event price")}
-									className="bg-input text-input-foreground border-input"
-								/>
+								<div className="flex gap-2">
+									<Input
+										id="eventPrice"
+										name="eventPrice"
+										type="number"
+										min="0"
+										// Convert to string and strip leading zeros when displaying
+										value={formData.eventPrice === undefined ? "" : String(formData.eventPrice)}
+										onChange={inputHandler}
+										placeholder={t("Enter event price")}
+										className="bg-input text-input-foreground border-input"
+									/>
+									<Select
+										value={formData.eventCurrency || Currency.USD}
+										onValueChange={(currency) => {
+											setFormData((prev) => ({ ...prev, eventCurrency: currency as Currency }));
+										}}
+									>
+										<SelectTrigger className="w-24 bg-input text-input-foreground border-input hover:bg-accent hover:text-accent-foreground transition-colors duration-200">
+											<SelectValue placeholder={t("Currency")} />
+										</SelectTrigger>
+										<SelectContent className="bg-popover text-popover-foreground">
+											{Object.values(Currency).map((currency) => (
+												<SelectItem
+													key={currency}
+													value={currency}
+													className="hover:bg-accent hover:text-accent-foreground transition-colors duration-200"
+												>
+													{currency}
+												</SelectItem>
+											))}
+										</SelectContent>
+									</Select>
+								</div>
 							</div>
 						</div>
 
 						{/* Image Section */}
 						<div className="space-y-4">
-							<label className="text-sm font-medium text-foreground">{t("Event Image")}</label>
-							<div className="relative aspect-[16/9] w-full max-w-2xl mx-auto rounded-xl overflow-hidden bg-muted/50 rounded-t-xl">
-								{imagePreview ? (
+							<label className="text-sm font-medium text-foreground">{t("Event Image")} *</label>
+							<div className="relative aspect-video w-full max-w-2xl mx-auto rounded-xl overflow-hidden bg-muted/50 rounded-t-xl">
+								{uiState.imagePreview ? (
 									<>
-										<Image src={imagePreview} alt="Event preview" className="w-full h-full" fill />
+										<Image src={uiState.imagePreview} alt="Event preview" className="w-full h-full" fill />
 
 										<label
 											htmlFor="image"
@@ -589,13 +1098,12 @@ const EventCreatePage = () => {
 
 						{/* Image Cropper Modal */}
 						<ImageCropper
-							isOpen={isCropperOpen}
+							isOpen={uiState.isCropperOpen}
 							onClose={() => {
-								setIsCropperOpen(false);
-								setTempImageUrl(null);
+								setUiState((prev) => ({ ...prev, isCropperOpen: false, tempImageUrl: null }));
 							}}
 							onCropComplete={cropCompleteHandler}
-							imageUrl={tempImageUrl || ""}
+							imageUrl={uiState.tempImageUrl || ""}
 						/>
 
 						{/* Submit Button */}
@@ -603,20 +1111,10 @@ const EventCreatePage = () => {
 							<Button
 								type="submit"
 								size="lg"
-								disabled={
-									isSubmitting ||
-									selectedCategories.length === 0 ||
-									!formData.groupId ||
-									!formData.eventCity ||
-									!formData.eventAddress ||
-									!formData.eventCapacity ||
-									!formData.eventImages.length ||
-									!formData.eventStartAt ||
-									!formData.eventEndAt
-								}
+								disabled={uiState.isSubmitting}
 								className="bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed px-8"
 							>
-								{isSubmitting ? t("Creating...") : t("Create Event")}
+								{uiState.isSubmitting ? t("Creating...") : t("Create Event")}
 							</Button>
 						</div>
 					</form>

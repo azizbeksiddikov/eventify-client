@@ -43,7 +43,7 @@ const GroupCard = ({ group }: GroupCardProps) => {
 	};
 
 	return (
-		<Card className="min-w-[340px] py-0 ui-card group gap-0">
+		<Card className="w-full py-0 ui-card group gap-0">
 			<CardHeader className="p-0 gap-0">
 				<div className="relative aspect-video w-full overflow-hidden rounded-t-xl">
 					<Link href={`/groups/${group._id}`}>

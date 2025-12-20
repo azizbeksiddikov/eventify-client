@@ -15,7 +15,7 @@ import CategoriesSidebar from "@/libs/components/events/CategoriesSidebar";
 
 import { GET_EVENTS } from "@/apollo/user/query";
 import { LIKE_TARGET_EVENT } from "@/apollo/user/mutation";
-import { likeEvent, parseDate } from "@/libs/utils";
+import { likeEvent, parseDate, readDate } from "@/libs/utils";
 import { EventCategory, EventStatus } from "@/libs/enums/event.enum";
 import { Event } from "@/libs/types/event/event";
 import { EventsInquiry } from "@/libs/types/event/event.input";
@@ -29,8 +29,8 @@ const EventsPage = ({
 	initialSearch = {
 		page: 1,
 		limit: 6,
-		sort: "createdAt",
-		direction: Direction.DESC,
+		sort: "eventStartAt",
+		direction: Direction.ASC,
 		search: {
 			text: "",
 			eventCategories: [],
@@ -46,10 +46,6 @@ const EventsPage = ({
 	const { t } = useTranslation("common");
 	const user = useReactiveVar(userVar);
 	const [events, setEvents] = useState<Event[]>([]);
-
-	const readDate = (date: Date): string => {
-		return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, "0")}-${date.getDate().toString().padStart(2, "0")}`;
-	};
 
 	const readUrl = (): EventsInquiry => {
 		if (searchParams) {
@@ -89,8 +85,8 @@ const EventsPage = ({
 			return {
 				page: Math.max(1, Number(searchParams.get("page")) || 1),
 				limit: Math.max(1, Number(searchParams.get("limit")) || 6),
-				sort: (searchParams.get("sort") as keyof Event) || "createdAt",
-				direction: searchParams.get("direction") === "1" ? Direction.ASC : Direction.DESC,
+				sort: (searchParams.get("sort") as keyof Event) || "eventStartAt",
+				direction: searchParams.get("direction") === "-1" ? Direction.DESC : Direction.ASC,
 				search: {
 					text: searchParams.get("text") || "",
 					eventCategories: categories,
@@ -109,7 +105,7 @@ const EventsPage = ({
 
 		params.set("page", Math.max(1, newSearch.page || 1).toString());
 		params.set("limit", Math.max(1, newSearch.limit || 6).toString());
-		params.set("sort", newSearch.sort || "createdAt");
+		params.set("sort", newSearch.sort || "eventStartAt");
 		params.set("direction", newSearch.direction === Direction.ASC ? "1" : "-1");
 
 		if (newSearch.search.text) {
@@ -170,7 +166,7 @@ const EventsPage = ({
 	};
 
 	const likeEventHandler = async (eventId: string) => {
-		await likeEvent(user._id, eventId, likeTargetEvent, client.cache);
+		await likeEvent(user._id, eventId, likeTargetEvent);
 	};
 
 	return (

@@ -2,35 +2,32 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
+import Image from "next/image";
+import { ImageIcon, RefreshCw, ArrowLeft } from "lucide-react";
 
 import { Button } from "@/libs/components/ui/button";
 import { Input } from "@/libs/components/ui/input";
 import { Textarea } from "@/libs/components/ui/textarea";
 import { Card } from "@/libs/components/ui/card";
-import { ImageIcon, RefreshCw } from "lucide-react";
-import { GroupCategory } from "@/libs/enums/group.enum";
-import { GroupUpdateInput } from "@/libs/types/group/group.update";
 import { ImageCropper } from "@/libs/components/common/ImageCropper";
 
 import { useMutation, useReactiveVar, useQuery } from "@apollo/client/react";
 import { userVar } from "@/apollo/store";
 import { UPDATE_GROUP } from "@/apollo/user/mutation";
+import { GET_GROUP } from "@/apollo/user/query";
 import { smallError, smallSuccess } from "@/libs/alert";
 import { useTranslation } from "next-i18next";
 import { Message } from "@/libs/enums/common.enum";
-import axios from "axios";
-import { getJwtToken } from "@/libs/auth";
+import { GroupCategory } from "@/libs/enums/group.enum";
+import { GroupUpdateInput } from "@/libs/types/group/group.update";
 import { imageTypes, NEXT_APP_API_URL } from "@/libs/config";
-import { NEXT_PUBLIC_API_GRAPHQL_URL } from "@/libs/config";
-import { GET_GROUP } from "@/apollo/user/query";
-import Image from "next/image";
+import { uploadImage } from "@/libs/upload";
 
 const GroupUpdatePage = () => {
 	const router = useRouter();
 	const searchParams = useSearchParams();
 	const { t } = useTranslation("common");
 	const user = useReactiveVar(userVar);
-	const token = getJwtToken();
 
 	const [groupId, setGroupId] = useState<string | null>(null);
 	const [isSubmitting, setIsSubmitting] = useState(false);
@@ -95,38 +92,9 @@ const GroupUpdatePage = () => {
 	}, [searchParams]);
 
 	/** HANDLERS */
-	const uploadImage = async (image: File) => {
+	const handleImageUpload = async (image: File) => {
 		try {
-			const formData = new FormData();
-			formData.append(
-				"operations",
-				JSON.stringify({
-					query: `mutation ImageUploader($file: Upload!, $target: String!) {
-						imageUploader(file: $file, target: $target) 
-				  }`,
-					variables: {
-						file: null,
-						target: "group",
-					},
-				}),
-			);
-			formData.append(
-				"map",
-				JSON.stringify({
-					"0": ["variables.file"],
-				}),
-			);
-			formData.append("0", image);
-
-			const response = await axios.post(`${NEXT_PUBLIC_API_GRAPHQL_URL}`, formData, {
-				headers: {
-					"Content-Type": "multipart/form-data",
-					"apollo-require-preflight": true,
-					Authorization: `Bearer ${token}`,
-				},
-			});
-
-			const responseImage = response.data.data.imageUploader;
+			const responseImage = await uploadImage(image, "group");
 			const imageUrl = `${NEXT_APP_API_URL}/${responseImage}`;
 
 			// Update form data and preview
@@ -155,7 +123,7 @@ const GroupUpdatePage = () => {
 
 	const cropCompleteHandler = async (croppedFile: File) => {
 		try {
-			const imageUrl = await uploadImage(croppedFile);
+			const imageUrl = await handleImageUpload(croppedFile);
 			if (imageUrl) {
 				setImagePreview(imageUrl);
 				setTempImageUrl(null);
@@ -171,12 +139,12 @@ const GroupUpdatePage = () => {
 		setIsSubmitting(true);
 
 		try {
-			if (!user._id || !token) throw new Error(Message.NOT_AUTHENTICATED);
+			if (!user._id) throw new Error(Message.NOT_AUTHENTICATED);
 			if (!formData) throw new Error(t(Message.INVALID_FORM_DATA));
-			if (!formData.groupName) throw new Error(t(Message.GROUP_NAME_REQUIRED));
-			if (!formData.groupDesc) throw new Error(t(Message.GROUP_DESCRIPTION_REQUIRED));
-			if (selectedCategories.length === 0) throw new Error(t(Message.GROUP_CATEGORY_REQUIRED));
-			if (!formData.groupImage) throw new Error(t(Message.GROUP_IMAGE_REQUIRED));
+			if (!formData.groupName || formData.groupName.trim() === "") throw new Error(t("Please enter group name"));
+			if (!formData.groupDesc || formData.groupDesc.trim() === "") throw new Error(t("Please enter group description"));
+			if (selectedCategories.length === 0) throw new Error(t("Please select at least one category"));
+			if (!formData.groupImage) throw new Error(t("Please upload a group image"));
 
 			const updatedFormData = {
 				...formData,
@@ -190,7 +158,8 @@ const GroupUpdatePage = () => {
 			await smallSuccess(t(Message.GROUP_UPDATED_SUCCESSFULLY));
 			router.push(`/groups/${formData._id}`);
 		} catch (error: unknown) {
-			const errorMessage = error instanceof Error ? error.message : "Unknown error";
+			const errorMessage = error instanceof Error ? error.message : t(Message.SOMETHING_WENT_WRONG);
+			smallError(errorMessage);
 			console.log(errorMessage);
 		} finally {
 			setIsSubmitting(false);
@@ -236,20 +205,7 @@ const GroupUpdatePage = () => {
 						onClick={() => router.push(`/groups/${formData._id}`)}
 						className="flex items-center gap-2 text-primary hover:text-primary-foreground hover:bg-primary border-primary hover:border-primary/80 transition-colors duration-200"
 					>
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							width="24"
-							height="24"
-							viewBox="0 0 24 24"
-							fill="none"
-							stroke="currentColor"
-							strokeWidth="2"
-							strokeLinecap="round"
-							strokeLinejoin="round"
-							className="h-4 w-4"
-						>
-							<path d="m15 18-6-6 6-6" />
-						</svg>
+						<ArrowLeft className="h-4 w-4" />
 						{t("Back to Group")}
 					</Button>
 				</div>
@@ -316,7 +272,7 @@ const GroupUpdatePage = () => {
 						{/* Image Section */}
 						<div className="space-y-4">
 							<label className="text-sm font-medium text-foreground">{t("Group Image")}</label>
-							<div className="relative aspect-[16/9] w-full max-w-2xl mx-auto rounded-xl overflow-hidden bg-muted/50 rounded-t-xl">
+							<div className="relative aspect-video w-full max-w-2xl mx-auto rounded-xl overflow-hidden bg-muted/50">
 								{imagePreview ? (
 									<>
 										<Image src={imagePreview} alt="Group preview" className="object-contain" fill />
@@ -367,7 +323,7 @@ const GroupUpdatePage = () => {
 							<Button
 								type="submit"
 								size="lg"
-								disabled={isSubmitting || selectedCategories.length === 0}
+								disabled={isSubmitting}
 								className="bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed px-8"
 							>
 								{isSubmitting ? t("Updating...") : t("Update Group")}

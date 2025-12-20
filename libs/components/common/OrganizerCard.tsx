@@ -21,7 +21,7 @@ const OrganizerCard = ({ organizer, likeMemberHandler, subscribeHandler, unsubsc
 	const { t } = useTranslation("common");
 
 	return (
-		<Card className="min-w-[340px] py-2 ui-card group gap-0">
+		<Card className="w-full py-2 ui-card group gap-0">
 			{/* Header */}
 			<CardHeader className="py-2 shrink-0">
 				<div className="flex flex-row gap-2 items-center">
