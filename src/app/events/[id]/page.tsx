@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { useTranslation } from "next-i18next";
 import { userVar } from "@/apollo/store";
-import { useMutation, useQuery, useReactiveVar, useApolloClient } from "@apollo/client/react";
+import { useMutation, useQuery, useReactiveVar } from "@apollo/client/react";
 
 import CommentsComponent from "@/libs/components/common/CommentsComponent";
 import { CommentGroup } from "@/libs/enums/comment.enum";
@@ -70,8 +70,6 @@ const ChosenEvent = () => {
 		notifyOnNetworkStatusChange: true,
 	});
 
-	const client = useApolloClient();
-
 	/** LIFECYCLES */
 	useEffect(() => {
 		if (eventId) {
@@ -110,7 +108,7 @@ const ChosenEvent = () => {
 	/**  HANDLERS */
 
 	const likeEventHandler = async (eventId: string) => {
-		await likeEvent(user._id, eventId, likeTargetEvent, client.cache);
+		await likeEvent(user._id, eventId, likeTargetEvent);
 	};
 
 	const purchaseTicketHandler = async () => {

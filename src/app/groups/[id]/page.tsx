@@ -43,7 +43,7 @@ const GroupDetailPage = () => {
 
 	/** HANDLERS **/
 	const likeGroupHandler = async (groupId: string) => {
-		likeGroup(user._id, groupId, likeTargetGroup, client.cache);
+		likeGroup(user._id, groupId, likeTargetGroup);
 	};
 
 	const joinGroupHandler = async (groupId: string) => {
@@ -55,7 +55,7 @@ const GroupDetailPage = () => {
 	};
 
 	const likeEventHandler = async (eventId: string) => {
-		await likeEvent(user._id, eventId, likeTargetEvent, client.cache);
+		await likeEvent(user._id, eventId, likeTargetEvent);
 	};
 
 	if (!groupId) return null;

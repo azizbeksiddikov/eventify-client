@@ -497,7 +497,7 @@ export const UPDATE_EVENT_BY_ORGANIZER: TypedDocumentNode<
 `;
 
 type LikeTargetEventMutation = {
-	likeTargetEvent: Pick<Event, "_id"> & {
+	likeTargetEvent: Pick<Event, "_id" | "eventLikes"> & {
 		meLiked?: MeLiked[];
 	};
 };
@@ -508,6 +508,7 @@ export const LIKE_TARGET_EVENT: TypedDocumentNode<LikeTargetEventMutation, LikeT
 	mutation LikeTargetEvent($input: String!) {
 		likeTargetEvent(eventId: $input) {
 			_id
+			eventLikes
 			meLiked {
 				memberId
 				likeRefId

@@ -71,31 +71,21 @@ const OrganizerProfile = ({
 	const { t } = useTranslation("common");
 	const currentUser = useReactiveVar(userVar);
 
-	const [isFollowing, setIsFollowing] = useState(!!organizer?.meFollowed?.[0]?.myFollowing);
-	const [isLiked, setIsLiked] = useState(!!organizer?.meLiked?.[0]?.myFavorite);
-
-	useEffect(() => {
-		if (organizer) {
-			setIsFollowing(!!organizer.meFollowed?.[0]?.myFollowing);
-			setIsLiked(!!organizer.meLiked?.[0]?.myFavorite);
-		}
-	}, [organizer]);
+	const isFollowing = !!organizer?.meFollowed?.[0]?.myFollowing;
+	const isLiked = !!organizer?.meLiked?.[0]?.myFavorite;
 
 	const followHandler = useCallback(() => {
 		if (!organizer) return;
 		if (isFollowing) {
 			unsubscribeHandler(organizer._id);
-			setIsFollowing(false);
 		} else {
 			subscribeHandler(organizer._id);
-			setIsFollowing(true);
 		}
 	}, [isFollowing, organizer, subscribeHandler, unsubscribeHandler]);
 
 	const likeHandler = useCallback(() => {
 		if (!organizer) return;
 		likeMemberHandler(organizer._id);
-		setIsLiked((prev) => !prev);
 	}, [organizer, likeMemberHandler]);
 
 	if (!organizer) {

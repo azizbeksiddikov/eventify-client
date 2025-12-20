@@ -31,7 +31,7 @@ const GroupCard = ({ group }: GroupCardProps) => {
 
 	/** HANDLERS **/
 	const likeGroupHandler = async (groupId: string) => {
-		likeGroup(user._id, groupId, likeTargetGroup, client.cache);
+		likeGroup(user._id, groupId, likeTargetGroup);
 	};
 
 	const joinGroupHandler = async (groupId: string) => {

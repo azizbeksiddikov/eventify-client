@@ -23,9 +23,9 @@ const SmallEventCard = ({ event, likeEventHandler }: EventCardProps) => {
 
 	return (
 		<div className="p-1.5 rounded-md hover:bg-accent/5 transition-all duration-200">
-			<div className="flex items-center gap-2">
+			<div className="flex items-center gap-2 overflow-hidden">
 				{/* Image and Description Column */}
-				<Link href={`/events/${event._id}`} className="flex-1 flex items-center gap-2 group">
+				<Link href={`/events/${event._id}`} className="flex-1 flex items-center gap-2 group min-w-0 overflow-hidden">
 					{/* Image */}
 					<div className="shrink-0">
 						<div className="w-12 h-12 rounded-md overflow-hidden relative">
@@ -41,29 +41,31 @@ const SmallEventCard = ({ event, likeEventHandler }: EventCardProps) => {
 					</div>
 
 					{/* Description */}
-					<div className="flex-1 min-w-0">
-						<h4 className="text-xs sm:text-sm font-semibold text-card-foreground group-hover:text-card-foreground transition-colors duration-200 line-clamp-1">
+					<div className="flex-1 min-w-0 overflow-hidden">
+						<h4 className="text-xs sm:text-sm font-semibold text-card-foreground group-hover:text-card-foreground transition-colors duration-200 line-clamp-1 truncate">
 							{event.eventName}
 						</h4>
-						<div className="mt-0.5 flex flex-col gap-0.5 text-[10px] text-card-foreground/70">
-							<div className="flex items-center">
+						<div className="mt-0.5 flex flex-col gap-0.5 text-[10px] text-card-foreground/70 min-w-0">
+							<div className="flex items-center min-w-0">
 								<Calendar className="w-2.5 h-2.5 mr-0.5 text-card-foreground/70 shrink-0" />
-								{formatSeoulDate(event.eventStartAt, {
-									month: "short",
-									day: "numeric",
-									year: "numeric",
-								})}
+								<span className="truncate">
+									{formatSeoulDate(event.eventStartAt, {
+										month: "short",
+										day: "numeric",
+										year: "numeric",
+									})}
+								</span>
 							</div>
-							<div className="flex items-center">
+							<div className="flex items-center min-w-0">
 								<MapPin className="w-2.5 h-2.5 mr-0.5 text-card-foreground/70 shrink-0" />
-								<span className="line-clamp-1">{locationText}</span>
+								<span className="line-clamp-1 truncate">{locationText}</span>
 							</div>
 						</div>
 					</div>
 				</Link>
 
 				{/* Views and Like Column */}
-				<div className="flex flex-col items-end gap-1">
+				<div className="flex flex-col items-end gap-1 shrink-0">
 					<div className="flex items-center">
 						<Eye className="w-2.5 h-2.5 mr-0.5 text-card-foreground/70 shrink-0" />
 						<span className="text-[10px] text-card-foreground/70">{event.eventViews.toLocaleString()}</span>

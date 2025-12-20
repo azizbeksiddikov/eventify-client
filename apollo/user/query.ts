@@ -632,6 +632,11 @@ export const GET_EVENT: TypedDocumentNode<GetEventQuery, GetEventQueryVariables>
 				eventViews
 				createdAt
 				updatedAt
+				meLiked {
+					memberId
+					likeRefId
+					myFavorite
+				}
 			}
 			eventCurrency
 		}

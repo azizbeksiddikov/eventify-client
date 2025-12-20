@@ -158,89 +158,17 @@ export const parseDate = (dateStr: string | undefined): Date | undefined => {
 	return new Date(date[0], date[1] - 1, date[2]);
 };
 
-// Simple debounce timers for likes
-const debounceTimers: { [key: string]: NodeJS.Timeout } = {};
-const clickCounts: { [key: string]: number } = {};
-
 export const likeEvent = async (
 	memberId: string,
 	likeRefId: string,
 	likeTargetEvent: (options?: any) => Promise<any>,
-	cache: any,
 ) => {
 	try {
 		if (!likeRefId || likeRefId === "") return;
 		if (!memberId || memberId === "") throw new Error(Message.NOT_AUTHENTICATED);
 
-		const eventKey = `Event:${likeRefId}`;
-
-		// Get current state
-		const currentData = cache?.readFragment({
-			id: eventKey,
-			fragment: gql`
-				fragment EventLikeData on Event {
-					eventLikes
-					meLiked
-				}
-			`,
-		});
-
-		const currentLikeState = currentData?.meLiked?.[0]?.myFavorite || false;
-		const newLikeState = !currentLikeState;
-
-		// Update UI immediately
-		if (cache) {
-			cache.modify({
-				id: eventKey,
-				fields: {
-					eventLikes(existing: number = 0) {
-						return newLikeState ? existing + 1 : existing - 1;
-					},
-					meLiked() {
-						return newLikeState ? [{ memberId, likeRefId, myFavorite: true, __typename: "MeLiked" }] : [];
-					},
-				},
-			});
-		}
-
-		// Clear existing timer
-		if (debounceTimers[likeRefId]) {
-			clearTimeout(debounceTimers[likeRefId]);
-		}
-
-		// Count clicks
-		clickCounts[likeRefId] = (clickCounts[likeRefId] || 0) + 1;
-
-		// Debounce backend call
-		debounceTimers[likeRefId] = setTimeout(async () => {
-			try {
-				const isOddClicks = clickCounts[likeRefId] % 2 === 1;
-
-				if (isOddClicks) await likeTargetEvent({ variables: { input: likeRefId } });
-			} catch (err: any) {
-				// Revert on error
-				if (cache) {
-					cache.modify({
-						id: eventKey,
-						fields: {
-							eventLikes(existing: number = 0) {
-								return currentLikeState ? existing + 1 : existing - 1;
-							},
-							meLiked() {
-								return currentLikeState ? [{ memberId, likeRefId, myFavorite: true, __typename: "MeLiked" }] : [];
-							},
-						},
-					});
-				}
-				smallError(err.message);
-			} finally {
-				delete debounceTimers[likeRefId];
-				delete clickCounts[likeRefId];
-			}
-		}, 500);
+		await likeTargetEvent({ variables: { input: likeRefId } });
 	} catch (err: any) {
-		delete debounceTimers[likeRefId];
-		delete clickCounts[likeRefId];
 		smallError(err.message);
 	}
 };
@@ -249,82 +177,13 @@ export const likeMember = async (
 	memberId: string,
 	likeRefId: string,
 	likeTargetMember: (options?: any) => Promise<any>,
-	cache: any,
 ) => {
 	try {
 		if (!likeRefId || likeRefId === "") return;
 		if (!memberId || memberId === "") throw new Error(Message.NOT_AUTHENTICATED);
 
-		const memberKey = `Member:${likeRefId}`;
-
-		// Get current state
-		const currentData = cache?.readFragment({
-			id: memberKey,
-			fragment: gql`
-				fragment MemberLikeData on Member {
-					memberLikes
-					meLiked
-				}
-			`,
-		});
-
-		const currentLikeState = currentData?.meLiked?.[0]?.myFavorite || false;
-		const newLikeState = !currentLikeState;
-
-		// Update UI immediately
-		if (cache) {
-			cache.modify({
-				id: memberKey,
-				fields: {
-					memberLikes(existing: number = 0) {
-						return newLikeState ? existing + 1 : existing - 1;
-					},
-					meLiked() {
-						return newLikeState ? [{ memberId, likeRefId, myFavorite: true, __typename: "MeLiked" }] : [];
-					},
-				},
-			});
-		}
-
-		// Clear existing timer
-		if (debounceTimers[likeRefId]) {
-			clearTimeout(debounceTimers[likeRefId]);
-		}
-
-		// Count clicks
-		clickCounts[likeRefId] = (clickCounts[likeRefId] || 0) + 1;
-
-		// Debounce backend call
-		debounceTimers[likeRefId] = setTimeout(async () => {
-			try {
-				const isOddClicks = clickCounts[likeRefId] % 2 === 1;
-
-				if (isOddClicks) await likeTargetMember({ variables: { input: likeRefId } });
-			} catch (err: any) {
-				// Revert on error
-				if (cache) {
-					cache.modify({
-						id: memberKey,
-						fields: {
-							memberLikes(existing: number = 0) {
-								return currentLikeState ? existing + 1 : existing - 1;
-							},
-							meLiked() {
-								return currentLikeState ? [{ memberId, likeRefId, myFavorite: true, __typename: "MeLiked" }] : [];
-							},
-						},
-					});
-				}
-				smallError(err.message);
-				console.log("ERROR, likeMemberHandler:", err.message);
-			} finally {
-				delete debounceTimers[likeRefId];
-				delete clickCounts[likeRefId];
-			}
-		}, 500);
+		await likeTargetMember({ variables: { input: likeRefId } });
 	} catch (err: any) {
-		delete debounceTimers[likeRefId];
-		delete clickCounts[likeRefId];
 		smallError(err.message);
 	}
 };
@@ -333,82 +192,13 @@ export const likeGroup = async (
 	memberId: string,
 	likeRefId: string,
 	likeTargetGroup: (options?: any) => Promise<any>,
-	cache: any,
 ) => {
 	try {
 		if (!likeRefId || likeRefId === "") return;
 		if (!memberId || memberId === "") throw new Error(Message.NOT_AUTHENTICATED);
 
-		const groupKey = `Group:${likeRefId}`;
-
-		// Get current state
-		const currentData = cache?.readFragment({
-			id: groupKey,
-			fragment: gql`
-				fragment GroupLikeData on Group {
-					groupLikes
-					meLiked
-				}
-			`,
-		});
-
-		const currentLikeState = currentData?.meLiked?.[0]?.myFavorite || false;
-		const newLikeState = !currentLikeState;
-
-		// Update UI immediately
-		if (cache) {
-			cache.modify({
-				id: groupKey,
-				fields: {
-					groupLikes(existing: number = 0) {
-						return newLikeState ? existing + 1 : existing - 1;
-					},
-					meLiked() {
-						return newLikeState ? [{ memberId, likeRefId, myFavorite: true, __typename: "MeLiked" }] : [];
-					},
-				},
-			});
-		}
-
-		// Clear existing timer
-		if (debounceTimers[likeRefId]) {
-			clearTimeout(debounceTimers[likeRefId]);
-		}
-
-		// Count clicks
-		clickCounts[likeRefId] = (clickCounts[likeRefId] || 0) + 1;
-
-		// Debounce backend call
-		debounceTimers[likeRefId] = setTimeout(async () => {
-			try {
-				const isOddClicks = clickCounts[likeRefId] % 2 === 1;
-
-				if (isOddClicks) await likeTargetGroup({ variables: { input: likeRefId } });
-			} catch (err: any) {
-				// Revert on error
-				if (cache) {
-					cache.modify({
-						id: groupKey,
-						fields: {
-							groupLikes(existing: number = 0) {
-								return currentLikeState ? existing + 1 : existing - 1;
-							},
-							meLiked() {
-								return currentLikeState ? [{ memberId, likeRefId, myFavorite: true, __typename: "MeLiked" }] : [];
-							},
-						},
-					});
-				}
-				smallError(err.message);
-				console.log("ERROR, likeGroupHandler:", err.message);
-			} finally {
-				delete debounceTimers[likeRefId];
-				delete clickCounts[likeRefId];
-			}
-		}, 500);
+		await likeTargetGroup({ variables: { input: likeRefId } });
 	} catch (err: any) {
-		delete debounceTimers[likeRefId];
-		delete clickCounts[likeRefId];
 		smallError(err.message);
 	}
 };

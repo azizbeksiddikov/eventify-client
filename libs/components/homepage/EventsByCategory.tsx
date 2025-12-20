@@ -42,11 +42,7 @@ const EventsByCategory = ({
 
 	/** HANDLERS **/
 	const likeEventHandler = async (eventId: string) => {
-		if (!user._id) {
-			router.push("/auth/login");
-			return;
-		}
-		await likeEvent(user._id, eventId, likeTargetEvent, client.cache);
+		await likeEvent(user._id, eventId, likeTargetEvent);
 	};
 
 	return (

@@ -48,7 +48,7 @@ const TopOrganizers = ({
 
 	/** HANDLERS */
 	const likeMemberHandler = async (memberId: string) => {
-		likeMember(user._id, memberId, likeTargetMember, client.cache);
+		likeMember(user._id, memberId, likeTargetMember);
 	};
 
 	const subscribeHandler = async (memberId: string) => {

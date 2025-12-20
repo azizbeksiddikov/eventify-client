@@ -45,7 +45,7 @@ const OrganizerDetailPage = () => {
 
 	/** HANDLERS */
 	const likeMemberHandler = async (memberId: string) => {
-		likeMember(user._id, memberId, likeTargetMember, client.cache);
+		likeMember(user._id, memberId, likeTargetMember);
 	};
 
 	const subscribeHandler = async (memberId: string) => {
@@ -57,7 +57,7 @@ const OrganizerDetailPage = () => {
 	};
 
 	const likeEventHandler = async (eventId: string) => {
-		await likeEvent(user._id, eventId, likeTargetEvent, client.cache);
+		await likeEvent(user._id, eventId, likeTargetEvent);
 	};
 
 	if (!organizerId) return null;
