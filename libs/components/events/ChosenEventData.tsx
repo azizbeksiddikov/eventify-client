@@ -3,6 +3,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "next-i18next";
 import { Heart, Calendar, Clock, MapPin, Users, Plus, Minus, Ticket, Pencil, ExternalLink } from "lucide-react";
+import ReactMarkdown from "react-markdown";
 
 import { Button } from "@/libs/components/ui/button";
 import { Badge } from "@/libs/components/ui/badge";
@@ -319,7 +320,42 @@ const ChosenEventData = ({
 				<Separator />
 				<div className="px-4 sm:px-6 py-4">
 					<h3 className="text-sm font-semibold mb-2 text-foreground/90">{t("Description")}</h3>
-					<p className="text-sm text-muted-foreground leading-relaxed">{event.eventDesc}</p>
+					<div className="text-sm text-muted-foreground leading-relaxed">
+						<ReactMarkdown
+							components={{
+								a: ({ node, ...props }) => (
+									<a
+										{...props}
+										className="text-primary hover:underline font-medium break-all"
+										target="_blank"
+										rel="noopener noreferrer"
+									/>
+								),
+								strong: ({ node, ...props }) => <strong {...props} className="font-semibold text-foreground" />,
+								p: ({ node, ...props }) => <p {...props} className="mb-3 last:mb-0" />,
+								ul: ({ node, ...props }) => <ul {...props} className="list-disc pl-5 mb-3 space-y-1" />,
+								ol: ({ node, ...props }) => <ol {...props} className="list-decimal pl-5 mb-3 space-y-1" />,
+								li: ({ node, ...props }) => <li {...props} className="pl-1" />,
+								h1: ({ node, ...props }) => (
+									<h1 {...props} className="text-lg font-bold text-foreground mb-2 mt-4 first:mt-0" />
+								),
+								h2: ({ node, ...props }) => (
+									<h2 {...props} className="text-base font-bold text-foreground mb-2 mt-4 first:mt-0" />
+								),
+								h3: ({ node, ...props }) => (
+									<h3 {...props} className="text-sm font-bold text-foreground mb-2 mt-3 first:mt-0" />
+								),
+								blockquote: ({ node, ...props }) => (
+									<blockquote
+										{...props}
+										className="border-l-4 border-primary/30 pl-4 py-1 italic mb-3 text-muted-foreground/80"
+									/>
+								),
+							}}
+						>
+							{event.eventDesc}
+						</ReactMarkdown>
+					</div>
 				</div>
 			</Card>
 

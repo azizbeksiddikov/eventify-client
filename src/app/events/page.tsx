@@ -61,6 +61,31 @@ const EventsPage = ({
 					.map((cat) => cat.toUpperCase() as EventCategory)
 					.filter((cat) => Object.values(EventCategory).includes(cat)) || [];
 
+			const startDate = searchParams.get("startDate");
+			const endDate = searchParams.get("endDate");
+			const statusParam = searchParams.get("status");
+
+			// Parse dates and validate
+			const parsedStartDate = parseDate(startDate || undefined);
+			let parsedEndDate = parseDate(endDate || undefined);
+
+			// Validate: startDate must be ≤ endDate
+			if (parsedStartDate && parsedEndDate && parsedStartDate > parsedEndDate) {
+				// If startDate is after endDate, clear endDate (similar to SearchEvents behavior)
+				parsedEndDate = undefined;
+			}
+
+			// If dates are present (from SearchEvents), allow any event status
+			// Otherwise, if no status is specified, default to UPCOMING
+			let eventStatus: EventStatus | undefined;
+			if (parsedStartDate || parsedEndDate) {
+				// From SearchEvents: allow any status, only use status if explicitly provided
+				eventStatus = statusParam ? (statusParam as EventStatus) : undefined;
+			} else {
+				// No dates: default to UPCOMING if no status specified
+				eventStatus = (statusParam as EventStatus) || EventStatus.UPCOMING;
+			}
+
 			return {
 				page: Math.max(1, Number(searchParams.get("page")) || 1),
 				limit: Math.max(1, Number(searchParams.get("limit")) || 6),
@@ -69,9 +94,9 @@ const EventsPage = ({
 				search: {
 					text: searchParams.get("text") || "",
 					eventCategories: categories,
-					eventStatus: searchParams.get("status") as EventStatus,
-					eventStartDay: parseDate(searchParams.get("startDate") || undefined),
-					eventEndDay: parseDate(searchParams.get("endDate") || undefined),
+					eventStatus,
+					eventStartDay: parsedStartDate,
+					eventEndDay: parsedEndDate,
 				},
 			};
 		}

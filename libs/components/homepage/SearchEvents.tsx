@@ -20,6 +20,22 @@ const SearchEvents = () => {
 	const [startDate, setStartDate] = useState<Date | undefined>();
 	const [endDate, setEndDate] = useState<Date | undefined>();
 
+	const handleStartDateChange = (date: Date | undefined) => {
+		setStartDate(date);
+		// If new startDate is after endDate, clear endDate
+		if (date && endDate && date > endDate) {
+			setEndDate(undefined);
+		}
+	};
+
+	const handleEndDateChange = (date: Date | undefined) => {
+		setEndDate(date);
+		// If new endDate is before startDate, clear startDate
+		if (date && startDate && date < startDate) {
+			setStartDate(undefined);
+		}
+	};
+
 	const searchHandler = (e: React.FormEvent) => {
 		e.preventDefault();
 
@@ -59,7 +75,7 @@ const SearchEvents = () => {
 								<PopoverTrigger asChild>
 									<Button
 										variant="outline"
-										className="h-10 sm:h-11 md:h-12 lg:h-14 justify-start text-left font-normal border border-input hover:bg-accent/50 transition-colors text-xs sm:text-sm md:text-base w-full sm:w-auto"
+										className="h-10 sm:h-11 md:h-12 lg:h-14 justify-start text-left font-normal border border-input hover:bg-accent/50 transition-colors text-xs sm:text-sm md:text-base w-full sm:flex-1"
 									>
 										<CalendarIcon className="mr-1.5 sm:mr-2 h-3 w-3 sm:h-3.5 sm:w-3.5 md:h-4 md:w-4 shrink-0" />
 										<span className="truncate">
@@ -68,21 +84,33 @@ const SearchEvents = () => {
 									</Button>
 								</PopoverTrigger>
 								<PopoverContent className="w-auto p-0" align="start">
-									<Calendar mode="single" selected={startDate} onSelect={setStartDate} initialFocus />
+									<Calendar
+										mode="single"
+										selected={startDate}
+										onSelect={handleStartDateChange}
+										initialFocus
+										disabled={(date) => (endDate ? date > endDate : false)}
+									/>
 								</PopoverContent>
 							</Popover>
 							<Popover>
 								<PopoverTrigger asChild>
 									<Button
 										variant="outline"
-										className="h-10 sm:h-11 md:h-12 lg:h-14 justify-start text-left font-normal border border-input hover:bg-accent/50 transition-colors text-xs sm:text-sm md:text-base w-full sm:w-auto"
+										className="h-10 sm:h-11 md:h-12 lg:h-14 justify-start text-left font-normal border border-input hover:bg-accent/50 transition-colors text-xs sm:text-sm md:text-base w-full sm:flex-1"
 									>
 										<CalendarIcon className="mr-1.5 sm:mr-2 h-3 w-3 sm:h-3.5 sm:w-3.5 md:h-4 md:w-4 shrink-0" />
 										<span className="truncate">{endDate ? format(endDate, "PPP") : <span>{t("End date")}</span>}</span>
 									</Button>
 								</PopoverTrigger>
 								<PopoverContent className="w-auto p-0" align="start">
-									<Calendar mode="single" selected={endDate} onSelect={setEndDate} initialFocus />
+									<Calendar
+										mode="single"
+										selected={endDate}
+										onSelect={handleEndDateChange}
+										initialFocus
+										disabled={(date) => (startDate ? date < startDate : false)}
+									/>
 								</PopoverContent>
 							</Popover>
 						</div>

@@ -140,8 +140,7 @@ function SortAndFilter({ updateURL, eventsSearchFilters, initialSearch }: SortAn
 									onSelect={startDateHandler}
 									initialFocus
 									disabled={(date) =>
-										date < new Date() ||
-										(eventsSearchFilters.search?.eventEndDay ? date > eventsSearchFilters.search.eventEndDay : false)
+										eventsSearchFilters.search?.eventEndDay ? date > eventsSearchFilters.search.eventEndDay : false
 									}
 								/>
 							</div>
@@ -171,10 +170,7 @@ function SortAndFilter({ updateURL, eventsSearchFilters, initialSearch }: SortAn
 									onSelect={endDateHandler}
 									initialFocus
 									disabled={(date) =>
-										date < new Date() ||
-										(eventsSearchFilters.search?.eventStartDay
-											? date < eventsSearchFilters.search.eventStartDay
-											: false)
+										eventsSearchFilters.search?.eventStartDay ? date < eventsSearchFilters.search.eventStartDay : false
 									}
 								/>
 							</div>

@@ -57,7 +57,7 @@ const EventsByCategory = ({
 					<Button
 						type="submit"
 						onClick={() => router.push("/events")}
-						className="shrink-0 h-9 sm:h-10 md:h-12 px-3 sm:px-4 md:px-6 bg-card text-card-foreground hover:bg-card/90"
+						className="shrink-0 h-9 sm:h-10 md:h-12 px-3 sm:px-4 md:px-6"
 					>
 						<div className="flex items-center gap-1">
 							{t("View All Events")}
@@ -128,7 +128,7 @@ const EventsByCategory = ({
 								</div>
 								<div className="p-2.5 sm:p-3 border-t mt-auto">
 									<Link
-										href={`/event?categories=${categoryData.category.toUpperCase()}`}
+										href={`/events?categories=${categoryData.category.toUpperCase()}`}
 										className="text-primary hover:text-primary/80 font-medium flex items-center justify-center gap-1 transition-colors duration-200"
 									>
 										<ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5" />

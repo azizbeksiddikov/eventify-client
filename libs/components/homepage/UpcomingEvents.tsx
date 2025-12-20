@@ -46,10 +46,13 @@ export default function UpcomingEvents({
 	return (
 		<section className="py-10 sm:py-20 bg-muted">
 			<div className="max-w-7xl mx-auto px-4">
-				<div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 sm:mb-8 gap-4 sm:gap-0">
-					<h2 className="text-xl sm:text-2xl my-4">{t("Upcoming Events")}</h2>
-
-					<Button type="submit" onClick={() => router.push("/events")} className="h-10 sm:h-14 px-4 sm:px-8">
+			<div className="flex flex-row items-center justify-start gap-3 mb-6 sm:mb-8">
+					<h2 className="flex-1 min-w-0 text-foreground">{t("Upcoming Events")}</h2>
+					<Button
+						type="submit"
+						onClick={() => router.push("/events")}
+						className="shrink-0 h-9 sm:h-10 md:h-12 px-3 sm:px-4 md:px-6"
+					>
 						<div className="flex items-center gap-1">
 							{t("View All Events")}
 							<ArrowRight className="w-3 h-3 sm:w-4 sm:h-4" />
@@ -70,9 +73,9 @@ export default function UpcomingEvents({
 					</div>
 
 					{/* Events List - Simple bullet points */}
-					<div className="md:col-span-1">
-						<div className="bg-card rounded-lg sm:rounded-2xl shadow-sm p-3 sm:p-5 h-full">
-							<div className="flex items-center mb-3 sm:mb-4">
+					<div className="md:col-span-1 md:relative">
+						<div className="bg-card rounded-lg sm:rounded-2xl shadow-sm p-3 sm:p-5 h-full md:absolute md:inset-0 flex flex-col">
+							<div className="flex items-center mb-3 sm:mb-4 shrink-0">
 								{selectedDate !== undefined && <CalendarIcon className="w-4 h-4 sm:w-5 sm:h-5 text-primary mr-2" />}
 
 								<h3 className="text-base font-semibold text-foreground">
@@ -85,7 +88,7 @@ export default function UpcomingEvents({
 							</div>
 
 							{filteredEvents.length > 0 ? (
-								<ul className="space-y-2 sm:space-y-3">
+								<ul className="space-y-2 sm:space-y-3 overflow-y-auto flex-1 min-h-0 pr-1">
 									{filteredEvents.map((event: Event) => (
 										<li key={event._id} className="border-l-2 border-primary pl-2 sm:pl-3 py-1">
 											<Link
@@ -115,7 +118,7 @@ export default function UpcomingEvents({
 									))}
 								</ul>
 							) : (
-								<div className="flex flex-col items-center justify-center h-[calc(100%-2rem)] text-center">
+								<div className="flex flex-col items-center justify-center flex-1 text-center">
 									<CalendarIcon className="w-8 h-8 sm:w-10 sm:h-10 text-muted-foreground/30 mb-2" />
 									<p className="text-xs text-muted-foreground">{t("No events scheduled")}</p>
 									<p className="text-xs text-muted-foreground mt-1">{t("Select another date")}</p>
