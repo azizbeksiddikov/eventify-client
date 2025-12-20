@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 // Providers
 import { Providers } from "./providers";
 import { ThemeProvider } from "./theme-provider";
+import { Toaster } from "sonner";
 
 import Header from "@/libs/components/layout/Header";
 import Footer from "@/libs/components/layout/Footer";
@@ -24,6 +25,7 @@ export default function RootLayout({
 			<body className="antialiased w-full">
 				<Providers>
 					<ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+						<Toaster richColors position="top-right" closeButton />
 						<div className="flex flex-col min-h-screen w-full">
 							<Header />
 							<main className="flex-1 w-full flex flex-col">{children}</main>

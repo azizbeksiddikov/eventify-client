@@ -7,6 +7,7 @@ import { ReactNode } from "react";
 import { ErrorLink } from "@apollo/client/link/error";
 import { CombinedGraphQLErrors } from "@apollo/client/errors";
 import { getJwtToken, logOut } from "@/libs/auth";
+import { smallError } from "@/libs/alert";
 
 // Auth link: Only add Authorization header when token exists
 const authLink = new ApolloLink((operation, forward) => {
@@ -45,6 +46,7 @@ const errorLink = new ErrorLink(({ error }) => {
 				message.includes("Token expired")
 			) {
 				console.warn("Authentication error detected:", message);
+				smallError(message);
 
 				// Clear invalid token and redirect to login
 				if (typeof window !== "undefined") logOut();
@@ -59,9 +61,12 @@ const errorLink = new ErrorLink(({ error }) => {
 			const statusCode = (error as { statusCode: number }).statusCode;
 			if (statusCode === 401 || statusCode === 403) {
 				console.warn("Authentication failed (401/403)");
+				smallError("Your session has expired. Please login again.");
 				if (typeof window !== "undefined") logOut();
+				return;
 			}
 		}
+		smallError("Network connection error. Please try again.");
 	}
 });
 

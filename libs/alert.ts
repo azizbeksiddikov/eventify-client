@@ -11,7 +11,6 @@ export const smallSuccess = (message: string, position?: ToastPosition, duration
 	toast.success(message, {
 		position: position ?? "top-right",
 		duration: duration ?? 2000,
-		className: "bg-success text-success-foreground mx-auto",
 		...commonToastOptions,
 	});
 };
@@ -19,8 +18,7 @@ export const smallSuccess = (message: string, position?: ToastPosition, duration
 export const smallError = (message: string, position?: ToastPosition, duration?: number) => {
 	toast.error(message, {
 		position: position ?? "top-right",
-		duration: duration ?? 2000,
-		className: "bg-destructive text-destructive-foreground mx-auto",
+		duration: duration ?? 3000,
 		...commonToastOptions,
 	});
 };
@@ -29,7 +27,6 @@ export const smallInfo = (message: string, position?: ToastPosition, duration?: 
 	toast.info(message, {
 		position: position ?? "top-right",
 		duration: duration ?? 2000,
-		className: "bg-info text-info-foreground mx-auto",
 		...commonToastOptions,
 	});
 };
