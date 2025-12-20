@@ -66,17 +66,21 @@ const OrganizerDetailPage = () => {
 		<div>
 			<OrganizerHeader />
 
-			<div className="mx-auto pb-6 sm:pb-8 md:pb-10 max-w-7xl">
-				<div className="flex flex-col sm:flex-row gap-4 sm:gap-6 lg:gap-8">
-					<OrganizerProfile
-						organizer={organizer}
-						likeMemberHandler={likeMemberHandler}
-						subscribeHandler={subscribeHandler}
-						unsubscribeHandler={unsubscribeHandler}
-					/>
-					{organizer?.organizedGroups && organizer.organizedGroups.length > 0 && (
-						<SimilarGroups groups={organizer.organizedGroups} text={t("Organizer Groups")} />
-					)}
+			<div className="px-4 sm:px-6 md:px-8 lg:px-10 pb-10 max-w-7xl mx-auto space-y-6 sm:space-y-8 md:space-y-10">
+				<div className="flex flex-col lg:grid lg:grid-cols-4 gap-6 lg:gap-8">
+					<div className="lg:col-span-3">
+						<OrganizerProfile
+							organizer={organizer}
+							likeMemberHandler={likeMemberHandler}
+							subscribeHandler={subscribeHandler}
+							unsubscribeHandler={unsubscribeHandler}
+						/>
+					</div>
+					<div className="lg:col-span-1">
+						{organizer?.organizedGroups && organizer.organizedGroups.length > 0 && (
+							<SimilarGroups groups={organizer.organizedGroups} text={t("Organizer Groups")} />
+						)}
+					</div>
 				</div>
 
 				{/* Events Section */}

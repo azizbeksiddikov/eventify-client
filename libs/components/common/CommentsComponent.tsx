@@ -56,6 +56,7 @@ const CommentsComponent = ({ commentRefId, commentGroup, initialCommentsInquiry 
 			direction: Direction.DESC,
 			search: {
 				commentRefId,
+				commentGroup,
 			},
 		},
 	);

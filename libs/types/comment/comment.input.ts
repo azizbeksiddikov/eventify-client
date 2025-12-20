@@ -1,5 +1,5 @@
-import { CommentGroup } from '@/libs/enums/comment.enum';
-import { Direction } from '@/libs/enums/common.enum';
+import { CommentGroup } from "@/libs/enums/comment.enum";
+import { Direction } from "@/libs/enums/common.enum";
 
 export interface CommentInput {
 	commentGroup: CommentGroup;
@@ -10,6 +10,7 @@ export interface CommentInput {
 
 export interface CISearch {
 	commentRefId: string;
+	commentGroup: CommentGroup;
 }
 
 export interface CommentsInquiry {
