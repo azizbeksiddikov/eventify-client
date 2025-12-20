@@ -5,6 +5,7 @@ const nextConfig = {
 		NEXT_PUBLIC_API_GRAPHQL_URL: process.env.NEXT_PUBLIC_API_GRAPHQL_URL,
 	},
 	images: {
+		unoptimized: process.env.NODE_ENV === "development",
 		remotePatterns: [
 			{
 				protocol: "https",

@@ -84,8 +84,12 @@ const GroupsPage = ({
 		router.push(`${pathname}?${params.toString()}`);
 	};
 
-	/** APOLLO REQUESTS **/
-	const { data: getGroupsData, refetch: getGroupsRefetch } = useQuery(GET_GROUPS, {
+	/* APOLLO REQUESTS */
+	const {
+		data: getGroupsData,
+		loading,
+		refetch: getGroupsRefetch,
+	} = useQuery(GET_GROUPS, {
 		fetchPolicy: "cache-and-network",
 		variables: { input: groupsSearchFilters },
 		notifyOnNetworkStatusChange: true,
@@ -117,13 +121,15 @@ const GroupsPage = ({
 	return (
 		<div>
 			<GroupsHeader />
-			<SortAndFilterGroups
-				updateURL={updateURL}
-				groupsSearchFilters={groupsSearchFilters}
-				initialSearch={initialSearch}
-			/>
+			<div className="px-6 sm:px-12 lg:px-20">
+				<SortAndFilterGroups
+					updateURL={updateURL}
+					groupsSearchFilters={groupsSearchFilters}
+					initialSearch={initialSearch}
+				/>
+			</div>
 
-			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 mb-10">
+			<div className="max-w-7xl mx-auto px-6 sm:px-12 lg:px-20 py-10 mb-10">
 				<div className="flex flex-col lg:flex-row gap-8">
 					{/* Categories Sidebar */}
 					<CategoriesSidebarGroup
@@ -134,7 +140,13 @@ const GroupsPage = ({
 
 					{/* Events Grid */}
 					<div className="flex-1">
-						{groups.length > 0 ? (
+						{loading && groups.length === 0 ? (
+							<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+								{Array.from({ length: 6 }).map((_, idx) => (
+									<div key={idx} className="h-[340px] rounded-xl border bg-card/60 shadow-sm animate-pulse" />
+								))}
+							</div>
+						) : groups.length > 0 ? (
 							<>
 								<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
 									{groups.map((group) => (

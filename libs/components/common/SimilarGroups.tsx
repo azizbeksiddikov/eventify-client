@@ -28,7 +28,7 @@ const SimilarGroups = ({ groups, text = "Similar Groups" }: SimilarGroupsProps) 
 				{groups.map((group) => (
 					<Link
 						key={group._id}
-						href={`/groups?${group._id}`}
+						href={`/groups/${group._id}`}
 						className="block group hover:scale-[1.01] transition-all duration-300 p-2 sm:p-3 lg:p-2 xl:p-3 rounded-lg hover:bg-secondary/20 hover:border-l-2 sm:hover:border-l-4 hover:border-l-primary"
 					>
 						<div className="flex items-start sm:items-center gap-2 sm:gap-3 lg:gap-2 xl:gap-3">

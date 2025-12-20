@@ -13,7 +13,7 @@ const quickLinks = [
 const Footer = () => {
 	return (
 		<footer className="bg-background border-t w-full text-sm md:text-base">
-			<div className="content-container my-8 grid grid-cols-1 gap-10 md:grid-cols-3 md:gap-12">
+			<div className="max-w-7xl mx-auto px-6 sm:px-12 lg:px-20 my-8 grid grid-cols-1 gap-10 md:grid-cols-3 md:gap-12">
 				{/* Company Info & Social */}
 				<div className="space-y-6 md:space-y-8">
 					<Link href="/" className="flex items-center gap-3 hover:scale-95 transition-transform">
@@ -92,7 +92,7 @@ const Footer = () => {
 
 			<hr className="border-t" />
 			{/* Bottom Bar */}
-			<div className="content-container mt-4 mb-12">
+			<div className="max-w-7xl mx-auto px-6 sm:px-12 lg:px-20 mt-4 mb-12">
 				<div className="flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-center">
 					<p className="text-sm text-muted-foreground md:text-base">© {"2025 Eventify. All rights reserved"}.</p>
 					<div className="flex flex-wrap items-center gap-x-8 gap-y-2 text-sm text-muted-foreground md:text-base">

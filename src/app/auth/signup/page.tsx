@@ -116,7 +116,7 @@ const Signup = () => {
 	};
 
 	return (
-		<div className="flex-1 my-10 flex items-center justify-center px-4 sm:px-6 lg:px-8">
+		<div className="flex-1 my-20 flex items-center justify-center px-4 sm:px-6 lg:px-8">
 			<Card className="w-full max-w-md">
 				<CardHeader className="text-center">
 					<CardTitle className="text-3xl font-semibold">{t("Create your account")}</CardTitle>

@@ -25,24 +25,24 @@ const HelpPage = () => {
 	const [activeTab, setActiveTab] = useState<string>(defaultTab);
 
 	return (
-		<div className="max-w-4xl mx-auto my-10 px-4">
+		<div className="max-w-7xl mx-auto my-10 px-6 sm:px-12 lg:px-20">
 			{/* Header Section */}
-			<div className="text-center mb-16">
+			<div className="text-center mb-10 sm:mb-16">
 				<h1 className="text-3xl sm:text-4xl font-bold mb-4 text-foreground">{t("How can we help you?")}</h1>
-				<p className="text-base sm:text-lg text-muted-foreground">
+				<p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto">
 					{t("Find answers to common questions or get in touch with our support team.")}
 				</p>
 			</div>
 
 			{/* Tabs Section */}
-			<Tabs value={activeTab} onValueChange={setActiveTab}>
-				{/* Tabs List */}
-				<TabsList className="grid grid-cols-3 gap-2 sm:gap-4 mb-8 h-10 sm:h-12 w-full">
+			<Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+				{/* Tabs List - Scrollable on mobile or wrapped */}
+				<TabsList className="w-full h-auto flex flex-wrap sm:grid sm:grid-cols-3 gap-2 px-1 py-1 5">
 					{faqByGroup.map((group) => (
 						<TabsTrigger
 							key={group.faqGroup}
 							value={group.faqGroup}
-							className="text-sm sm:text-base font-medium px-2 py-1"
+							className="text-sm sm:text-base font-medium flex-1"
 						>
 							{group.faqGroup}
 						</TabsTrigger>

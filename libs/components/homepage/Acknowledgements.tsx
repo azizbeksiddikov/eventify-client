@@ -3,7 +3,7 @@ import { Users, Heart, Code2 } from "lucide-react";
 const Acknowledgements = () => {
 	return (
 		<section className="py-8 sm:py-12 md:py-16 lg:py-20 bg-muted w-full min-w-0">
-			<div className="content-container grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
+			<div className="max-w-7xl mx-auto px-6 sm:px-12 lg:px-20 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
 				{/* Team & Community Section */}
 				<div className="bg-card rounded-lg sm:rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-all duration-200 animate-slideIn">
 					<div className="p-3 sm:p-4 border-b">

@@ -1,14 +1,17 @@
-import { useTranslation } from 'next-i18next';
+import { useTranslation } from "next-i18next";
 
 const OrganizersHeader = () => {
-	const { t } = useTranslation('common');
+	const { t } = useTranslation("common");
+
 	return (
-		<div className="bg-gradient-to-b from-muted-foreground/10 to-background py-8 ">
-			<div className="max-w-7xl mx-auto text-center ">
-				<h1 className="text-2xl md:text-3xl font-semibold text-foreground">{t('Organizers')}</h1>
-				<p className="mt-2 text-sm md:text-base text-muted-foreground">
-					{t('Browse through our list of event organizers')}
-				</p>
+		<div className="bg-gradient-to-b from-muted-foreground/10 to-background py-8">
+			<div className="flex flex-col md:flex-row items-center justify-between mb-8 max-w-7xl mx-auto px-6 sm:px-12 lg:px-20">
+				<div className="text-center w-full mb-4 md:mb-0">
+					<h2>{t("Organizers")}</h2>
+					<p className="text-muted-foreground mt-2 text-base md:text-lg">
+						{t("Browse through our list of event organizers")}
+					</p>
+				</div>
 			</div>
 		</div>
 	);

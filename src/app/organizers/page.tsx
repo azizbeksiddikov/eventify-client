@@ -66,12 +66,12 @@ const OrganizersPage = ({
 
 		router.push(`${pathname}?${params.toString()}`);
 	};
-	/** APOLLO */
+	/* APOLLO */
 	const [likeTargetMember] = useMutation(LIKE_TARGET_MEMBER);
 	const [subscribe] = useMutation(SUBSCRIBE);
 	const [unsubscribe] = useMutation(UNSUBSCRIBE);
 
-	const { data: organizersData } = useQuery(GET_ORGANIZERS, {
+	const { data: organizersData, loading } = useQuery(GET_ORGANIZERS, {
 		fetchPolicy: "cache-and-network",
 		variables: {
 			input: organizerSearch,
@@ -107,11 +107,23 @@ const OrganizersPage = ({
 	return (
 		<div>
 			<OrganizersHeader />
-			<SortAndFilterOrganizers updateURL={updateURL} organizerSearch={organizerSearch} initialSearch={initialSearch} />
+			<div className="px-6 sm:px-12 lg:px-20">
+				<SortAndFilterOrganizers
+					updateURL={updateURL}
+					organizerSearch={organizerSearch}
+					initialSearch={initialSearch}
+				/>
+			</div>
 
 			{/* Organizers Grid */}
-			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 mb-10">
-				{organizers.length > 0 ? (
+			<div className="max-w-7xl mx-auto px-6 sm:px-12 lg:px-20 py-10 mb-10">
+				{loading && organizers.length === 0 ? (
+					<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+						{Array.from({ length: 6 }).map((_, idx) => (
+							<div key={idx} className="h-[340px] rounded-xl border bg-card/60 shadow-sm animate-pulse" />
+						))}
+					</div>
+				) : organizers.length > 0 ? (
 					<>
 						<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
 							{organizers.map((organizer) => (
@@ -128,7 +140,7 @@ const OrganizersPage = ({
 						{/* Pagination */}
 						<div className="mt-10 flex justify-center">
 							<PaginationComponent
-								totalItems={organizers.length}
+								totalItems={organizersData?.getOrganizers?.metaCounter?.[0]?.total ?? 0}
 								currentPage={organizerSearch.page}
 								pageChangeHandler={pageChangeHandler}
 							/>

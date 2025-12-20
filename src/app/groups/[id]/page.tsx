@@ -30,7 +30,7 @@ const GroupDetailPage = () => {
 	const [leaveTargetGroup] = useMutation(LEAVE_GROUP);
 	const [likeTargetEvent] = useMutation(LIKE_TARGET_EVENT);
 
-	const { data: getGroupData } = useQuery(GET_GROUP, {
+	const { data: getGroupData, loading: groupLoading } = useQuery(GET_GROUP, {
 		fetchPolicy: "cache-and-network",
 		skip: !groupId,
 		variables: { input: groupId || "" },
@@ -59,35 +59,54 @@ const GroupDetailPage = () => {
 	};
 
 	if (!groupId) return null;
-	if (!group) return null;
+
 	return (
 		<div>
 			<ChosenGroupHeader />
 
-			<div className="content-container pb-10">
-				<div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
-					<div className="lg:col-span-3">
-						<ChosenGroupData
-							userId={user._id}
-							group={group}
-							likeGroupHandler={likeGroupHandler}
-							joinGroupHandler={joinGroupHandler}
-							leaveGroupHandler={leaveGroupHandler}
-						/>
-						{/*  Upcoming group Events */}
-						{group?.groupUpcomingEvents && (
-							<UpcomingEvents
-								events={group.groupUpcomingEvents}
-								organizerName={group.groupName}
-								likeEventHandler={likeEventHandler}
-							/>
-						)}
+			<div className="max-w-7xl mx-auto px-6 sm:px-12 lg:px-20 pb-10">
+				{groupLoading && !group ? (
+					<div className="rounded-xl border bg-card/60 shadow-sm p-6 animate-pulse">
+						<div className="h-6 w-48 bg-muted/60 rounded mb-4" />
+						<div className="h-40 w-full bg-muted/60 rounded mb-4" />
+						<div className="h-4 w-full bg-muted/60 rounded mb-2" />
+						<div className="h-4 w-5/6 bg-muted/60 rounded" />
 					</div>
-					<ChosenGroupOther group={group} />
-				</div>
+				) : null}
 
-				{/* Comments Section */}
-				{group && <CommentsComponent commentRefId={groupId} commentGroup={CommentGroup.GROUP} />}
+				{!groupLoading && !group ? (
+					<div className="flex flex-col items-center justify-center py-20 text-center">
+						<p className="text-lg font-medium text-muted-foreground">{t("Group not found")}</p>
+					</div>
+				) : null}
+
+				{group && (
+					<>
+						<div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
+							<div className="lg:col-span-3">
+								<ChosenGroupData
+									userId={user._id}
+									group={group}
+									likeGroupHandler={likeGroupHandler}
+									joinGroupHandler={joinGroupHandler}
+									leaveGroupHandler={leaveGroupHandler}
+								/>
+								{/*  Upcoming group Events */}
+								{group?.groupUpcomingEvents && (
+									<UpcomingEvents
+										events={group.groupUpcomingEvents}
+										organizerName={group.groupName}
+										likeEventHandler={likeEventHandler}
+									/>
+								)}
+							</div>
+							<ChosenGroupOther group={group} />
+						</div>
+
+						{/* Comments Section */}
+						<CommentsComponent commentRefId={groupId} commentGroup={CommentGroup.GROUP} />
+					</>
+				)}
 			</div>
 		</div>
 	);

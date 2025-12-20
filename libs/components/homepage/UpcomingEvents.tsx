@@ -45,7 +45,7 @@ export default function UpcomingEvents({
 
 	return (
 		<section className="py-10 sm:py-20 bg-muted">
-			<div className="max-w-7xl mx-auto px-4">
+			<div className="max-w-7xl mx-auto px-6 sm:px-12 lg:px-20">
 			<div className="flex flex-row items-center justify-start gap-3 mb-6 sm:mb-8">
 					<h2 className="flex-1 min-w-0 text-foreground">{t("Upcoming Events")}</h2>
 					<Button

@@ -46,13 +46,12 @@ const GroupCard = ({ group }: GroupCardProps) => {
 		<Card className="min-w-[340px] py-0 ui-card group gap-0">
 			<CardHeader className="p-0 gap-0">
 				<div className="relative aspect-video w-full overflow-hidden rounded-t-xl">
-					<Link href={`/groups?${group._id}`}>
+					<Link href={`/groups/${group._id}`}>
 						<Image
 							src={getImageUrl(group.groupImage, "group")}
 							alt={group.groupName}
 							fill
 							className="object-cover transition-transform duration-300"
-							unoptimized={process.env.NODE_ENV === "development"}
 						/>
 					</Link>
 					<div className="absolute bottom-1.5 left-1.5 flex items-center gap-1.5">
@@ -70,7 +69,7 @@ const GroupCard = ({ group }: GroupCardProps) => {
 
 			<CardContent className="pt-3 px-3 pb-0 flex-1 flex flex-col">
 				<div className="space-y-2 text-[12px] leading-5">
-					<Link href={`/groups?${group._id}`} className="block">
+					<Link href={`/groups/${group._id}`} className="block">
 						<h3 className="text-[13px] leading-5 font-semibold text-foreground line-clamp-1">{group.groupName}</h3>
 					</Link>
 
@@ -136,7 +135,7 @@ const GroupCard = ({ group }: GroupCardProps) => {
 					{group?.meJoined?.[0]?.meJoined ? t("Leave") : t("Join")}
 				</Button>
 
-				<Link href={`/group/detail?groupId=${group._id}`}>
+				<Link href={`/groups/${group._id}`}>
 					<Button
 						variant="outline"
 						size="sm"

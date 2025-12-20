@@ -50,7 +50,7 @@ const SearchEvents = () => {
 
 	return (
 		<div className="bg-secondary/70 py-6 sm:py-8 md:py-12 lg:py-16 xl:py-20 shadow-lg w-full">
-			<div className="px-4 sm:px-6 md:px-8 lg:px-10 max-w-7xl mx-auto">
+			<div className="px-6 sm:px-12 lg:px-20 max-w-7xl mx-auto">
 				<h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl mb-4 sm:mb-6 md:mb-8 text-center font-bold">
 					{t("Find Events")}
 				</h2>

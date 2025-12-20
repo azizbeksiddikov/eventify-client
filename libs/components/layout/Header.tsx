@@ -87,7 +87,7 @@ const Header = () => {
 
 	return (
 		<header className="sticky top-0 z-50 bg-background/80 backdrop-blur-sm border-b w-full">
-			<div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-10 flex items-center justify-between h-14 sm:h-16 md:h-20">
+			<div className="max-w-7xl mx-auto px-6 sm:px-12 lg:px-20 flex items-center justify-between h-14 sm:h-16 md:h-20">
 				{/* Logo */}
 				<Link href="/" className="flex items-center gap-2 sm:gap-3 hover:scale-95 transition-transform duration-300">
 					<Logo className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8" />

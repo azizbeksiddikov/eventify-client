@@ -138,7 +138,7 @@ const ChosenEvent = () => {
 		<div>
 			<ChosenEventHeader />
 
-			<div className="content-container pb-10">
+			<div className="max-w-7xl mx-auto px-6 sm:px-12 lg:px-20 pb-10">
 				{eventLoading && !event ? (
 					<div className="rounded-xl border bg-card/60 shadow-sm p-6 animate-pulse">
 						<div className="h-6 w-48 bg-muted/60 rounded mb-4" />
