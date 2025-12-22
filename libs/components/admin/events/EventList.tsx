@@ -1,12 +1,12 @@
-import React from 'react';
-import { useTranslation } from 'next-i18next';
+import React from "react";
+import { useTranslation } from "next-i18next";
 
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/libs/components/ui/table';
-import EventRow from '@/libs/components/admin/events/EventRow';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/libs/components/ui/table";
+import EventRow from "@/libs/components/admin/events/EventRow";
 
-import { Events, Event } from '@/libs/types/event/event';
-import { EventUpdateInput } from '@/libs/types/event/event.update';
-import { Message } from '@/libs/enums/common.enum';
+import { Events, Event } from "@/libs/types/event/event";
+import { EventUpdateInput } from "@/libs/types/event/event.update";
+import { Message } from "@/libs/enums/common.enum";
 
 interface EventPanelListType {
 	events: Events;
@@ -15,28 +15,28 @@ interface EventPanelListType {
 }
 
 export const EventPanelList = ({ events, updateEventHandler, removeEventHandler }: EventPanelListType) => {
-	const { t } = useTranslation();
+	const { t } = useTranslation("admin");
 
 	return (
 		<div className="rounded-md border border-input bg-card">
 			<Table>
 				<TableHeader>
 					<TableRow className="bg-card hover:bg-accent/50">
-						<TableHead className="w-[10%] text-muted-foreground">{t('ID')}</TableHead>
-						<TableHead className="w-[20%] text-muted-foreground">{t('EVENT')}</TableHead>
-						<TableHead className="w-[15%] text-muted-foreground">{t('DATE')}</TableHead>
-						<TableHead className="w-[15%] text-muted-foreground">{t('LOCATION')}</TableHead>
-						<TableHead className="w-[10%] text-muted-foreground">{t('ATTENDEES')}</TableHead>
-						<TableHead className="w-[10%] text-muted-foreground">{t('PRICE')}</TableHead>
-						<TableHead className="w-[10%] text-muted-foreground">{t('STATUS')}</TableHead>
-						<TableHead className="w-[10%] text-muted-foreground">{t('ACTIONS')}</TableHead>
+						<TableHead className="w-[10%] text-muted-foreground">{t("id")}</TableHead>
+						<TableHead className="w-[20%] text-muted-foreground">{t("event")}</TableHead>
+						<TableHead className="w-[15%] text-muted-foreground">{t("date")}</TableHead>
+						<TableHead className="w-[15%] text-muted-foreground">{t("location")}</TableHead>
+						<TableHead className="w-[10%] text-muted-foreground">{t("attendees")}</TableHead>
+						<TableHead className="w-[10%] text-muted-foreground">{t("price")}</TableHead>
+						<TableHead className="w-[10%] text-muted-foreground">{t("status")}</TableHead>
+						<TableHead className="w-[10%] text-muted-foreground">{t("actions")}</TableHead>
 					</TableRow>
 				</TableHeader>
 				<TableBody>
 					{events.metaCounter[0]?.total === 0 ? (
 						<TableRow>
 							<TableCell colSpan={8} className="text-center">
-								<span className="text-muted-foreground">{t(Message.NO_DATA_FOUND)}</span>
+								<span className="text-muted-foreground">{t("no_data_found")}</span>
 							</TableCell>
 						</TableRow>
 					) : (

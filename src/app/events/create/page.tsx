@@ -23,13 +23,13 @@ import { CREATE_EVENT, CREATE_RECURRING_EVENT } from "@/apollo/user/mutation";
 import { EventInput, EventRecurrenceInput } from "@/libs/types/event/event.input";
 import { Group } from "@/libs/types/group/group";
 import { smallError, smallSuccess } from "@/libs/alert";
-import { Message, Currency } from "@/libs/enums/common.enum";
+import { Currency } from "@/libs/enums/common.enum";
 import { imageTypes, NEXT_APP_API_URL } from "@/libs/config";
 import { uploadImage } from "@/libs/upload";
 
 const EventCreatePage = () => {
 	const router = useRouter();
-	const { t } = useTranslation("common");
+	const { t } = useTranslation(["events", "groups", "errors"]);
 	const user = useReactiveVar(userVar);
 
 	const [groups, setGroups] = useState<Group[]>([]);
@@ -117,7 +117,7 @@ const EventCreatePage = () => {
 			return imageUrl;
 		} catch (err) {
 			console.error("Error uploading image:", err);
-			smallError(t("Failed to upload image"));
+			smallError(t("failed_to_upload_image"));
 			return null;
 		}
 	};
@@ -138,7 +138,7 @@ const EventCreatePage = () => {
 			}
 		} catch (err) {
 			console.error("Error handling cropped image:", err);
-			smallError(t("Failed to process image"));
+			smallError(t("errors:failed_to_process_image"));
 		}
 	};
 
@@ -147,31 +147,31 @@ const EventCreatePage = () => {
 		setUiState((prev) => ({ ...prev, isSubmitting: true }));
 
 		try {
-			if (!user._id) throw new Error(Message.NOT_AUTHENTICATED);
-			if (!formData) throw new Error(Message.INVALID_FORM_DATA);
+			if (!user._id) throw new Error(t("errors:not_authenticated"));
+			if (!formData) throw new Error(t("errors:invalid_form_data"));
 
 			// Validate in order of form appearance
-			if (!formData?.groupId) throw new Error(t("Please select a group"));
-			if (!formData?.eventName || formData.eventName.trim() === "") throw new Error(t("Please enter event name"));
+			if (!formData?.groupId) throw new Error(t("please_select_group"));
+			if (!formData?.eventName || formData.eventName.trim() === "") throw new Error(t("please_enter_event_name"));
 			if (!formData?.eventDesc || formData.eventDesc.trim() === "")
-				throw new Error(t("Please enter event description"));
-			if (formSelection.selectedCategories.length === 0) throw new Error(t("Please select at least one category"));
+				throw new Error(t("please_enter_event_description"));
+			if (formSelection.selectedCategories.length === 0) throw new Error(t("please_select_at_least_one_category"));
 			if (!formSelection.eventTags || formSelection.eventTags.trim() === "")
-				throw new Error(t("Please enter event tags"));
-			if (!formData.eventStartAt) throw new Error(t("Please select event start date and time"));
-			if (!formData.eventEndAt) throw new Error(t("Please select event end date and time"));
+				throw new Error(t("please_enter_event_tags"));
+			if (!formData.eventStartAt) throw new Error(t("please_select_event_start_date_time"));
+			if (!formData.eventEndAt) throw new Error(t("please_select_event_end_date_time"));
 			if (formData.eventEndAt <= formData.eventStartAt) {
-				throw new Error(t("End date and time must be after start date and time"));
+				throw new Error(t("end_date_must_be_after_start_date"));
 			}
 			if (formSelection.locationType === EventLocationType.OFFLINE) {
 				if (!formData.eventAddress || formData.eventAddress.trim() === "")
-					throw new Error(t("Please enter event address"));
+					throw new Error(t("please_enter_event_address"));
 			}
 			if (formData.eventCapacity !== undefined && formData.eventCapacity < 1) {
-				throw new Error(t("Event capacity must be at least 1"));
+				throw new Error(t("event_capacity_must_be_at_least_1"));
 			}
-			if (formData.eventPrice !== undefined && formData.eventPrice < 0) throw new Error(t("Price cannot be negative"));
-			if (!formData.eventImages.length) throw new Error(t("Please upload an event image"));
+			if (formData.eventPrice !== undefined && formData.eventPrice < 0) throw new Error(t("price_cannot_be_negative"));
+			if (!formData.eventImages.length) throw new Error(t("please_upload_event_image"));
 
 			// Parse event tags from comma-separated string
 			const tagsArray = formSelection.eventTags
@@ -204,18 +204,18 @@ const EventCreatePage = () => {
 
 			if (formSelection.eventType === EventType.RECURRING) {
 				// Validate recurring event fields
-				if (!recurrenceState.recurrenceType) throw new Error(t("Please select recurrence type"));
+				if (!recurrenceState.recurrenceType) throw new Error(t("please_select_recurrence_type"));
 				if (recurrenceState.recurrenceType === RecurrenceType.INTERVAL && !recurrenceState.recurrenceInterval) {
-					throw new Error(t("Please enter recurrence interval"));
+					throw new Error(t("please_enter_recurrence_interval"));
 				}
 				if (
 					recurrenceState.recurrenceType === RecurrenceType.DAYS_OF_WEEK &&
 					recurrenceState.recurrenceDaysOfWeek.length === 0
 				) {
-					throw new Error(t("Please select at least one day of week"));
+					throw new Error(t("please_select_at_least_one_day_of_week"));
 				}
 				if (recurrenceState.recurrenceType === RecurrenceType.DAY_OF_MONTH && !recurrenceState.recurrenceDayOfMonth) {
-					throw new Error(t("Please enter day of month"));
+					throw new Error(t("please_enter_day_of_month"));
 				}
 
 				const recurringEventInput: EventRecurrenceInput = {
@@ -237,7 +237,7 @@ const EventCreatePage = () => {
 					variables: { input: recurringEventInput },
 				});
 
-				await smallSuccess(t(Message.EVENT_CREATED_SUCCESSFULLY));
+				await smallSuccess(t("event_created_successfully"));
 				router.push(`/events`);
 			} else {
 				const eventInput: EventInput = {
@@ -249,11 +249,11 @@ const EventCreatePage = () => {
 					variables: { input: eventInput },
 				});
 
-				await smallSuccess(t(Message.EVENT_CREATED_SUCCESSFULLY));
+				await smallSuccess(t("event_created_successfully"));
 				router.push(`/events/${createEventData?.createEvent?._id}`);
 			}
 		} catch (error: unknown) {
-			const errorMessage = error instanceof Error ? error.message : t("Failed to create event");
+			const errorMessage = error instanceof Error ? error.message : t("errors:something_went_wrong");
 			smallError(errorMessage);
 			console.log(errorMessage);
 		} finally {
@@ -275,13 +275,13 @@ const EventCreatePage = () => {
 			const numberValue = Number(cleanedValue);
 
 			if (isNaN(numberValue)) {
-				smallError(t("Invalid number"));
+				smallError(t("invalid_number"));
 				return;
 			}
 
 			// Prevent negative values for price
 			if (name === "eventPrice" && numberValue < 0) {
-				smallError(t("Price cannot be negative"));
+				smallError(t("price_cannot_be_negative"));
 				return;
 			}
 
@@ -319,14 +319,14 @@ const EventCreatePage = () => {
 							className="flex items-center gap-2 text-primary hover:text-primary-foreground hover:bg-primary border-primary hover:border-primary/80 transition-colors duration-200"
 						>
 							<ArrowLeft className="h-4 w-4" />
-							{t("Back to Events")}
+							{t("back_to_events")}
 						</Button>
 					</div>
 
 					<Card className="p-6 bg-card text-card-foreground">
 						<div className="text-center py-8">
 							<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-							<p className="text-muted-foreground">{t("Loading...")}</p>
+							<p className="text-muted-foreground">{t("loading")}</p>
 						</div>
 					</Card>
 				</div>
@@ -346,21 +346,21 @@ const EventCreatePage = () => {
 							className="flex items-center gap-2 text-primary hover:text-primary-foreground hover:bg-primary border-primary hover:border-primary/80 transition-colors duration-200"
 						>
 							<ArrowLeft className="h-4 w-4" />
-							{t("Back to Events")}
+							{t("back_to_events")}
 						</Button>
 					</div>
 
 					<Card className="p-6 bg-card text-card-foreground">
 						<div className="text-center py-8">
-							<h2 className="text-2xl font-semibold text-foreground mb-4">{t("No Groups Found")}</h2>
+							<h2 className="text-2xl font-semibold text-foreground mb-4">{t("no_groups_found")}</h2>
 							<p className="text-muted-foreground mb-6">
-								{t("You need to create a group first before creating events.")}
+								{t("you_need_to_create_a_group_first_before_creating_events")}
 							</p>
 							<Button
 								onClick={() => router.push("/groups/create")}
 								className="bg-primary text-primary-foreground hover:bg-primary/90"
 							>
-								{t("Create Group")}
+								{t("groups:create_group")}
 							</Button>
 						</div>
 					</Card>
@@ -379,17 +379,17 @@ const EventCreatePage = () => {
 						className="flex items-center gap-2 text-primary hover:text-primary-foreground hover:bg-primary border-primary hover:border-primary/80 transition-colors duration-200"
 					>
 						<ArrowLeft className="h-4 w-4" />
-						{t("Back to Events")}
+						{t("back_to_events")}
 					</Button>
 				</div>
 
 				<Card className="p-6 bg-card text-card-foreground">
-					<h1 className="text-3xl font-semibold text-foreground mb-6">{t("Create New Event")}</h1>
+					<h1 className="text-3xl font-semibold text-foreground mb-6">{t("create_new_event")}</h1>
 
 					<form onSubmit={submitHandler} className="space-y-6">
 						{/* Event Type Selection */}
 						<div className="space-y-2">
-							<label className="text-sm font-medium text-foreground">{t("Event Type")} (opt)</label>
+							<label className="text-sm font-medium text-foreground">{t("event_type")} (opt)</label>
 							<Select
 								value={formSelection.eventType}
 								onValueChange={(value: EventType) => {
@@ -410,15 +410,15 @@ const EventCreatePage = () => {
 									<SelectValue />
 								</SelectTrigger>
 								<SelectContent className="bg-popover text-popover-foreground">
-									<SelectItem value={EventType.ONCE}>{t("One-time Event")}</SelectItem>
-									<SelectItem value={EventType.RECURRING}>{t("Recurring Event")}</SelectItem>
+									<SelectItem value={EventType.ONCE}>{t("one_time_event")}</SelectItem>
+									<SelectItem value={EventType.RECURRING}>{t("recurring_event")}</SelectItem>
 								</SelectContent>
 							</Select>
 						</div>
 						{/* Group Selection */}
 						<div className="space-y-2">
 							<label htmlFor="groupId" className="text-sm font-medium text-foreground">
-								{t("Select Group")} (opt)
+								{t("select_group")} (opt)
 							</label>
 							<Select
 								value={formData.groupId}
@@ -431,13 +431,13 @@ const EventCreatePage = () => {
 								}}
 							>
 								<SelectTrigger className="w-full bg-input text-input-foreground border-input">
-									<SelectValue placeholder="Select a group">
+									<SelectValue placeholder={t("select_a_group")}>
 										{formData.groupId && (
 											<div className="flex items-center space-x-3">
 												<div className="relative h-8 w-8 rounded-full overflow-hidden">
 													<Image
 														src={`${NEXT_APP_API_URL}/${formSelection.selectedGroup?.groupImage}`}
-														alt="Group preview"
+														alt={t("group_preview")}
 														className="object-cover w-full h-full"
 														fill
 													/>
@@ -479,14 +479,14 @@ const EventCreatePage = () => {
 						{/* Event Name */}
 						<div className="space-y-2">
 							<label htmlFor="eventName" className="text-sm font-medium text-foreground">
-								{t("Event Name")} *
+								{t("event_name")} *
 							</label>
 							<Input
 								id="eventName"
 								name="eventName"
 								value={formData.eventName}
 								onChange={inputHandler}
-								placeholder={t("Enter event name")}
+								placeholder={t("enter_event_name")}
 								className="bg-input text-input-foreground border-input"
 							/>
 						</div>
@@ -494,21 +494,21 @@ const EventCreatePage = () => {
 						{/* Event Description */}
 						<div className="space-y-2">
 							<label htmlFor="eventDesc" className="text-sm font-medium text-foreground">
-								{t("Description")} *
+								{t("description")} *
 							</label>
 							<Textarea
 								id="eventDesc"
 								name="eventDesc"
 								value={formData.eventDesc}
 								onChange={inputHandler}
-								placeholder={t("Describe your event")}
+								placeholder={t("describe_your_event")}
 								className="min-h-[120px] bg-input text-input-foreground border-input"
 							/>
 						</div>
 
 						{/* Categories */}
 						<div className="space-y-2">
-							<label className="text-sm font-medium text-foreground">{t("Categories (Select up to 3)")} *</label>
+							<label className="text-sm font-medium text-foreground">{t("categories_select_up_to_3")} *</label>
 							<div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
 								{Object.values(EventCategory).map((category) => (
 									<Button
@@ -526,7 +526,7 @@ const EventCreatePage = () => {
 												: "bg-transparent text-foreground hover:bg-accent hover:text-accent-foreground"
 										} disabled:opacity-50 disabled:cursor-not-allowed`}
 									>
-										{category.charAt(0) + category.slice(1).toLowerCase().replace("_", " ")}
+										{t(category.toLowerCase())}
 									</Button>
 								))}
 							</div>
@@ -535,14 +535,14 @@ const EventCreatePage = () => {
 						{/* Event Tags */}
 						<div className="space-y-2">
 							<label htmlFor="eventTags" className="text-sm font-medium text-foreground">
-								{t("Tags")} * <span className="text-muted-foreground text-xs">({t("comma-separated")})</span>
+								{t("tags")} * <span className="text-muted-foreground text-xs">({t("comma-separated")})</span>
 							</label>
 							<Input
 								id="eventTags"
 								name="eventTags"
 								value={formSelection.eventTags}
 								onChange={(e) => setFormSelection((prev) => ({ ...prev, eventTags: e.target.value }))}
-								placeholder={t("e.g., networking, workshop, conference")}
+								placeholder={t("e_g_networking_workshop_conference")}
 								className="bg-input text-input-foreground border-input"
 							/>
 						</div>
@@ -560,18 +560,18 @@ const EventCreatePage = () => {
 								htmlFor="isRealEvent"
 								className="text-sm font-medium text-foreground cursor-pointer leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
 							>
-								{t("Real Event")}
+								{t("real_event")}
 							</label>
 						</div>
 
 						{/* Recurring Event Fields */}
 						{formSelection.eventType === EventType.RECURRING && (
 							<div className="space-y-4 p-4 border rounded-lg bg-muted/30">
-								<h3 className="text-lg font-semibold text-foreground">{t("Recurrence Settings")}</h3>
+								<h3 className="text-lg font-semibold text-foreground">{t("recurrence_settings")}</h3>
 
 								{/* Recurrence Type */}
 								<div className="space-y-2">
-									<label className="text-sm font-medium text-foreground">{t("Recurrence Type")} *</label>
+									<label className="text-sm font-medium text-foreground">{t("recurrence_type")} *</label>
 									<Select
 										value={recurrenceState.recurrenceType}
 										onValueChange={(value: RecurrenceType) => {
@@ -585,12 +585,12 @@ const EventCreatePage = () => {
 										}}
 									>
 										<SelectTrigger className="w-full bg-input text-input-foreground border-input">
-											<SelectValue placeholder={t("Select recurrence type")} />
+											<SelectValue placeholder={t("select_recurrence_type")} />
 										</SelectTrigger>
 										<SelectContent className="bg-popover text-popover-foreground">
-											<SelectItem value={RecurrenceType.INTERVAL}>{t("Every N days")}</SelectItem>
-											<SelectItem value={RecurrenceType.DAYS_OF_WEEK}>{t("Weekly on specific days")}</SelectItem>
-											<SelectItem value={RecurrenceType.DAY_OF_MONTH}>{t("Monthly on specific day")}</SelectItem>
+											<SelectItem value={RecurrenceType.INTERVAL}>{t("every_n_days")}</SelectItem>
+											<SelectItem value={RecurrenceType.DAYS_OF_WEEK}>{t("weekly_on_specific_days")}</SelectItem>
+											<SelectItem value={RecurrenceType.DAY_OF_MONTH}>{t("monthly_on_specific_day")}</SelectItem>
 										</SelectContent>
 									</Select>
 								</div>
@@ -599,7 +599,7 @@ const EventCreatePage = () => {
 								{recurrenceState.recurrenceType === RecurrenceType.INTERVAL && (
 									<div className="space-y-2">
 										<label htmlFor="recurrenceInterval" className="text-sm font-medium text-foreground">
-											{t("Repeat every (days)")} *
+											{t("repeat_every_days")} *
 										</label>
 										<Input
 											id="recurrenceInterval"
@@ -616,7 +616,7 @@ const EventCreatePage = () => {
 													recurrenceInterval: e.target.value ? Number(e.target.value) : undefined,
 												}))
 											}
-											placeholder={t("e.g., 7 for weekly")}
+											placeholder={t("e_g_7_for_weekly")}
 											className="bg-input text-input-foreground border-input"
 										/>
 									</div>
@@ -625,16 +625,16 @@ const EventCreatePage = () => {
 								{/* Days of Week */}
 								{recurrenceState.recurrenceType === RecurrenceType.DAYS_OF_WEEK && (
 									<div className="space-y-2">
-										<label className="text-sm font-medium text-foreground">{t("Days of Week")} *</label>
+										<label className="text-sm font-medium text-foreground">{t("days_of_week")} *</label>
 										<div className="grid grid-cols-7 gap-2">
 											{[
-												{ value: 0, label: t("Sun") },
-												{ value: 1, label: t("Mon") },
-												{ value: 2, label: t("Tue") },
-												{ value: 3, label: t("Wed") },
-												{ value: 4, label: t("Thu") },
-												{ value: 5, label: t("Fri") },
-												{ value: 6, label: t("Sat") },
+												{ value: 0, label: t("sun") },
+												{ value: 1, label: t("mon") },
+												{ value: 2, label: t("tue") },
+												{ value: 3, label: t("wed") },
+												{ value: 4, label: t("thu") },
+												{ value: 5, label: t("fri") },
+												{ value: 6, label: t("sat") },
 											].map((day) => (
 												<Button
 													key={day.value}
@@ -670,7 +670,7 @@ const EventCreatePage = () => {
 								{recurrenceState.recurrenceType === RecurrenceType.DAY_OF_MONTH && (
 									<div className="space-y-2">
 										<label htmlFor="recurrenceDayOfMonth" className="text-sm font-medium text-foreground">
-											{t("Day of Month")} *
+											{t("day_of_month")} *
 										</label>
 										<Input
 											id="recurrenceDayOfMonth"
@@ -688,7 +688,7 @@ const EventCreatePage = () => {
 													recurrenceDayOfMonth: e.target.value ? Number(e.target.value) : undefined,
 												}))
 											}
-											placeholder={t("e.g., 15 for 15th of each month")}
+											placeholder={t("e_g_15_for_15th_of_each_month")}
 											className="bg-input text-input-foreground border-input"
 										/>
 									</div>
@@ -697,7 +697,7 @@ const EventCreatePage = () => {
 								{/* Recurrence End Date */}
 								<div className="space-y-2">
 									<label htmlFor="recurrenceEndDate" className="text-sm font-medium text-foreground">
-										{t("Recurrence End Date")} (opt)
+										{t("recurrence_end_date")} (opt)
 									</label>
 									<Input
 										id="recurrenceEndDate"
@@ -726,7 +726,7 @@ const EventCreatePage = () => {
 							<div className="space-y-4">
 								<div className="space-y-2">
 									<label htmlFor="eventStartDate" className="text-sm font-medium text-foreground">
-										{t("Start Date")} *
+										{t("start_date")} *
 									</label>
 									<Input
 										id="eventStartDate"
@@ -754,7 +754,7 @@ const EventCreatePage = () => {
 								</div>
 								<div className="space-y-2">
 									<label htmlFor="eventStartTime" className="text-sm font-medium text-foreground">
-										{t("Start Time")} *
+										{t("start_time")} *
 									</label>
 									<div className="flex gap-2">
 										<Select
@@ -835,7 +835,7 @@ const EventCreatePage = () => {
 							<div className="space-y-4">
 								<div className="space-y-2">
 									<label htmlFor="eventEndDate" className="text-sm font-medium text-foreground">
-										{t("End Date")} *
+										{t("end_date")} *
 									</label>
 									<Input
 										id="eventEndDate"
@@ -863,14 +863,12 @@ const EventCreatePage = () => {
 										}`}
 									/>
 									{formData.eventEndAt <= formData.eventStartAt && (
-										<p className="text-sm text-destructive mt-1">
-											{t("End date and time must be after start date and time")}
-										</p>
+										<p className="text-sm text-destructive mt-1">{t("end_date_must_be_after_start_date")}</p>
 									)}
 								</div>
 								<div className="space-y-2">
 									<label htmlFor="eventEndTime" className="text-sm font-medium text-foreground">
-										{t("End Time")} *
+										{t("end_time")} *
 									</label>
 									<div className="flex gap-2">
 										<Select
@@ -951,7 +949,7 @@ const EventCreatePage = () => {
 
 						{/* Location Type */}
 						<div className="space-y-2">
-							<label className="text-sm font-medium text-foreground">{t("Location Type")} *</label>
+							<label className="text-sm font-medium text-foreground">{t("location_type")} *</label>
 							<Select
 								value={formSelection.locationType}
 								onValueChange={(value: EventLocationType) => {
@@ -962,8 +960,8 @@ const EventCreatePage = () => {
 									<SelectValue />
 								</SelectTrigger>
 								<SelectContent className="bg-popover text-popover-foreground">
-									<SelectItem value={EventLocationType.ONLINE}>{t("Online")}</SelectItem>
-									<SelectItem value={EventLocationType.OFFLINE}>{t("Offline")}</SelectItem>
+									<SelectItem value={EventLocationType.ONLINE}>{t("online")}</SelectItem>
+									<SelectItem value={EventLocationType.OFFLINE}>{t("offline")}</SelectItem>
 								</SelectContent>
 							</Select>
 						</div>
@@ -973,27 +971,27 @@ const EventCreatePage = () => {
 							<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 								<div className="space-y-2">
 									<label htmlFor="eventCity" className="text-sm font-medium text-foreground">
-										{t("City")} (opt)
+										{t("city")} (opt)
 									</label>
 									<Input
 										id="eventCity"
 										name="eventCity"
 										value={formData.eventCity || ""}
 										onChange={inputHandler}
-										placeholder={t("Enter city")}
+										placeholder={t("enter_city")}
 										className="bg-input text-input-foreground border-input"
 									/>
 								</div>
 								<div className="space-y-2">
 									<label htmlFor="eventAddress" className="text-sm font-medium text-foreground">
-										{t("Address")} *
+										{t("address")} *
 									</label>
 									<Input
 										id="eventAddress"
 										name="eventAddress"
 										value={formData.eventAddress || ""}
 										onChange={inputHandler}
-										placeholder={t("Enter address")}
+										placeholder={t("enter_address")}
 										className="bg-input text-input-foreground border-input"
 									/>
 								</div>
@@ -1004,7 +1002,7 @@ const EventCreatePage = () => {
 						<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 							<div className="space-y-2">
 								<label htmlFor="eventCapacity" className="text-sm font-medium text-foreground">
-									{t("Capacity (number)")} (opt)
+									{t("capacity_number")} (opt)
 								</label>
 								<Input
 									id="eventCapacity"
@@ -1012,13 +1010,13 @@ const EventCreatePage = () => {
 									type="number"
 									value={formData.eventCapacity === undefined ? "" : String(formData.eventCapacity)}
 									onChange={inputHandler}
-									placeholder={t("Enter event capacity")}
+									placeholder={t("event_capacity_placeholder")}
 									className="bg-input text-input-foreground border-input"
 								/>
 							</div>
 							<div className="space-y-2">
 								<label htmlFor="eventPrice" className="text-sm font-medium text-foreground">
-									{t("Price")} (opt)
+									{t("price")} (opt)
 								</label>
 								<div className="flex gap-2">
 									<Input
@@ -1029,7 +1027,7 @@ const EventCreatePage = () => {
 										// Convert to string and strip leading zeros when displaying
 										value={formData.eventPrice === undefined ? "" : String(formData.eventPrice)}
 										onChange={inputHandler}
-										placeholder={t("Enter event price")}
+										placeholder={t("enter_event_price")}
 										className="bg-input text-input-foreground border-input"
 									/>
 									<Select
@@ -1039,7 +1037,7 @@ const EventCreatePage = () => {
 										}}
 									>
 										<SelectTrigger className="w-24 bg-input text-input-foreground border-input hover:bg-accent hover:text-accent-foreground transition-colors duration-200">
-											<SelectValue placeholder={t("Currency")} />
+											<SelectValue placeholder={t("currency")} />
 										</SelectTrigger>
 										<SelectContent className="bg-popover text-popover-foreground">
 											{Object.values(Currency).map((currency) => (
@@ -1059,11 +1057,11 @@ const EventCreatePage = () => {
 
 						{/* Image Section */}
 						<div className="space-y-4">
-							<label className="text-sm font-medium text-foreground">{t("Event Image")} *</label>
+							<label className="text-sm font-medium text-foreground">{t("event_image")} *</label>
 							<div className="relative aspect-video w-full max-w-2xl mx-auto rounded-xl overflow-hidden bg-muted/50 rounded-t-xl">
 								{uiState.imagePreview ? (
 									<>
-										<Image src={uiState.imagePreview} alt="Event preview" className="w-full h-full" fill />
+										<Image src={uiState.imagePreview} alt={t("event_preview")} className="w-full h-full" fill />
 
 										<label
 											htmlFor="image"
@@ -1071,7 +1069,7 @@ const EventCreatePage = () => {
 										>
 											<div className="flex items-center gap-2 bg-white/90 text-foreground px-4 py-2 rounded-lg opacity-0 hover:opacity-100 transition-opacity duration-200">
 												<RefreshCw className="h-4 w-4" />
-												<span className="font-medium">{t("Reset Image")}</span>
+												<span className="font-medium">{t("reset_image")}</span>
 											</div>
 										</label>
 									</>
@@ -1081,7 +1079,7 @@ const EventCreatePage = () => {
 										className="absolute inset-0 flex flex-col items-center justify-center bg-muted/50 hover:bg-muted/60 transition-colors duration-200 cursor-pointer"
 									>
 										<ImageIcon className="h-12 w-12 text-muted-foreground mb-2" />
-										<span className="text-muted-foreground font-medium">{t("Click to upload image")}</span>
+										<span className="text-muted-foreground font-medium">{t("click_to_upload_image")}</span>
 									</label>
 								)}
 								<input
@@ -1092,7 +1090,7 @@ const EventCreatePage = () => {
 									onChange={imageChangeHandler}
 									className="hidden"
 								/>
-								<p className="text-sm text-muted-foreground mt-1">{t("Only JPG, JPEG, and PNG files are allowed")}</p>
+								<p className="text-sm text-muted-foreground mt-1">{t("only_jpg_jpeg_png_allowed")}</p>
 							</div>
 						</div>
 
@@ -1114,7 +1112,7 @@ const EventCreatePage = () => {
 								disabled={uiState.isSubmitting}
 								className="bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed px-8"
 							>
-								{uiState.isSubmitting ? t("Creating...") : t("Create Event")}
+								{uiState.isSubmitting ? t("creating") : t("create_event")}
 							</Button>
 						</div>
 					</form>

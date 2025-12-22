@@ -1,7 +1,7 @@
 import { Calendar, Edit, Save, Trash2, X } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
-
+import { useTranslation } from "next-i18next";
 import { Avatar, AvatarImage, AvatarFallback } from "@/libs/components/ui/avatar";
 import { Badge } from "@/libs/components/ui/badge";
 import { Button } from "@/libs/components/ui/button";
@@ -10,6 +10,7 @@ import { TableCell, TableRow } from "@/libs/components/ui/table";
 import { Popover, PopoverContent, PopoverTrigger } from "@/libs/components/ui/popover";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/libs/components/ui/select";
 import { format } from "date-fns";
+import { enUS, ko, ru, uz } from "date-fns/locale";
 import { Calendar as CalendarComponent } from "@/libs/components/ui/calendar";
 
 import { Event } from "@/libs/types/event/event";
@@ -69,8 +70,18 @@ const EventRow = ({
 		eventEndAt: event.eventEndAt,
 	},
 }: EventRowProps) => {
+	const { i18n } = useTranslation(); // Use translation hook
 	const [eventUpdateInput, setEventUpdateInput] = useState<EventUpdateInput>(initialEvent);
 	const [isEditing, setIsEditing] = useState(false);
+
+	const localeMap: Record<string, any> = {
+		en: enUS,
+		ko: ko,
+		ru: ru,
+		uz: uz,
+	};
+
+	const currentLocale = localeMap[i18n.language] || enUS;
 
 	const cancelHandler = () => {
 		setEventUpdateInput(initialEvent);
@@ -133,8 +144,8 @@ const EventRow = ({
 							>
 								<Calendar className="mr-2 h-4 w-4" />
 								{eventUpdateInput.eventStartAt
-									? format(new Date(eventUpdateInput.eventStartAt), "PPP")
-									: format(new Date(event.eventStartAt), "PPP")}
+									? format(new Date(eventUpdateInput.eventStartAt), "PPP", { locale: currentLocale })
+									: format(new Date(event.eventStartAt), "PPP", { locale: currentLocale })}
 							</Button>
 						</PopoverTrigger>
 						<PopoverContent className="w-auto p-0" align="start">
@@ -143,12 +154,13 @@ const EventRow = ({
 								selected={new Date(eventUpdateInput.eventStartAt || event.eventStartAt)}
 								onSelect={(date) => date && inputHandler("eventStartAt", date)}
 								initialFocus
+								locale={currentLocale}
 							/>
 						</PopoverContent>
 					</Popover>
 				) : (
 					<span className="text-foreground">
-						{new Date(event.eventStartAt).toLocaleDateString("en-US", {
+						{new Date(event.eventStartAt).toLocaleDateString(i18n.language, {
 							year: "numeric",
 							month: "long",
 							day: "numeric",
@@ -167,8 +179,8 @@ const EventRow = ({
 							>
 								<Calendar className="mr-2 h-4 w-4" />
 								{eventUpdateInput.eventEndAt
-									? format(new Date(eventUpdateInput.eventEndAt), "PPP")
-									: format(new Date(event.eventEndAt), "PPP")}
+									? format(new Date(eventUpdateInput.eventEndAt), "PPP", { locale: currentLocale })
+									: format(new Date(event.eventEndAt), "PPP", { locale: currentLocale })}
 							</Button>
 						</PopoverTrigger>
 						<PopoverContent className="w-auto p-0" align="start">
@@ -177,6 +189,7 @@ const EventRow = ({
 								selected={new Date(eventUpdateInput.eventEndAt || event.eventEndAt)}
 								onSelect={(date) => date && inputHandler("eventEndAt", date)}
 								initialFocus
+								locale={currentLocale}
 							/>
 						</PopoverContent>
 					</Popover>

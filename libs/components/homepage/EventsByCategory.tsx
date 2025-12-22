@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "next-i18next";
-import { useMutation, useQuery, useReactiveVar, useApolloClient } from "@apollo/client/react";
+import { useMutation, useQuery, useReactiveVar } from "@apollo/client/react";
 import { userVar } from "@/apollo/store";
 import { ArrowRight } from "lucide-react";
 
@@ -26,9 +26,8 @@ const EventsByCategory = ({
 	},
 }: EventsByCategoryProps) => {
 	const router = useRouter();
-	const { t } = useTranslation("common");
+	const { t } = useTranslation(["home", "events"]);
 	const user = useReactiveVar(userVar);
-	const client = useApolloClient();
 
 	/** APOLLO */
 	const [likeTargetEvent] = useMutation(LIKE_TARGET_EVENT);
@@ -49,14 +48,14 @@ const EventsByCategory = ({
 		<section className="bg-secondary/50 py-8 sm:py-12 md:py-16 lg:py-20 w-full">
 			<div className="max-w-7xl mx-auto px-6 sm:px-12 lg:px-20">
 				<div className="flex flex-row items-center justify-start gap-3 mb-6 sm:mb-8">
-					<h2 className="flex-1 min-w-0 text-foreground">{t("Events by Category")}</h2>
+					<h2 className="flex-1 min-w-0 text-foreground">{t("events_by_category")}</h2>
 					<Button
 						type="submit"
 						onClick={() => router.push("/events")}
 						className="shrink-0 h-9 sm:h-10 md:h-12 px-3 sm:px-4 md:px-6"
 					>
 						<div className="flex items-center gap-1">
-							{t("View All Events")}
+							{t("view_all_events")}
 							<ArrowRight className="w-3 h-3 sm:w-4 sm:h-4" />
 						</div>
 					</Button>
@@ -94,9 +93,9 @@ const EventsByCategory = ({
 						<div className="bg-muted/50 rounded-full p-6 sm:p-8 mb-4 sm:mb-6">
 							<ArrowRight className="w-12 h-12 sm:w-16 sm:h-16 text-muted-foreground/50" />
 						</div>
-						<h3 className="text-foreground mb-2">{t("No Events Available")}</h3>
+						<h3 className="text-foreground mb-2">{t("no_events_available")}</h3>
 						<p className="text-muted-foreground max-w-md">
-							{t("There are no events in these categories yet. Check back later or explore other categories.")}
+							{t("there_are_no_events_in_these_categories_yet_check_back_later_or_explore_other_categories")}
 						</p>
 					</div>
 				) : (
@@ -107,12 +106,12 @@ const EventsByCategory = ({
 								className="bg-card/60 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 flex flex-col overflow-hidden border border-border/50"
 							>
 								<div className="p-3 sm:p-4 border-b">
-									<h3 className="text-foreground">{categoryData.category}</h3>
+									<h3 className="text-foreground">{t(`events:${categoryData.category.toLowerCase()}`)}</h3>
 								</div>
 								<div className="p-3 sm:p-4 flex-1">
 									{categoryData.events.length === 0 ? (
 										<div className="flex flex-col items-center justify-center py-6 text-center">
-											<p className="text-muted-foreground">{t("No events in this category")}</p>
+											<p className="text-muted-foreground">{t("no_events_in_this_category")}</p>
 										</div>
 									) : (
 										<div className="space-y-2 sm:space-y-3">

@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
+import { enUS, ko, ru, uz } from "date-fns/locale";
 import { CalendarIcon, SearchIcon } from "lucide-react";
 
 import { Input } from "@/libs/components/ui/input";
@@ -14,7 +15,16 @@ import { readDate } from "@/libs/utils";
 
 const SearchEvents = () => {
 	const router = useRouter();
-	const { t } = useTranslation("common");
+	const { t, i18n } = useTranslation("home");
+
+	const localeMap: Record<string, any> = {
+		en: enUS,
+		ko: ko,
+		ru: ru,
+		uz: uz,
+	};
+
+	const currentLocale = localeMap[i18n.language] || enUS;
 
 	const [text, setText] = useState("");
 	const [startDate, setStartDate] = useState<Date | undefined>();
@@ -52,7 +62,7 @@ const SearchEvents = () => {
 		<div className="bg-secondary/70 py-6 sm:py-8 md:py-12 lg:py-16 xl:py-20 shadow-lg w-full">
 			<div className="px-6 sm:px-12 lg:px-20 max-w-7xl mx-auto">
 				<h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl mb-4 sm:mb-6 md:mb-8 text-center font-bold">
-					{t("Find Events")}
+					{t("find_events")}
 				</h2>
 				<Card className="p-3 sm:p-4 md:p-6 lg:p-8 w-full max-w-5xl mx-auto border-2 border-primary/20 shadow-md">
 					<form
@@ -62,7 +72,7 @@ const SearchEvents = () => {
 						<div className="flex-1 relative w-full">
 							<Input
 								type="text"
-								placeholder={t("Search Events")}
+								placeholder={t("search_events")}
 								className="w-full h-10 sm:h-11 md:h-12 lg:h-14 text-sm sm:text-base md:text-lg pl-9 sm:pl-10 rounded-md focus:ring-2 focus:ring-primary/50 transition-all"
 								value={text}
 								onChange={(e) => setText(e.target.value)}
@@ -79,7 +89,7 @@ const SearchEvents = () => {
 									>
 										<CalendarIcon className="mr-1.5 sm:mr-2 h-3 w-3 sm:h-3.5 sm:w-3.5 md:h-4 md:w-4 shrink-0" />
 										<span className="truncate">
-											{startDate ? format(startDate, "PPP") : <span>{t("Start date")}</span>}
+											{startDate ? format(startDate, "PPP", { locale: currentLocale }) : <span>{t("start_date")}</span>}
 										</span>
 									</Button>
 								</PopoverTrigger>
@@ -89,6 +99,7 @@ const SearchEvents = () => {
 										selected={startDate}
 										onSelect={handleStartDateChange}
 										initialFocus
+										locale={currentLocale}
 										disabled={(date) => (endDate ? date > endDate : false)}
 									/>
 								</PopoverContent>
@@ -100,7 +111,9 @@ const SearchEvents = () => {
 										className="h-10 sm:h-11 md:h-12 lg:h-14 justify-start text-left font-normal border border-input hover:bg-accent/50 transition-colors text-xs sm:text-sm md:text-base w-full sm:flex-1"
 									>
 										<CalendarIcon className="mr-1.5 sm:mr-2 h-3 w-3 sm:h-3.5 sm:w-3.5 md:h-4 md:w-4 shrink-0" />
-										<span className="truncate">{endDate ? format(endDate, "PPP") : <span>{t("End date")}</span>}</span>
+										<span className="truncate">
+											{endDate ? format(endDate, "PPP", { locale: currentLocale }) : <span>{t("end_date")}</span>}
+										</span>
 									</Button>
 								</PopoverTrigger>
 								<PopoverContent className="w-auto p-0" align="start">
@@ -109,6 +122,7 @@ const SearchEvents = () => {
 										selected={endDate}
 										onSelect={handleEndDateChange}
 										initialFocus
+										locale={currentLocale}
 										disabled={(date) => (startDate ? date < startDate : false)}
 									/>
 								</PopoverContent>
@@ -118,7 +132,7 @@ const SearchEvents = () => {
 							type="submit"
 							className="h-10 sm:h-11 md:h-12 lg:h-14 px-4 sm:px-5 md:px-6 lg:px-8 bg-primary text-primary-foreground hover:bg-primary/90 transition-colors font-medium text-sm sm:text-base w-full md:w-auto"
 						>
-							{t("Search")}
+							{t("search")}
 						</Button>
 					</form>
 				</Card>

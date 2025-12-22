@@ -27,7 +27,7 @@ const EventsModule = ({
 	updateEventHandler,
 	removeEventHandler,
 }: EventsInquiryProps) => {
-	const { t } = useTranslation();
+	const { t } = useTranslation("admin");
 	const eventsTotal = events.metaCounter[0]?.total ?? 0;
 
 	/** HANDLERS **/
@@ -38,7 +38,7 @@ const EventsModule = ({
 
 	return (
 		<div className="p-6 bg-background">
-			<h2 className="text-2xl font-bold mb-6 text-foreground">{t("Event List")}</h2>
+			<h2 className="text-2xl font-bold mb-6 text-foreground">{t("event_list")}</h2>
 			<div className="bg-card rounded-lg shadow border  ">
 				<EventSearch
 					initialInquiry={initialInquiry}

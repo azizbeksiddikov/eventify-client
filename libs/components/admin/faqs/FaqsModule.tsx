@@ -34,7 +34,7 @@ const FaqsModule = ({
 		faqAnswer: "",
 	},
 }: FaqsInquiryProps) => {
-	const { t } = useTranslation();
+	const { t } = useTranslation("admin");
 	const [activeTab, setActiveTab] = useState<FaqGroup | "">("");
 	const [isCreating, setIsCreating] = useState(false);
 	const [newFaq, setNewFaq] = useState<FaqInput>(initialNewFaq);
@@ -74,7 +74,7 @@ const FaqsModule = ({
 
 	return (
 		<div className="p-6 bg-background">
-			<h2 className="text-2xl font-bold mb-6 text-foreground">{t("FAQ Management")}</h2>
+			<h2 className="text-2xl font-bold mb-6 text-foreground">{t("faq_management")}</h2>
 			<div className="bg-card rounded-lg shadow border  ">
 				<Separator className="bg-border" />
 
@@ -92,18 +92,18 @@ const FaqsModule = ({
 								<div className="space-y-4">
 									<div className="flex justify-between items-center">
 										<h3 className="text-lg font-semibold">
-											{group.faqGroup} {t("FAQs")}
+											{group.faqGroup} {t("faqs")}
 										</h3>
 										<Button onClick={toggleCreateForm} variant={isCreating ? "outline" : "default"}>
 											{isCreating ? (
 												<>
 													<X className="w-4 h-4 mr-2" />
-													{t("Close")}
+													{t("close")}
 												</>
 											) : (
 												<>
 													<Plus className="w-4 h-4 mr-2" />
-													{t("Add FAQ")}
+													{t("add_faq")}
 												</>
 											)}
 										</Button>
@@ -128,9 +128,9 @@ const FaqsModule = ({
 												/>
 												<div className="flex justify-end space-x-2 pt-4">
 													<Button variant="outline" onClick={cancelHandler}>
-														{t("Cancel")}
+														{t("cancel")}
 													</Button>
-													<Button onClick={createHandler}>{t("Create FAQ")}</Button>
+													<Button onClick={createHandler}>{t("create_faq")}</Button>
 												</div>
 											</CardContent>
 										</Card>

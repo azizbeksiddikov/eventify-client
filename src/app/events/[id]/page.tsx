@@ -26,7 +26,7 @@ import { Tickets } from "@/libs/types/ticket/ticket";
 const ChosenEvent = () => {
 	const params = useParams();
 	const user = useReactiveVar(userVar);
-	const { t } = useTranslation("common");
+	const { t } = useTranslation(["events", "errors"]);
 
 	const eventId = params?.id as string | undefined;
 	const [event, setEvent] = useState<Event | null>(null);
@@ -114,9 +114,9 @@ const ChosenEvent = () => {
 
 	const purchaseTicketHandler = async () => {
 		try {
-			if (!user._id) throw new Error(Message.NOT_AUTHENTICATED);
-			if (!eventId) throw new Error(Message.EVENT_NOT_FOUND);
-			if (isExternalEvent) throw new Error(Message.BAD_REQUEST);
+			if (!user._id) throw new Error(t("errors:not_authenticated"));
+			if (!eventId) throw new Error(t("event_not_found"));
+			if (isExternalEvent) throw new Error(t("errors:invalid_request"));
 
 			await createTicket({ variables: { input: ticketInput } });
 			if (eventId) {
@@ -124,7 +124,7 @@ const ChosenEvent = () => {
 			}
 			refetchTickets({ input: ticketInquiry });
 
-			await smallSuccess(t("Ticket purchased successfully"));
+			await smallSuccess(t("ticket_purchased_successfully"));
 		} catch (error: unknown) {
 			const errorMessage = error instanceof Error ? error.message : "Unknown error";
 			console.log("ERROR, purchaseTicketHandler:", errorMessage);
@@ -149,10 +149,10 @@ const ChosenEvent = () => {
 
 				{!eventLoading && !event ? (
 					<NotFound
-						title={t("Event Not Found")}
-						message={t("The event you are looking for does not exist or has been removed.")}
+						title={t("event_not_found")}
+						message={t("event_not_found_message")}
 						backPath="/events"
-						backLabel={t("Back to Events")}
+						backLabel={t("back_to_events")}
 					/>
 				) : (
 					<div className="grid grid-cols-1 gap-6 lg:grid-cols-4">

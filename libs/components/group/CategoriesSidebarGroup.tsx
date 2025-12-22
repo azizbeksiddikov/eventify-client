@@ -17,7 +17,7 @@ interface CategoriesSidebarProps {
 }
 
 const CategoriesSidebarGroup = ({ groupsSearchFilters, updateURL, initialSearch }: CategoriesSidebarProps) => {
-	const { t } = useTranslation("common");
+	const { t } = useTranslation("groups");
 
 	const hasSelectedCategories = useMemo(
 		() => groupsSearchFilters?.search?.groupCategories && groupsSearchFilters.search.groupCategories.length > 0,
@@ -45,11 +45,8 @@ const CategoriesSidebarGroup = ({ groupsSearchFilters, updateURL, initialSearch 
 		});
 	};
 
-	const formatCategory = (category: string) => {
-		return t(category)
-			.toLowerCase()
-			.replace(/_/g, " ")
-			.replace(/\b\w/g, (char) => char.toUpperCase());
+	const formatCategory = (category: GroupCategory) => {
+		return t(category.toLowerCase());
 	};
 
 	const renderCategoryItems = () => (
@@ -85,7 +82,7 @@ const CategoriesSidebarGroup = ({ groupsSearchFilters, updateURL, initialSearch 
 
 		return (
 			<div>
-				<div className="text-xs font-semibold text-muted-foreground mb-2">{t("Selected")}</div>
+				<div className="text-xs font-semibold text-muted-foreground mb-2">{t("selected")}</div>
 				<div className="flex flex-wrap gap-2">
 					{selected.map((category) => (
 						<Button
@@ -112,7 +109,7 @@ const CategoriesSidebarGroup = ({ groupsSearchFilters, updateURL, initialSearch 
 		>
 			<div className="flex items-center gap-1">
 				<X className="w-4 h-4" />
-				{t("Clear")}
+				{t("clear")}
 			</div>
 		</Button>
 	);
@@ -126,7 +123,7 @@ const CategoriesSidebarGroup = ({ groupsSearchFilters, updateURL, initialSearch 
 						<Button variant="outline" className="w-full justify-between bg-background/70">
 							<div className="flex items-center">
 								<Filter className="mr-2 h-4 w-4" />
-								<span>{t("Categories")}</span>
+								<span>{t("categories")}</span>
 							</div>
 							<span className="text-xs text-muted-foreground">
 								{groupsSearchFilters.search?.groupCategories?.length
@@ -138,7 +135,7 @@ const CategoriesSidebarGroup = ({ groupsSearchFilters, updateURL, initialSearch 
 					<PopoverContent className="w-[90vw] max-w-sm p-0 bg-primary/5 backdrop-blur-sm border border-primary/20 shadow-sm rounded-md">
 						<div className="p-4">
 							<div className="flex items-center justify-between mb-4">
-								<h3 className="text-base font-semibold text-primary">{t("Categories")}</h3>
+								<h3 className="text-base font-semibold text-primary">{t("categories")}</h3>
 								{renderClearButton(true)}
 							</div>
 
@@ -157,7 +154,7 @@ const CategoriesSidebarGroup = ({ groupsSearchFilters, updateURL, initialSearch 
 			<div className="hidden lg:block lg:w-72 shrink-0">
 				<div className="bg-primary/5 backdrop-blur-sm rounded-2xl shadow-sm border border-primary/20 p-6 pt-0">
 					<div className="flex items-center justify-between mb-4">
-						<h3 className="text-lg font-semibold text-primary">{t("Categories")}</h3>
+						<h3 className="text-lg font-semibold text-primary">{t("categories")}</h3>
 						{renderClearButton()}
 					</div>
 					{renderCategoryItems()}

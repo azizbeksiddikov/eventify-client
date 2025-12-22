@@ -32,7 +32,7 @@ const GroupRow = ({
 		groupCategories: group.groupCategories,
 	},
 }: GroupRowProps) => {
-	const { t } = useTranslation();
+	const { t } = useTranslation("admin");
 	const [groupUpdateInput, setGroupUpdateInput] = useState<GroupUpdateInput>(initialGroup);
 	const [isEditing, setIsEditing] = useState(false);
 
@@ -104,7 +104,7 @@ const GroupRow = ({
 							? group.groupDesc.length > 35
 								? `${group.groupDesc.slice(0, 35)}...`
 								: group.groupDesc
-							: t("N/A")}
+							: t("n_a")}
 					</span>
 				)}
 			</TableCell>

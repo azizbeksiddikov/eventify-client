@@ -27,7 +27,7 @@ import { getImageUrl } from "@/libs/utils";
 const GroupUpdatePage = () => {
 	const router = useRouter();
 	const params = useParams();
-	const { t } = useTranslation("common");
+	const { t } = useTranslation(["groups", "errors"]);
 	const user = useReactiveVar(userVar);
 	const groupId = params?.id as string;
 
@@ -63,7 +63,7 @@ const GroupUpdatePage = () => {
 			);
 
 			if (!isOwner && !isModerator) {
-				smallError(t(Message.NOT_AUTHORIZED));
+				smallError(t("errors:not_authorized"));
 				router.push(`/groups/${group._id}`);
 				return;
 			}
@@ -96,7 +96,7 @@ const GroupUpdatePage = () => {
 			return imageUrl;
 		} catch (err) {
 			console.error("Error uploading image:", err);
-			smallError(t(Message.UPLOAD_FAILED));
+			smallError(t("errors:failed_to_upload"));
 			return null;
 		}
 	};
@@ -117,7 +117,7 @@ const GroupUpdatePage = () => {
 			}
 		} catch (err) {
 			console.error("Error handling cropped image:", err);
-			smallError(t(Message.IMAGE_PROCESSING_FAILED));
+			smallError(t("errors:failed_to_process_image"));
 		}
 	};
 
@@ -128,11 +128,11 @@ const GroupUpdatePage = () => {
 		setUiState((prev) => ({ ...prev, isSubmitting: true }));
 
 		try {
-			if (!user._id) throw new Error(Message.NOT_AUTHENTICATED);
-			if (!formData.groupName?.trim()) throw new Error(t("Please enter group name"));
-			if (!formData.groupDesc?.trim()) throw new Error(t("Please enter group description"));
-			if (selectedCategories.length === 0) throw new Error(t("Please select at least one category"));
-			if (!formData.groupImage) throw new Error(t("Please upload a group image"));
+			if (!user._id) throw new Error(t("errors:not_authenticated"));
+			if (!formData.groupName?.trim()) throw new Error(t("please_enter_group_name"));
+			if (!formData.groupDesc?.trim()) throw new Error(t("please_enter_group_description"));
+			if (selectedCategories.length === 0) throw new Error(t("please_select_at_least_one_category"));
+			if (!formData.groupImage) throw new Error(t("please_upload_group_image"));
 
 			const updatedInput: GroupUpdateInput = {
 				...formData,
@@ -143,10 +143,10 @@ const GroupUpdatePage = () => {
 				variables: { input: updatedInput },
 			});
 
-			await smallSuccess(t(Message.GROUP_UPDATED_SUCCESSFULLY));
+			await smallSuccess(t("group_updated_successfully"));
 			router.push(`/groups/${formData._id}`);
 		} catch (error: unknown) {
-			const errorMessage = error instanceof Error ? error.message : t(Message.SOMETHING_WENT_WRONG);
+			const errorMessage = error instanceof Error ? error.message : t("errors:something_went_wrong");
 			smallError(errorMessage);
 		} finally {
 			setUiState((prev) => ({ ...prev, isSubmitting: false }));
@@ -184,25 +184,25 @@ const GroupUpdatePage = () => {
 						className="flex items-center gap-2 text-primary hover:text-primary-foreground hover:bg-primary border-primary transition-colors duration-200"
 					>
 						<ArrowLeft className="h-4 w-4" />
-						{t("Back to Group")}
+						{t("back_to_group")}
 					</Button>
 				</div>
 
 				<Card className="p-6 bg-card text-card-foreground">
-					<h1 className="text-3xl font-semibold text-foreground mb-6">{t("Update Group")}</h1>
+					<h1 className="text-3xl font-semibold text-foreground mb-6">{t("update_group")}</h1>
 
 					<form onSubmit={submitHandler} className="space-y-6">
 						{/* Group Name */}
 						<div className="space-y-2">
 							<label htmlFor="groupName" className="text-sm font-medium text-foreground">
-								{t("Group Name")} *
+								{t("group_name")} *
 							</label>
 							<Input
 								id="groupName"
 								name="groupName"
 								value={formData.groupName}
 								onChange={inputHandler}
-								placeholder={t("Enter group name")}
+								placeholder={t("enter_group_name")}
 								required
 							/>
 						</div>
@@ -210,14 +210,14 @@ const GroupUpdatePage = () => {
 						{/* Group Description */}
 						<div className="space-y-2">
 							<label htmlFor="groupDesc" className="text-sm font-medium text-foreground">
-								{t("Description")} *
+								{t("description")} *
 							</label>
 							<Textarea
 								id="groupDesc"
 								name="groupDesc"
 								value={formData.groupDesc}
 								onChange={inputHandler}
-								placeholder={t("Enter group description")}
+								placeholder={t("enter_group_description")}
 								className="min-h-[120px]"
 								required
 							/>
@@ -225,7 +225,7 @@ const GroupUpdatePage = () => {
 
 						{/* Categories */}
 						<div className="space-y-2">
-							<label className="text-sm font-medium text-foreground">{t("Categories (Select up to 3)")} *</label>
+							<label className="text-sm font-medium text-foreground">{t("categories_select_up_to_3")} *</label>
 							<div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
 								{Object.values(GroupCategory).map((category) => (
 									<Button
@@ -236,7 +236,7 @@ const GroupUpdatePage = () => {
 										disabled={selectedCategories.length >= 3 && !selectedCategories.includes(category)}
 										className="h-10"
 									>
-										{category.charAt(0) + category.slice(1).toLowerCase().replace("_", " ")}
+										{t(category.toLowerCase())}
 									</Button>
 								))}
 							</div>
@@ -244,7 +244,7 @@ const GroupUpdatePage = () => {
 
 						{/* Image Upload */}
 						<div className="space-y-4">
-							<label className="text-sm font-medium text-foreground">{t("Group Image")} *</label>
+							<label className="text-sm font-medium text-foreground">{t("group_image")} *</label>
 							<div className="relative aspect-video w-full rounded-xl overflow-hidden bg-muted/50 border-2">
 								{uiState.imagePreview ? (
 									<>
@@ -255,7 +255,7 @@ const GroupUpdatePage = () => {
 										>
 											<div className="flex items-center gap-2 bg-white/90 text-foreground px-4 py-2 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
 												<RefreshCw className="h-4 w-4" />
-												<span className="font-medium">{t("Change Image")}</span>
+												<span className="font-medium">{t("change_image")}</span>
 											</div>
 										</label>
 									</>
@@ -265,7 +265,7 @@ const GroupUpdatePage = () => {
 										className="absolute inset-0 flex flex-col items-center justify-center cursor-pointer hover:bg-muted/60 transition-colors"
 									>
 										<ImageIcon className="h-12 w-12 text-muted-foreground mb-2" />
-										<span className="text-muted-foreground font-medium">{t("Click to upload image")}</span>
+										<span className="text-muted-foreground font-medium">{t("click_to_upload_image")}</span>
 									</label>
 								)}
 								<input id="image" type="file" accept={imageTypes} onChange={imageChangeHandler} className="hidden" />
@@ -281,7 +281,7 @@ const GroupUpdatePage = () => {
 
 						<div className="flex justify-end pt-4">
 							<Button type="submit" size="lg" disabled={uiState.isSubmitting} className="px-12">
-								{uiState.isSubmitting ? t("Updating...") : t("Update Group")}
+								{uiState.isSubmitting ? t("updating") : t("update_group")}
 							</Button>
 						</div>
 					</form>

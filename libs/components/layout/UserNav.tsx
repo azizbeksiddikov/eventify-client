@@ -19,7 +19,7 @@ import { Member } from "@/libs/types/member/member";
 import { NEXT_APP_API_URL } from "@/libs/config";
 export function UserNav({ authMember }: { authMember: Member }) {
 	const router = useRouter();
-	const { t } = useTranslation("common");
+	const { t } = useTranslation("header");
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
@@ -45,10 +45,10 @@ export function UserNav({ authMember }: { authMember: Member }) {
 				</DropdownMenuLabel>
 				<DropdownMenuSeparator />
 				<DropdownMenuGroup>
-					<DropdownMenuItem onClick={() => router.push("/profile")}>{t("Profile")}</DropdownMenuItem>
+					<DropdownMenuItem onClick={() => router.push("/profile")}>{t("profile")}</DropdownMenuItem>
 				</DropdownMenuGroup>
 				<DropdownMenuSeparator />
-				<DropdownMenuItem onClick={logOut}>{t("Log out")}</DropdownMenuItem>
+				<DropdownMenuItem onClick={() => logOut()}>{t("logout")}</DropdownMenuItem>
 			</DropdownMenuContent>
 		</DropdownMenu>
 	);

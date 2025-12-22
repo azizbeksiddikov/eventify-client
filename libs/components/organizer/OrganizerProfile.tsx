@@ -32,11 +32,11 @@ const getMemberTypeBadge = (type: MemberType, t: (key: string) => string) => {
 						<TooltipTrigger asChild>
 							<div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-rose-500/10 text-rose-600 border border-rose-500/20 text-[10px] font-bold uppercase tracking-widest cursor-default group/badge">
 								<Crown className={iconBaseClass} fill="currentColor" fillOpacity={0.1} />
-								<span className="hidden sm:inline">{t("Admin")}</span>
+								<span className="hidden sm:inline">{t("admin")}</span>
 							</div>
 						</TooltipTrigger>
 						<TooltipContent side="top">
-							<p className="text-[10px] font-bold">{t("Platform Administrator")}</p>
+							<p className="text-[10px] font-bold">{t("platform_administrator")}</p>
 						</TooltipContent>
 					</Tooltip>
 				</TooltipProvider>
@@ -48,11 +48,11 @@ const getMemberTypeBadge = (type: MemberType, t: (key: string) => string) => {
 						<TooltipTrigger asChild>
 							<div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-blue-500/10 text-blue-600 border border-blue-500/20 text-[10px] font-bold uppercase tracking-widest cursor-default group/badge">
 								<CheckCircle2 className={iconBaseClass} fill="currentColor" fillOpacity={0.1} />
-								<span className="hidden sm:inline">{t("Organizer")}</span>
+								<span className="hidden sm:inline">{t("organizer")}</span>
 							</div>
 						</TooltipTrigger>
 						<TooltipContent side="top">
-							<p className="text-[10px] font-bold">{t("Official Organizer")}</p>
+							<p className="text-[10px] font-bold">{t("official_organizer")}</p>
 						</TooltipContent>
 					</Tooltip>
 				</TooltipProvider>
@@ -68,7 +68,7 @@ const OrganizerProfile = ({
 	subscribeHandler,
 	unsubscribeHandler,
 }: OrganizerProfileProps) => {
-	const { t } = useTranslation("common");
+	const { t } = useTranslation("organizers");
 	const currentUser = useReactiveVar(userVar);
 
 	const isFollowing = !!organizer?.meFollowed?.[0]?.myFollowing;
@@ -93,20 +93,20 @@ const OrganizerProfile = ({
 	}
 
 	const statsData = [
-		{ icon: <Eye className="h-4 w-4" />, label: t("Views"), value: organizer.memberViews },
+		{ icon: <Eye className="h-4 w-4" />, label: t("views"), value: organizer.memberViews },
 		{
 			icon: <Calendar className="h-4 w-4" />,
-			label: t("Events"),
+			label: t("events"),
 			value: organizer.eventsOrganizedCount,
 		},
 		{
 			icon: <Users className="h-4 w-4" />,
-			label: t("Followers"),
+			label: t("followers"),
 			value: organizer.memberFollowers,
 		},
 		{
 			icon: <Users className="h-4 w-4" />,
-			label: t("Following"),
+			label: t("following"),
 			value: organizer.memberFollowings,
 		},
 	];
@@ -121,7 +121,7 @@ const OrganizerProfile = ({
 							{organizer.memberImage ? (
 								<AvatarImage
 									src={`${NEXT_APP_API_URL}/${organizer.memberImage}`}
-									alt={organizer.memberFullName ?? t("Owner avatar")}
+									alt={organizer.memberFullName ?? t("owner_avatar")}
 									className="object-cover rounded-full"
 								/>
 							) : (
@@ -141,7 +141,7 @@ const OrganizerProfile = ({
 								"bg-secondary/80 text-secondary-foreground hover:bg-secondary": isFollowing,
 							})}
 						>
-							{isFollowing ? t("Following") : t("Follow")}
+							{isFollowing ? t("following") : t("follow")}
 						</Button>
 						<Button
 							onClick={likeHandler}

@@ -16,7 +16,7 @@ import { Message } from "@/libs/enums/common.enum";
 import { smallError } from "@/libs/alert";
 
 const Login = () => {
-	const { t } = useTranslation();
+	const { t } = useTranslation("auth");
 	const router = useRouter();
 	const searchParams = useSearchParams();
 	const [loginInput, setLoginInput] = useState<LoginInput>({
@@ -36,11 +36,11 @@ const Login = () => {
 
 	const validateForm = () => {
 		if (!loginInput.username.trim()) {
-			smallError(Message.USERNAME_REQUIRED);
+			smallError(t("username_required"));
 			return false;
 		}
 		if (!loginInput.memberPassword) {
-			smallError(Message.PASSWORD_REQUIRED);
+			smallError(t("password_required"));
 			return false;
 		}
 		return true;
@@ -67,15 +67,15 @@ const Login = () => {
 		<div className="flex-1 my-20 flex items-center justify-center px-4 sm:px-6 lg:px-8">
 			<Card className="w-full max-w-md">
 				<CardHeader className="text-center">
-					<CardTitle className="text-3xl font-semibold">{t("Login")}</CardTitle>
+					<CardTitle className="text-3xl font-semibold">{t("login")}</CardTitle>
 					<CardDescription>
-						{t("Or")}
+						{t("or")}
 						<Link
 							href="/auth/signup"
 							className="font-medium text-primary hover:text-primary/80 transition-colors duration-300 underline"
 						>
 							{" "}
-							{t("create a new account")}
+							{t("create_new_account")}
 						</Link>
 					</CardDescription>
 				</CardHeader>
@@ -84,7 +84,7 @@ const Login = () => {
 						<div className="space-y-4">
 							<div className="space-y-2">
 								<label htmlFor="username" className="text-sm font-medium">
-									{t("Username")}
+									{t("username")}
 								</label>
 								<Input
 									id="username"
@@ -93,13 +93,13 @@ const Login = () => {
 									autoComplete="username"
 									value={loginInput.username}
 									onChange={(e) => inputHandler(e.target.name, e.target.value)}
-									placeholder={t("Enter your username")}
+									placeholder={t("enter_username")}
 								/>
 							</div>
 
 							<div className="space-y-2">
 								<label htmlFor="memberPassword" className="text-sm font-medium">
-									{t("Password")}
+									{t("password")}
 								</label>
 								<div className="relative">
 									<Input
@@ -109,7 +109,7 @@ const Login = () => {
 										autoComplete="current-password"
 										value={loginInput.memberPassword}
 										onChange={(e) => inputHandler(e.target.name, e.target.value)}
-										placeholder={t("Enter your password")}
+										placeholder={t("enter_password")}
 										className="pr-10"
 									/>
 									<Button
@@ -126,7 +126,7 @@ const Login = () => {
 						</div>
 
 						<Button type="submit" className="w-full" disabled={isLoading}>
-							{isLoading ? t("Signing in...") : t("Sign in")}
+							{isLoading ? t("signing_in") : t("sign_in")}
 						</Button>
 					</form>
 				</CardContent>

@@ -46,7 +46,7 @@ const CommentsComponent = ({ commentRefId, commentGroup, initialCommentsInquiry 
 		commentRefId,
 	});
 	const textareaRef = useRef<HTMLTextAreaElement>(null);
-	const { t } = useTranslation("common");
+	const { t } = useTranslation("comments");
 	const user = useReactiveVar(userVar);
 	const [commentInquiry, setCommentInquiry] = useState<CommentsInquiry>(
 		initialCommentsInquiry || {
@@ -116,7 +116,7 @@ const CommentsComponent = ({ commentRefId, commentGroup, initialCommentsInquiry 
 			});
 
 			await getCommentsRefetch();
-			await smallSuccess(t("Comment deleted successfully"));
+			await smallSuccess(t("comment_deleted_successfully"));
 		} catch (error: unknown) {
 			if (error instanceof Error) {
 				console.log(error.message);
@@ -141,14 +141,14 @@ const CommentsComponent = ({ commentRefId, commentGroup, initialCommentsInquiry 
 					},
 				});
 				setEditingCommentId(null);
-				await smallSuccess(t("Comment updated successfully"));
+				await smallSuccess(t("comment_updated_successfully"));
 			} else {
 				await createComment({
 					variables: {
 						input: newCommentData,
 					},
 				});
-				await smallSuccess(t("Comment created successfully"));
+				await smallSuccess(t("comment_created_successfully"));
 			}
 
 			setNewCommentData({ ...newCommentData, commentContent: "" });
@@ -167,7 +167,7 @@ const CommentsComponent = ({ commentRefId, commentGroup, initialCommentsInquiry 
 	return (
 		<Card className="mt-5">
 			<CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-2 sm:gap-8">
-				<h3 className="text-xl font-semibold text-foreground/90">{t("Comments")}</h3>
+				<h3 className="text-xl font-semibold text-foreground/90">{t("comments")}</h3>
 				<div className="flex flex-col sm:flex-row w-full sm:w-auto items-start sm:items-center gap-3 sm:gap-6">
 					<div className="flex flex-row justify-between w-full sm:gap-6">
 						<div className="flex items-center gap-2 text-muted-foreground/80">
@@ -215,7 +215,7 @@ const CommentsComponent = ({ commentRefId, commentGroup, initialCommentsInquiry 
 							className="w-full sm:w-auto text-muted-foreground/80 hover:text-foreground transition-colors mt-2 sm:mt-0"
 						>
 							<Plus className="h-4 w-4 mr-2" />
-							{t("Write a comment")}
+							{t("write_a_comment")}
 						</Button>
 					)}
 				</div>
@@ -246,10 +246,10 @@ const CommentsComponent = ({ commentRefId, commentGroup, initialCommentsInquiry 
 											}}
 											className="text-muted-foreground/80 hover:text-foreground"
 										>
-											{t("Cancel")}
+											{t("cancel")}
 										</Button>
 										<Button type="submit" size="sm" disabled={!newCommentData.commentContent.trim()}>
-											{editingCommentId ? t("Update Comment") : t("Post Comment")}
+											{editingCommentId ? t("update_comment") : t("post_comment")}
 										</Button>
 									</div>
 								</div>
@@ -261,13 +261,13 @@ const CommentsComponent = ({ commentRefId, commentGroup, initialCommentsInquiry 
 
 				{totalComments <= 0 && !isWriting ? (
 					<div className="text-center py-8 sm:py-12">
-						<div className="text-muted-foreground/80 mb-4 text-sm">{t("No comments yet")}</div>
+						<div className="text-muted-foreground/80 mb-4 text-sm">{t("no_comments_yet")}</div>
 						<Button
 							variant="outline"
 							onClick={() => setIsWriting(true)}
 							className="text-muted-foreground/80 hover:text-foreground transition-colors"
 						>
-							{t("Be the first to comment")}
+							{t("be_the_first_to_comment")}
 						</Button>
 					</div>
 				) : (
@@ -281,7 +281,7 @@ const CommentsComponent = ({ commentRefId, commentGroup, initialCommentsInquiry 
 										: null;
 									const memberName = !!comment.memberData?.memberFullName
 										? comment.memberData?.memberFullName
-										: t("No Name");
+										: t("no_name");
 									const isOwner = user?._id === comment.memberId;
 
 									return (

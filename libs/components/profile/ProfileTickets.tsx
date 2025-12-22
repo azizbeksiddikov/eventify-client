@@ -17,7 +17,7 @@ interface ProfileTicketsProps {
 }
 
 export const ProfileTickets = ({ tickets, cancelTicketHandler }: ProfileTicketsProps) => {
-	const { t } = useTranslation("common");
+	const { t } = useTranslation("profile");
 
 	const getStatusColor = (status: TicketStatus) => {
 		switch (status) {
@@ -35,23 +35,23 @@ export const ProfileTickets = ({ tickets, cancelTicketHandler }: ProfileTicketsP
 	return (
 		<Card className="w-full">
 			<CardHeader>
-				<h2 className="text-lg font-medium text-card-foreground">{t("My Tickets")}</h2>
+				<h2 className="text-lg font-medium text-card-foreground">{t("my_tickets")}</h2>
 			</CardHeader>
 			<CardContent>
 				{tickets.length === 0 ? (
-					<div className="text-center text-muted-foreground py-8">{t("No tickets found")}</div>
+					<div className="text-center text-muted-foreground py-8">{t("no_tickets_found")}</div>
 				) : (
 					<Table>
 						<TableHeader>
 							<TableRow>
-								<TableHead className="w-[250px] px-4">{t("Event")}</TableHead>
-								<TableHead className="text-center px-2">{t("Status")}</TableHead>
-								<TableHead className="text-center px-2">{t("Attendees")}</TableHead>
-								<TableHead className="text-center px-2">{t("Tickets")}</TableHead>
-								<TableHead className="text-center px-2">{t("Price")}</TableHead>
-								<TableHead className="text-center px-2">{t("Total")}</TableHead>
-								<TableHead className="text-center px-2">{t("Date")}</TableHead>
-								<TableHead className="text-right px-4">{t("Actions")}</TableHead>
+								<TableHead className="w-[250px] px-4">{t("event")}</TableHead>
+								<TableHead className="text-center px-2">{t("status")}</TableHead>
+								<TableHead className="text-center px-2">{t("attendees")}</TableHead>
+								<TableHead className="text-center px-2">{t("tickets")}</TableHead>
+								<TableHead className="text-center px-2">{t("price")}</TableHead>
+								<TableHead className="text-center px-2">{t("total")}</TableHead>
+								<TableHead className="text-center px-2">{t("date")}</TableHead>
+								<TableHead className="text-right px-4">{t("actions")}</TableHead>
 							</TableRow>
 						</TableHeader>
 						<TableBody>
@@ -69,7 +69,7 @@ export const ProfileTickets = ({ tickets, cancelTicketHandler }: ProfileTicketsP
 												</div>
 												<div>
 													<h3 className="text-sm font-medium text-card-foreground">
-														{ticket.event?.eventName || t("Event")}
+														{ticket.event?.eventName || t("event")}
 													</h3>
 												</div>
 											</div>
@@ -118,7 +118,7 @@ export const ProfileTickets = ({ tickets, cancelTicketHandler }: ProfileTicketsP
 														onClick={() => cancelTicketHandler(ticket._id)}
 														className="bg-destructive/10 border-destructive text-destructive hover:bg-destructive/20 hover:text-destructive transition-colors duration-200"
 													>
-														{t("Cancel")}
+														{t("cancel")}
 													</Button>
 												)}
 												<Link href={`/events/${ticket.event?._id}`}>
@@ -126,7 +126,7 @@ export const ProfileTickets = ({ tickets, cancelTicketHandler }: ProfileTicketsP
 														variant="ghost"
 														size="icon"
 														className="text-muted-foreground hover:text-primary transition-colors duration-200"
-														aria-label={t("View event details")}
+														aria-label={t("view_event_details")}
 													>
 														<LinkIcon className="h-4 w-4" />
 													</Button>

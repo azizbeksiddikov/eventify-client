@@ -19,7 +19,7 @@ interface GroupCardProps {
 }
 
 const GroupCard = ({ group }: GroupCardProps) => {
-	const { t } = useTranslation("common");
+	const { t } = useTranslation("groups");
 	const user = useReactiveVar(userVar);
 
 	/** APOLLO */
@@ -76,7 +76,7 @@ const GroupCard = ({ group }: GroupCardProps) => {
 					<div className="flex flex-wrap gap-1.5 min-h-[20px]">
 						{group.groupCategories?.slice(0, 4).map((category, index) => (
 							<span key={index} className="text-primary/90 bg-primary/10 px-2 py-0.5 rounded-full">
-								#{category}
+								#{t(category.toLowerCase())}
 							</span>
 						))}
 					</div>
@@ -95,7 +95,7 @@ const GroupCard = ({ group }: GroupCardProps) => {
 							<p className="text-foreground leading-snug line-clamp-2">{group.groupDesc}</p>
 						) : (
 							<p className="text-muted-foreground italic flex items-center justify-center py-1 w-full">
-								<span className="bg-muted/50 px-2 py-0.5 rounded-md">{t("No description available")}</span>
+								<span className="bg-muted/50 px-2 py-0.5 rounded-md">{t("no_description_available")}</span>
 							</p>
 						)}
 					</div>
@@ -113,7 +113,7 @@ const GroupCard = ({ group }: GroupCardProps) => {
 								: "text-muted-foreground hover:text-foreground"
 						}`}
 						onClick={() => likeGroupHandler(group._id)}
-						aria-label={group?.meLiked?.[0]?.myFavorite ? t("Liked") : t("Like")}
+						aria-label={group?.meLiked?.[0]?.myFavorite ? t("liked") : t("like")}
 					>
 						<Heart
 							className={`w-4 h-4 transition-all ${
@@ -132,7 +132,7 @@ const GroupCard = ({ group }: GroupCardProps) => {
 					}`}
 					onClick={() => (group?.meJoined?.[0]?.meJoined ? leaveGroupHandler(group._id) : joinGroupHandler(group._id))}
 				>
-					{group?.meJoined?.[0]?.meJoined ? t("Leave") : t("Join")}
+					{group?.meJoined?.[0]?.meJoined ? t("leave") : t("join")}
 				</Button>
 
 				<Link href={`/groups/${group._id}`}>
@@ -140,7 +140,7 @@ const GroupCard = ({ group }: GroupCardProps) => {
 						variant="outline"
 						size="sm"
 						className="h-9 w-9 p-0 rounded-lg hover:bg-primary/5 border-primary/30 text-primary"
-						aria-label={t("View")}
+						aria-label={t("view")}
 					>
 						<ExternalLink className="w-4 h-4" />
 					</Button>

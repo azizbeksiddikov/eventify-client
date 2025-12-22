@@ -23,7 +23,7 @@ import { followMember, likeEvent, likeMember, unfollowMember } from "@/libs/util
 const OrganizerDetailPage = () => {
 	const params = useParams();
 	const user = useReactiveVar(userVar);
-	const { t } = useTranslation("common");
+	const { t } = useTranslation("organizers");
 
 	const organizerId = params?.id as string | undefined;
 
@@ -85,10 +85,10 @@ const OrganizerDetailPage = () => {
 				{!organizerLoading && !organizer ? (
 					<div className="pt-20">
 						<NotFound
-							title={t("Organizer Not Found")}
-							message={t("The organizer you are looking for does not exist or has been removed.")}
+							title={t("organizer_not_found")}
+							message={t("organizer_not_found_message")}
 							backPath="/organizers"
-							backLabel={t("Back to Organizers")}
+							backLabel={t("back_to_organizers")}
 						/>
 					</div>
 				) : organizer ? (
@@ -104,7 +104,7 @@ const OrganizerDetailPage = () => {
 							</div>
 							<div className="lg:col-span-1">
 								{organizer?.organizedGroups && organizer.organizedGroups.length > 0 && (
-									<SimilarGroups groups={organizer.organizedGroups} text={t("Organizer Groups")} />
+									<SimilarGroups groups={organizer.organizedGroups} text={t("organizer_groups")} />
 								)}
 							</div>
 						</div>

@@ -15,7 +15,7 @@ interface EventSearchProps {
 }
 
 export function EventSearch({ initialInquiry, eventsInquiry, setEventsInquiry }: EventSearchProps) {
-	const { t } = useTranslation();
+	const { t } = useTranslation(["admin", "events"]);
 
 	/**	 HANDLERS */
 	const searchTextHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -63,7 +63,7 @@ export function EventSearch({ initialInquiry, eventsInquiry, setEventsInquiry }:
 		<div className="flex items-center gap-6 p-6 rounded-t-lg bg-card border  ">
 			{/* SEARCH */}
 			<Input
-				placeholder={t("Search events...")}
+				placeholder={t("search_events")}
 				value={eventsInquiry?.search?.text ?? ""}
 				onChange={searchTextHandler}
 				className="w-full bg-background text-foreground border-input focus:ring-primary"
@@ -77,13 +77,13 @@ export function EventSearch({ initialInquiry, eventsInquiry, setEventsInquiry }:
 				}}
 			>
 				<SelectTrigger className="w-[180px] bg-background text-foreground border-input focus:ring-primary">
-					<SelectValue placeholder={t("Filter by category")} />
+					<SelectValue placeholder={t("filter_by_category")} />
 				</SelectTrigger>
 				<SelectContent className="bg-card text-foreground  ">
-					<SelectItem value="all">{t("All Categories")}</SelectItem>
+					<SelectItem value="all">{t("all_categories")}</SelectItem>
 					{Object.values(EventCategory).map((value) => (
 						<SelectItem key={value} value={value}>
-							{t(value.charAt(0).toUpperCase() + value.slice(1))}
+							{t(`events:${value.toLowerCase()}`)}
 						</SelectItem>
 					))}
 				</SelectContent>
@@ -97,10 +97,10 @@ export function EventSearch({ initialInquiry, eventsInquiry, setEventsInquiry }:
 				}}
 			>
 				<SelectTrigger className="w-[180px] bg-background text-foreground border-input focus:ring-primary">
-					<SelectValue placeholder={t("Filter by status")} />
+					<SelectValue placeholder={t("filter_by_status")} />
 				</SelectTrigger>
 				<SelectContent className="bg-card text-foreground  ">
-					<SelectItem value="all">{t("All Statuses")}</SelectItem>
+					<SelectItem value="all">{t("all_statuses")}</SelectItem>
 					{Object.values(EventStatus).map((value) => (
 						<SelectItem key={value} value={value}>
 							{t(value.charAt(0).toUpperCase() + value.slice(1))}
@@ -117,13 +117,13 @@ export function EventSearch({ initialInquiry, eventsInquiry, setEventsInquiry }:
 				}}
 			>
 				<SelectTrigger className="w-[180px] bg-background text-foreground border-input focus:ring-primary">
-					<SelectValue placeholder={t("Sort by")} />
+					<SelectValue placeholder={t("sort_by")} />
 				</SelectTrigger>
 				<SelectContent className="bg-card text-foreground  ">
-					<SelectItem value="createdAt">{t("Created At")}</SelectItem>
-					<SelectItem value="eventDate">{t("Event Date")}</SelectItem>
-					<SelectItem value="attendeeCount">{t("Attendees")}</SelectItem>
-					<SelectItem value="eventPrice">{t("Price")}</SelectItem>
+					<SelectItem value="createdAt">{t("created_at")}</SelectItem>
+					<SelectItem value="eventDate">{t("event_date")}</SelectItem>
+					<SelectItem value="attendeeCount">{t("attendees")}</SelectItem>
+					<SelectItem value="eventPrice">{t("price")}</SelectItem>
 				</SelectContent>
 			</Select>
 
@@ -135,11 +135,11 @@ export function EventSearch({ initialInquiry, eventsInquiry, setEventsInquiry }:
 				}}
 			>
 				<SelectTrigger className="w-[180px] bg-background text-foreground border-input focus:ring-primary">
-					<SelectValue placeholder={t("Direction")} />
+					<SelectValue placeholder={t("direction")} />
 				</SelectTrigger>
 				<SelectContent className="bg-card text-foreground  ">
-					<SelectItem value={Direction.ASC}>{t("Ascending")}</SelectItem>
-					<SelectItem value={Direction.DESC}>{t("Descending")}</SelectItem>
+					<SelectItem value={Direction.ASC}>{t("ascending")}</SelectItem>
+					<SelectItem value={Direction.DESC}>{t("descending")}</SelectItem>
 				</SelectContent>
 			</Select>
 
@@ -149,7 +149,7 @@ export function EventSearch({ initialInquiry, eventsInquiry, setEventsInquiry }:
 				onClick={clearAllHandler}
 				className="bg-background text-foreground border-input hover:bg-accent hover:text-accent-foreground"
 			>
-				{t("Clear")}
+				{t("clear")}
 			</Button>
 		</div>
 	);

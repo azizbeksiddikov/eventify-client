@@ -1,0 +1,15 @@
+{
+	"comments": "Комментарии",
+	"per_page": "на странице",
+	"write_a_comment": "Написать комментарий",
+	"cancel": "Отмена",
+	"update_comment": "Обновить комментарий",
+	"post_comment": "Опубликовать комментарий",
+	"no_comments_yet": "Комментариев пока нет",
+	"be_the_first_to_comment": "Будьте первым, кто прокомментирует",
+	"no_name": "Без имени",
+	"owner_avatar": "Аватар владельца",
+	"comment_deleted_successfully": "Комментарий успешно удален",
+	"comment_updated_successfully": "Комментарий успешно обновлен",
+	"comment_created_successfully": "Комментарий успешно создан"
+}

@@ -1,0 +1,15 @@
+{
+	"comments": "Izohlar",
+	"per_page": "sahifada",
+	"write_a_comment": "Izoh yozish",
+	"cancel": "Bekor qilish",
+	"update_comment": "Izohni yangilash",
+	"post_comment": "Izoh qoldirish",
+	"no_comments_yet": "Hozircha izohlar yo'q",
+	"be_the_first_to_comment": "Birinchi bo'lib izoh qoldiring",
+	"no_name": "Ismsiz",
+	"owner_avatar": "Egasi avatarlari",
+	"comment_deleted_successfully": "Izoh muvaffaqiyatli o'chirildi",
+	"comment_updated_successfully": "Izoh muvaffaqiyatli yangilandi",
+	"comment_created_successfully": "Izoh muvaffaqiyatli yaratildi"
+}

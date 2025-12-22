@@ -18,7 +18,7 @@ interface OrganizerCardProps {
 }
 
 const OrganizerCard = ({ organizer, likeMemberHandler, subscribeHandler, unsubscribeHandler }: OrganizerCardProps) => {
-	const { t } = useTranslation("common");
+	const { t } = useTranslation("organizers");
 
 	return (
 		<Card className="w-full py-2 ui-card group gap-0">
@@ -61,7 +61,7 @@ const OrganizerCard = ({ organizer, likeMemberHandler, subscribeHandler, unsubsc
 								<p className="text-[10px] font-medium">{organizer?.eventsOrganizedCount || 0}</p>
 							</div>
 						</TooltipTrigger>
-						<TooltipContent side="bottom">{t("Events organized")}</TooltipContent>
+						<TooltipContent side="bottom">{t("events_organized")}</TooltipContent>
 					</Tooltip>
 					<Tooltip>
 						<TooltipTrigger asChild>
@@ -70,7 +70,7 @@ const OrganizerCard = ({ organizer, likeMemberHandler, subscribeHandler, unsubsc
 								<p className="text-[10px] font-medium">{organizer.memberFollowers || 0}</p>
 							</div>
 						</TooltipTrigger>
-						<TooltipContent side="bottom">{t("People following this organizer")}</TooltipContent>
+						<TooltipContent side="bottom">{t("people_following_organizer")}</TooltipContent>
 					</Tooltip>
 					<Tooltip>
 						<TooltipTrigger asChild>
@@ -79,7 +79,7 @@ const OrganizerCard = ({ organizer, likeMemberHandler, subscribeHandler, unsubsc
 								<p className="text-[10px] font-medium">{organizer.memberLikes || 0}</p>
 							</div>
 						</TooltipTrigger>
-						<TooltipContent side="bottom">{t("Total likes received")}</TooltipContent>
+						<TooltipContent side="bottom">{t("total_likes_received")}</TooltipContent>
 					</Tooltip>
 				</div>
 				<div className="px-0.5">
@@ -89,7 +89,7 @@ const OrganizerCard = ({ organizer, likeMemberHandler, subscribeHandler, unsubsc
 								<p className="text-[10px] text-foreground leading-relaxed line-clamp-2">{organizer.memberDesc}</p>
 							) : (
 								<p className="text-[10px] text-muted-foreground italic flex items-center justify-center py-1">
-									<span className="bg-muted/50 px-2 py-0.5 rounded-md">{t("No description available")}</span>
+									<span className="bg-muted/50 px-2 py-0.5 rounded-md">{t("no_description_available")}</span>
 								</p>
 							)}
 						</div>
@@ -109,7 +109,7 @@ const OrganizerCard = ({ organizer, likeMemberHandler, subscribeHandler, unsubsc
 								: "text-muted-foreground hover:text-foreground"
 						}`}
 						onClick={() => likeMemberHandler(organizer._id)}
-						aria-label={organizer?.meLiked?.[0]?.myFavorite ? t("Liked") : t("Like")}
+						aria-label={organizer?.meLiked?.[0]?.myFavorite ? t("liked") : t("like")}
 					>
 						<Heart
 							className={`w-4 h-4 transition-all ${
@@ -131,14 +131,14 @@ const OrganizerCard = ({ organizer, likeMemberHandler, subscribeHandler, unsubsc
 							: subscribeHandler(organizer._id)
 					}
 				>
-					{organizer?.meFollowed?.[0]?.myFollowing ? t("Following") : t("Follow")}
+					{organizer?.meFollowed?.[0]?.myFollowing ? t("following") : t("follow")}
 				</Button>
 				<Link href={`/organizers/${organizer._id}`}>
 					<Button
 						variant="outline"
 						size="sm"
 						className="h-6 w-6 p-0 rounded-md hover:bg-primary/5 border-primary/30 text-primary transition-colors"
-						aria-label={t("View")}
+						aria-label={t("view")}
 					>
 						<ExternalLink className="h-3 w-3" />
 					</Button>

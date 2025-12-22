@@ -43,7 +43,7 @@ const EventsPage = ({
 	const searchParams = useSearchParams();
 	const router = useRouter();
 	const pathname = usePathname();
-	const { t } = useTranslation("common");
+	const { t } = useTranslation("events");
 	const user = useReactiveVar(userVar);
 	const [events, setEvents] = useState<Event[]>([]);
 
@@ -213,7 +213,7 @@ const EventsPage = ({
 							</>
 						) : (
 							<div className="py-16 text-center">
-								<p className="text-muted-foreground">{t("No events found. Try adjusting your filters.")}</p>
+								<p className="text-muted-foreground">{t("no_events_found")}</p>
 							</div>
 						)}
 					</div>

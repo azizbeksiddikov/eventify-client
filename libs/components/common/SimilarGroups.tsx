@@ -13,8 +13,8 @@ interface SimilarGroupsProps {
 	text?: string;
 }
 
-const SimilarGroups = ({ groups, text = "Similar Groups" }: SimilarGroupsProps) => {
-	const { t } = useTranslation("common");
+const SimilarGroups = ({ groups, text = "similar_groups" }: SimilarGroupsProps) => {
+	const { t } = useTranslation("groups");
 
 	return (
 		<Card className="p-4 bg-card border shadow-sm rounded-2xl">

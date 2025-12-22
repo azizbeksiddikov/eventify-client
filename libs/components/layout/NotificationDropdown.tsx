@@ -36,34 +36,35 @@ const defaultNotificationsInquiry: NotificationsInquiry = {
 };
 
 const getNotificationText = (notification: Notification, t: (key: string) => string) => {
+	const memberName = notification.memberData?.memberFullName || "";
 	switch (notification.notificationType) {
 		case NotificationType.CREATE_EVENT:
-			return t("New event was created");
+			return t("new_event_was_created");
 		case NotificationType.JOIN_EVENT:
-			return `${notification.memberData?.memberFullName} ${t("joined your event")}`;
+			return `${memberName} ${t("joined_your_event")}`;
 		case NotificationType.LIKE_EVENT:
-			return `${notification.memberData?.memberFullName} ${t("liked your event")}`;
+			return `${memberName} ${t("liked_your_event")}`;
 		case NotificationType.COMMENT_EVENT:
-			return `${notification.memberData?.memberFullName} ${t("commented on your event")}`;
+			return `${memberName} ${t("commented_on_your_event")}`;
 		case NotificationType.JOIN_GROUP:
-			return `${notification.memberData?.memberFullName} ${t("joined your group")}`;
+			return `${memberName} ${t("joined_your_group")}`;
 		case NotificationType.LIKE_GROUP:
-			return t(`${notification.memberData?.memberFullName} ${t("liked your group")}`);
+			return `${memberName} ${t("liked_your_group")}`;
 		case NotificationType.COMMENT_GROUP:
-			return t(`${notification.memberData?.memberFullName} ${t("commented on your group")}`);
+			return `${memberName} ${t("commented_on_your_group")}`;
 		case NotificationType.LIKE_MEMBER:
-			return t(`${notification.memberData?.memberFullName} ${t("liked your profile")}`);
+			return `${memberName} ${t("liked_your_profile")}`;
 		case NotificationType.COMMENT_MEMBER:
-			return t(`${notification.memberData?.memberFullName} ${t("commented on your profile")}`);
+			return `${memberName} ${t("commented_on_your_profile")}`;
 		case NotificationType.FOLLOW_MEMBER:
-			return t(`${notification.memberData?.memberFullName} ${t("followed you")}`);
+			return `${memberName} ${t("followed_you")}`;
 		default:
-			return t("New notification");
+			return t("new_notification");
 	}
 };
 
 export const NotificationDropdown = () => {
-	const { t } = useTranslation("common");
+	const { t } = useTranslation("header");
 	const router = useRouter();
 
 	const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -133,7 +134,7 @@ export const NotificationDropdown = () => {
 			</DropdownMenuTrigger>
 			<DropdownMenuContent align="end" className="w-80">
 				<div className="flex items-center justify-between px-4 py-2">
-					<h4 className="text-sm font-medium">{t("Notifications")}</h4>
+					<h4 className="text-sm font-medium">{t("notifications")}</h4>
 					<Badge variant="secondary" className="text-xs">
 						{unreadCount} {t("unread")}
 					</Badge>
@@ -144,7 +145,7 @@ export const NotificationDropdown = () => {
 						onClick={readAllNotificationsHandler}
 						disabled={unreadCount === 0}
 					>
-						{t("Read All")}
+						{t("read_all")}
 					</Button>
 				</div>
 				<Separator />
@@ -169,7 +170,7 @@ export const NotificationDropdown = () => {
 											className="h-6 text-xs bg-primary text-primary-foreground hover:bg-primary/90"
 											onClick={(e) => readNotificationHandler(notification, e)}
 										>
-											{t("Read")}
+											{t("read")}
 										</Button>
 									)}
 								</div>
@@ -177,7 +178,7 @@ export const NotificationDropdown = () => {
 						))
 					) : (
 						<div className="flex items-center justify-center h-32 text-sm text-muted-foreground">
-							{t("No notifications")}
+							{t("no_notifications")}
 						</div>
 					)}
 				</ScrollArea>

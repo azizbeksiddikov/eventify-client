@@ -4,25 +4,25 @@ export const NEXT_APP_API_URL = process.env.NEXT_APP_API_URL;
 export const NEXT_PUBLIC_API_GRAPHQL_URL = process.env.NEXT_PUBLIC_API_GRAPHQL_URL;
 
 export const eventsSortOptions = [
-	{ value: "createdAt", label: "Newest" },
-	{ value: "eventStartAt", label: "Event Date" },
-	{ value: "eventPrice", label: "Price" },
-	{ value: "attendeeCount", label: "Popularity" },
+	{ value: "createdAt", label: "sort_newest" },
+	{ value: "eventStartAt", label: "sort_event_date" },
+	{ value: "eventPrice", label: "sort_price" },
+	{ value: "attendeeCount", label: "sort_popularity" },
 ];
 
 export const groupsSortOptions = [
-	{ value: "createdAt", label: "Newest" },
-	{ value: "memberCount", label: "Members" },
-	{ value: "groupViews", label: "Views" },
-	{ value: "groupLikes", label: "Likes" },
+	{ value: "createdAt", label: "sort_newest" },
+	{ value: "memberCount", label: "sort_members" },
+	{ value: "groupViews", label: "sort_views" },
+	{ value: "groupLikes", label: "sort_likes" },
 ];
 
 export const organizersSortOptions = [
-	{ value: "createdAt", label: "Newest" },
-	{ value: "memberFollowers", label: "Followers" },
-	{ value: "memberEvents", label: "Events" },
-	{ value: "memberGroups", label: "Groups" },
-	{ value: "memberRank", label: "Rank" },
+	{ value: "createdAt", label: "sort_newest" },
+	{ value: "memberFollowers", label: "sort_followers" },
+	{ value: "memberEvents", label: "sort_events" },
+	{ value: "memberGroups", label: "sort_groups" },
+	{ value: "memberRank", label: "sort_rank" },
 ];
 
 export const imageTypes = ".jpg,.jpeg,.png,image/jpeg,image/png,image/jpg";

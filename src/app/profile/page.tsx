@@ -38,15 +38,15 @@ import { Message } from "@/libs/enums/common.enum";
 
 const ProfilePage = () => {
 	const user = useReactiveVar(userVar);
-	const { t } = useTranslation("common");
+	const { t } = useTranslation(["profile", "errors"]);
 	const router = useRouter();
 
 	const tabs = [
-		{ id: "groups", label: t("Groups"), icon: Users },
-		{ id: "tickets", label: t("Tickets"), icon: TicketIcon },
-		{ id: "followers", label: t("Followers"), icon: UserCheck },
-		{ id: "followings", label: t("Followings"), icon: UserPlus },
-		{ id: "settings", label: t("Settings"), icon: Settings },
+		{ id: "groups", label: t("groups"), icon: Users },
+		{ id: "tickets", label: t("tickets"), icon: TicketIcon },
+		{ id: "followers", label: t("followers"), icon: UserCheck },
+		{ id: "followings", label: t("followings"), icon: UserPlus },
+		{ id: "settings", label: t("settings"), icon: Settings },
 	];
 	const [activeTab, setActiveTab] = useState(tabs[0].id);
 
@@ -157,7 +157,7 @@ const ProfilePage = () => {
 
 	/** HANDLERS */
 	const likeMemberHandler = async (memberId: string) => {
-		likeMember(user._id, memberId, likeTargetMember, client.cache);
+		likeMember(user._id, memberId, likeTargetMember);
 	};
 
 	const subscribeHandler = async (memberId: string) => {
@@ -170,7 +170,7 @@ const ProfilePage = () => {
 
 	const updateMemberHandler = async (memberUpdateInput: MemberUpdateInput) => {
 		try {
-			if (!user?._id) throw new Error(Message.NOT_AUTHENTICATED);
+			if (!user?._id) throw new Error(t("errors:not_authenticated"));
 
 			const excludedFields = ["_id", "memberStatus", "emailVerified"];
 			const cleanedMemberUpdateInput = Object.fromEntries(
@@ -187,7 +187,7 @@ const ProfilePage = () => {
 				updateUserInfo(jwtToken);
 			}
 
-			await smallSuccess(t(Message.MEMBER_UPDATED_SUCCESSFULLY));
+			await smallSuccess(t("member_updated_successfully"));
 		} catch (err: unknown) {
 			const errorMessage = err instanceof Error ? err.message : "Unknown error";
 			console.log("ERROR, updateMemberHandler:", errorMessage);
@@ -195,7 +195,7 @@ const ProfilePage = () => {
 	};
 
 	const likeGroupHandler = async (groupId: string) => {
-		likeGroup(user._id, groupId, likeTargetGroup, client.cache);
+		likeGroup(user._id, groupId, likeTargetGroup);
 	};
 
 	const joinGroupHandler = async (groupId: string) => {
@@ -209,13 +209,13 @@ const ProfilePage = () => {
 
 	const cancelTicketHandler = async (ticketId: string) => {
 		try {
-			if (!user?._id) throw new Error(Message.NOT_AUTHENTICATED);
+			if (!user?._id) throw new Error(t("errors:not_authenticated"));
 
 			await cancelTicket({
 				variables: { input: ticketId },
 			});
 
-			await smallSuccess(t(Message.TICKET_CANCELLED_SUCCESSFULLY));
+			await smallSuccess(t("ticket_cancelled_successfully"));
 			refetchMember();
 			refetchTickets();
 		} catch (err: unknown) {

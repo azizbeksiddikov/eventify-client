@@ -15,7 +15,7 @@ interface TicketCardProps {
 }
 
 const TicketCard = ({ ticket, showSeparator = true }: TicketCardProps) => {
-	const { t } = useTranslation("common");
+	const { t } = useTranslation("events");
 
 	const getStatusVariant = (status: TicketStatus) => {
 		switch (status) {
@@ -52,17 +52,17 @@ const TicketCard = ({ ticket, showSeparator = true }: TicketCardProps) => {
 						<div className="grid grid-cols-3 gap-4 text-center sm:text-left">
 							{/* Price */}
 							<div className="flex flex-col">
-								<span className="inline text-sm text-muted-foreground/60">{t("Price per ticket")}</span>
+								<span className="inline text-sm text-muted-foreground/60">{t("price_per_ticket")}</span>
 								<span className="text-base font-medium mt-0 sm:mt-1">${ticket.ticketPrice}</span>
 							</div>
 							{/* Quantity */}
 							<div className="flex flex-col">
-								<span className="inline text-sm text-muted-foreground/60">{t("Quantity")}</span>
+								<span className="inline text-sm text-muted-foreground/60">{t("quantity")}</span>
 								<span className="text-base font-medium mt-0 sm:mt-1">{ticket.ticketQuantity}</span>
 							</div>
 							{/* Total */}
 							<div className="flex flex-col">
-								<span className="inline text-sm text-muted-foreground/60">{t("Total cost")}</span>
+								<span className="inline text-sm text-muted-foreground/60">{t("total_cost")}</span>
 								<span className="text-base font-medium mt-0 sm:mt-1">${ticket.totalPrice}</span>
 							</div>
 						</div>
@@ -70,7 +70,7 @@ const TicketCard = ({ ticket, showSeparator = true }: TicketCardProps) => {
 
 					{/* Timestamp - hidden on small screens */}
 					<div className="hidden lg:block min-w-40 text-right">
-						<div className="text-xs text-muted-foreground/60">{t("Last change")}</div>
+						<div className="text-xs text-muted-foreground/60">{t("last_change")}</div>
 						<div className="text-sm text-muted-foreground/60 mt-1">{formatSeoulDateTime(ticket.createdAt)}</div>
 					</div>
 				</CardContent>

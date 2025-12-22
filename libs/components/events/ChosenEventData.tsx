@@ -43,7 +43,7 @@ const ChosenEventData = ({
 	ticketInput,
 }: ChosenEventDataProps) => {
 	const router = useRouter();
-	const { t } = useTranslation("common");
+	const { t } = useTranslation("events");
 	const [isPaymentDialogOpen, setIsPaymentDialogOpen] = useState(false);
 
 	if (!event) return null;
@@ -51,7 +51,7 @@ const ChosenEventData = ({
 	const isExternalEvent = Boolean(event.externalUrl) || (event.origin && event.origin !== "internal");
 
 	const formatPrice = (price: number, currency?: Currency) => {
-		if (!price || price === 0) return t("Free");
+		if (!price || price === 0) return t("free");
 		if (currency) {
 			try {
 				return new Intl.NumberFormat(undefined, { style: "currency", currency }).format(price);
@@ -111,7 +111,7 @@ const ChosenEventData = ({
 							onClick={() => router.push(`/events/update/${event._id}`)}
 						>
 							<Pencil className="h-4 w-4 mr-1.5" />
-							{t("Edit")}
+							{t("edit")}
 						</Button>
 					)}
 
@@ -147,7 +147,7 @@ const ChosenEventData = ({
 											variant="secondary"
 											className="bg-red-500/90 text-white backdrop-blur-sm shadow-md px-2 sm:px-3 py-1 font-medium"
 										>
-											{t("Fake")}
+											{t("fake")}
 										</Badge>
 									</div>
 								)}
@@ -173,7 +173,7 @@ const ChosenEventData = ({
 											variant="outline"
 											className="text-xs font-medium border-primary/30 text-primary bg-primary/5 hover:bg-primary/10 transition-colors px-2 sm:px-3 py-1 rounded-full"
 										>
-											{category}
+											{t(category.toLowerCase())}
 										</Badge>
 									))}
 								</div>
@@ -206,8 +206,8 @@ const ChosenEventData = ({
 										<MapPin className="h-5 w-5 shrink-0 text-primary" />
 										<span className="line-clamp-1 text-sm font-medium">
 											{event.locationType === "ONLINE"
-												? t("Online")
-												: [event.eventCity, event.eventAddress].filter(Boolean).join(" • ") || t("Offline")}
+												? t("online")
+												: [event.eventCity, event.eventAddress].filter(Boolean).join(" • ") || t("offline")}
 										</span>
 									</div>
 
@@ -215,7 +215,7 @@ const ChosenEventData = ({
 										<Users className="h-5 w-5 shrink-0 text-primary" />
 										<span className="text-sm font-medium">
 											{typeof event.eventCapacity === "number" && event.eventCapacity > 0
-												? `${event.attendeeCount ?? 0}/${event.eventCapacity} ${t("Attendees / capacity")}`
+												? `${event.attendeeCount ?? 0}/${event.eventCapacity} ${t("attendees_capacity")}`
 												: `${event.attendeeCount ?? 0} ${t("attendees")}`}
 										</span>
 									</div>
@@ -258,13 +258,13 @@ const ChosenEventData = ({
 							{isExternalEvent ? (
 								<div className="bg-accent/30 rounded-xl p-3 sm:p-4 flex flex-col gap-2">
 									<div className="text-sm text-muted-foreground">
-										{t("Tickets are available on the original event page.")}
+										{t("tickets_are_available_on_the_original_event_page")}
 									</div>
 									{event.externalUrl && (
 										<a href={event.externalUrl} target="_blank" rel="noreferrer" className="w-full">
 											<Button variant="outline" className="w-full border-primary/30 text-primary hover:bg-primary/5">
 												<ExternalLink className="w-4 h-4 mr-2" />
-												{t("Open original event")}
+												{t("open_original_event")}
 											</Button>
 										</a>
 									)}
@@ -296,7 +296,7 @@ const ChosenEventData = ({
 												</Button>
 											</div>
 											<div className="flex items-center gap-2">
-												<span className="text-sm text-muted-foreground">{t("Total")}</span>
+												<span className="text-sm text-muted-foreground">{t("total")}</span>
 												<span className="text-sm font-semibold text-primary">
 													{formatPrice((event.eventPrice || 0) * ticketInput!.ticketQuantity, event.eventCurrency)}
 												</span>
@@ -309,7 +309,7 @@ const ChosenEventData = ({
 											size="sm"
 											className="h-9 bg-primary hover:bg-primary/90 text-primary-foreground px-4 sm:px-6 shadow-sm hover:shadow transition-all duration-200 w-full sm:w-auto"
 										>
-											{t("Buy Ticket")}
+											{t("buy_ticket")}
 										</Button>
 									</div>
 								</div>
@@ -321,7 +321,7 @@ const ChosenEventData = ({
 				{/* Section: Description */}
 				<Separator />
 				<div className="px-4 sm:px-6 py-4">
-					<h3 className="text-sm font-semibold mb-2 text-foreground/90">{t("Description")}</h3>
+					<h3 className="text-sm font-semibold mb-2 text-foreground/90">{t("description")}</h3>
 					<div className="text-sm text-muted-foreground leading-relaxed">
 						<ReactMarkdown
 							components={{
@@ -364,21 +364,21 @@ const ChosenEventData = ({
 			<Dialog open={isPaymentDialogOpen} onOpenChange={setIsPaymentDialogOpen}>
 				<DialogContent className="sm:max-w-md max-w-[90vw] rounded-lg">
 					<DialogHeader>
-						<DialogTitle>{t("Confirm Payment")}</DialogTitle>
-						<DialogDescription>{t("Do you want to proceed with the payment?")}</DialogDescription>
+						<DialogTitle>{t("confirm_payment")}</DialogTitle>
+						<DialogDescription>{t("do_you_want_to_proceed_with_payment")}</DialogDescription>
 					</DialogHeader>
 					<div className="space-y-4 py-4">
 						<div className="flex justify-between items-center">
-							<span className="text-sm text-muted-foreground">{t("Price per ticket")}</span>
+							<span className="text-sm text-muted-foreground">{t("price_per_ticket")}</span>
 							<span className="text-sm font-medium">{formatPrice(event.eventPrice, event.eventCurrency)}</span>
 						</div>
 						<div className="flex justify-between items-center">
-							<span className="text-sm text-muted-foreground">{t("Number of tickets")}</span>
+							<span className="text-sm text-muted-foreground">{t("number_of_tickets")}</span>
 							<span className="text-sm font-medium">{ticketInput!.ticketQuantity}</span>
 						</div>
 						<Separator />
 						<div className="flex justify-between items-center">
-							<span className="text-sm font-medium">{t("Total amount")}</span>
+							<span className="text-sm font-medium">{t("total_amount")}</span>
 							<span className="text-sm font-semibold text-primary">
 								{formatPrice((event.eventPrice || 0) * ticketInput!.ticketQuantity, event.eventCurrency)}
 							</span>
@@ -386,10 +386,10 @@ const ChosenEventData = ({
 					</div>
 					<DialogFooter className="flex-col sm:flex-row gap-2">
 						<Button variant="outline" onClick={() => setIsPaymentDialogOpen(false)} className="w-full sm:w-auto">
-							{t("Cancel")}
+							{t("cancel")}
 						</Button>
 						<Button onClick={confirmPurchaseHandler} className="bg-primary hover:bg-primary/90 w-full sm:w-auto">
-							{t("Confirm Payment")}
+							{t("confirm_payment")}
 						</Button>
 					</DialogFooter>
 				</DialogContent>

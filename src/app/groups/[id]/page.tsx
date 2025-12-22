@@ -21,7 +21,7 @@ import { CommentGroup } from "@/libs/enums/comment.enum";
 const GroupDetailPage = () => {
 	const params = useParams();
 	const user = useReactiveVar(userVar);
-	const { t } = useTranslation("common");
+	const { t } = useTranslation("groups");
 
 	const groupId = params?.id as string | undefined;
 
@@ -77,10 +77,10 @@ const GroupDetailPage = () => {
 
 				{!groupLoading && !group ? (
 					<NotFound
-						title={t("Group Not Found")}
-						message={t("The group you are looking for does not exist or has been removed.")}
+						title={t("group_not_found")}
+						message={t("group_not_found_message")}
 						backPath="/groups"
-						backLabel={t("Back to Groups")}
+						backLabel={t("back_to_groups")}
 					/>
 				) : null}
 

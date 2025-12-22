@@ -12,12 +12,12 @@ import { MemberType } from "@/libs/enums/member.enum";
 
 const ChosenGroupHeader = () => {
 	const router = useRouter();
-	const { t } = useTranslation("common");
+	const { t } = useTranslation("groups");
 	const user = useReactiveVar(userVar);
 
 	const createGroupHandler = () => {
 		if (user.memberType !== MemberType.ORGANIZER) {
-			smallError(t("Only organizers can create groups"));
+			smallError(t("only_organizers_can_create_groups"));
 			return;
 		}
 		router.push("/groups/create");
@@ -34,7 +34,7 @@ const ChosenGroupHeader = () => {
 				>
 					<div className="flex items-center gap-2">
 						<ArrowLeft className="w-4 h-4" />
-						{t("Back to Groups")}
+						{t("back_to_groups")}
 					</div>
 				</Button>
 
@@ -51,13 +51,13 @@ const ChosenGroupHeader = () => {
 							}`}
 						>
 							<div className="flex items-center gap-2">
-								{t("Create Group")}
+								{t("create_group")}
 								<ArrowRight className="w-4 h-4" />
 							</div>
 						</Button>
 					</TooltipTrigger>
 					{user.memberType !== MemberType.ORGANIZER && (
-						<TooltipContent side="bottom">{t("Organizers only!")}</TooltipContent>
+						<TooltipContent side="bottom">{t("organizers_only")}</TooltipContent>
 					)}
 				</Tooltip>
 			</div>

@@ -15,7 +15,7 @@ interface GroupSearchProps {
 }
 
 export function GroupSearch({ initialInquiry, groupsInquiry, setGroupsInquiry }: GroupSearchProps) {
-	const { t } = useTranslation();
+	const { t } = useTranslation(["admin", "groups"]);
 
 	/**	 HANDLERS */
 	const searchTextHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -53,7 +53,7 @@ export function GroupSearch({ initialInquiry, groupsInquiry, setGroupsInquiry }:
 		<div className="flex items-center gap-6 p-6 rounded-t-lg bg-card border  ">
 			{/* SEARCH */}
 			<Input
-				placeholder={t("Search groups...")}
+				placeholder={t("search_groups")}
 				value={groupsInquiry?.search?.text ?? ""}
 				onChange={searchTextHandler}
 				className="w-full bg-background text-foreground border-input focus:ring-primary"
@@ -67,13 +67,13 @@ export function GroupSearch({ initialInquiry, groupsInquiry, setGroupsInquiry }:
 				}}
 			>
 				<SelectTrigger className="w-[180px] bg-background text-foreground border-input focus:ring-primary">
-					<SelectValue placeholder={t("Filter by category")} />
+					<SelectValue placeholder={t("filter_by_category")} />
 				</SelectTrigger>
 				<SelectContent className="bg-card text-foreground  ">
-					<SelectItem value="all">{t("All Categories")}</SelectItem>
+					<SelectItem value="all">{t("all_categories")}</SelectItem>
 					{Object.values(GroupCategory).map((value) => (
 						<SelectItem key={value} value={value}>
-							{t(value.charAt(0).toUpperCase() + value.slice(1))}
+							{t(`groups:${value.toLowerCase()}`)}
 						</SelectItem>
 					))}
 				</SelectContent>
@@ -87,13 +87,13 @@ export function GroupSearch({ initialInquiry, groupsInquiry, setGroupsInquiry }:
 				}}
 			>
 				<SelectTrigger className="w-[180px] bg-background text-foreground border-input focus:ring-primary">
-					<SelectValue placeholder={t("Sort by")} />
+					<SelectValue placeholder={t("sort_by")} />
 				</SelectTrigger>
 				<SelectContent className="bg-card text-foreground  ">
-					<SelectItem value="createdAt">{t("Created At")}</SelectItem>
-					<SelectItem value="memberCount">{t("Members")}</SelectItem>
-					<SelectItem value="eventsCount">{t("Events")}</SelectItem>
-					<SelectItem value="groupViews">{t("Views")}</SelectItem>
+					<SelectItem value="createdAt">{t("created_at")}</SelectItem>
+					<SelectItem value="memberCount">{t("members")}</SelectItem>
+					<SelectItem value="eventsCount">{t("events")}</SelectItem>
+					<SelectItem value="groupViews">{t("views_header")}</SelectItem>
 				</SelectContent>
 			</Select>
 
@@ -105,11 +105,11 @@ export function GroupSearch({ initialInquiry, groupsInquiry, setGroupsInquiry }:
 				}}
 			>
 				<SelectTrigger className="w-[180px] bg-background text-foreground border-input focus:ring-primary">
-					<SelectValue placeholder={t("Direction")} />
+					<SelectValue placeholder={t("direction")} />
 				</SelectTrigger>
 				<SelectContent className="bg-card text-foreground  ">
-					<SelectItem value={Direction.ASC}>{t("Ascending")}</SelectItem>
-					<SelectItem value={Direction.DESC}>{t("Descending")}</SelectItem>
+					<SelectItem value={Direction.ASC}>{t("ascending")}</SelectItem>
+					<SelectItem value={Direction.DESC}>{t("descending")}</SelectItem>
 				</SelectContent>
 			</Select>
 
@@ -119,7 +119,7 @@ export function GroupSearch({ initialInquiry, groupsInquiry, setGroupsInquiry }:
 				onClick={clearAllHandler}
 				className="bg-background text-foreground border-input hover:bg-accent hover:text-accent-foreground"
 			>
-				{t("Clear")}
+				{t("clear")}
 			</Button>
 		</div>
 	);

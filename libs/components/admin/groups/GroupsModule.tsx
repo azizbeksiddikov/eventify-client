@@ -27,7 +27,7 @@ const GroupsModule = ({
 	updateGroupHandler,
 	removeGroupHandler,
 }: GroupsInquiryProps) => {
-	const { t } = useTranslation();
+	const { t } = useTranslation("admin");
 	const groupsTotal = groups.metaCounter[0]?.total ?? 0;
 
 	/** HANDLERS **/
@@ -38,7 +38,7 @@ const GroupsModule = ({
 
 	return (
 		<div className="p-6 bg-background">
-			<h2 className="text-2xl font-bold mb-6 text-foreground">{t("Group List")}</h2>
+			<h2 className="text-2xl font-bold mb-6 text-foreground">{t("group_list")}</h2>
 			<div className="bg-card rounded-lg shadow border  ">
 				<GroupSearch
 					initialInquiry={initialInquiry}

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
+import { useTranslation } from "next-i18next";
 
 // Apollo
 import { useQuery } from "@apollo/client/react";
@@ -31,6 +32,7 @@ const AutoScrollEvents = ({
 		search: { eventStatus: EventStatus.UPCOMING },
 	},
 }: AutoScrollEventsProps) => {
+	const { t, i18n } = useTranslation("home");
 	const [currentIndex, setCurrentIndex] = useState(0);
 	const [hoverPosition, setHoverPosition] = useState<number | null>(null);
 	const [isAutoScrolling, setIsAutoScrolling] = useState(true);
@@ -150,26 +152,37 @@ const AutoScrollEvents = ({
 	}, []);
 
 	// Format date for better accessibility
-	const formatDate = useCallback((dateString: Date) => {
-		const date = new Date(dateString);
-		return new Intl.DateTimeFormat("en-US", {
-			weekday: "long",
-			year: "numeric",
-			month: "long",
-			day: "numeric",
-		}).format(date);
-	}, []);
+	const formatDate = useCallback(
+		(dateString: Date) => {
+			const date = new Date(dateString);
+			return new Intl.DateTimeFormat(i18n.language || "en-US", {
+				weekday: "long",
+				year: "numeric",
+				month: "long",
+				day: "numeric",
+			}).format(date);
+		},
+		[i18n.language],
+	);
 
 	// Get event location with fallback
-	const getEventLocation = useCallback((event: Event) => {
-		if (event.eventAddress) return event.eventAddress;
-		if (event.eventCity) return event.eventCity;
-		if (event.locationType === EventLocationType.ONLINE) return "Online Event";
-		return "Location TBA";
-	}, []);
+	const getEventLocation = useCallback(
+		(event: Event) => {
+			if (event.eventAddress) return event.eventAddress;
+			if (event.eventCity) return event.eventCity;
+			if (event.locationType === EventLocationType.ONLINE) return t("online_event");
+			return t("location_tba");
+		},
+		[t],
+	);
 
-	if (upcomingEventsLoading) return <div>Loading...</div>;
-	if (upcomingEventsError) return <div>Error: {upcomingEventsError.message}</div>;
+	if (upcomingEventsLoading) return <div>{t("loading")}...</div>;
+	if (upcomingEventsError)
+		return (
+			<div>
+				{t("error")}: {upcomingEventsError.message}
+			</div>
+		);
 	if (!eventList.length) return null; // Section disappears if no featured events are found
 
 	return (
@@ -183,7 +196,7 @@ const AutoScrollEvents = ({
 				return false;
 			}}
 			aria-roledescription="carousel"
-			aria-label="Featured events"
+			aria-label={t("featured_events")}
 		>
 			{/* Carousel items */}
 			<div className="h-full relative">
@@ -261,10 +274,10 @@ const AutoScrollEvents = ({
 							<Link
 								href={`/events/${event._id}`}
 								className="inline-block bg-primary text-white px-4 sm:px-6 md:px-8 py-2 sm:py-3 md:py-4 rounded-full text-sm sm:text-base font-medium hover:bg-primary/90 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
-								aria-label={`View details for ${event.eventName}`}
+								aria-label={`${t("events_view_details_for")} ${event.eventName}`}
 								onClick={handleUserInteraction}
 							>
-								{"View Details"}
+								{t("events_view_details")}
 							</Link>
 						</div>
 					</div>

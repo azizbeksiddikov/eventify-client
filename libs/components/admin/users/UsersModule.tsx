@@ -27,7 +27,7 @@ const UsersModule = ({
 	updateMemberHandler,
 	removeMemberHandler,
 }: UsersModuleProps) => {
-	const { t } = useTranslation();
+	const { t } = useTranslation("admin");
 	const membersTotal = members.metaCounter[0]?.total;
 
 	/** HANDLERS **/
@@ -37,7 +37,7 @@ const UsersModule = ({
 
 	return (
 		<div className="p-6 bg-background">
-			<h2 className="text-2xl font-bold mb-6 text-foreground">{t("Member List")}</h2>
+			<h2 className="text-2xl font-bold mb-6 text-foreground">{t("member_list")}</h2>
 			<div className="bg-card rounded-lg shadow border  ">
 				<MemberSearch
 					initialInquiry={initialInquiry}

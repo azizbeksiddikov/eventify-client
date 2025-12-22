@@ -5,7 +5,7 @@ import { Button } from "@/libs/components/ui/button";
 
 const OrganizerHeader = () => {
 	const router = useRouter();
-	const { t } = useTranslation("common");
+	const { t } = useTranslation("organizers");
 
 	return (
 		<section className="bg-gradient-to-b from-muted-foreground/10 to-background py-8">
@@ -18,7 +18,7 @@ const OrganizerHeader = () => {
 				>
 					<div className="flex items-center gap-2">
 						<ArrowLeft className="w-4 h-4 mr-1 transition-transform group-hover:-translate-x-1" />
-						<span className="text-sm sm:text-base font-medium">{t("Back to Organizers")}</span>
+						<span className="text-sm sm:text-base font-medium">{t("back_to_organizers")}</span>
 					</div>
 				</Button>
 			</div>

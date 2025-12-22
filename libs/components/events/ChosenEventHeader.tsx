@@ -12,12 +12,12 @@ import { MemberType } from "@/libs/enums/member.enum";
 
 const ChosenEventHeader = () => {
 	const router = useRouter();
-	const { t } = useTranslation("common");
+	const { t } = useTranslation("events");
 	const user = useReactiveVar(userVar);
 
 	const createHandler = () => {
 		if (user.memberType !== MemberType.ORGANIZER) {
-			smallError(t("Only organizers can create events"));
+			smallError(t("only_organizers_can_create_events"));
 			return;
 		}
 		router.push("/events/create");
@@ -34,7 +34,7 @@ const ChosenEventHeader = () => {
 				>
 					<div className="flex items-center gap-2">
 						<ArrowLeft className="w-4 h-4" />
-						{t("Back to Events")}
+						{t("back_to_events")}
 					</div>
 				</Button>
 
@@ -51,13 +51,13 @@ const ChosenEventHeader = () => {
 							}`}
 						>
 							<div className="flex items-center gap-2">
-								{t("Create Event")}
+								{t("create_event")}
 								<CalendarPlus className="w-4 h-4" />
 							</div>
 						</Button>
 					</TooltipTrigger>
 					{user.memberType !== MemberType.ORGANIZER && (
-						<TooltipContent side="bottom">{t("Organizers only!")}</TooltipContent>
+						<TooltipContent side="bottom">{t("organizers_only")}</TooltipContent>
 					)}
 				</Tooltip>
 			</div>

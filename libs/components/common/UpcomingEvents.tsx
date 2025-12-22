@@ -15,13 +15,13 @@ interface UpcomingEventsProps {
 }
 
 const UpcomingEvents = ({ events, organizerName, likeEventHandler }: UpcomingEventsProps) => {
-	const { t } = useTranslation("common");
+	const { t } = useTranslation(["home", "events", "groups"]);
 
 	const title = (
 		<div className="space-y-1">
 			<div className="flex items-center gap-2 text-xl sm:text-2xl font-bold text-card-foreground">
 				<Calendar className="w-6 h-6 text-primary" />
-				<span>{t("Upcoming Events")}</span>
+				<span>{t("upcoming_events")}</span>
 			</div>
 			{organizerName && (
 				<div className="flex items-center gap-1.5 text-sm sm:text-base text-muted-foreground ml-8">
@@ -32,7 +32,7 @@ const UpcomingEvents = ({ events, organizerName, likeEventHandler }: UpcomingEve
 							variant="secondary"
 							className="hidden sm:inline-flex ml-3 bg-primary/5 text-primary border-primary/10 hover:bg-primary/10 transition-colors px-2 py-0.5 rounded-full font-bold text-[10px] uppercase tracking-wider"
 						>
-							{events.length} {t("Events this Month")}
+							{events.length} {t("events_this_month")}
 						</Badge>
 					)}
 				</div>
@@ -44,7 +44,7 @@ const UpcomingEvents = ({ events, organizerName, likeEventHandler }: UpcomingEve
 		return (
 			<Card className="mt-10 p-6 sm:p-8 bg-card hover:bg-accent/5 transition-all duration-300 shadow-sm hover:shadow-md border  /50 text-center">
 				{title}
-				<p className="mt-4 text-muted-foreground">{t("No events scheduled in the next 30 days.")}</p>
+				<p className="mt-4 text-muted-foreground">{t("no_events_scheduled_next_30_days")}</p>
 			</Card>
 		);
 	}

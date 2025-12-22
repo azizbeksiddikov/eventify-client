@@ -26,7 +26,7 @@ const ChosenGroupData = ({
 	joinGroupHandler,
 	leaveGroupHandler,
 }: ChosenGroupDataProps) => {
-	const { t } = useTranslation("common");
+	const { t } = useTranslation("groups");
 	const router = useRouter();
 
 	if (!group) return null;
@@ -58,7 +58,7 @@ const ChosenGroupData = ({
 						onClick={() => router.push(`/groups/update/${group._id}`)}
 					>
 						<Pencil className="h-4 w-4 mr-1.5" />
-						{t("Edit")}
+						{t("edit")}
 					</Button>
 				)}
 
@@ -111,7 +111,7 @@ const ChosenGroupData = ({
 										variant="outline"
 										className="text-xs font-medium border-primary/30 text-primary bg-primary/5 hover:bg-primary/10 transition-colors px-2 sm:px-3 py-1 rounded-full"
 									>
-										{category}
+										{t(category.toLowerCase())}
 									</Badge>
 								))}
 							</div>
@@ -122,7 +122,7 @@ const ChosenGroupData = ({
 								<div className="flex items-center gap-3 text-muted-foreground hover:text-foreground transition-colors bg-muted/40 hover:bg-muted/50 p-2 sm:p-3 rounded-xl">
 									<Calendar className="h-5 w-5 shrink-0 text-primary" />
 									<span className="text-sm font-medium">
-										{t("Created on")}{" "}
+										{t("created_on")}{" "}
 										{new Date(group.createdAt).toLocaleDateString("en-US", {
 											weekday: "short",
 											month: "short",
@@ -190,7 +190,7 @@ const ChosenGroupData = ({
 											: "bg-primary hover:bg-primary/90 text-primary-foreground",
 								)}
 							>
-								{isOwner ? t("Owner cannot leave group") : isJoined ? t("Leave Group") : t("Join Group")}
+								{isOwner ? t("owner_cannot_leave_group") : isJoined ? t("leave_group") : t("join_group")}
 							</Button>
 						</div>
 					</div>
@@ -200,7 +200,7 @@ const ChosenGroupData = ({
 			{/* Section: Description */}
 			<Separator />
 			<div className="px-4 sm:px-6 py-4">
-				<h3 className="text-sm font-semibold mb-2 text-foreground/90">{t("Description")}</h3>
+				<h3 className="text-sm font-semibold mb-2 text-foreground/90">{t("description")}</h3>
 				<p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">{group.groupDesc}</p>
 			</div>
 		</Card>

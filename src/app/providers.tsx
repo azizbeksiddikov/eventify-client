@@ -8,6 +8,7 @@ import { ErrorLink } from "@apollo/client/link/error";
 import { CombinedGraphQLErrors } from "@apollo/client/errors";
 import { getJwtToken, logOut } from "@/libs/auth";
 import { smallError } from "@/libs/alert";
+import { I18nProvider } from "@/libs/i18n/provider";
 
 // Auth link: Only add Authorization header when token exists
 const authLink = new ApolloLink((operation, forward) => {
@@ -104,5 +105,9 @@ export function Providers({ children }: { children: ReactNode }) {
 		cache: new InMemoryCache(),
 	});
 
-	return <ApolloProvider client={client}>{children}</ApolloProvider>;
+	return (
+		<ApolloProvider client={client}>
+			<I18nProvider>{children}</I18nProvider>
+		</ApolloProvider>
+	);
 }

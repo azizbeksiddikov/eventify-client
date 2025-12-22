@@ -16,21 +16,21 @@ interface ChosenEventOtherProps {
 }
 
 const ChosenEventOther = ({ event, likeEventHandler }: ChosenEventOtherProps) => {
-	const { t } = useTranslation("common");
+	const { t } = useTranslation("events");
 
 	if (!event) return null;
 
 	return (
 		<div className="space-y-3 sm:space-y-4 lg:space-y-6 w-full h-full">
 			{/* Owner's Info */}
-			{event?.memberData && <Owner member={event.memberData} title={t("Event Organizer")} />}
+			{event?.memberData && <Owner member={event.memberData} title={t("event_organizer")} />}
 
 			{/* Hosting Group */}
 			{event?.hostingGroup && (
 				<Card className="p-3 bg-card hover:bg-secondary/15 transition-all duration-300 shadow-sm hover:shadow-md border  /50 w-full gap-2">
 					<h2 className="text-lg font-semibold mb-2 sm:mb-3 text-card-foreground flex items-center gap-2">
 						<Users className="w-4 h-4 text-card-foreground" />
-						{t("Hosting Group")}
+						{t("hosting_group")}
 					</h2>
 
 					{/* Hosting Group Image and Name */}
@@ -80,7 +80,7 @@ const ChosenEventOther = ({ event, likeEventHandler }: ChosenEventOtherProps) =>
 			<Card className="p-3 sm:p-4 lg:p-5 bg-card hover:bg-secondary/15 transition-all duration-300 shadow-sm hover:shadow-md border  /50 w-full">
 				<h2 className="text-lg font-semibold mb-3 text-card-foreground flex items-center gap-2">
 					<Calendar className="w-4 h-4 text-card-foreground" />
-					{t("Similar Events")}
+					{t("similar_events")}
 				</h2>
 				<div className="space-y-2 sm:space-y-3">
 					{event?.similarEvents && event.similarEvents.length > 0 ? (
@@ -90,8 +90,8 @@ const ChosenEventOther = ({ event, likeEventHandler }: ChosenEventOtherProps) =>
 					) : (
 						<div className="py-6">
 							<div className="rounded-lg border border-dashed bg-muted/20 px-4 py-4 text-center">
-								<div className="text-sm font-medium text-foreground/90">{t("No similar events found")}</div>
-								<div className="mt-1 text-xs text-muted-foreground">{t("Try checking back later.")}</div>
+								<div className="text-sm font-medium text-foreground/90">{t("no_similar_events_found")}</div>
+								<div className="mt-1 text-xs text-muted-foreground">{t("try_checking_back_later")}</div>
 							</div>
 						</div>
 					)}

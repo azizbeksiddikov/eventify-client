@@ -37,7 +37,7 @@ const OrganizersPage = ({
 	const searchParams = useSearchParams();
 	const pathname = usePathname();
 	const user = useReactiveVar(userVar);
-	const { t } = useTranslation("common");
+	const { t } = useTranslation("organizers");
 
 	const readUrl = (): OrganizersInquiry => {
 		return {
@@ -89,7 +89,7 @@ const OrganizersPage = ({
 
 	/** HANDLERS */
 	const likeMemberHandler = async (memberId: string) => {
-		likeMember(user._id, memberId, likeTargetMember, client.cache);
+		likeMember(user._id, memberId, likeTargetMember);
 	};
 
 	const subscribeHandler = async (memberId: string) => {
@@ -148,7 +148,7 @@ const OrganizersPage = ({
 					</>
 				) : (
 					<div className="py-16 text-center">
-						<p className="text-muted-foreground">{t("No organizers found. Try adjusting your filters.")}</p>
+						<p className="text-muted-foreground">{t("no_organizers_found")}</p>
 					</div>
 				)}
 			</div>

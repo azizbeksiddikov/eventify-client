@@ -20,7 +20,7 @@ interface EventCardProps {
 }
 
 const EventCard = ({ event, likeEventHandler }: EventCardProps) => {
-	const { t } = useTranslation("common");
+	const { t } = useTranslation("events");
 
 	const formatLocalDateTime = (value: Date) => {
 		const date = value instanceof Date ? value : new Date(value);
@@ -50,7 +50,7 @@ const EventCard = ({ event, likeEventHandler }: EventCardProps) => {
 	};
 
 	const formatPrice = (price: number, currency?: Currency) => {
-		if (!price || price === 0) return t("Free");
+		if (!price || price === 0) return t("free");
 		if (currency) {
 			try {
 				return new Intl.NumberFormat(undefined, { style: "currency", currency }).format(price);
@@ -90,7 +90,7 @@ const EventCard = ({ event, likeEventHandler }: EventCardProps) => {
 					{event.isRealEvent === false && (
 						<div className="absolute top-2 left-2 z-2">
 							<Badge variant="secondary" className="bg-red-500/90 text-white shadow-sm text-[10px] px-2 py-0.5">
-								{t("Fake")}
+								{t("fake")}
 							</Badge>
 						</div>
 					)}
@@ -122,7 +122,7 @@ const EventCard = ({ event, likeEventHandler }: EventCardProps) => {
 								className="truncate text-[10px] text-primary/90 bg-primary/10 px-2 py-0.5 rounded-full"
 								title={`#${category}`}
 							>
-								#{category}
+								#{t(category.toLowerCase())}
 							</span>
 						))}
 					</div>
@@ -132,8 +132,8 @@ const EventCard = ({ event, likeEventHandler }: EventCardProps) => {
 							<MapPin className="w-2.5 h-2.5 shrink-0" />
 							<span className="line-clamp-1">
 								{event.locationType === "ONLINE"
-									? t("Online")
-									: [event.eventCity, event.eventAddress].filter(Boolean).join(" • ") || t("Offline")}
+									? t("online")
+									: [event.eventCity, event.eventAddress].filter(Boolean).join(" • ") || t("offline")}
 							</span>
 						</div>
 						<div className="flex items-center gap-2 text-muted-foreground">
@@ -151,7 +151,7 @@ const EventCard = ({ event, likeEventHandler }: EventCardProps) => {
 								<p className="text-[10px] sm:text-xs font-medium">{event.attendeeCount || 0}</p>
 							</div>
 						</TooltipTrigger>
-						<TooltipContent side="bottom">{t("Total attendees")}</TooltipContent>
+						<TooltipContent side="bottom">{t("total_attendees")}</TooltipContent>
 					</Tooltip>
 
 					{typeof event.eventCapacity === "number" && event.eventCapacity > 0 ? (
@@ -164,7 +164,7 @@ const EventCard = ({ event, likeEventHandler }: EventCardProps) => {
 									</p>
 								</div>
 							</TooltipTrigger>
-							<TooltipContent side="bottom">{t("Attendees / capacity")}</TooltipContent>
+							<TooltipContent side="bottom">{t("attendees_capacity")}</TooltipContent>
 						</Tooltip>
 					) : (
 						<div className="flex items-center justify-center gap-1 p-1 rounded-md bg-card/70">
@@ -180,7 +180,7 @@ const EventCard = ({ event, likeEventHandler }: EventCardProps) => {
 							<p className="text-[10px] text-foreground leading-relaxed line-clamp-2">{event.eventDesc}</p>
 						) : (
 							<p className="text-[10px] text-muted-foreground italic flex items-center justify-center py-1 w-full">
-								<span className="bg-muted/50 px-2 py-0.5 rounded-md">{t("No description available")}</span>
+								<span className="bg-muted/50 px-2 py-0.5 rounded-md">{t("no_description_available")}</span>
 							</p>
 						)}
 					</div>
@@ -198,7 +198,7 @@ const EventCard = ({ event, likeEventHandler }: EventCardProps) => {
 								: "text-muted-foreground hover:text-foreground"
 						}`}
 						onClick={() => likeEventHandler(event._id)}
-						aria-label={event?.meLiked?.[0]?.myFavorite ? t("Liked") : t("Like")}
+						aria-label={event?.meLiked?.[0]?.myFavorite ? t("liked") : t("like")}
 					>
 						<Heart
 							className={`w-4 h-4 transition-all ${event?.meLiked?.[0]?.myFavorite ? "fill-current stroke-current" : ""}`}
@@ -212,7 +212,7 @@ const EventCard = ({ event, likeEventHandler }: EventCardProps) => {
 						variant="outline"
 						size="sm"
 						className="h-9 w-9 p-0 rounded-lg hover:bg-primary/5 border-primary/30 text-primary"
-						aria-label={t("View")}
+						aria-label={t("view")}
 					>
 						<ExternalLink className="w-4 h-4" />
 					</Button>

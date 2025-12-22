@@ -37,7 +37,7 @@ export const ImageCropper = ({
 	isCircular = false,
 	quality = 0.92,
 }: ImageCropperProps) => {
-	const { t } = useTranslation("common");
+	const { t } = useTranslation(["events", "groups"]);
 	const imgRef = useRef<HTMLImageElement>(null);
 
 	const isCircularOutput = isCircular;

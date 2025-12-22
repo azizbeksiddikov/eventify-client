@@ -28,25 +28,25 @@ export const ProfileGroups = ({
 	leaveGroupHandler,
 }: ProfileGroupsProps) => {
 	const user = useReactiveVar(userVar);
-	const { t } = useTranslation("common");
+	const { t } = useTranslation("profile");
 
 	return (
 		<Card className="w-full">
 			<CardHeader>
-				<h2 className="text-lg font-medium text-card-foreground">{t("Groups Joined")}</h2>
+				<h2 className="text-lg font-medium text-card-foreground">{t("groups_joined")}</h2>
 			</CardHeader>
 			<CardContent>
 				{groups.length === 0 ? (
-					<div className="text-center text-muted-foreground py-8">{t("No groups found")}</div>
+					<div className="text-center text-muted-foreground py-8">{t("no_groups_found")}</div>
 				) : (
 					<Table>
 						<TableHeader>
 							<TableRow>
-								<TableHead className="w-[300px]">{t("Group")}</TableHead>
-								<TableHead className="text-center">{t("Members")}</TableHead>
-								<TableHead className="text-center">{t("Events")}</TableHead>
-								<TableHead className="text-center">{t("Created")}</TableHead>
-								<TableHead className="text-right">{t("Actions")}</TableHead>
+								<TableHead className="w-[300px]">{t("group")}</TableHead>
+								<TableHead className="text-center">{t("members")}</TableHead>
+								<TableHead className="text-center">{t("events")}</TableHead>
+								<TableHead className="text-center">{t("created")}</TableHead>
+								<TableHead className="text-right">{t("actions")}</TableHead>
 							</TableRow>
 						</TableHeader>
 						<TableBody>
@@ -77,7 +77,7 @@ export const ProfileGroups = ({
 															<h3 className="text-sm font-medium text-card-foreground">{group.groupName}</h3>
 															{group.memberId === user?._id && (
 																<Badge variant="secondary" className="text-xs">
-																	{t("Owner")}
+																	{t("owner")}
 																</Badge>
 															)}
 														</div>
@@ -114,7 +114,7 @@ export const ProfileGroups = ({
 															? "text-destructive hover:text-destructive/80"
 															: "text-muted-foreground hover:text-destructive"
 													} transition-colors duration-200`}
-													aria-label={isLiked ? t("Unlike") : t("Like")}
+													aria-label={isLiked ? t("unlike") : t("like")}
 												>
 													<Heart className={`h-4 w-4 ${isLiked ? "fill-current" : ""}`} />
 												</Button>
@@ -124,7 +124,7 @@ export const ProfileGroups = ({
 														size="icon"
 														onClick={() => leaveGroupHandler(group._id)}
 														className="text-destructive hover:text-destructive/80 transition-colors duration-200"
-														aria-label={t("Leave group")}
+														aria-label={t("leave_group")}
 													>
 														<LogOut className="h-4 w-4" />
 													</Button>
@@ -134,7 +134,7 @@ export const ProfileGroups = ({
 														size="icon"
 														onClick={() => joinGroupHandler(group._id)}
 														className="text-muted-foreground hover:text-primary transition-colors duration-200"
-														aria-label={t("Join group")}
+														aria-label={t("join_group")}
 													>
 														<LogIn className="h-4 w-4" />
 													</Button>
@@ -144,7 +144,7 @@ export const ProfileGroups = ({
 														variant="ghost"
 														size="icon"
 														className="text-muted-foreground hover:text-primary transition-colors duration-200"
-														aria-label={t("View group details")}
+														aria-label={t("view_group_details")}
 													>
 														<LinkIcon className="h-4 w-4" />
 													</Button>

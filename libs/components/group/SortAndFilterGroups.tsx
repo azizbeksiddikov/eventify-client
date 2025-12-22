@@ -19,7 +19,7 @@ interface SortAndFilterProps {
 }
 
 function SortAndFilterGroups({ updateURL, groupsSearchFilters, initialSearch }: SortAndFilterProps) {
-	const { t } = useTranslation("common");
+	const { t } = useTranslation("groups");
 
 	const searchHandler = (text: string) => {
 		updateURL({
@@ -59,7 +59,7 @@ function SortAndFilterGroups({ updateURL, groupsSearchFilters, initialSearch }: 
 				{/* Left: search */}
 				<div className="min-w-0 flex-1">
 					<Input
-						placeholder={t("Search groups...")}
+						placeholder={t("search_groups")}
 						value={groupsSearchFilters.search?.text}
 						onChange={(e) => searchHandler(e.target.value)}
 						className={cn(
@@ -74,7 +74,7 @@ function SortAndFilterGroups({ updateURL, groupsSearchFilters, initialSearch }: 
 					<Select value={groupsSearchFilters.sort} onValueChange={sortHandler}>
 						<SelectTrigger className="h-11 w-full col-span-2 sm:col-span-1 sm:min-w-[160px]">
 							<ArrowUpDown className="text-muted-foreground mr-2" />
-							<SelectValue placeholder={t("Sort by")} />
+							<SelectValue placeholder={t("sort_by")} />
 						</SelectTrigger>
 						<SelectContent>
 							{groupsSortOptions.map((option) => (
@@ -117,7 +117,7 @@ function SortAndFilterGroups({ updateURL, groupsSearchFilters, initialSearch }: 
 						className="w-full lg:w-auto h-11 hover:bg-accent hover:text-accent-foreground"
 					>
 						<X className="h-4 w-4 mr-2" />
-						{t("Clear")}
+						{t("clear")}
 					</Button>
 				</div>
 			</div>

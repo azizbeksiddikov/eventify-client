@@ -221,7 +221,7 @@ export const followMember = async (
 			variables: { input: followRefId },
 		});
 
-		await smallSuccess(t("Member subscribed successfully"));
+		await smallSuccess(t("member_subscribed_successfully"));
 	} catch (err: any) {
 		smallError(err.message);
 		console.log("ERROR, subscribeHandler:", err.message);
@@ -242,7 +242,7 @@ export const unfollowMember = async (
 			variables: { input: followRefId },
 		});
 
-		await smallInfo(t("Member unsubscribed successfully"));
+		await smallInfo(t("member_unsubscribed_successfully"));
 	} catch (err: any) {
 		smallError(err.message);
 		console.log("ERROR, unsubscribeHandler:", err.message);
@@ -264,7 +264,7 @@ export const joinGroup = async (
 			variables: { input: groupId },
 		});
 
-		await smallSuccess(t("Group joined successfully"));
+		await smallSuccess(t("group_joined_successfully"));
 	} catch (err: any) {
 		smallError(err.message);
 		console.log("ERROR, joinGroupHandler:", err.message);
@@ -285,7 +285,7 @@ export const leaveGroup = async (
 			variables: { input: groupId },
 		});
 
-		await smallSuccess(t("Group left successfully"));
+		await smallSuccess(t("group_left_successfully"));
 	} catch (err: any) {
 		smallError(err.message);
 		console.log("ERROR, leaveGroupHandler:", err.message);

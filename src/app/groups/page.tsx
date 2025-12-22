@@ -36,7 +36,7 @@ const GroupsPage = ({
 	const router = useRouter();
 	const searchParams = useSearchParams();
 	const pathname = usePathname();
-	const { t } = useTranslation("common");
+	const { t } = useTranslation("groups");
 
 	const [groups, setGroups] = useState<Group[]>([]);
 
@@ -166,7 +166,7 @@ const GroupsPage = ({
 							</>
 						) : (
 							<div className="py-16 text-center">
-								<p className="text-muted-foreground">{t("No groups found. Try adjusting your filters.")}</p>
+								<p className="text-muted-foreground">{t("no_groups_found")}</p>
 							</div>
 						)}
 					</div>

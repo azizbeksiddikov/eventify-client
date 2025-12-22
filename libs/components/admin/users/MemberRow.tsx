@@ -36,7 +36,7 @@ const MemberRow = ({
 		memberType: member.memberType,
 	},
 }: MemberRowProps) => {
-	const { t } = useTranslation();
+	const { t } = useTranslation("admin");
 	const [memberUpdateInput, setMemberUpdateInput] = useState<MemberUpdateInput>(initialMember);
 	const [isEditing, setIsEditing] = useState(false);
 
@@ -106,7 +106,7 @@ const MemberRow = ({
 						className="h-8"
 					/>
 				) : (
-					<span className="text-foreground">{member.memberFullName || t("N/A")}</span>
+					<span className="text-foreground">{member.memberFullName || t("n_a")}</span>
 				)}
 			</TableCell>
 
@@ -119,7 +119,7 @@ const MemberRow = ({
 						className="h-8"
 					/>
 				) : (
-					<span className="text-foreground">{member.memberPhone || t("N/A")}</span>
+					<span className="text-foreground">{member.memberPhone || t("n_a")}</span>
 				)}
 			</TableCell>
 
@@ -145,8 +145,8 @@ const MemberRow = ({
 							<SelectValue placeholder="Select status" />
 						</SelectTrigger>
 						<SelectContent>
-							<SelectItem value={MemberStatus.ACTIVE}>{t("ACTIVE")}</SelectItem>
-							<SelectItem value={MemberStatus.BLOCKED}>{t("BLOCKED")}</SelectItem>
+							<SelectItem value={MemberStatus.ACTIVE}>{t("active")}</SelectItem>
+							<SelectItem value={MemberStatus.BLOCKED}>{t("blocked")}</SelectItem>
 						</SelectContent>
 					</Select>
 				) : (
@@ -162,8 +162,8 @@ const MemberRow = ({
 							<SelectValue placeholder="Select type" />
 						</SelectTrigger>
 						<SelectContent>
-							<SelectItem value={MemberType.ORGANIZER}>{t("ORGANIZER")}</SelectItem>
-							<SelectItem value={MemberType.USER}>{t("USER")}</SelectItem>
+							<SelectItem value={MemberType.ORGANIZER}>{t("organizer")}</SelectItem>
+							<SelectItem value={MemberType.USER}>{t("user")}</SelectItem>
 						</SelectContent>
 					</Select>
 				) : (

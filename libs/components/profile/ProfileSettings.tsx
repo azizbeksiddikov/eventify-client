@@ -28,7 +28,7 @@ export const ProfileSettings = ({
 	memberUpdateInput,
 	setMemberUpdateInput,
 }: ProfileSettingsProps) => {
-	const { t } = useTranslation("common");
+	const { t } = useTranslation("profile");
 	const token = getJwtToken();
 
 	const [imagePreview, setImagePreview] = useState<string | null>(
@@ -118,18 +118,18 @@ export const ProfileSettings = ({
 	return (
 		<div className="bg-card rounded-xl shadow-sm">
 			<div className="px-6 py-4 border-b  ">
-				<h2 className="text-lg font-medium text-card-foreground">{t("Profile Settings")}</h2>
+				<h2 className="text-lg font-medium text-card-foreground">{t("profile_settings")}</h2>
 			</div>
 			<form onSubmit={submitHandler} className="p-6 space-y-6">
 				{/* Image Upload Section */}
 				<div className="space-y-4">
-					<label className="text-sm font-medium text-foreground">{t("Profile Image")}</label>
+					<label className="text-sm font-medium text-foreground">{t("profile_image")}</label>
 					<div className="relative w-24 h-24 md:w-32 md:h-32 mx-auto rounded-full overflow-hidden bg-muted/50 border-2 border-dashed   hover:border-primary/50 transition-all duration-200">
 						{imagePreview ? (
 							<div className="relative w-full h-full group">
 								<Image
 									src={imagePreview}
-									alt={memberUpdateInput.memberFullName ?? t("No image")}
+									alt={memberUpdateInput.memberFullName ?? t("no_image")}
 									className="rounded-full transition-transform duration-200"
 									fill
 								/>
@@ -137,7 +137,7 @@ export const ProfileSettings = ({
 								<label htmlFor="image" className="absolute inset-0 flex items-center justify-center cursor-pointer">
 									<div className="flex items-center gap-2 bg-card/90 backdrop-blur-sm text-card-foreground px-3 py-1.5 rounded-md opacity-0 group-hover:opacity-100 transition-all duration-200 shadow-lg">
 										<RefreshCw className="h-3.5 w-3.5" />
-										<span className="text-sm font-medium">{t("Change")}</span>
+										<span className="text-sm font-medium">{t("change")}</span>
 									</div>
 								</label>
 							</div>
@@ -150,7 +150,7 @@ export const ProfileSettings = ({
 									<div className="p-2.5 rounded-full bg-primary/10 group-hover:bg-primary/20 transition-colors duration-200">
 										<ImageIcon className="h-5 w-5 text-primary" />
 									</div>
-									<p className="text-xs text-muted-foreground">{t("Upload")}</p>
+									<p className="text-xs text-muted-foreground">{t("upload")}</p>
 								</div>
 							</label>
 						)}
@@ -163,11 +163,11 @@ export const ProfileSettings = ({
 							className="hidden"
 						/>
 					</div>
-					<p className="text-center text-xs text-muted-foreground mt-2">{t("JPG, JPEG, PNG up to 5MB")}</p>
+					<p className="text-center text-xs text-muted-foreground mt-2">{t("image_format_size")}</p>
 				</div>
 
 				<div className="space-y-2">
-					<Label htmlFor="username">{t("Username")}</Label>
+					<Label htmlFor="username">{t("username")}</Label>
 					<Input
 						id="username"
 						value={memberUpdateInput.username}
@@ -177,7 +177,7 @@ export const ProfileSettings = ({
 				</div>
 
 				<div className="space-y-2">
-					<Label htmlFor="fullName">{t("Full Name")}</Label>
+					<Label htmlFor="fullName">{t("full_name")}</Label>
 					<Input
 						id="fullName"
 						value={memberUpdateInput.memberFullName}
@@ -187,7 +187,7 @@ export const ProfileSettings = ({
 				</div>
 
 				<div className="space-y-2">
-					<Label htmlFor="email">{t("Email")}</Label>
+					<Label htmlFor="email">{t("email")}</Label>
 					<Input
 						id="email"
 						value={memberUpdateInput.memberEmail}
@@ -197,7 +197,7 @@ export const ProfileSettings = ({
 				</div>
 
 				<div className="space-y-2">
-					<Label htmlFor="phone">{t("Phone")}</Label>
+					<Label htmlFor="phone">{t("phone")}</Label>
 					<Input
 						id="phone"
 						value={memberUpdateInput.memberPhone}
@@ -208,7 +208,7 @@ export const ProfileSettings = ({
 				</div>
 
 				<div className="space-y-2">
-					<Label htmlFor="description">{t("Description")}</Label>
+					<Label htmlFor="description">{t("description")}</Label>
 					<Textarea
 						id="description"
 						value={memberUpdateInput.memberDesc}
@@ -219,7 +219,7 @@ export const ProfileSettings = ({
 				</div>
 
 				<div className="flex justify-end">
-					<Button type="submit">{t("Save Changes")}</Button>
+					<Button type="submit">{t("save_changes")}</Button>
 				</div>
 
 				{/* Image Cropper */}

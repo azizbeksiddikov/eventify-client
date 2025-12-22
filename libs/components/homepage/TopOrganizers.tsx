@@ -27,7 +27,7 @@ const TopOrganizers = ({
 		search: {},
 	},
 }: TopOrganizersProps) => {
-	const { t } = useTranslation("common");
+	const { t } = useTranslation("home");
 	const router = useRouter();
 	const user = useReactiveVar(userVar);
 
@@ -63,7 +63,7 @@ const TopOrganizers = ({
 		<section className="bg-secondary/50 py-8 sm:py-12 md:py-16 lg:py-20 w-full">
 			<div className="max-w-7xl mx-auto px-6 sm:px-12 lg:px-20">
 				<div className="flex flex-row items-center justify-start gap-3 mb-6 sm:mb-8">
-					<h2 className="text-foreground">{t("Top Organizers")}</h2>
+					<h2 className="text-foreground">{t("top_organizers")}</h2>
 					<Button
 						type="submit"
 						onClick={() => router.push("/organizers")}
@@ -104,7 +104,7 @@ const TopOrganizers = ({
 						))
 					) : organizers.length === 0 ? (
 						<div className="col-span-full flex flex-col items-center justify-center py-10 text-center">
-							<p className="text-muted-foreground">{t("No top organizers found at the moment")}</p>
+							<p className="text-muted-foreground">{t("no_top_organizers_found")}</p>
 						</div>
 					) : (
 						organizers.map((organizer) => (

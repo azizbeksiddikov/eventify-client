@@ -30,7 +30,7 @@ import { getImageUrl } from "@/libs/utils";
 const EventUpdatePage = () => {
 	const router = useRouter();
 	const params = useParams();
-	const { t } = useTranslation("common");
+	const { t } = useTranslation(["events", "errors"]);
 	const user = useReactiveVar(userVar);
 	const eventId = params?.id as string;
 
@@ -67,7 +67,7 @@ const EventUpdatePage = () => {
 
 			// Check if user is authorized to update the event
 			if (event.memberId !== user?._id) {
-				smallError(t("You are not authorized to update this event"));
+				smallError(t("errors:not_authorized_to_update_event"));
 				router.push(`/events/${event._id}`);
 				return;
 			}
@@ -118,7 +118,7 @@ const EventUpdatePage = () => {
 			return imageUrl;
 		} catch (err) {
 			console.error("Error uploading image:", err);
-			smallError(t("Failed to upload image"));
+			smallError(t("failed_to_upload_image"));
 			return null;
 		}
 	};
@@ -139,7 +139,7 @@ const EventUpdatePage = () => {
 			}
 		} catch (err) {
 			console.error("Error handling cropped image:", err);
-			smallError(t("Failed to process image"));
+			smallError(t("errors:failed_to_process_image"));
 		}
 	};
 
@@ -151,24 +151,24 @@ const EventUpdatePage = () => {
 
 		try {
 			// Validation
-			if (!formData._id) throw new Error(Message.EVENT_NOT_FOUND);
-			if (!user._id) throw new Error(Message.NOT_AUTHENTICATED);
-			if (!formData.eventName?.trim()) throw new Error(t("Please enter event name"));
-			if (!formData.eventDesc?.trim()) throw new Error(t("Please enter event description"));
-			if (formSelection.selectedCategories.length === 0) throw new Error(t("Please select at least one category"));
-			if (!formData.eventStartAt) throw new Error(t("Please select event start date and time"));
-			if (!formData.eventEndAt) throw new Error(t("Please select event end date and time"));
+			if (!formData._id) throw new Error(t("errors:event_not_found"));
+			if (!user._id) throw new Error(t("errors:not_authenticated"));
+			if (!formData.eventName?.trim()) throw new Error(t("please_enter_event_name"));
+			if (!formData.eventDesc?.trim()) throw new Error(t("please_enter_event_description"));
+			if (formSelection.selectedCategories.length === 0) throw new Error(t("please_select_at_least_one_category"));
+			if (!formData.eventStartAt) throw new Error(t("please_select_event_start_date_time"));
+			if (!formData.eventEndAt) throw new Error(t("please_select_event_end_date_time"));
 			if (formData.eventEndAt <= formData.eventStartAt) {
-				throw new Error(t("End date and time must be after start date and time"));
+				throw new Error(t("end_date_must_be_after_start_date"));
 			}
 			if (formSelection.locationType === EventLocationType.OFFLINE) {
-				if (!formData.eventAddress?.trim()) throw new Error(t("Please enter event address"));
+				if (!formData.eventAddress?.trim()) throw new Error(t("please_enter_event_address"));
 			}
 			if (formData.eventCapacity !== undefined && formData.eventCapacity < 1) {
-				throw new Error(t("Event capacity must be at least 1"));
+				throw new Error(t("event_capacity_must_be_at_least_1"));
 			}
-			if (formData.eventPrice !== undefined && formData.eventPrice < 0) throw new Error(t("Price cannot be negative"));
-			if (!formData.eventImages?.length) throw new Error(t("Please upload an event image"));
+			if (formData.eventPrice !== undefined && formData.eventPrice < 0) throw new Error(t("price_cannot_be_negative"));
+			if (!formData.eventImages?.length) throw new Error(t("please_upload_event_image"));
 
 			// Parse event tags
 			const tagsArray = formSelection.eventTags
@@ -187,10 +187,10 @@ const EventUpdatePage = () => {
 				variables: { input: updatedInput },
 			});
 
-			await smallSuccess(t("Event updated successfully"));
+			await smallSuccess(t("event_updated_successfully"));
 			router.push(`/events/${formData._id}`);
 		} catch (error: unknown) {
-			const errorMessage = error instanceof Error ? error.message : t("Failed to update event");
+			const errorMessage = error instanceof Error ? error.message : t("errors:failed_to_update");
 			smallError(errorMessage);
 		} finally {
 			setUiState((prev) => ({ ...prev, isSubmitting: false }));
@@ -233,7 +233,7 @@ const EventUpdatePage = () => {
 			<div className="min-h-screen bg-background flex items-center justify-center">
 				<div className="text-center">
 					<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-					<p className="text-muted-foreground">{t("Loading...")}</p>
+					<p className="text-muted-foreground">{t("loading")}</p>
 				</div>
 			</div>
 		);
@@ -249,46 +249,46 @@ const EventUpdatePage = () => {
 						className="flex items-center gap-2 text-primary hover:text-primary-foreground hover:bg-primary border-primary transition-colors duration-200"
 					>
 						<ArrowLeft className="h-4 w-4" />
-						{t("Back to Event")}
+						{t("back_to_event")}
 					</Button>
 				</div>
 
 				<Card className="p-6 bg-card text-card-foreground">
-					<h1 className="text-3xl font-semibold text-foreground mb-6">{t("Update Event")}</h1>
+					<h1 className="text-3xl font-semibold text-foreground mb-6">{t("update_event")}</h1>
 
 					<form onSubmit={submitHandler} className="space-y-6">
 						{/* Event Name */}
 						<div className="space-y-2">
 							<label htmlFor="eventName" className="text-sm font-medium text-foreground">
-								{t("Event Name")} *
+								{t("event_name")} *
 							</label>
 							<Input
 								id="eventName"
 								name="eventName"
 								value={formData.eventName}
 								onChange={inputHandler}
-								placeholder={t("Enter event name")}
+								placeholder={t("enter_event_name")}
 							/>
 						</div>
 
 						{/* Event Description */}
 						<div className="space-y-2">
 							<label htmlFor="eventDesc" className="text-sm font-medium text-foreground">
-								{t("Description")} *
+								{t("description")} *
 							</label>
 							<Textarea
 								id="eventDesc"
 								name="eventDesc"
 								value={formData.eventDesc}
 								onChange={inputHandler}
-								placeholder={t("Describe your event")}
+								placeholder={t("describe_your_event")}
 								className="min-h-[120px]"
 							/>
 						</div>
 
 						{/* Categories */}
 						<div className="space-y-2">
-							<label className="text-sm font-medium text-foreground">{t("Categories (Select up to 3)")} *</label>
+							<label className="text-sm font-medium text-foreground">{t("categories_select_up_to_3")} *</label>
 							<div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
 								{Object.values(EventCategory).map((category) => (
 									<Button
@@ -302,7 +302,7 @@ const EventUpdatePage = () => {
 										}
 										className="h-10"
 									>
-										{category.charAt(0) + category.slice(1).toLowerCase().replace("_", " ")}
+										{t(category.toLowerCase())}
 									</Button>
 								))}
 							</div>
@@ -311,13 +311,13 @@ const EventUpdatePage = () => {
 						{/* Event Tags */}
 						<div className="space-y-2">
 							<label htmlFor="eventTags" className="text-sm font-medium text-foreground">
-								{t("Tags")} * <span className="text-muted-foreground text-xs">({t("comma-separated")})</span>
+								{t("tags")} * <span className="text-muted-foreground text-xs">({t("comma-separated")})</span>
 							</label>
 							<Input
 								id="eventTags"
 								value={formSelection.eventTags}
 								onChange={(e) => setFormSelection((prev) => ({ ...prev, eventTags: e.target.value }))}
-								placeholder={t("e.g., networking, workshop, conference")}
+								placeholder={t("e_g_networking_workshop_conference")}
 							/>
 						</div>
 
@@ -334,7 +334,7 @@ const EventUpdatePage = () => {
 								htmlFor="isRealEvent"
 								className="text-sm font-medium text-foreground cursor-pointer leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
 							>
-								{t("Real Event")}
+								{t("real_event")}
 							</label>
 						</div>
 
@@ -343,7 +343,7 @@ const EventUpdatePage = () => {
 							{/* Start Date & Time */}
 							<div className="space-y-4">
 								<div className="space-y-2">
-									<label className="text-sm font-medium text-foreground">{t("Start Date")} *</label>
+									<label className="text-sm font-medium text-foreground">{t("start_date")} *</label>
 									<Input
 										type="date"
 										value={formData.eventStartAt ? new Date(formData.eventStartAt).toISOString().split("T")[0] : ""}
@@ -427,7 +427,7 @@ const EventUpdatePage = () => {
 							{/* End Date & Time */}
 							<div className="space-y-4">
 								<div className="space-y-2">
-									<label className="text-sm font-medium text-foreground">{t("End Date")} *</label>
+									<label className="text-sm font-medium text-foreground">{t("end_date")} *</label>
 									<Input
 										type="date"
 										value={formData.eventEndAt ? new Date(formData.eventEndAt).toISOString().split("T")[0] : ""}
@@ -491,26 +491,26 @@ const EventUpdatePage = () => {
 						<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 							<div className="space-y-2">
 								<label htmlFor="eventCity" className="text-sm font-medium text-foreground">
-									{t("City")} *
+									{t("city")} *
 								</label>
 								<Input
 									id="eventCity"
 									name="eventCity"
 									value={formData.eventCity}
 									onChange={inputHandler}
-									placeholder={t("Enter city")}
+									placeholder={t("enter_city")}
 								/>
 							</div>
 							<div className="space-y-2">
 								<label htmlFor="eventAddress" className="text-sm font-medium text-foreground">
-									{t("Address")} *
+									{t("address")} *
 								</label>
 								<Input
 									id="eventAddress"
 									name="eventAddress"
 									value={formData.eventAddress}
 									onChange={inputHandler}
-									placeholder={t("Enter address")}
+									placeholder={t("enter_address")}
 								/>
 							</div>
 						</div>
@@ -519,7 +519,7 @@ const EventUpdatePage = () => {
 						<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 							<div className="space-y-2">
 								<label htmlFor="eventCapacity" className="text-sm font-medium text-foreground">
-									{t("Capacity")}
+									{t("event_capacity_label")}
 								</label>
 								<Input
 									id="eventCapacity"
@@ -531,7 +531,7 @@ const EventUpdatePage = () => {
 							</div>
 							<div className="space-y-2">
 								<label htmlFor="eventPrice" className="text-sm font-medium text-foreground">
-									{t("Price")}
+									{t("price")}
 								</label>
 								<div className="flex gap-2">
 									<Input
@@ -565,7 +565,7 @@ const EventUpdatePage = () => {
 
 						{/* Status */}
 						<div className="space-y-2">
-							<label className="text-sm font-medium text-foreground">{t("Status")}</label>
+							<label className="text-sm font-medium text-foreground">{t("status")}</label>
 							<Select
 								value={formData.eventStatus}
 								onValueChange={(val: EventStatus) =>
@@ -587,7 +587,7 @@ const EventUpdatePage = () => {
 
 						{/* Image Upload */}
 						<div className="space-y-4">
-							<label className="text-sm font-medium text-foreground">{t("Event Image")} *</label>
+							<label className="text-sm font-medium text-foreground">{t("event_image")} *</label>
 							<div className="relative aspect-video w-full rounded-xl overflow-hidden bg-muted/50 border-2">
 								{uiState.imagePreview ? (
 									<>
@@ -598,7 +598,7 @@ const EventUpdatePage = () => {
 										>
 											<div className="flex items-center gap-2 bg-white/90 text-foreground px-4 py-2 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
 												<RefreshCw className="h-4 w-4" />
-												<span className="font-medium">{t("Change Image")}</span>
+												<span className="font-medium">{t("change_image")}</span>
 											</div>
 										</label>
 									</>
@@ -608,7 +608,7 @@ const EventUpdatePage = () => {
 										className="absolute inset-0 flex flex-col items-center justify-center cursor-pointer hover:bg-muted/60 transition-colors"
 									>
 										<ImageIcon className="h-12 w-12 text-muted-foreground mb-2" />
-										<span className="text-muted-foreground font-medium">{t("Click to upload image")}</span>
+										<span className="text-muted-foreground font-medium">{t("click_to_upload_image")}</span>
 									</label>
 								)}
 								<input id="image" type="file" accept={imageTypes} onChange={imageChangeHandler} className="hidden" />
@@ -624,7 +624,7 @@ const EventUpdatePage = () => {
 
 						<div className="flex justify-end pt-4">
 							<Button type="submit" size="lg" disabled={uiState.isSubmitting} className="px-12">
-								{uiState.isSubmitting ? t("Updating...") : t("Update Event")}
+								{uiState.isSubmitting ? t("updating") : t("update_event")}
 							</Button>
 						</div>
 					</form>

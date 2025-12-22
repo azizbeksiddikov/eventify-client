@@ -12,30 +12,30 @@ interface ProfileHeaderProps {
 }
 
 export const ProfileHeader = ({ member, groupsCount, ticketsCount }: ProfileHeaderProps) => {
-	const { t } = useTranslation();
+	const { t } = useTranslation("profile");
 	const stats = [
 		{
-			label: t("Points"),
+			label: t("points"),
 			value: member.memberPoints || 0,
 			icon: Star,
 		},
 		{
-			label: t("Groups"),
+			label: t("groups"),
 			value: groupsCount || 0,
 			icon: Users,
 		},
 		{
-			label: t("Events"),
+			label: t("events"),
 			value: member.memberEvents || 0,
 			icon: Calendar,
 		},
 		{
-			label: t("Tickets"),
+			label: t("tickets"),
 			value: ticketsCount || 0,
 			icon: Ticket,
 		},
 		{
-			label: t("Likes"),
+			label: t("likes"),
 			value: member.memberLikes || 0,
 			icon: Heart,
 		},
@@ -51,7 +51,7 @@ export const ProfileHeader = ({ member, groupsCount, ticketsCount }: ProfileHead
 							{member.memberImage ? (
 								<AvatarImage
 									src={`${NEXT_APP_API_URL}/${member.memberImage}`}
-									alt={member.memberFullName ?? t("No image")}
+									alt={member.memberFullName ?? t("no_image")}
 									className="rounded-full ring-4 ring-primary/10"
 								/>
 							) : (
@@ -98,7 +98,7 @@ export const ProfileHeader = ({ member, groupsCount, ticketsCount }: ProfileHead
 				{member.memberDesc && (
 					<div className="border-t  /50 pt-4">
 						<p className="text-card-foreground/80 text-base md:text-lg text-left leading-relaxed">
-							{member.memberDesc ?? t("No description")}
+							{member.memberDesc ?? t("no_description")}
 						</p>
 					</div>
 				)}

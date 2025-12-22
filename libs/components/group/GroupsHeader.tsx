@@ -12,12 +12,12 @@ import { MemberType } from "@/libs/enums/member.enum";
 
 const GroupsHeader = () => {
 	const router = useRouter();
-	const { t } = useTranslation("common");
+	const { t } = useTranslation("groups");
 	const user = useReactiveVar(userVar);
 
 	const createGroupHandler = () => {
 		if (user.memberType !== MemberType.ORGANIZER) {
-			smallError(t("Only organizers can create groups"));
+			smallError(t("only_organizers_can_create_groups"));
 			return;
 		}
 		router.push("/groups/create");
@@ -27,10 +27,8 @@ const GroupsHeader = () => {
 		<section className="bg-gradient-to-b from-muted-foreground/10 to-background py-8">
 			<div className="flex flex-col md:flex-row items-center justify-between mb-8 max-w-7xl mx-auto px-6 sm:px-12 lg:px-20">
 				<div className="text-center md:text-left mb-4 md:mb-0">
-					<h2>{t("Discover Groups")}</h2>
-					<p className="text-muted-foreground mt-2 text-base md:text-lg">
-						{t("Find and join amazing groups in your area")}
-					</p>
+					<h2>{t("discover_groups")}</h2>
+					<p className="text-muted-foreground mt-2 text-base md:text-lg">{t("find_and_join_amazing_groups")}</p>
 				</div>
 
 				<Tooltip>
@@ -46,13 +44,13 @@ const GroupsHeader = () => {
 							}`}
 						>
 							<div className="flex items-center justify-center gap-2">
-								{t("Create Group")}
+								{t("create_group")}
 								<Plus className="w-4 h-4" />
 							</div>
 						</Button>
 					</TooltipTrigger>
 					{user.memberType !== MemberType.ORGANIZER && (
-						<TooltipContent side="bottom">{t("Organizers only!")}</TooltipContent>
+						<TooltipContent side="bottom">{t("organizers_only")}</TooltipContent>
 					)}
 				</Tooltip>
 			</div>

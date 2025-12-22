@@ -15,7 +15,7 @@ interface OwnerProps {
 }
 
 const Owner = ({ member, title = "Group Owner" }: OwnerProps) => {
-	const { t } = useTranslation("common");
+	const { t } = useTranslation("organizers");
 
 	return (
 		<Card className="p-4 bg-card hover:bg-secondary/15 transition-all duration-300 shadow-sm hover:shadow-md border  /50">
@@ -33,7 +33,7 @@ const Owner = ({ member, title = "Group Owner" }: OwnerProps) => {
 							{member?.memberImage ? (
 								<AvatarImage
 									src={`${NEXT_APP_API_URL}/${member.memberImage}`}
-									alt={member.memberFullName ?? t("Owner avatar")}
+									alt={member.memberFullName ?? t("owner_avatar")}
 									className="rounded-full"
 								/>
 							) : (
@@ -45,14 +45,14 @@ const Owner = ({ member, title = "Group Owner" }: OwnerProps) => {
 					</div>
 					<div className="flex flex-col gap-2">
 						<h3 className="font-semibold text-card-foreground group-hover:text-card-foreground transition-colors duration-200">
-							{member.memberFullName ?? t("No Name")}
+							{member.memberFullName ?? t("no_name")}
 						</h3>
 						<Badge className="bg-yellow-100 text-yellow-800 py-0.5">
 							<Crown className="h-2.5 w-2.5 mr-1" />
-							{t("Owner")}
+							{t("owner")}
 						</Badge>
 						<p className="text-card-foreground leading-relaxed group-hover:text-card-foreground/80 transition-colors duration-200 line-clamp-2">
-							{member.memberDesc ?? t("No Description")}
+							{member.memberDesc ?? t("no_description")}
 						</p>
 					</div>
 				</div>

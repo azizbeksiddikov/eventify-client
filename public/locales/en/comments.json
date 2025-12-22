@@ -1,0 +1,15 @@
+{
+	"comments": "Comments",
+	"per_page": "per page",
+	"write_a_comment": "Write a comment",
+	"cancel": "Cancel",
+	"update_comment": "Update Comment",
+	"post_comment": "Post Comment",
+	"no_comments_yet": "No comments yet",
+	"be_the_first_to_comment": "Be the first to comment",
+	"no_name": "No Name",
+	"owner_avatar": "Owner avatar",
+	"comment_deleted_successfully": "Comment deleted successfully",
+	"comment_updated_successfully": "Comment updated successfully",
+	"comment_created_successfully": "Comment created successfully"
+}

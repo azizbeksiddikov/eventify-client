@@ -1,0 +1,15 @@
+{
+	"comments": "댓글",
+	"per_page": "페이지당",
+	"write_a_comment": "댓글 쓰기",
+	"cancel": "취소",
+	"update_comment": "댓글 업데이트",
+	"post_comment": "댓글 게시",
+	"no_comments_yet": "아직 댓글이 없습니다",
+	"be_the_first_to_comment": "첫 번째로 댓글을 남겨보세요",
+	"no_name": "이름 없음",
+	"owner_avatar": "소유자 아바타",
+	"comment_deleted_successfully": "댓글이 성공적으로 삭제되었습니다",
+	"comment_updated_successfully": "댓글이 성공적으로 업데이트되었습니다",
+	"comment_created_successfully": "댓글이 성공적으로 작성되었습니다"
+}

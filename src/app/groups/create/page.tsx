@@ -24,7 +24,7 @@ import Image from "next/image";
 
 const GroupCreatePage = () => {
 	const router = useRouter();
-	const { t } = useTranslation("common");
+	const { t } = useTranslation(["groups", "errors"]);
 	const user = useReactiveVar(userVar);
 
 	const [isSubmitting, setIsSubmitting] = useState(false);
@@ -56,7 +56,7 @@ const GroupCreatePage = () => {
 			return imageUrl;
 		} catch (err) {
 			console.error("Error uploading image:", err);
-			smallError(t(Message.UPLOAD_FAILED));
+			smallError(t("errors:failed_to_upload"));
 			return null;
 		}
 	};
@@ -79,7 +79,7 @@ const GroupCreatePage = () => {
 			}
 		} catch (err) {
 			console.error("Error handling cropped image:", err);
-			smallError(t(Message.IMAGE_PROCESSING_FAILED));
+			smallError(t("errors:failed_to_process_image"));
 		}
 	};
 
@@ -88,11 +88,11 @@ const GroupCreatePage = () => {
 		setIsSubmitting(true);
 
 		try {
-			if (!user._id) throw new Error(Message.NOT_AUTHENTICATED);
-			if (!formData.groupName) throw new Error(t(Message.GROUP_NAME_REQUIRED));
-			if (!formData.groupDesc) throw new Error(t(Message.GROUP_DESCRIPTION_REQUIRED));
-			if (selectedCategories.length === 0) throw new Error(t(Message.GROUP_CATEGORY_REQUIRED));
-			if (!formData.groupImage) throw new Error(t(Message.GROUP_IMAGE_REQUIRED));
+			if (!user._id) throw new Error(t("errors:not_authenticated"));
+			if (!formData.groupName) throw new Error(t("group_name_is_required"));
+			if (!formData.groupDesc) throw new Error(t("group_description_is_required"));
+			if (selectedCategories.length === 0) throw new Error(t("group_category_is_required"));
+			if (!formData.groupImage) throw new Error(t("group_image_is_required"));
 
 			const updatedFormData = {
 				...formData,
@@ -103,7 +103,7 @@ const GroupCreatePage = () => {
 				variables: { input: updatedFormData },
 			});
 
-			await smallSuccess(t(Message.GROUP_CREATED_SUCCESSFULLY));
+			await smallSuccess(t("group_created_successfully"));
 			if (response.data?.createGroup?._id) {
 				router.push(`/groups/${response.data.createGroup._id}`);
 				// Scroll to top after navigation (with small delay to ensure page has loaded)
@@ -115,7 +115,7 @@ const GroupCreatePage = () => {
 			if (error instanceof Error) {
 				smallError(error.message);
 			} else {
-				smallError(t(Message.SOMETHING_WENT_WRONG));
+				smallError(t("errors:something_went_wrong"));
 			}
 		} finally {
 			setIsSubmitting(false);
@@ -164,25 +164,25 @@ const GroupCreatePage = () => {
 						>
 							<path d="m15 18-6-6 6-6" />
 						</svg>
-						{t("Back to Groups")}
+						{t("back_to_groups")}
 					</Button>
 				</div>
 
 				<Card className="p-6 bg-card text-card-foreground">
-					<h1 className="text-3xl font-semibold text-foreground mb-6">{t("Create New Group")}</h1>
+					<h1 className="text-3xl font-semibold text-foreground mb-6">{t("create_new_group")}</h1>
 
 					<form onSubmit={submitHandler} className="space-y-6">
 						{/* Group Name */}
 						<div className="space-y-2">
 							<label htmlFor="groupName" className="text-sm font-medium text-foreground">
-								{t("Group Name")}
+								{t("group_name")}
 							</label>
 							<Input
 								id="groupName"
 								name="groupName"
 								value={formData.groupName}
 								onChange={inputHandler}
-								placeholder={t("Enter group name")}
+								placeholder={t("enter_group_name")}
 								className="bg-input text-input-foreground border-input"
 								required
 							/>
@@ -191,14 +191,14 @@ const GroupCreatePage = () => {
 						{/* Group Description */}
 						<div className="space-y-2">
 							<label htmlFor="groupDesc" className="text-sm font-medium text-foreground">
-								{t("Description")}
+								{t("description")}
 							</label>
 							<Textarea
 								id="groupDesc"
 								name="groupDesc"
 								value={formData.groupDesc}
 								onChange={inputHandler}
-								placeholder={t("Enter group description")}
+								placeholder={t("enter_group_description")}
 								className="min-h-[120px] bg-input text-input-foreground border-input"
 								required
 							/>
@@ -206,7 +206,7 @@ const GroupCreatePage = () => {
 
 						{/* Categories */}
 						<div className="space-y-2">
-							<label className="text-sm font-medium text-foreground">{t("Categories (Select up to 3)")}</label>
+							<label className="text-sm font-medium text-foreground">{t("categories_select_up_to_3")}</label>
 							<div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
 								{Object.values(GroupCategory).map((category) => (
 									<Button
@@ -221,7 +221,7 @@ const GroupCreatePage = () => {
 												: "bg-transparent text-foreground hover:bg-accent hover:text-accent-foreground"
 										} disabled:opacity-50 disabled:cursor-not-allowed`}
 									>
-										{category.charAt(0) + category.slice(1).toLowerCase().replace("_", " ")}
+										{t(category.toLowerCase())}
 									</Button>
 								))}
 							</div>
@@ -229,7 +229,7 @@ const GroupCreatePage = () => {
 
 						{/* Image Section */}
 						<div className="space-y-4">
-							<label className="text-sm font-medium text-foreground">{t("Group Image")}</label>
+							<label className="text-sm font-medium text-foreground">{t("group_image")}</label>
 							<div className="relative aspect-video w-full max-w-2xl mx-auto rounded-xl overflow-hidden bg-muted/50">
 								{imagePreview ? (
 									<>
@@ -240,7 +240,7 @@ const GroupCreatePage = () => {
 										>
 											<div className="flex items-center gap-2 bg-white/90 text-foreground px-4 py-2 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200">
 												<RefreshCw className="h-4 w-4" />
-												<span className="font-medium">{t("Change Image")}</span>
+												<span className="font-medium">{t("change_image")}</span>
 											</div>
 										</label>
 									</>
@@ -250,7 +250,7 @@ const GroupCreatePage = () => {
 										className="absolute inset-0 flex flex-col items-center justify-center bg-muted/50 hover:bg-muted/60 transition-colors duration-200 cursor-pointer"
 									>
 										<ImageIcon className="h-12 w-12 text-muted-foreground mb-2" />
-										<span className="text-muted-foreground font-medium">{t("Click to upload image")}</span>
+										<span className="text-muted-foreground font-medium">{t("click_to_upload_image")}</span>
 									</label>
 								)}
 								<input
@@ -262,7 +262,7 @@ const GroupCreatePage = () => {
 									className="hidden"
 									required
 								/>
-								<p className="text-sm text-muted-foreground mt-1">{t("Only JPG, JPEG, and PNG files are allowed")}</p>
+								<p className="text-sm text-muted-foreground mt-1">{t("only_jpg_jpeg_png_allowed")}</p>
 							</div>
 						</div>
 
@@ -285,7 +285,7 @@ const GroupCreatePage = () => {
 								disabled={isSubmitting || selectedCategories.length === 0}
 								className="bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed px-8"
 							>
-								{isSubmitting ? t("Creating...") : t("Create Group")}
+								{isSubmitting ? t("creating") : t("create_group")}
 							</Button>
 						</div>
 					</form>

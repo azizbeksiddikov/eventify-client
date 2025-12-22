@@ -99,7 +99,7 @@ const AdminHome = ({
 }: AdminHomeProps) => {
 	const router = useRouter();
 	const user = useReactiveVar(userVar);
-	const { t } = useTranslation();
+	const { t } = useTranslation("admin");
 	const [loading, setLoading] = useState(true);
 	const device = useDeviceDetect();
 
@@ -251,7 +251,7 @@ const AdminHome = ({
 	if (device === "mobile") {
 		return (
 			<div className="container mx-auto py-8">
-				<div className="text-center text-2xl font-bold">{t("Please, enter from Desktop")}</div>
+				<div className="text-center text-2xl font-bold">{t("please_enter_from_desktop")}</div>
 			</div>
 		);
 	}
@@ -263,19 +263,19 @@ const AdminHome = ({
 				<TabsList className="grid w-full grid-cols-4 mb-8 h-12">
 					<TabsTrigger value="users" className="flex items-center gap-2">
 						<Users className="h-4 w-4" />
-						{t("Users")}
+						{t("users")}
 					</TabsTrigger>
 					<TabsTrigger value="groups" className="flex items-center gap-2">
 						<Users2 className="h-4 w-4" />
-						{t("Groups")}
+						{t("groups")}
 					</TabsTrigger>
 					<TabsTrigger value="events" className="flex items-center gap-2">
 						<Calendar className="h-4 w-4" />
-						{t("Events")}
+						{t("events")}
 					</TabsTrigger>
 					<TabsTrigger value="faqs" className="flex items-center gap-2">
 						<HelpCircle className="h-4 w-4" />
-						{t("Faqs")}
+						{t("faqs")}
 					</TabsTrigger>
 				</TabsList>
 				{/* TABS CONTENT */}

@@ -24,41 +24,41 @@ export const ProfileFollowers = ({
 	subscribeHandler,
 	unsubscribeHandler,
 }: ProfileFollowersProps) => {
-	const { t } = useTranslation("common");
+	const { t } = useTranslation("profile");
 
 	return (
 		<div className="bg-card rounded-xl shadow-sm">
 			<div className="px-6 py-4 border-b  ">
-				<h2 className="text-lg font-medium text-card-foreground">{t("My Followers")}</h2>
+				<h2 className="text-lg font-medium text-card-foreground">{t("my_followers")}</h2>
 			</div>
 			<div className="p-6">
 				{followers.length === 0 ? (
-					<div className="text-center text-muted-foreground py-8">{t("No followers found")}</div>
+					<div className="text-center text-muted-foreground py-8">{t("no_followers_found")}</div>
 				) : (
 					<Table>
 						<TableHeader>
 							<TableRow>
-								<TableHead>{t("User")}</TableHead>
-								<TableHead className="text-center">{t("Type")}</TableHead>
+								<TableHead>{t("user")}</TableHead>
+								<TableHead className="text-center">{t("type")}</TableHead>
 								<TableHead className="text-center">
 									<div className="flex items-center justify-center gap-1">
 										<Users className="h-4 w-4" />
-										{t("Following")}
+										{t("following")}
 									</div>
 								</TableHead>
 								<TableHead className="text-center">
 									<div className="flex items-center justify-center gap-1">
 										<Users className="h-4 w-4" />
-										{t("Followers")}
+										{t("followers")}
 									</div>
 								</TableHead>
 								<TableHead className="text-center">
 									<div className="flex items-center justify-center gap-1">
 										<Calendar className="h-4 w-4" />
-										{t("Tickets")}
+										{t("tickets")}
 									</div>
 								</TableHead>
-								<TableHead className="text-right">{t("Actions")}</TableHead>
+								<TableHead className="text-right">{t("actions")}</TableHead>
 							</TableRow>
 						</TableHeader>
 						<TableBody>

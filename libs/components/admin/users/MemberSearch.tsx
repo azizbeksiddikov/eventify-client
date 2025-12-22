@@ -15,7 +15,7 @@ interface MemberSearchProps {
 }
 
 export function MemberSearch({ initialInquiry, membersInquiry, setMembersInquiry }: MemberSearchProps) {
-	const { t } = useTranslation();
+	const { t } = useTranslation("admin");
 
 	/**	 HANDLERS */
 	const searchTextHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -63,7 +63,7 @@ export function MemberSearch({ initialInquiry, membersInquiry, setMembersInquiry
 		<div className="flex items-center gap-6 p-6 rounded-t-lg bg-card border  ">
 			{/* SEARCH */}
 			<Input
-				placeholder={t("Search members...")}
+				placeholder={t("search_members")}
 				value={membersInquiry?.search?.text ?? ""}
 				onChange={searchTextHandler}
 				className="w-full bg-background text-foreground border-input focus:ring-primary"
@@ -77,24 +77,24 @@ export function MemberSearch({ initialInquiry, membersInquiry, setMembersInquiry
 				}}
 			>
 				<SelectTrigger className="w-[180px] bg-background text-foreground border-input focus:ring-primary">
-					<SelectValue placeholder={t("Filter by type")} />
+					<SelectValue placeholder={t("filter_by_type")} />
 				</SelectTrigger>
 				<SelectContent className="bg-card text-foreground  ">
-					<SelectItem value="all">{t("All Types")}</SelectItem>
-					<SelectItem value={MemberType.ORGANIZER}>{t("Organizer")}</SelectItem>
-					<SelectItem value={MemberType.USER}>{t("User")}</SelectItem>
+					<SelectItem value="all">{t("all_types")}</SelectItem>
+					<SelectItem value={MemberType.ORGANIZER}>{t("organizer")}</SelectItem>
+					<SelectItem value={MemberType.USER}>{t("user")}</SelectItem>
 				</SelectContent>
 			</Select>
 
 			{/* FILTER BY STATUS */}
 			<Select value={membersInquiry?.search?.memberStatus ?? "all"} onValueChange={changeStatusHandler}>
 				<SelectTrigger className="w-[180px] bg-background text-foreground border-input focus:ring-primary">
-					<SelectValue placeholder={t("Filter by status")} />
+					<SelectValue placeholder={t("filter_by_status")} />
 				</SelectTrigger>
 				<SelectContent className="bg-card text-foreground  ">
-					<SelectItem value="all">{t("All Statuses")}</SelectItem>
-					<SelectItem value={MemberStatus.ACTIVE}>{t("Active")}</SelectItem>
-					<SelectItem value={MemberStatus.BLOCKED}>{t("Blocked")}</SelectItem>
+					<SelectItem value="all">{t("all_statuses")}</SelectItem>
+					<SelectItem value={MemberStatus.ACTIVE}>{t("active")}</SelectItem>
+					<SelectItem value={MemberStatus.BLOCKED}>{t("blocked")}</SelectItem>
 				</SelectContent>
 			</Select>
 
@@ -106,12 +106,12 @@ export function MemberSearch({ initialInquiry, membersInquiry, setMembersInquiry
 				}}
 			>
 				<SelectTrigger className="w-[180px] bg-background text-foreground border-input focus:ring-primary">
-					<SelectValue placeholder={t("Sort by")} />
+					<SelectValue placeholder={t("sort_by")} />
 				</SelectTrigger>
 				<SelectContent className="bg-card text-foreground  ">
-					<SelectItem value="createdAt">{t("Created At")}</SelectItem>
-					<SelectItem value="memberPoints">{t("Points")}</SelectItem>
-					<SelectItem value="memberFullName">{t("Full Name")}</SelectItem>
+					<SelectItem value="createdAt">{t("created_at")}</SelectItem>
+					<SelectItem value="memberPoints">{t("points")}</SelectItem>
+					<SelectItem value="memberFullName">{t("full_name")}</SelectItem>
 				</SelectContent>
 			</Select>
 
@@ -123,11 +123,11 @@ export function MemberSearch({ initialInquiry, membersInquiry, setMembersInquiry
 				}}
 			>
 				<SelectTrigger className="w-[180px] bg-background text-foreground border-input focus:ring-primary">
-					<SelectValue placeholder={t("Direction")} />
+					<SelectValue placeholder={t("direction")} />
 				</SelectTrigger>
 				<SelectContent className="bg-card text-foreground  ">
-					<SelectItem value={Direction.ASC}>{t("Ascending")}</SelectItem>
-					<SelectItem value={Direction.DESC}>{t("Descending")}</SelectItem>
+					<SelectItem value={Direction.ASC}>{t("ascending")}</SelectItem>
+					<SelectItem value={Direction.DESC}>{t("descending")}</SelectItem>
 				</SelectContent>
 			</Select>
 
@@ -137,7 +137,7 @@ export function MemberSearch({ initialInquiry, membersInquiry, setMembersInquiry
 				onClick={clearAllHandler}
 				className="bg-background text-foreground border-input hover:bg-accent hover:text-accent-foreground"
 			>
-				{t("Clear")}
+				{t("clear")}
 			</Button>
 		</div>
 	);

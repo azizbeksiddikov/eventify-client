@@ -1,5 +1,6 @@
 import { useTranslation } from "next-i18next";
 import { format } from "date-fns";
+import { enUS, ko, ru, uz } from "date-fns/locale";
 import { Calendar, ArrowUpDown, X } from "lucide-react";
 
 import { Popover, PopoverContent, PopoverTrigger } from "@/libs/components/ui/popover";
@@ -21,7 +22,16 @@ interface SortAndFilterProps {
 }
 
 function SortAndFilter({ updateURL, eventsSearchFilters, initialSearch }: SortAndFilterProps) {
-	const { t } = useTranslation("common");
+	const { t, i18n } = useTranslation("events");
+
+	const localeMap: Record<string, any> = {
+		en: enUS,
+		ko: ko,
+		ru: ru,
+		uz: uz,
+	};
+
+	const currentLocale = localeMap[i18n.language] || enUS;
 
 	const searchHandler = (text: string) => {
 		updateURL({
@@ -100,20 +110,17 @@ function SortAndFilter({ updateURL, eventsSearchFilters, initialSearch }: SortAn
 	};
 
 	return (
-		<div className="rounded-2xl shadow-lg p-4 sm:p-6 relative border-2 /80 bg-background/70 backdrop-blur-md w-full max-w-5xl mx-auto">
-			<div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+		<div className="rounded-2xl shadow-lg p-4 sm:p-6 relative border-2 border-border/80 bg-background/70 backdrop-blur-md w-full max-w-5xl mx-auto">
+			<div className="flex flex-col gap-4 lg:flex-row lg:flex-wrap lg:items-center lg:justify-between">
 				{/* Left: search + dates */}
-				<div className="min-w-0 grid gap-3 sm:gap-4 sm:grid-cols-2 lg:flex lg:items-center lg:gap-4 lg:flex-1">
+				<div className="min-w-0 grid gap-3 sm:gap-4 sm:grid-cols-2 lg:flex lg:flex-wrap lg:items-center lg:gap-4 lg:flex-1">
 					{/* 🔍 Search Bar */}
 					<div className="sm:col-span-2 min-w-0 lg:flex-none">
 						<Input
-							placeholder={t("Search events") + "..."}
+							placeholder={t("search_events") + "..."}
 							value={eventsSearchFilters.search?.text}
 							onChange={(e) => searchHandler(e.target.value)}
-							className={cn(
-								buttonVariants({ variant: "ghost", size: "icon" }),
-								"w-full lg:w-80 bg-background/80 backdrop-blur-sm /50 transition-colors hover:bg-accent/50",
-							)}
+							className="w-full lg:w-auto lg:min-w-[240px] bg-background/80 backdrop-blur-sm transition-colors hover:bg-accent/50"
 						/>
 					</div>
 
@@ -122,23 +129,24 @@ function SortAndFilter({ updateURL, eventsSearchFilters, initialSearch }: SortAn
 						<PopoverTrigger asChild>
 							<Button
 								variant="outline"
-								className="w-full lg:w-auto justify-start bg-background/80 backdrop-blur-sm /50 hover:bg-accent/50 transition-colors"
+								className="w-full lg:w-auto justify-start bg-background/80 backdrop-blur-sm hover:bg-accent/50 transition-colors"
 							>
 								<Calendar className="mr-2 h-4 w-4 text-muted-foreground" />
 								<span className="truncate">
 									{eventsSearchFilters.search.eventStartDay
-										? format(eventsSearchFilters.search.eventStartDay, "MMM d, yyyy")
-										: t("Start date")}
+										? format(eventsSearchFilters.search.eventStartDay, "MMM d, yyyy", { locale: currentLocale })
+										: t("start_date")}
 								</span>
 							</Button>
 						</PopoverTrigger>
 						<PopoverContent className="w-auto p-0 z-[1000]" align="start">
-							<div className="bg-background/95 backdrop-blur-md rounded-lg shadow-xl border  /50">
+							<div className="bg-background/95 backdrop-blur-md rounded-lg shadow-xl border border-border/50">
 								<CalendarComponent
 									mode="single"
 									selected={eventsSearchFilters.search.eventStartDay}
 									onSelect={startDateHandler}
 									initialFocus
+									locale={currentLocale}
 									disabled={(date) =>
 										eventsSearchFilters.search?.eventEndDay ? date > eventsSearchFilters.search.eventEndDay : false
 									}
@@ -152,23 +160,24 @@ function SortAndFilter({ updateURL, eventsSearchFilters, initialSearch }: SortAn
 						<PopoverTrigger asChild>
 							<Button
 								variant="outline"
-								className="w-full lg:w-auto justify-start bg-background/80 backdrop-blur-sm /50 hover:bg-accent/50 transition-colors"
+								className="w-full lg:w-auto justify-start bg-background/80 backdrop-blur-sm hover:bg-accent/50 transition-colors"
 							>
 								<Calendar className="mr-2 h-4 w-4 text-muted-foreground" />
 								<span className="truncate">
 									{eventsSearchFilters.search.eventEndDay
-										? format(eventsSearchFilters.search.eventEndDay, "MMM d, yyyy")
-										: t("End date")}
+										? format(eventsSearchFilters.search.eventEndDay, "MMM d, yyyy", { locale: currentLocale })
+										: t("end_date")}
 								</span>
 							</Button>
 						</PopoverTrigger>
 						<PopoverContent className="w-auto p-0 z-[1000]" align="start">
-							<div className="bg-background/95 backdrop-blur-md rounded-lg shadow-xl border  /50">
+							<div className="bg-background/95 backdrop-blur-md rounded-lg shadow-xl border border-border/50">
 								<CalendarComponent
 									mode="single"
 									selected={eventsSearchFilters.search.eventEndDay}
 									onSelect={endDateHandler}
 									initialFocus
+									locale={currentLocale}
 									disabled={(date) =>
 										eventsSearchFilters.search?.eventStartDay ? date < eventsSearchFilters.search.eventStartDay : false
 									}
@@ -179,11 +188,11 @@ function SortAndFilter({ updateURL, eventsSearchFilters, initialSearch }: SortAn
 				</div>
 
 				{/* Right: sort + direction + clear */}
-				<div className="grid grid-cols-2 gap-3 sm:gap-4 sm:grid-cols-3 lg:flex lg:items-center lg:justify-end lg:gap-4 lg:flex-none">
+				<div className="grid grid-cols-2 gap-3 sm:gap-4 sm:grid-cols-3 lg:flex lg:flex-wrap lg:items-center lg:justify-end lg:gap-4 lg:flex-none">
 					<Select value={eventsSearchFilters.sort} onValueChange={sortHandler}>
-						<SelectTrigger className="h-11 w-full col-span-2 sm:col-span-1 sm:min-w-[160px]">
+						<SelectTrigger className="h-11 w-full col-span-2 sm:col-span-1 sm:min-w-[160px] lg:w-auto lg:min-w-[160px]">
 							<ArrowUpDown className="text-muted-foreground mr-2" />
-							<SelectValue placeholder={t("Sort by")} />
+							<SelectValue placeholder={t("sort_by")} />
 						</SelectTrigger>
 						<SelectContent>
 							{eventsSortOptions.map((option) => (
@@ -198,7 +207,7 @@ function SortAndFilter({ updateURL, eventsSearchFilters, initialSearch }: SortAn
 						variant="outline"
 						size="icon"
 						onClick={toggleDirection}
-						className="w-full lg:w-14 h-11 bg-background/80 backdrop-blur-sm /50 hover:bg-accent/50 transition-colors"
+						className="w-full lg:w-14 h-11 bg-background/80 backdrop-blur-sm hover:bg-accent/50 transition-colors"
 					>
 						<span
 							className={cn(
@@ -226,7 +235,7 @@ function SortAndFilter({ updateURL, eventsSearchFilters, initialSearch }: SortAn
 						className="w-full lg:w-auto h-11 hover:bg-accent hover:text-accent-foreground"
 					>
 						<X className="h-4 w-4 mr-2" />
-						{t("Clear")}
+						{t("clear")}
 					</Button>
 				</div>
 			</div>

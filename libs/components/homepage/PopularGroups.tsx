@@ -25,7 +25,7 @@ const PopularGroups = ({
 	},
 }: PopularGroupsProps) => {
 	const router = useRouter();
-	const { t } = useTranslation("common");
+	const { t } = useTranslation("home");
 
 	/** APOLLO */
 
@@ -41,7 +41,7 @@ const PopularGroups = ({
 		<section className="py-8 sm:py-12 md:py-16 lg:py-20 bg-muted w-full">
 			<div className="max-w-7xl mx-auto px-6 sm:px-12 lg:px-20">
 				<div className="flex flex-row items-center justify-start gap-3 mb-6 sm:mb-8">
-					<h2 className="text-foreground">{t("Popular Groups")}</h2>
+					<h2 className="text-foreground">{t("popular_groups")}</h2>
 
 					<Button
 						type="submit"
@@ -82,7 +82,7 @@ const PopularGroups = ({
 						))
 					) : groups.length === 0 ? (
 						<div className="col-span-full flex flex-col items-center justify-center py-10 text-center">
-							<p className="text-muted-foreground">{t("No popular groups found at the moment")}</p>
+							<p className="text-muted-foreground">{t("no_popular_groups_found")}</p>
 						</div>
 					) : (
 						groups.map((group) => <GroupCard key={group._id} group={group} />)

@@ -11,7 +11,7 @@ import { GET_FAQS } from "@/apollo/user/query";
 import { FaqByGroup } from "@/libs/types/faq/faq";
 
 const HelpPage = () => {
-	const { t } = useTranslation();
+	const { t } = useTranslation("help");
 
 	/** APOLLO REQUESTS */
 	const { data: getFaqsData } = useQuery(GET_FAQS, {
@@ -28,10 +28,8 @@ const HelpPage = () => {
 		<div className="max-w-7xl mx-auto my-10 px-6 sm:px-12 lg:px-20">
 			{/* Header Section */}
 			<div className="text-center mb-10 sm:mb-16">
-				<h1 className="text-3xl sm:text-4xl font-bold mb-4 text-foreground">{t("How can we help you?")}</h1>
-				<p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto">
-					{t("Find answers to common questions or get in touch with our support team.")}
-				</p>
+				<h1 className="text-3xl sm:text-4xl font-bold mb-4 text-foreground">{t("how_can_we_help")}</h1>
+				<p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto">{t("help_description")}</p>
 			</div>
 
 			{/* Tabs Section */}

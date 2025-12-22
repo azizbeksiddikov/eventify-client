@@ -25,7 +25,7 @@ export default function UpcomingEvents({
 }: UpcomingEventsProps) {
 	const router = useRouter();
 	const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
-	const { t } = useTranslation("common");
+	const { t } = useTranslation(["home", "events"]);
 	const today = new Date();
 	const startMonth = new Date(today.getFullYear(), today.getMonth(), 1);
 
@@ -46,15 +46,15 @@ export default function UpcomingEvents({
 	return (
 		<section className="py-10 sm:py-20 bg-muted">
 			<div className="max-w-7xl mx-auto px-6 sm:px-12 lg:px-20">
-			<div className="flex flex-row items-center justify-start gap-3 mb-6 sm:mb-8">
-					<h2 className="flex-1 min-w-0 text-foreground">{t("Upcoming Events")}</h2>
+				<div className="flex flex-row items-center justify-start gap-3 mb-6 sm:mb-8">
+					<h2 className="flex-1 min-w-0 text-foreground">{t("upcoming_events")}</h2>
 					<Button
 						type="submit"
 						onClick={() => router.push("/events")}
 						className="shrink-0 h-9 sm:h-10 md:h-12 px-3 sm:px-4 md:px-6"
 					>
 						<div className="flex items-center gap-1">
-							{t("View All Events")}
+							{t("view_all_events")}
 							<ArrowRight className="w-3 h-3 sm:w-4 sm:h-4" />
 						</div>
 					</Button>
@@ -120,8 +120,8 @@ export default function UpcomingEvents({
 							) : (
 								<div className="flex flex-col items-center justify-center flex-1 text-center">
 									<CalendarIcon className="w-8 h-8 sm:w-10 sm:h-10 text-muted-foreground/30 mb-2" />
-									<p className="text-xs text-muted-foreground">{t("No events scheduled")}</p>
-									<p className="text-xs text-muted-foreground mt-1">{t("Select another date")}</p>
+									<p className="text-xs text-muted-foreground">{t("events:no_events_scheduled")}</p>
+									<p className="text-xs text-muted-foreground mt-1">{t("events:select_another_date")}</p>
 								</div>
 							)}
 						</div>

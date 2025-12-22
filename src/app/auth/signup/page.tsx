@@ -26,7 +26,7 @@ interface SignupForm extends MemberInput {
 const Signup = () => {
 	const router = useRouter();
 	const searchParams = useSearchParams();
-	const { t } = useTranslation("common");
+	const { t } = useTranslation("auth");
 	const [formData, setFormData] = useState<SignupForm>({
 		username: "",
 		memberEmail: "",
@@ -55,36 +55,36 @@ const Signup = () => {
 
 	const validateForm = () => {
 		if (!formData.username.trim()) {
-			smallError(t(Message.USERNAME_REQUIRED));
+			smallError(t("username_required"));
 			return false;
 		}
 
 		if (!formData.memberEmail.trim()) {
-			smallError(t(Message.EMAIL_REQUIRED));
+			smallError(t("email_required"));
 			return false;
 		} else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.memberEmail)) {
-			smallError(t(Message.INVALID_EMAIL));
+			smallError(t("valid_email_required"));
 			return false;
 		}
 
 		if (!formData.memberFullName.trim()) {
-			smallError(t(Message.FULL_NAME_REQUIRED));
+			smallError(t("full_name_required"));
 			return false;
 		}
 
 		if (!formData.memberPassword) {
-			smallError(t(Message.PASSWORD_REQUIRED));
+			smallError(t("password_required"));
 			return false;
 		} else if (formData.memberPassword.length < 8) {
-			smallError(t(Message.PASSWORD_TOO_SHORT));
+			smallError(t("password_min_length"));
 			return false;
 		}
 
 		if (!formData.confirmPassword) {
-			smallError(t(Message.CONFIRM_PASSWORD_REQUIRED));
+			smallError(t("confirm_password_required"));
 			return false;
 		} else if (formData.confirmPassword !== formData.memberPassword) {
-			smallError(t(Message.PASSWORDS_DONT_MATCH));
+			smallError(t("passwords_mismatch"));
 			return false;
 		}
 
@@ -119,14 +119,14 @@ const Signup = () => {
 		<div className="flex-1 my-20 flex items-center justify-center px-4 sm:px-6 lg:px-8">
 			<Card className="w-full max-w-md">
 				<CardHeader className="text-center">
-					<CardTitle className="text-3xl font-semibold">{t("Create your account")}</CardTitle>
+					<CardTitle className="text-3xl font-semibold">{t("create_your_account")}</CardTitle>
 					<CardDescription>
-						{t("Or")}{" "}
+						{t("or")}{" "}
 						<Link
 							href="/auth/login"
 							className="font-medium text-primary hover:text-primary/80 transition-colors duration-300 underline"
 						>
-							{t("sign in to your account")}
+							{t("sign_in_to_account")}
 						</Link>
 					</CardDescription>
 				</CardHeader>
@@ -134,7 +134,7 @@ const Signup = () => {
 					<form className="space-y-6" onSubmit={submitHandler}>
 						<div className="space-y-4">
 							<div className="space-y-2">
-								<Label className="text-sm font-medium block text-center mb-4">{t("Account Type")}</Label>
+								<Label className="text-sm font-medium block text-center mb-4">{t("account_type")}</Label>
 								<TooltipProvider>
 									<RadioGroup
 										defaultValue={MemberType.USER}
@@ -149,19 +149,19 @@ const Signup = () => {
 														value={MemberType.USER}
 														id="user"
 														className="peer sr-only"
-														aria-label={t("User account type")}
+														aria-label={t("regular_user_description")}
 													/>
 													<Label
 														htmlFor="user"
 														className="flex items-center gap-2 cursor-pointer rounded-lg border-2 border-muted p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
 													>
 														<User className="h-4 w-4" />
-														<span className="text-sm font-medium">{t("User")}</span>
+														<span className="text-sm font-medium">{t("user")}</span>
 													</Label>
 												</div>
 											</TooltipTrigger>
 											<TooltipContent>
-												<p>{t("Regular user account for attending events")}</p>
+												<p>{t("regular_user_description")}</p>
 											</TooltipContent>
 										</Tooltip>
 
@@ -172,19 +172,19 @@ const Signup = () => {
 														value={MemberType.ORGANIZER}
 														id="organizer"
 														className="peer sr-only"
-														aria-label={t("Organizer account type")}
+														aria-label={t("organizer_description")}
 													/>
 													<Label
 														htmlFor="organizer"
 														className="flex items-center gap-2 cursor-pointer rounded-lg border-2 border-muted p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
 													>
 														<Star className="h-4 w-4" />
-														<span className="text-sm font-medium">{t("Organizer")}</span>
+														<span className="text-sm font-medium">{t("organizer")}</span>
 													</Label>
 												</div>
 											</TooltipTrigger>
 											<TooltipContent>
-												<p>{t("Create and manage your own events")}</p>
+												<p>{t("organizer_description")}</p>
 											</TooltipContent>
 										</Tooltip>
 									</RadioGroup>
@@ -193,7 +193,7 @@ const Signup = () => {
 
 							<div className="space-y-2">
 								<Label htmlFor="username" className="text-sm font-medium">
-									{t("Username")}
+									{t("username")}
 								</Label>
 								<Input
 									id="username"
@@ -202,14 +202,14 @@ const Signup = () => {
 									autoComplete="username"
 									value={formData.username}
 									onChange={(e) => inputHandler(e.target.name, e.target.value)}
-									placeholder={t("Enter your username")}
+									placeholder={t("enter_username")}
 									tabIndex={3}
 								/>
 							</div>
 
 							<div className="space-y-2">
 								<Label htmlFor="memberEmail" className="text-sm font-medium">
-									{t("Email address")}
+									{t("email_address")}
 								</Label>
 								<Input
 									id="memberEmail"
@@ -218,14 +218,14 @@ const Signup = () => {
 									autoComplete="email"
 									value={formData.memberEmail}
 									onChange={(e) => inputHandler(e.target.name, e.target.value)}
-									placeholder={t("Enter your email")}
+									placeholder={t("enter_email")}
 									tabIndex={4}
 								/>
 							</div>
 
 							<div className="space-y-2">
 								<Label htmlFor="memberFullName" className="text-sm font-medium">
-									{t("Full name")}
+									{t("full_name")}
 								</Label>
 								<Input
 									id="memberFullName"
@@ -234,14 +234,14 @@ const Signup = () => {
 									autoComplete="name"
 									value={formData.memberFullName}
 									onChange={(e) => inputHandler(e.target.name, e.target.value)}
-									placeholder={t("Enter your full name")}
+									placeholder={t("enter_full_name")}
 									tabIndex={5}
 								/>
 							</div>
 
 							<div className="space-y-2">
 								<Label htmlFor="memberPassword" className="text-sm font-medium">
-									{t("Password")}
+									{t("password")}
 								</Label>
 								<div className="relative">
 									<Input
@@ -251,7 +251,7 @@ const Signup = () => {
 										autoComplete="new-password"
 										value={formData.memberPassword}
 										onChange={(e) => inputHandler(e.target.name, e.target.value)}
-										placeholder={t("Enter your password")}
+										placeholder={t("enter_password")}
 										className="pr-10"
 										tabIndex={6}
 									/>
@@ -270,7 +270,7 @@ const Signup = () => {
 
 							<div className="space-y-2">
 								<Label htmlFor="confirmPassword" className="text-sm font-medium">
-									{t("Confirm password")}
+									{t("confirm_password")}
 								</Label>
 								<div className="relative">
 									<Input
@@ -280,7 +280,7 @@ const Signup = () => {
 										autoComplete="new-password"
 										value={formData.confirmPassword}
 										onChange={(e) => inputHandler(e.target.name, e.target.value)}
-										placeholder={t("Confirm your password")}
+										placeholder={t("enter_confirm_password")}
 										className="pr-10"
 										tabIndex={7}
 									/>
@@ -299,7 +299,7 @@ const Signup = () => {
 						</div>
 
 						<Button type="submit" className="w-full" disabled={isLoading} tabIndex={8}>
-							{isLoading ? t("Creating account...") : t("Create account")}
+							{isLoading ? t("creating_account") : t("create_account")}
 						</Button>
 					</form>
 				</CardContent>

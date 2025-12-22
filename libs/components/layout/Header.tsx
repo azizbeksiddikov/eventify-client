@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState, useCallback, useEffect } from "react";
+import { useTranslation } from "next-i18next";
 import { usePathname, useRouter } from "next/navigation";
 import { useReactiveVar } from "@apollo/client/react";
 import { Menu, X, Home, Calendar, Users, User2, HelpCircle, ShieldAlert } from "lucide-react";
@@ -15,6 +16,7 @@ import {
 } from "@/libs/components/ui/dropdown-menu";
 import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/libs/components/ui/sheet";
 import { ModeToggle } from "@/libs/components/ui/mode-toggle";
+// import { ModeToggle } from "@/libs/components/layout/ModeToggle";
 import { Logo } from "@/libs/components/common/Logo";
 import { UserNav } from "@/libs/components/layout/UserNav";
 import { NotificationDropdown } from "@/libs/components/layout/NotificationDropdown";
@@ -24,15 +26,16 @@ import { userVar } from "@/apollo/store";
 import { getValidJwtToken, updateUserInfo } from "@/libs/auth";
 import { Member } from "@/libs/types/member/member";
 import { MemberType } from "@/libs/enums/member.enum";
+import { useI18n } from "@/libs/i18n/provider";
 
 const navLinks = [
-	{ href: "/", label: "Home", icon: Home },
-	{ href: "/events", label: "Events", icon: Calendar },
-	{ href: "/groups", label: "Groups", icon: Users },
-	{ href: "/organizers", label: "Organizers", icon: User2 },
-	{ href: "/help", label: "Help", icon: HelpCircle },
+	{ href: "/", label: "home", icon: Home },
+	{ href: "/events", label: "events", icon: Calendar },
+	{ href: "/groups", label: "groups", icon: Users },
+	{ href: "/organizers", label: "organizers", icon: User2 },
+	{ href: "/help", label: "help", icon: HelpCircle },
 ];
-const adminLink = { href: "/_admin", label: "Admin", icon: ShieldAlert };
+const adminLink = { href: "/_admin", label: "admin", icon: ShieldAlert };
 
 const languages = [
 	// Using lipis/flag-icons (CSS sprites) instead of emoji flags for cross-browser consistency.
@@ -44,14 +47,15 @@ const languages = [
 ];
 
 const Header = () => {
+	const { t } = useTranslation("header");
+	const { locale, changeLocale } = useI18n();
 	const pathname = usePathname();
 	const authMember = useReactiveVar(userVar) as unknown as Member;
 	const router = useRouter();
 	// Important: keep the very first render deterministic so SSR === first client render.
 	// We'll sync from localStorage after mount to avoid hydration mismatches (e.g. fi-us vs fi-kr).
-	const [currentLanguage, setCurrentLanguage] = useState<string>("en");
 
-	const selectedLanguage = languages.find((l) => l.code === currentLanguage) ?? languages[0];
+	const selectedLanguage = languages.find((l) => l.code === locale) ?? languages[0];
 
 	/** LIFECYCLES **/
 
@@ -64,23 +68,18 @@ const Header = () => {
 	// Sync language from localStorage after mount (client-only).
 	useEffect(() => {
 		const stored = localStorage.getItem("locale");
-		if (!stored) {
-			localStorage.setItem("locale", "en");
-			return;
+		if (stored && stored !== locale) {
+			changeLocale(stored);
 		}
-		if (stored !== currentLanguage) setCurrentLanguage(stored);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [locale, changeLocale]);
 
 	/** HANDLERS **/
 	const languageHandler = useCallback(
 		(languageCode: string) => {
-			setCurrentLanguage(languageCode);
-			localStorage.setItem("locale", languageCode);
-			// Refresh the page to apply the new locale
+			changeLocale(languageCode);
 			router.refresh();
 		},
-		[router],
+		[changeLocale, router],
 	);
 
 	const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -107,7 +106,7 @@ const Header = () => {
 									: "text-muted-foreground hover:text-foreground",
 							)}
 						>
-							{link.label}
+							{t(link.label)}
 						</Link>
 					))}
 					{authMember.memberType === MemberType.ADMIN && (
@@ -120,7 +119,7 @@ const Header = () => {
 									: "text-muted-foreground hover:text-foreground",
 							)}
 						>
-							{adminLink.label}
+							{t(adminLink.label)}
 						</Link>
 					)}
 				</nav>
@@ -143,13 +142,13 @@ const Header = () => {
 								style={{ width: 22, height: 16 }}
 								aria-hidden
 							/>
-							<span className="sr-only">Current language: {selectedLanguage.name}</span>
+							<span className="sr-only">Current language: {t(selectedLanguage.code)}</span>
 						</DropdownMenuTrigger>
 						<DropdownMenuContent align="end">
 							{languages.map((language) => (
 								<DropdownMenuItem
 									key={language.code}
-									className={cn(currentLanguage === language.code ? "bg-accent" : "", "cursor-pointer w-full")}
+									className={cn(locale === language.code ? "bg-accent" : "", "cursor-pointer w-full")}
 									onClick={() => languageHandler(language.code)}
 								>
 									<div className="flex items-center gap-2">
@@ -158,7 +157,7 @@ const Header = () => {
 											style={{ width: 22, height: 16 }}
 											aria-hidden
 										/>
-										<span>{language.name}</span>
+										<span>{t(language.code)}</span>
 									</div>
 								</DropdownMenuItem>
 							))}
@@ -172,11 +171,11 @@ const Header = () => {
 						<div className="flex items-center gap-2 lg:gap-4">
 							<Link href="/auth/login">
 								<Button variant="outline" className="text-xs sm:text-sm h-8 lg:h-9 px-3 lg:px-4">
-									{"Login"}
+									{t("login")}
 								</Button>
 							</Link>
 							<Link href="/auth/signup">
-								<Button className="text-xs sm:text-sm h-8 lg:h-9 px-3 lg:px-4">{"Sign Up"}</Button>
+								<Button className="text-xs sm:text-sm h-8 lg:h-9 px-3 lg:px-4">{t("sign_up")}</Button>
 							</Link>
 						</div>
 					)}
@@ -193,7 +192,7 @@ const Header = () => {
 					) : (
 						<Link href="/auth/login">
 							<Button variant="outline" className="text-xs sm:text-sm h-8 px-3">
-								{"Login"}
+								{t("login")}
 							</Button>
 						</Link>
 					)}
@@ -212,7 +211,7 @@ const Header = () => {
 								<SheetHeader className="gap-0 border-b p-0">
 									<div className="flex items-center justify-between px-4 pt-4 pb-3">
 										<div className="w-10" />
-										<SheetTitle className="text-base">Menu</SheetTitle>
+										<SheetTitle className="text-base">{t("menu")}</SheetTitle>
 										<SheetClose asChild>
 											<Button
 												variant="ghost"
@@ -247,16 +246,13 @@ const Header = () => {
 														style={{ width: 22, height: 16 }}
 														aria-hidden
 													/>
-													<span className="sr-only">Current language: {selectedLanguage.name}</span>
+													<span className="sr-only">Current language: {t(selectedLanguage.code)}</span>
 												</DropdownMenuTrigger>
 												<DropdownMenuContent align="end">
 													{languages.map((language) => (
 														<DropdownMenuItem
 															key={language.code}
-															className={cn(
-																currentLanguage === language.code ? "bg-accent" : "",
-																"cursor-pointer w-full",
-															)}
+															className={cn(locale === language.code ? "bg-accent" : "", "cursor-pointer w-full")}
 															onClick={() => languageHandler(language.code)}
 														>
 															<div className="flex items-center gap-2">
@@ -265,7 +261,7 @@ const Header = () => {
 																	style={{ width: 22, height: 16 }}
 																	aria-hidden
 																/>
-																<span>{language.name}</span>
+																<span>{t(language.code)}</span>
 															</div>
 														</DropdownMenuItem>
 													))}
@@ -303,7 +299,7 @@ const Header = () => {
 														pathname === link.href ? "text-primary" : "text-muted-foreground group-hover:text-primary",
 													)}
 												>
-													{link.label}
+													{t(link.label)}
 												</span>
 												{pathname === link.href && (
 													<div className="absolute right-0 top-0 h-full w-1.5 bg-primary rounded-full" />
@@ -338,7 +334,7 @@ const Header = () => {
 														: "text-muted-foreground group-hover:text-primary",
 												)}
 											>
-												{adminLink.label}
+												{t(adminLink.label)}
 											</span>
 											{pathname === adminLink.href && (
 												<div className="absolute right-0 top-0 h-full w-1.5 bg-primary rounded-full" />
@@ -352,11 +348,11 @@ const Header = () => {
 									<div className="flex flex-col gap-2 border-t px-4 pt-3 pb-[calc(env(safe-area-inset-bottom)+1.25rem)]">
 										<Link href="/auth/login" onClick={() => setIsMobileMenuOpen(false)}>
 											<Button variant="outline" className="w-full text-sm h-10">
-												{"Login"}
+												{t("login")}
 											</Button>
 										</Link>
 										<Link href="/auth/signup" onClick={() => setIsMobileMenuOpen(false)}>
-											<Button className="w-full text-sm h-10">{"Sign Up"}</Button>
+											<Button className="w-full text-sm h-10">{t("sign_up")}</Button>
 										</Link>
 									</div>
 								)}

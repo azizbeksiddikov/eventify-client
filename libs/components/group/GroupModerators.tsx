@@ -15,13 +15,13 @@ interface GroupModeratorsProps {
 }
 
 const GroupModerators = ({ groupModerators }: GroupModeratorsProps) => {
-	const { t } = useTranslation("common");
+	const { t } = useTranslation("groups");
 
 	return (
 		<Card className="p-8 bg-card hover:bg-secondary/15 transition-all duration-300 shadow-sm hover:shadow-md border  /50">
 			<h2 className="text-2xl font-semibold mb-6 text-card-foreground flex items-center gap-2">
 				<Users className="w-5 h-5 text-card-foreground" />
-				{t("Moderators")}
+				{t("moderators")}
 			</h2>
 			<div className="space-y-6">
 				{groupModerators
@@ -39,7 +39,7 @@ const GroupModerators = ({ groupModerators }: GroupModeratorsProps) => {
 											{moderator.memberData?.memberImage ? (
 												<AvatarImage
 													src={`${NEXT_APP_API_URL}/${moderator.memberData.memberImage}`}
-													alt={moderator.memberData.memberFullName ?? t("Owner avatar")}
+													alt={moderator.memberData.memberFullName ?? t("owner_avatar")}
 													className="rounded-full"
 												/>
 											) : (
@@ -59,7 +59,7 @@ const GroupModerators = ({ groupModerators }: GroupModeratorsProps) => {
 										</h3>
 										<Badge variant="secondary" className="bg-blue-100 text-blue-800">
 											<Shield className="h-3 w-3 mr-1" />
-											{t("Moderator")}
+											{t("moderator")}
 										</Badge>
 									</div>
 									<p className="text-base text-card-foreground leading-relaxed group-hover:text-card-foreground/80 transition-colors duration-200">
