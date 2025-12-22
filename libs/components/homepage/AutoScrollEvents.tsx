@@ -168,8 +168,9 @@ const AutoScrollEvents = ({
 		return "Location TBA";
 	}, []);
 
-	if (upcomingEventsLoading || !eventList.length) return <div>Loading...</div>;
+	if (upcomingEventsLoading) return <div>Loading...</div>;
 	if (upcomingEventsError) return <div>Error: {upcomingEventsError.message}</div>;
+	if (!eventList.length) return null; // Section disappears if no featured events are found
 
 	return (
 		<section

@@ -11,6 +11,7 @@ import { CommentGroup } from "@/libs/enums/comment.enum";
 import ChosenEventData from "@/libs/components/events/ChosenEventData";
 import ChosenEventHeader from "@/libs/components/events/ChosenEventHeader";
 import ChosenEventOther from "@/libs/components/events/ChosenEventOther";
+import NotFound from "@/libs/components/common/NotFound";
 
 import { GET_EVENT, GET_MY_TICKETS } from "@/apollo/user/query";
 import { CREATE_TICKET, LIKE_TARGET_EVENT } from "@/apollo/user/mutation";
@@ -146,27 +147,33 @@ const ChosenEvent = () => {
 					</div>
 				) : null}
 
-				<div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
-					<div className="lg:col-span-3">
-						<ChosenEventData
-							event={event}
-							userId={user._id}
-							purchaseTicketHandler={purchaseTicketHandler}
-							likeEventHandler={likeEventHandler}
-							setTicketInput={setTicketInput}
-							ticketInput={ticketInput}
-						/>
-						{/* My Tickets */}
-						{!isExternalEvent && (
-							<MyTickets myTickets={myTickets} ticketInquiry={ticketInquiry} setTicketInquiry={setTicketInquiry} />
-						)}
+				{!eventLoading && !event ? (
+					<NotFound
+						title={t("Event Not Found")}
+						message={t("The event you are looking for does not exist or has been removed.")}
+						backPath="/events"
+						backLabel={t("Back to Events")}
+					/>
+				) : (
+					<div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
+						<div className="lg:col-span-3">
+							<ChosenEventData
+								event={event}
+								userId={user._id}
+								purchaseTicketHandler={purchaseTicketHandler}
+								likeEventHandler={likeEventHandler}
+								setTicketInput={setTicketInput}
+								ticketInput={ticketInput}
+							/>
+							{/* My Tickets */}
+							{!isExternalEvent && (
+								<MyTickets myTickets={myTickets} ticketInquiry={ticketInquiry} setTicketInquiry={setTicketInquiry} />
+							)}
+						</div>
+
+						<ChosenEventOther event={event} likeEventHandler={likeEventHandler} />
 					</div>
-
-					<ChosenEventOther event={event} likeEventHandler={likeEventHandler} />
-				</div>
-
-				{/* Comments Section */}
-				{eventId && !isExternalEvent && <CommentsComponent commentRefId={eventId} commentGroup={CommentGroup.EVENT} />}
+				)}
 			</div>
 		</div>
 	);

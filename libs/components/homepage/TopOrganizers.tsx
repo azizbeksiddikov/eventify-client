@@ -74,43 +74,49 @@ const TopOrganizers = ({
 				</div>
 
 				<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
-					{loading
-						? [1, 2, 3, 4].map((index) => (
-								<div
-									key={index}
-									className="bg-card rounded-xl shadow-sm overflow-hidden animate-pulse border border-border/50"
-								>
-									<div className="p-4 flex items-center gap-3 sm:gap-4">
-										<div className="h-16 w-16 sm:h-20 sm:w-20 bg-muted rounded-full shrink-0"></div>
-										<div className="flex-1 space-y-2">
-											<div className="h-5 bg-muted rounded w-32"></div>
-											<div className="h-4 bg-muted rounded w-40"></div>
-										</div>
-									</div>
-									<div className="p-4 space-y-4">
-										<div className="grid grid-cols-3 gap-2 p-3 bg-muted/50 rounded-xl">
-											<div className="h-10 bg-muted rounded"></div>
-											<div className="h-10 bg-muted rounded"></div>
-											<div className="h-10 bg-muted rounded"></div>
-										</div>
-										<div className="h-16 bg-muted rounded"></div>
-									</div>
-									<div className="p-4 border-t flex gap-2">
-										<div className="h-7 bg-muted rounded flex-1"></div>
-										<div className="h-7 bg-muted rounded flex-1"></div>
-										<div className="h-7 bg-muted rounded w-16"></div>
+					{loading ? (
+						[1, 2, 3, 4].map((index) => (
+							<div
+								key={index}
+								className="bg-card rounded-xl shadow-sm overflow-hidden animate-pulse border border-border/50"
+							>
+								<div className="p-4 flex items-center gap-3 sm:gap-4">
+									<div className="h-16 w-16 sm:h-20 sm:w-20 bg-muted rounded-full shrink-0"></div>
+									<div className="flex-1 space-y-2">
+										<div className="h-5 bg-muted rounded w-32"></div>
+										<div className="h-4 bg-muted rounded w-40"></div>
 									</div>
 								</div>
-							))
-						: organizers.map((organizer) => (
-								<OrganizerCard
-									key={organizer._id}
-									organizer={organizer}
-									likeMemberHandler={likeMemberHandler}
-									subscribeHandler={subscribeHandler}
-									unsubscribeHandler={unsubscribeHandler}
-								/>
-							))}
+								<div className="p-4 space-y-4">
+									<div className="grid grid-cols-3 gap-2 p-3 bg-muted/50 rounded-xl">
+										<div className="h-10 bg-muted rounded"></div>
+										<div className="h-10 bg-muted rounded"></div>
+										<div className="h-10 bg-muted rounded"></div>
+									</div>
+									<div className="h-16 bg-muted rounded"></div>
+								</div>
+								<div className="p-4 border-t flex gap-2">
+									<div className="h-7 bg-muted rounded flex-1"></div>
+									<div className="h-7 bg-muted rounded flex-1"></div>
+									<div className="h-7 bg-muted rounded w-16"></div>
+								</div>
+							</div>
+						))
+					) : organizers.length === 0 ? (
+						<div className="col-span-full flex flex-col items-center justify-center py-10 text-center">
+							<p className="text-muted-foreground">{t("No top organizers found at the moment")}</p>
+						</div>
+					) : (
+						organizers.map((organizer) => (
+							<OrganizerCard
+								key={organizer._id}
+								organizer={organizer}
+								likeMemberHandler={likeMemberHandler}
+								subscribeHandler={subscribeHandler}
+								unsubscribeHandler={unsubscribeHandler}
+							/>
+						))
+					)}
 				</div>
 			</div>
 		</section>

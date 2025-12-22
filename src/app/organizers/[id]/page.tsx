@@ -16,6 +16,7 @@ import UpcomingEvents from "@/libs/components/common/UpcomingEvents";
 import OrganizerHeader from "@/libs/components/organizer/OrganizerHeader";
 import OrganizerProfile from "@/libs/components/organizer/OrganizerProfile";
 import SimilarGroups from "@/libs/components/common/SimilarGroups";
+import NotFound from "@/libs/components/common/NotFound";
 
 import { followMember, likeEvent, likeMember, unfollowMember } from "@/libs/utils";
 
@@ -32,7 +33,7 @@ const OrganizerDetailPage = () => {
 	const [unsubscribe] = useMutation(UNSUBSCRIBE);
 	const [likeTargetEvent] = useMutation(LIKE_TARGET_EVENT);
 
-	const { data: getOrganizerData } = useQuery(GET_ORGANIZER, {
+	const { data: getOrganizerData, loading: organizerLoading } = useQuery(GET_ORGANIZER, {
 		fetchPolicy: "cache-and-network",
 		skip: !organizerId,
 		variables: { input: organizerId! }, // Non-null assertion is safe because skip prevents execution when organizerId is null
@@ -61,39 +62,66 @@ const OrganizerDetailPage = () => {
 	};
 
 	if (!organizerId) return null;
-	if (!organizer) return null;
+
 	return (
 		<div>
 			<OrganizerHeader />
 
 			<div className="px-4 sm:px-6 md:px-8 lg:px-10 pb-10 max-w-7xl mx-auto space-y-6 sm:space-y-8 md:space-y-10">
-				<div className="flex flex-col lg:grid lg:grid-cols-4 gap-6 lg:gap-8">
-					<div className="lg:col-span-3">
-						<OrganizerProfile
-							organizer={organizer}
-							likeMemberHandler={likeMemberHandler}
-							subscribeHandler={subscribeHandler}
-							unsubscribeHandler={unsubscribeHandler}
+				{organizerLoading && !organizer ? (
+					<div className="rounded-xl border bg-card/60 shadow-sm p-6 animate-pulse mt-10">
+						<div className="flex items-center gap-4 mb-6">
+							<div className="h-16 w-16 bg-muted/60 rounded-full" />
+							<div className="space-y-2">
+								<div className="h-4 w-32 bg-muted/60 rounded" />
+								<div className="h-3 w-48 bg-muted/60 rounded" />
+							</div>
+						</div>
+						<div className="h-4 w-full bg-muted/60 rounded mb-4" />
+						<div className="h-40 w-full bg-muted/60 rounded" />
+					</div>
+				) : null}
+
+				{!organizerLoading && !organizer ? (
+					<div className="pt-20">
+						<NotFound
+							title={t("Organizer Not Found")}
+							message={t("The organizer you are looking for does not exist or has been removed.")}
+							backPath="/organizers"
+							backLabel={t("Back to Organizers")}
 						/>
 					</div>
-					<div className="lg:col-span-1">
-						{organizer?.organizedGroups && organizer.organizedGroups.length > 0 && (
-							<SimilarGroups groups={organizer.organizedGroups} text={t("Organizer Groups")} />
+				) : organizer ? (
+					<>
+						<div className="flex flex-col lg:grid lg:grid-cols-4 gap-6 lg:gap-8">
+							<div className="lg:col-span-3">
+								<OrganizerProfile
+									organizer={organizer}
+									likeMemberHandler={likeMemberHandler}
+									subscribeHandler={subscribeHandler}
+									unsubscribeHandler={unsubscribeHandler}
+								/>
+							</div>
+							<div className="lg:col-span-1">
+								{organizer?.organizedGroups && organizer.organizedGroups.length > 0 && (
+									<SimilarGroups groups={organizer.organizedGroups} text={t("Organizer Groups")} />
+								)}
+							</div>
+						</div>
+
+						{/* Events Section */}
+						{organizer?.organizedEvents && organizer.organizedEvents.length > 0 && (
+							<UpcomingEvents
+								events={organizer.organizedEvents}
+								organizerName={organizer.memberFullName}
+								likeEventHandler={likeEventHandler}
+							/>
 						)}
-					</div>
-				</div>
 
-				{/* Events Section */}
-				{organizer?.organizedEvents && organizer.organizedEvents.length > 0 && (
-					<UpcomingEvents
-						events={organizer.organizedEvents}
-						organizerName={organizer.memberFullName}
-						likeEventHandler={likeEventHandler}
-					/>
-				)}
-
-				{/* Comments Section */}
-				<CommentsComponent commentRefId={organizer._id} commentGroup={CommentGroup.MEMBER} />
+						{/* Comments Section */}
+						<CommentsComponent commentRefId={organizer._id} commentGroup={CommentGroup.MEMBER} />
+					</>
+				) : null}
 			</div>
 		</div>
 	);

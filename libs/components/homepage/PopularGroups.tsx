@@ -53,34 +53,40 @@ const PopularGroups = ({
 				</div>
 
 				<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
-					{loading
-						? [1, 2, 3, 4].map((index) => (
-								<div
-									key={index}
-									className="bg-card rounded-xl shadow-sm overflow-hidden animate-pulse border border-border/50"
-								>
-									<div className="aspect-video w-full bg-muted"></div>
-									<div className="p-4 space-y-3">
-										<div className="h-5 bg-muted rounded w-3/4"></div>
-										<div className="flex gap-2">
-											<div className="h-4 bg-muted rounded w-16"></div>
-											<div className="h-4 bg-muted rounded w-20"></div>
-										</div>
-										<div className="grid grid-cols-3 gap-2 p-2 bg-muted/50 rounded-lg">
-											<div className="h-8 bg-muted rounded"></div>
-											<div className="h-8 bg-muted rounded"></div>
-											<div className="h-8 bg-muted rounded"></div>
-										</div>
-										<div className="h-12 bg-muted rounded"></div>
+					{loading ? (
+						[1, 2, 3, 4].map((index) => (
+							<div
+								key={index}
+								className="bg-card rounded-xl shadow-sm overflow-hidden animate-pulse border border-border/50"
+							>
+								<div className="aspect-video w-full bg-muted"></div>
+								<div className="p-4 space-y-3">
+									<div className="h-5 bg-muted rounded w-3/4"></div>
+									<div className="flex gap-2">
+										<div className="h-4 bg-muted rounded w-16"></div>
+										<div className="h-4 bg-muted rounded w-20"></div>
 									</div>
-									<div className="p-4 border-t flex gap-2">
-										<div className="h-7 bg-muted rounded flex-1"></div>
-										<div className="h-7 bg-muted rounded flex-1"></div>
-										<div className="h-7 bg-muted rounded w-16"></div>
+									<div className="grid grid-cols-3 gap-2 p-2 bg-muted/50 rounded-lg">
+										<div className="h-8 bg-muted rounded"></div>
+										<div className="h-8 bg-muted rounded"></div>
+										<div className="h-8 bg-muted rounded"></div>
 									</div>
+									<div className="h-12 bg-muted rounded"></div>
 								</div>
-							))
-						: groups && groups.map((group) => <GroupCard key={group._id} group={group} />)}
+								<div className="p-4 border-t flex gap-2">
+									<div className="h-7 bg-muted rounded flex-1"></div>
+									<div className="h-7 bg-muted rounded flex-1"></div>
+									<div className="h-7 bg-muted rounded w-16"></div>
+								</div>
+							</div>
+						))
+					) : groups.length === 0 ? (
+						<div className="col-span-full flex flex-col items-center justify-center py-10 text-center">
+							<p className="text-muted-foreground">{t("No popular groups found at the moment")}</p>
+						</div>
+					) : (
+						groups.map((group) => <GroupCard key={group._id} group={group} />)
+					)}
 				</div>
 			</div>
 		</section>
