@@ -55,7 +55,7 @@ const ChosenGroupData = ({
 						variant="secondary"
 						size="sm"
 						className="absolute top-4 right-4 z-10 h-9 bg-background/80 backdrop-blur-sm shadow-sm hover:bg-background/90 hover:scale-105 transition-all duration-200"
-						onClick={() => router.push(`/group/update?groupId=${group._id}`)}
+						onClick={() => router.push(`/groups/update/${group._id}`)}
 					>
 						<Pencil className="h-4 w-4 mr-1.5" />
 						{t("Edit")}

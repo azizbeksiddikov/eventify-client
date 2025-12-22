@@ -1,9 +1,11 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { ImageIcon, RefreshCw, ArrowLeft } from "lucide-react";
+import { useMutation, useReactiveVar, useQuery } from "@apollo/client/react";
+import { useTranslation } from "next-i18next";
 
 import { Button } from "@/libs/components/ui/button";
 import { Input } from "@/libs/components/ui/input";
@@ -11,98 +13,85 @@ import { Textarea } from "@/libs/components/ui/textarea";
 import { Card } from "@/libs/components/ui/card";
 import { ImageCropper } from "@/libs/components/common/ImageCropper";
 
-import { useMutation, useReactiveVar, useQuery } from "@apollo/client/react";
 import { userVar } from "@/apollo/store";
 import { UPDATE_GROUP } from "@/apollo/user/mutation";
 import { GET_GROUP } from "@/apollo/user/query";
 import { smallError, smallSuccess } from "@/libs/alert";
-import { useTranslation } from "next-i18next";
 import { Message } from "@/libs/enums/common.enum";
 import { GroupCategory } from "@/libs/enums/group.enum";
 import { GroupUpdateInput } from "@/libs/types/group/group.update";
-import { imageTypes, NEXT_APP_API_URL } from "@/libs/config";
+import { imageTypes } from "@/libs/config";
 import { uploadImage } from "@/libs/upload";
+import { getImageUrl } from "@/libs/utils";
 
 const GroupUpdatePage = () => {
 	const router = useRouter();
-	const searchParams = useSearchParams();
+	const params = useParams();
 	const { t } = useTranslation("common");
 	const user = useReactiveVar(userVar);
+	const groupId = params?.id as string;
 
-	const [groupId, setGroupId] = useState<string | null>(null);
-	const [isSubmitting, setIsSubmitting] = useState(false);
-	const [imagePreview, setImagePreview] = useState<string | null>(null);
+	// UI State
+	const [uiState, setUiState] = useState({
+		isSubmitting: false,
+		imagePreview: null as string | null,
+		isCropperOpen: false,
+		tempImageUrl: null as string | null,
+	});
+
+	// Form State
 	const [selectedCategories, setSelectedCategories] = useState<GroupCategory[]>([]);
 	const [formData, setFormData] = useState<GroupUpdateInput | null>(null);
-	const [isCropperOpen, setIsCropperOpen] = useState(false);
-	const [tempImageUrl, setTempImageUrl] = useState<string | null>(null);
 
 	/** APOLLO REQUESTS **/
 	const [updateGroup] = useMutation(UPDATE_GROUP);
 	const { data: groupData, loading: groupLoading } = useQuery(GET_GROUP, {
-		variables: { input: groupId! },
+		variables: { input: groupId },
 		fetchPolicy: "cache-and-network",
 		skip: !groupId,
 	});
 
 	/** LIFECYCLE */
-	// Handle group data and authorization
 	useEffect(() => {
 		if (groupData?.getGroup) {
 			const group = groupData.getGroup;
 
-			// Check if user is authorized to update the group
+			// Authorization Check
 			const isOwner = group.memberId === user?._id;
 			const isModerator = group.groupModerators?.some(
-				(moderator) =>
-					moderator && typeof moderator === "object" && "memberId" in moderator && moderator.memberId === user?._id,
+				(m: any) => m && typeof m === "object" && "memberId" in m && m.memberId === user?._id,
 			);
 
 			if (!isOwner && !isModerator) {
 				smallError(t(Message.NOT_AUTHORIZED));
-				if (group._id) {
-					router.push(`/groups/${group._id}`);
-				}
+				router.push(`/groups/${group._id}`);
 				return;
 			}
 
-			if (group._id && group.groupName && group.groupDesc && group.groupImage) {
-				setFormData({
-					_id: group._id,
-					groupName: group.groupName,
-					groupDesc: group.groupDesc,
-					groupCategories: (group.groupCategories?.filter((cat): cat is GroupCategory => cat !== undefined) ||
-						[]) as GroupCategory[],
-					groupImage: group.groupImage,
-				});
-				setSelectedCategories(
-					(group.groupCategories?.filter((cat): cat is GroupCategory => cat !== undefined) || []) as GroupCategory[],
-				);
-				setImagePreview(`${NEXT_APP_API_URL}/${group.groupImage}`);
-			}
-		}
-	}, [groupData]);
+			setFormData({
+				_id: group._id,
+				groupName: group.groupName || "",
+				groupDesc: group.groupDesc || "",
+				groupCategories: (group.groupCategories || []) as GroupCategory[],
+				groupImage: group.groupImage || "",
+			});
 
-	// Handle groupId from URL
-	useEffect(() => {
-		const groupIdParam = searchParams.get("id");
-		if (groupIdParam) {
-			setGroupId(groupIdParam);
+			setSelectedCategories((group.groupCategories || []) as GroupCategory[]);
+			setUiState((prev) => ({
+				...prev,
+				imagePreview: getImageUrl(group.groupImage || "", "group"),
+			}));
 		}
-	}, [searchParams]);
+	}, [groupData, user?._id, router, t]);
 
 	/** HANDLERS */
 	const handleImageUpload = async (image: File) => {
 		try {
 			const responseImage = await uploadImage(image, "group");
-			const imageUrl = `${NEXT_APP_API_URL}/${responseImage}`;
+			const imageUrl = getImageUrl(responseImage, "group");
 
-			// Update form data and preview
-			setFormData((prev: GroupUpdateInput | null) => {
-				if (!prev) return null;
-				return { ...prev, groupImage: responseImage };
-			});
-			setImagePreview(imageUrl);
+			setFormData((prev) => (prev ? { ...prev, groupImage: responseImage } : null));
+			setUiState((prev) => ({ ...prev, imagePreview: imageUrl }));
 
 			return imageUrl;
 		} catch (err) {
@@ -116,8 +105,7 @@ const GroupUpdatePage = () => {
 		const file = e.target.files?.[0];
 		if (file) {
 			const imageUrl = URL.createObjectURL(file);
-			setTempImageUrl(imageUrl);
-			setIsCropperOpen(true);
+			setUiState((prev) => ({ ...prev, tempImageUrl: imageUrl, isCropperOpen: true }));
 		}
 	};
 
@@ -125,8 +113,7 @@ const GroupUpdatePage = () => {
 		try {
 			const imageUrl = await handleImageUpload(croppedFile);
 			if (imageUrl) {
-				setImagePreview(imageUrl);
-				setTempImageUrl(null);
+				setUiState((prev) => ({ ...prev, imagePreview: imageUrl, tempImageUrl: null }));
 			}
 		} catch (err) {
 			console.error("Error handling cropped image:", err);
@@ -136,23 +123,24 @@ const GroupUpdatePage = () => {
 
 	const submitHandler = async (e: React.FormEvent) => {
 		e.preventDefault();
-		setIsSubmitting(true);
+		if (!formData) return;
+
+		setUiState((prev) => ({ ...prev, isSubmitting: true }));
 
 		try {
 			if (!user._id) throw new Error(Message.NOT_AUTHENTICATED);
-			if (!formData) throw new Error(t(Message.INVALID_FORM_DATA));
-			if (!formData.groupName || formData.groupName.trim() === "") throw new Error(t("Please enter group name"));
-			if (!formData.groupDesc || formData.groupDesc.trim() === "") throw new Error(t("Please enter group description"));
+			if (!formData.groupName?.trim()) throw new Error(t("Please enter group name"));
+			if (!formData.groupDesc?.trim()) throw new Error(t("Please enter group description"));
 			if (selectedCategories.length === 0) throw new Error(t("Please select at least one category"));
 			if (!formData.groupImage) throw new Error(t("Please upload a group image"));
 
-			const updatedFormData = {
+			const updatedInput: GroupUpdateInput = {
 				...formData,
 				groupCategories: selectedCategories,
 			};
 
 			await updateGroup({
-				variables: { input: updatedFormData },
+				variables: { input: updatedInput },
 			});
 
 			await smallSuccess(t(Message.GROUP_UPDATED_SUCCESSFULLY));
@@ -160,30 +148,20 @@ const GroupUpdatePage = () => {
 		} catch (error: unknown) {
 			const errorMessage = error instanceof Error ? error.message : t(Message.SOMETHING_WENT_WRONG);
 			smallError(errorMessage);
-			console.log(errorMessage);
 		} finally {
-			setIsSubmitting(false);
+			setUiState((prev) => ({ ...prev, isSubmitting: false }));
 		}
 	};
 
 	const inputHandler = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
 		const { name, value } = e.target;
-
-		setFormData((prev) => {
-			if (!prev) return null;
-			return {
-				...prev,
-				[name]: value,
-			};
-		});
+		setFormData((prev) => (prev ? { ...prev, [name]: value } : null));
 	};
 
 	const categoryHandler = (category: GroupCategory) => {
 		if (selectedCategories.includes(category)) {
-			// If category is already selected, remove it
 			setSelectedCategories((prev) => prev.filter((c) => c !== category));
 		} else if (selectedCategories.length < 3) {
-			// If category is not selected and we haven't reached the limit, add it
 			setSelectedCategories((prev) => [...prev, category]);
 		}
 	};
@@ -203,7 +181,7 @@ const GroupUpdatePage = () => {
 					<Button
 						variant="outline"
 						onClick={() => router.push(`/groups/${formData._id}`)}
-						className="flex items-center gap-2 text-primary hover:text-primary-foreground hover:bg-primary border-primary hover:border-primary/80 transition-colors duration-200"
+						className="flex items-center gap-2 text-primary hover:text-primary-foreground hover:bg-primary border-primary transition-colors duration-200"
 					>
 						<ArrowLeft className="h-4 w-4" />
 						{t("Back to Group")}
@@ -217,7 +195,7 @@ const GroupUpdatePage = () => {
 						{/* Group Name */}
 						<div className="space-y-2">
 							<label htmlFor="groupName" className="text-sm font-medium text-foreground">
-								{t("Group Name")}
+								{t("Group Name")} *
 							</label>
 							<Input
 								id="groupName"
@@ -225,7 +203,6 @@ const GroupUpdatePage = () => {
 								value={formData.groupName}
 								onChange={inputHandler}
 								placeholder={t("Enter group name")}
-								className="bg-input text-input-foreground border-input"
 								required
 							/>
 						</div>
@@ -233,7 +210,7 @@ const GroupUpdatePage = () => {
 						{/* Group Description */}
 						<div className="space-y-2">
 							<label htmlFor="groupDesc" className="text-sm font-medium text-foreground">
-								{t("Description")}
+								{t("Description")} *
 							</label>
 							<Textarea
 								id="groupDesc"
@@ -241,14 +218,14 @@ const GroupUpdatePage = () => {
 								value={formData.groupDesc}
 								onChange={inputHandler}
 								placeholder={t("Enter group description")}
-								className="min-h-[120px] bg-input text-input-foreground border-input"
+								className="min-h-[120px]"
 								required
 							/>
 						</div>
 
 						{/* Categories */}
 						<div className="space-y-2">
-							<label className="text-sm font-medium text-foreground">{t("Categories (Select up to 3)")}</label>
+							<label className="text-sm font-medium text-foreground">{t("Categories (Select up to 3)")} *</label>
 							<div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
 								{Object.values(GroupCategory).map((category) => (
 									<Button
@@ -257,11 +234,7 @@ const GroupUpdatePage = () => {
 										variant={selectedCategories.includes(category) ? "default" : "outline"}
 										onClick={() => categoryHandler(category)}
 										disabled={selectedCategories.length >= 3 && !selectedCategories.includes(category)}
-										className={`h-10 transition-all duration-200 ${
-											selectedCategories.includes(category)
-												? "bg-primary text-primary-foreground font-semibold shadow-sm hover:bg-primary/90"
-												: "bg-transparent text-foreground hover:bg-accent hover:text-accent-foreground"
-										} disabled:opacity-50 disabled:cursor-not-allowed`}
+										className="h-10"
 									>
 										{category.charAt(0) + category.slice(1).toLowerCase().replace("_", " ")}
 									</Button>
@@ -269,18 +242,18 @@ const GroupUpdatePage = () => {
 							</div>
 						</div>
 
-						{/* Image Section */}
+						{/* Image Upload */}
 						<div className="space-y-4">
-							<label className="text-sm font-medium text-foreground">{t("Group Image")}</label>
-							<div className="relative aspect-video w-full max-w-2xl mx-auto rounded-xl overflow-hidden bg-muted/50">
-								{imagePreview ? (
+							<label className="text-sm font-medium text-foreground">{t("Group Image")} *</label>
+							<div className="relative aspect-video w-full rounded-xl overflow-hidden bg-muted/50 border-2">
+								{uiState.imagePreview ? (
 									<>
-										<Image src={imagePreview} alt="Group preview" className="object-contain" fill />
+										<Image src={uiState.imagePreview} alt="Group preview" className="object-contain" fill />
 										<label
 											htmlFor="image"
-											className="absolute inset-0 flex items-center justify-center bg-black/0 hover:bg-black/20 transition-colors duration-200 cursor-pointer group"
+											className="absolute inset-0 flex items-center justify-center bg-black/0 hover:bg-black/20 transition-colors cursor-pointer group"
 										>
-											<div className="flex items-center gap-2 bg-white/90 text-foreground px-4 py-2 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+											<div className="flex items-center gap-2 bg-white/90 text-foreground px-4 py-2 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
 												<RefreshCw className="h-4 w-4" />
 												<span className="font-medium">{t("Change Image")}</span>
 											</div>
@@ -289,44 +262,26 @@ const GroupUpdatePage = () => {
 								) : (
 									<label
 										htmlFor="image"
-										className="absolute inset-0 flex flex-col items-center justify-center bg-muted/50 hover:bg-muted/60 transition-colors duration-200 cursor-pointer"
+										className="absolute inset-0 flex flex-col items-center justify-center cursor-pointer hover:bg-muted/60 transition-colors"
 									>
 										<ImageIcon className="h-12 w-12 text-muted-foreground mb-2" />
 										<span className="text-muted-foreground font-medium">{t("Click to upload image")}</span>
 									</label>
 								)}
-								<input
-									id="image"
-									name="image"
-									type="file"
-									accept={imageTypes}
-									onChange={imageChangeHandler}
-									className="hidden"
-								/>
-								<p className="text-sm text-muted-foreground mt-1">{t("Only JPG, JPEG, and PNG files are allowed")}</p>
+								<input id="image" type="file" accept={imageTypes} onChange={imageChangeHandler} className="hidden" />
 							</div>
 						</div>
 
-						{/* Image Cropper Modal */}
 						<ImageCropper
-							isOpen={isCropperOpen}
-							onClose={() => {
-								setIsCropperOpen(false);
-								setTempImageUrl(null);
-							}}
+							isOpen={uiState.isCropperOpen}
+							onClose={() => setUiState((prev) => ({ ...prev, isCropperOpen: false, tempImageUrl: null }))}
 							onCropComplete={cropCompleteHandler}
-							imageUrl={tempImageUrl || ""}
+							imageUrl={uiState.tempImageUrl || ""}
 						/>
 
-						{/* Submit Button */}
-						<div className="flex justify-end">
-							<Button
-								type="submit"
-								size="lg"
-								disabled={isSubmitting}
-								className="bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed px-8"
-							>
-								{isSubmitting ? t("Updating...") : t("Update Group")}
+						<div className="flex justify-end pt-4">
+							<Button type="submit" size="lg" disabled={uiState.isSubmitting} className="px-12">
+								{uiState.isSubmitting ? t("Updating...") : t("Update Group")}
 							</Button>
 						</div>
 					</form>
