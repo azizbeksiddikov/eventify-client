@@ -41,9 +41,9 @@ const languages = [
 	// Using lipis/flag-icons (CSS sprites) instead of emoji flags for cross-browser consistency.
 	// https://github.com/lipis/flag-icons
 	{ code: "en", name: "English", flagIcon: "us" },
-	{ code: "ru", name: "Russian", flagIcon: "ru" },
-	{ code: "uz", name: "Uzbek", flagIcon: "uz" },
 	{ code: "ko", name: "Korean", flagIcon: "kr" },
+	{ code: "uz", name: "Uzbek", flagIcon: "uz" },
+	{ code: "ru", name: "Russian", flagIcon: "ru" },
 ];
 
 const Header = () => {
