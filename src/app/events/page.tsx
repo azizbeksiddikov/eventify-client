@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { userVar } from "@/apollo/store";
 import { useTranslation } from "next-i18next";
-import { useMutation, useReactiveVar, useApolloClient } from "@apollo/client/react";
+import { useMutation, useReactiveVar } from "@apollo/client/react";
 import { useQuery } from "@apollo/client/react";
 
 import PaginationComponent from "@/libs/components/common/PaginationComponent";
@@ -20,6 +20,7 @@ import { EventCategory, EventStatus } from "@/libs/enums/event.enum";
 import { Event } from "@/libs/types/event/event";
 import { EventsInquiry } from "@/libs/types/event/event.input";
 import { Direction } from "@/libs/enums/common.enum";
+import Loading from "@/libs/components/common/Loading";
 
 interface EventsPageProps {
 	initialSearch?: EventsInquiry;
@@ -141,7 +142,6 @@ const EventsPage = ({
 		},
 		notifyOnNetworkStatusChange: true,
 	});
-	const client = useApolloClient();
 
 	/** LIFECYCLES **/
 
@@ -188,11 +188,7 @@ const EventsPage = ({
 					{/* Events Grid */}
 					<div className="flex-1">
 						{eventsLoading && events.length === 0 ? (
-							<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-								{Array.from({ length: 6 }).map((_, idx) => (
-									<div key={idx} className="h-[340px] rounded-xl border bg-card/60 shadow-sm animate-pulse" />
-								))}
-							</div>
+							<Loading />
 						) : events.length > 0 ? (
 							<>
 								<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">

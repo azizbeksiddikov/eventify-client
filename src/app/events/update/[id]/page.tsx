@@ -16,13 +16,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ScrollArea } from "@/libs/components/ui/scroll-area";
 import { Checkbox } from "@/libs/components/ui/checkbox";
 import { ImageCropper } from "@/libs/components/common/ImageCropper";
+import Loading from "@/libs/components/common/Loading";
 
 import { EventCategory, EventStatus, EventLocationType } from "@/libs/enums/event.enum";
 import { GET_EVENT } from "@/apollo/user/query";
 import { UPDATE_EVENT_BY_ORGANIZER } from "@/apollo/user/mutation";
 import { EventUpdateInput } from "@/libs/types/event/event.update";
 import { smallError, smallSuccess } from "@/libs/alert";
-import { Message, Currency } from "@/libs/enums/common.enum";
+import { Currency } from "@/libs/enums/common.enum";
 import { imageTypes } from "@/libs/config";
 import { uploadImage } from "@/libs/upload";
 import { getImageUrl } from "@/libs/utils";
@@ -229,14 +230,7 @@ const EventUpdatePage = () => {
 	};
 
 	if (eventLoading || !formData) {
-		return (
-			<div className="min-h-screen bg-background flex items-center justify-center">
-				<div className="text-center">
-					<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-					<p className="text-muted-foreground">{t("loading")}</p>
-				</div>
-			</div>
-		);
+		return <Loading />;
 	}
 
 	return (

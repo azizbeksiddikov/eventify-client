@@ -6,8 +6,6 @@ import { useTranslation } from "next-i18next";
 import { userVar } from "@/apollo/store";
 import { useMutation, useQuery, useReactiveVar } from "@apollo/client/react";
 
-import CommentsComponent from "@/libs/components/common/CommentsComponent";
-import { CommentGroup } from "@/libs/enums/comment.enum";
 import ChosenEventData from "@/libs/components/events/ChosenEventData";
 import ChosenEventHeader from "@/libs/components/events/ChosenEventHeader";
 import ChosenEventOther from "@/libs/components/events/ChosenEventOther";
@@ -16,12 +14,12 @@ import NotFound from "@/libs/components/common/NotFound";
 import { GET_EVENT, GET_MY_TICKETS } from "@/apollo/user/query";
 import { CREATE_TICKET, LIKE_TARGET_EVENT } from "@/apollo/user/mutation";
 import { Event } from "@/libs/types/event/event";
-import { Message } from "@/libs/enums/common.enum";
 import { smallSuccess } from "@/libs/alert";
 import { likeEvent } from "@/libs/utils";
 import MyTickets from "@/libs/components/events/MyTickets";
 import { TicketInput, TicketInquiry } from "@/libs/types/ticket/ticket.input";
 import { Tickets } from "@/libs/types/ticket/ticket";
+import Loading from "@/libs/components/common/Loading";
 
 const ChosenEvent = () => {
 	const params = useParams();
@@ -138,14 +136,7 @@ const ChosenEvent = () => {
 			<ChosenEventHeader />
 
 			<div className="max-w-7xl mx-auto px-6 sm:px-12 lg:px-20 pb-10">
-				{eventLoading && !event ? (
-					<div className="rounded-xl border bg-card/60 shadow-sm p-6 animate-pulse">
-						<div className="h-6 w-48 bg-muted/60 rounded mb-4" />
-						<div className="h-40 w-full bg-muted/60 rounded mb-4" />
-						<div className="h-4 w-full bg-muted/60 rounded mb-2" />
-						<div className="h-4 w-5/6 bg-muted/60 rounded" />
-					</div>
-				) : null}
+				{eventLoading ?? <Loading />}
 
 				{!eventLoading && !event ? (
 					<NotFound

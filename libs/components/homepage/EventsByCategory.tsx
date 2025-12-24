@@ -7,6 +7,7 @@ import { ArrowRight } from "lucide-react";
 
 import { Button } from "@/libs/components/ui/button";
 import SmallEventCard from "@/libs/components/common/SmallEventCard";
+import Loading from "@/libs/components/common/Loading";
 
 import { GET_EVENTS_BY_CATEGORY } from "@/apollo/user/query";
 import { LIKE_TARGET_EVENT } from "@/apollo/user/mutation";
@@ -62,32 +63,7 @@ const EventsByCategory = ({
 				</div>
 
 				{loading ? (
-					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-						{[1, 2, 3].map((index) => (
-							<div
-								key={index}
-								className="bg-card rounded-xl shadow-sm overflow-hidden animate-pulse border border-border/50"
-							>
-								<div className="p-4 border-b">
-									<div className="h-6 bg-muted rounded w-32"></div>
-								</div>
-								<div className="p-4 space-y-4">
-									{[1, 2, 3].map((i) => (
-										<div key={i} className="flex gap-3">
-											<div className="w-12 h-12 sm:w-16 sm:h-16 bg-muted rounded-lg shrink-0"></div>
-											<div className="flex-1 space-y-2">
-												<div className="h-4 bg-muted rounded w-3/4"></div>
-												<div className="h-3 bg-muted rounded w-1/2"></div>
-											</div>
-										</div>
-									))}
-								</div>
-								<div className="p-4 border-t">
-									<div className="h-4 bg-muted rounded w-40"></div>
-								</div>
-							</div>
-						))}
-					</div>
+					<Loading />
 				) : eventsByCategory.length === 0 ? (
 					<div className="flex flex-col items-center justify-center py-12 sm:py-16 text-center px-4">
 						<div className="bg-muted/50 rounded-full p-6 sm:p-8 mb-4 sm:mb-6">

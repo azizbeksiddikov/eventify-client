@@ -2,7 +2,7 @@
 
 import { useParams } from "next/navigation";
 import { useTranslation } from "next-i18next";
-import { useApolloClient, useMutation, useQuery, useReactiveVar } from "@apollo/client/react";
+import { useMutation, useQuery, useReactiveVar } from "@apollo/client/react";
 import { userVar } from "@/apollo/store";
 
 import ChosenGroupHeader from "@/libs/components/group/ChosenGroupHeader";
@@ -17,6 +17,7 @@ import { JOIN_GROUP, LEAVE_GROUP, LIKE_TARGET_EVENT, LIKE_TARGET_GROUP } from "@
 import { joinGroup, leaveGroup, likeEvent, likeGroup } from "@/libs/utils";
 import { Group } from "@/libs/types/group/group";
 import { CommentGroup } from "@/libs/enums/comment.enum";
+import Loading from "@/libs/components/common/Loading";
 
 const GroupDetailPage = () => {
 	const params = useParams();
@@ -37,8 +38,6 @@ const GroupDetailPage = () => {
 		variables: { input: groupId || "" },
 		notifyOnNetworkStatusChange: true,
 	});
-
-	const client = useApolloClient();
 
 	const group = getGroupData?.getGroup as Group | null;
 
@@ -66,14 +65,7 @@ const GroupDetailPage = () => {
 			<ChosenGroupHeader />
 
 			<div className="max-w-7xl mx-auto px-6 sm:px-12 lg:px-20 pb-10">
-				{groupLoading && !group ? (
-					<div className="rounded-xl border bg-card/60 shadow-sm p-6 animate-pulse">
-						<div className="h-6 w-48 bg-muted/60 rounded mb-4" />
-						<div className="h-40 w-full bg-muted/60 rounded mb-4" />
-						<div className="h-4 w-full bg-muted/60 rounded mb-2" />
-						<div className="h-4 w-5/6 bg-muted/60 rounded" />
-					</div>
-				) : null}
+				{groupLoading && <Loading />}
 
 				{!groupLoading && !group ? (
 					<NotFound

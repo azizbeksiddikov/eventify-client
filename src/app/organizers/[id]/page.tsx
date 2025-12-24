@@ -3,7 +3,7 @@
 import { useParams } from "next/navigation";
 import { useTranslation } from "next-i18next";
 
-import { useApolloClient, useMutation, useQuery, useReactiveVar } from "@apollo/client/react";
+import { useMutation, useQuery, useReactiveVar } from "@apollo/client/react";
 import { GET_ORGANIZER } from "@/apollo/user/query";
 import { LIKE_TARGET_EVENT, LIKE_TARGET_MEMBER, SUBSCRIBE, UNSUBSCRIBE } from "@/apollo/user/mutation";
 import { userVar } from "@/apollo/store";
@@ -19,6 +19,7 @@ import SimilarGroups from "@/libs/components/common/SimilarGroups";
 import NotFound from "@/libs/components/common/NotFound";
 
 import { followMember, likeEvent, likeMember, unfollowMember } from "@/libs/utils";
+import Loading from "@/libs/components/common/Loading";
 
 const OrganizerDetailPage = () => {
 	const params = useParams();
@@ -39,8 +40,6 @@ const OrganizerDetailPage = () => {
 		variables: { input: organizerId! }, // Non-null assertion is safe because skip prevents execution when organizerId is null
 		notifyOnNetworkStatusChange: true,
 	});
-
-	const client = useApolloClient();
 
 	const organizer = getOrganizerData?.getOrganizer as Member | null;
 
@@ -68,19 +67,7 @@ const OrganizerDetailPage = () => {
 			<OrganizerHeader />
 
 			<div className="px-4 sm:px-6 md:px-8 lg:px-10 pb-10 max-w-7xl mx-auto space-y-6 sm:space-y-8 md:space-y-10">
-				{organizerLoading && !organizer ? (
-					<div className="rounded-xl border bg-card/60 shadow-sm p-6 animate-pulse mt-10">
-						<div className="flex items-center gap-4 mb-6">
-							<div className="h-16 w-16 bg-muted/60 rounded-full" />
-							<div className="space-y-2">
-								<div className="h-4 w-32 bg-muted/60 rounded" />
-								<div className="h-3 w-48 bg-muted/60 rounded" />
-							</div>
-						</div>
-						<div className="h-4 w-full bg-muted/60 rounded mb-4" />
-						<div className="h-40 w-full bg-muted/60 rounded" />
-					</div>
-				) : null}
+				{organizerLoading ? <Loading /> : null}
 
 				{!organizerLoading && !organizer ? (
 					<div className="pt-20">

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useTranslation } from "next-i18next";
-import { useApolloClient, useMutation, useQuery, useReactiveVar } from "@apollo/client/react";
+import { useMutation, useQuery, useReactiveVar } from "@apollo/client/react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 
 import OrganizerCard from "@/libs/components/common/OrganizerCard";
@@ -17,6 +17,7 @@ import { OrganizersInquiry } from "@/libs/types/member/member.input";
 import { Member } from "@/libs/types/member/member";
 import { userVar } from "@/apollo/store";
 import { followMember, likeMember, unfollowMember } from "@/libs/utils";
+import Loading from "@/libs/components/common/Loading";
 
 interface OrganizersPageProps {
 	initialSearch?: OrganizersInquiry;
@@ -78,7 +79,6 @@ const OrganizersPage = ({
 		},
 		notifyOnNetworkStatusChange: true,
 	});
-	const client = useApolloClient();
 	const organizers: Member[] = organizersData?.getOrganizers?.list || [];
 
 	/** LIFECYCLE */
@@ -117,12 +117,8 @@ const OrganizersPage = ({
 
 			{/* Organizers Grid */}
 			<div className="max-w-7xl mx-auto px-6 sm:px-12 lg:px-20 py-10 mb-10">
-				{loading && organizers.length === 0 ? (
-					<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-						{Array.from({ length: 6 }).map((_, idx) => (
-							<div key={idx} className="h-[340px] rounded-xl border bg-card/60 shadow-sm animate-pulse" />
-						))}
-					</div>
+				{loading ? (
+					<Loading />
 				) : organizers.length > 0 ? (
 					<>
 						<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">

@@ -18,6 +18,7 @@ import { Event } from "@/libs/types/event/event";
 // Styles
 import { Calendar, MapPin, ChevronLeft, ChevronRight } from "lucide-react";
 import { cn, getImageUrl } from "@/libs/utils";
+import Loading from "../common/Loading";
 
 interface AutoScrollEventsProps {
 	initialInput?: EventsInquiry;
@@ -176,7 +177,7 @@ const AutoScrollEvents = ({
 		[t],
 	);
 
-	if (upcomingEventsLoading) return <div>{t("loading")}...</div>;
+	if (upcomingEventsLoading) return <Loading />;
 	if (upcomingEventsError)
 		return (
 			<div>

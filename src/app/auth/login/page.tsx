@@ -12,7 +12,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/lib
 
 import { LoginInput } from "@/libs/types/member/member.input";
 import { logIn } from "@/libs/auth";
-import { Message } from "@/libs/enums/common.enum";
 import { smallError } from "@/libs/alert";
 
 const Login = () => {

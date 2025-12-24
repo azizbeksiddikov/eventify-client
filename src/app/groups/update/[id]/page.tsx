@@ -12,17 +12,18 @@ import { Input } from "@/libs/components/ui/input";
 import { Textarea } from "@/libs/components/ui/textarea";
 import { Card } from "@/libs/components/ui/card";
 import { ImageCropper } from "@/libs/components/common/ImageCropper";
+import Loading from "@/libs/components/common/Loading";
 
 import { userVar } from "@/apollo/store";
 import { UPDATE_GROUP } from "@/apollo/user/mutation";
 import { GET_GROUP } from "@/apollo/user/query";
 import { smallError, smallSuccess } from "@/libs/alert";
-import { Message } from "@/libs/enums/common.enum";
 import { GroupCategory } from "@/libs/enums/group.enum";
 import { GroupUpdateInput } from "@/libs/types/group/group.update";
 import { imageTypes } from "@/libs/config";
 import { uploadImage } from "@/libs/upload";
 import { getImageUrl } from "@/libs/utils";
+import { GroupMember } from "@/libs/types/groupMembers/groupMember";
 
 const GroupUpdatePage = () => {
 	const router = useRouter();
@@ -58,9 +59,7 @@ const GroupUpdatePage = () => {
 
 			// Authorization Check
 			const isOwner = group.memberId === user?._id;
-			const isModerator = group.groupModerators?.some(
-				(m: any) => m && typeof m === "object" && "memberId" in m && m.memberId === user?._id,
-			);
+			const isModerator = group.groupModerators?.some((m: GroupMember) => m.memberId === user?._id);
 
 			if (!isOwner && !isModerator) {
 				smallError(t("errors:not_authorized"));
@@ -167,11 +166,7 @@ const GroupUpdatePage = () => {
 	};
 
 	if (groupLoading || !formData) {
-		return (
-			<div className="min-h-screen bg-background flex items-center justify-center">
-				<div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-			</div>
-		);
+		return <Loading />;
 	}
 
 	return (

@@ -26,6 +26,7 @@ import {
 } from "@/apollo/user/mutation";
 import { getJwtToken, updateStorage, updateUserInfo } from "@/libs/auth";
 import { smallSuccess } from "@/libs/alert";
+import NotFound from "@/libs/components/common/NotFound";
 import { ProfileHeader } from "@/libs/components/profile/ProfileHeader";
 import { ProfileTabs } from "@/libs/components/profile/ProfileTabs";
 
@@ -34,6 +35,7 @@ import { Group } from "@/libs/types/group/group";
 import { Ticket } from "@/libs/types/ticket/ticket";
 import { MemberUpdateInput } from "@/libs/types/member/member.update";
 import { followMember, joinGroup, leaveGroup, likeGroup, likeMember, unfollowMember } from "@/libs/utils";
+import Loading from "@/libs/components/common/Loading";
 
 const ProfilePage = () => {
 	const user = useReactiveVar(userVar);
@@ -227,11 +229,8 @@ const ProfilePage = () => {
 		}
 	};
 
-	if (loadingMember || (getMemberData?.getMember && !member)) return null;
-	if (!member)
-		return (
-			<div className="flex w-full items-center justify-center py-20 text-lg font-medium text-gray-500">No info</div>
-		);
+	if (loadingMember) return <Loading />;
+	if (!member) return <NotFound />;
 	return (
 		<div className="content-container py-8 flex flex-col gap-4">
 			<ProfileHeader member={member} groupsCount={groups.length} ticketsCount={tickets.length} />

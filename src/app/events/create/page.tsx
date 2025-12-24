@@ -16,6 +16,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ScrollArea } from "@/libs/components/ui/scroll-area";
 import { Checkbox } from "@/libs/components/ui/checkbox";
 import { ImageCropper } from "@/libs/components/common/ImageCropper";
+import Loading from "@/libs/components/common/Loading";
 
 import { EventCategory, EventStatus, EventType, EventLocationType, RecurrenceType } from "@/libs/enums/event.enum";
 import { GET_MY_GROUPS } from "@/apollo/user/query";
@@ -308,33 +309,8 @@ const EventCreatePage = () => {
 	};
 
 	// Show loading state while fetching groups
-	if (groupsLoading) {
-		return (
-			<div className="min-h-screen bg-background">
-				<div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-					<div className="mb-8">
-						<Button
-							variant="outline"
-							onClick={() => router.push("/events")}
-							className="flex items-center gap-2 text-primary hover:text-primary-foreground hover:bg-primary border-primary hover:border-primary/80 transition-colors duration-200"
-						>
-							<ArrowLeft className="h-4 w-4" />
-							{t("back_to_events")}
-						</Button>
-					</div>
+	if (groupsLoading) return <Loading />;
 
-					<Card className="p-6 bg-card text-card-foreground">
-						<div className="text-center py-8">
-							<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-							<p className="text-muted-foreground">{t("loading")}</p>
-						</div>
-					</Card>
-				</div>
-			</div>
-		);
-	}
-
-	// Check if user has no groups (only after loading is complete)
 	if (groups.length === 0 && groupsData) {
 		return (
 			<div className="min-h-screen bg-background">

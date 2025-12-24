@@ -16,6 +16,7 @@ import { GroupCategory } from "@/libs/enums/group.enum";
 import { GroupsInquiry } from "@/libs/types/group/group.input";
 import { Direction } from "@/libs/enums/common.enum";
 import { Group } from "@/libs/types/group/group";
+import Loading from "@/libs/components/common/Loading";
 
 interface GroupsPageProps {
 	initialSearch?: GroupsInquiry;
@@ -140,12 +141,8 @@ const GroupsPage = ({
 
 					{/* Events Grid */}
 					<div className="flex-1">
-						{loading && groups.length === 0 ? (
-							<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-								{Array.from({ length: 6 }).map((_, idx) => (
-									<div key={idx} className="h-[340px] rounded-xl border bg-card/60 shadow-sm animate-pulse" />
-								))}
-							</div>
+						{loading ? (
+							<Loading />
 						) : groups.length > 0 ? (
 							<>
 								<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
