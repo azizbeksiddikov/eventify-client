@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useTranslation } from "next-i18next";
-import { useApolloClient, useMutation, useQuery, useReactiveVar } from "@apollo/client/react";
+import { useMutation, useQuery, useReactiveVar } from "@apollo/client/react";
 import { Users, Ticket as TicketIcon, Settings, UserPlus, UserCheck } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -34,7 +34,6 @@ import { Group } from "@/libs/types/group/group";
 import { Ticket } from "@/libs/types/ticket/ticket";
 import { MemberUpdateInput } from "@/libs/types/member/member.update";
 import { followMember, joinGroup, leaveGroup, likeGroup, likeMember, unfollowMember } from "@/libs/utils";
-import { Message } from "@/libs/enums/common.enum";
 
 const ProfilePage = () => {
 	const user = useReactiveVar(userVar);
@@ -75,7 +74,11 @@ const ProfilePage = () => {
 	const [leaveTargetGroup] = useMutation(LEAVE_GROUP);
 	const [cancelTicket] = useMutation(CANCEL_TICKET);
 
-	const { data: getMemberData, refetch: refetchMember } = useQuery(GET_MEMBER, {
+	const {
+		data: getMemberData,
+		refetch: refetchMember,
+		loading: loadingMember,
+	} = useQuery(GET_MEMBER, {
 		fetchPolicy: "cache-and-network",
 		skip: !user?._id,
 		variables: { input: user._id! },
@@ -105,7 +108,7 @@ const ProfilePage = () => {
 		skip: !user?._id,
 		notifyOnNetworkStatusChange: true,
 	});
-	const client = useApolloClient();
+
 	/** LIFECYCLE */
 	useEffect(() => {
 		const jwt = getJwtToken();
@@ -224,7 +227,11 @@ const ProfilePage = () => {
 		}
 	};
 
-	if (!member) return <div>...Loading</div>;
+	if (loadingMember || (getMemberData?.getMember && !member)) return null;
+	if (!member)
+		return (
+			<div className="flex w-full items-center justify-center py-20 text-lg font-medium text-gray-500">No info</div>
+		);
 	return (
 		<div className="content-container py-8 flex flex-col gap-4">
 			<ProfileHeader member={member} groupsCount={groups.length} ticketsCount={tickets.length} />
