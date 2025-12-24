@@ -183,9 +183,6 @@ const Header = () => {
 
 				{/* Mobile Controls - Shown on mobile/tablet, hidden on md screens */}
 				<div className="flex md:hidden items-center gap-2">
-					{/* Notification on mobile */}
-					{authMember._id && <NotificationDropdown />}
-
 					{/* User Menu on mobile */}
 					{authMember._id ? (
 						<UserNav authMember={authMember} />
@@ -228,7 +225,7 @@ const Header = () => {
 									<div className={cn("grid items-center px-4 pb-4", authMember._id ? "grid-cols-3" : "grid-cols-2")}>
 										{authMember._id && (
 											<div className="flex items-center justify-center">
-												<NotificationDropdown />
+												<NotificationDropdown isMobile />
 											</div>
 										)}
 

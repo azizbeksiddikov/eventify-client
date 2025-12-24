@@ -15,7 +15,8 @@ import {
 } from "@/libs/components/ui/dropdown-menu";
 import { ScrollArea } from "@/libs/components/ui/scroll-area";
 import { Badge } from "@/libs/components/ui/badge";
-import { Separator } from "@/libs/components/ui/separator";
+import { Avatar, AvatarFallback, AvatarImage } from "@/libs/components/ui/avatar";
+import { cn } from "@/libs/utils";
 
 import { GET_NOTIFICATIONS } from "@/apollo/user/query";
 import { READ_ALL_NOTIFICATIONS, UPDATE_NOTIFICATION } from "@/apollo/user/mutation";
@@ -63,12 +64,17 @@ const getNotificationText = (notification: Notification, t: (key: string) => str
 	}
 };
 
-export const NotificationDropdown = () => {
+interface NotificationDropdownProps {
+	isMobile?: boolean;
+}
+
+export const NotificationDropdown = ({ isMobile = false }: NotificationDropdownProps) => {
 	const { t } = useTranslation("header");
 	const router = useRouter();
 
 	const [notifications, setNotifications] = useState<Notification[]>([]);
 	const [unreadCount, setUnreadCount] = useState(0);
+	const [isOpen, setIsOpen] = useState(false);
 
 	/** APOLLO REQUESTS */
 	const [updateNotification] = useMutation(UPDATE_NOTIFICATION);
@@ -89,18 +95,37 @@ export const NotificationDropdown = () => {
 		}
 	}, [notificationsData]);
 
+	// Close desktop dropdown on resize to mobile
+	useEffect(() => {
+		if (isMobile) return;
+
+		const mediaQuery = window.matchMedia("(min-width: 768px)");
+		const handleChange = (e: MediaQueryListEvent) => {
+			if (!e.matches) {
+				setIsOpen(false);
+			}
+		};
+
+		mediaQuery.addEventListener("change", handleChange);
+		return () => mediaQuery.removeEventListener("change", handleChange);
+	}, [isMobile]);
+
 	const readNotificationHandler = async (notification: Notification, e: React.MouseEvent) => {
 		e.stopPropagation();
 		try {
-			await updateNotification({
-				variables: {
-					input: {
-						_id: notification._id,
-						isRead: true,
+			if (!notification.isRead) {
+				await updateNotification({
+					variables: {
+						input: {
+							_id: notification._id,
+							isRead: true,
+						},
 					},
-				},
-			});
+				});
+			}
+
 			if (notification.notificationLink) {
+				setIsOpen(false);
 				router.push(notification.notificationLink);
 			}
 		} catch (err) {
@@ -108,7 +133,8 @@ export const NotificationDropdown = () => {
 		}
 	};
 
-	const readAllNotificationsHandler = async () => {
+	const readAllNotificationsHandler = async (e: React.MouseEvent) => {
+		e.preventDefault();
 		try {
 			await readAllNotifications();
 			await refetchNotifications();
@@ -118,67 +144,82 @@ export const NotificationDropdown = () => {
 	};
 
 	return (
-		<DropdownMenu>
+		<DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
 			<DropdownMenuTrigger asChild>
-				<Button variant="ghost" size="icon" className="relative">
-					<BellIcon className="h-4 w-4" />
+				<Button variant="ghost" size="icon" className="relative group">
+					<BellIcon className="h-5 w-5 text-muted-foreground group-hover:text-foreground transition-colors" />
 					{unreadCount > 0 && (
 						<Badge
 							variant="destructive"
-							className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs"
+							className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs rounded-full"
 						>
 							{unreadCount}
 						</Badge>
 					)}
 				</Button>
 			</DropdownMenuTrigger>
-			<DropdownMenuContent align="end" className="w-80">
-				<div className="flex items-center justify-between px-4 py-2">
-					<h4 className="text-sm font-medium">{t("notifications")}</h4>
-					<Badge variant="secondary" className="text-xs">
-						{unreadCount} {t("unread")}
-					</Badge>
-					<Button
-						variant="default"
-						size="sm"
-						className="h-7 text-xs bg-primary text-primary-foreground hover:bg-primary/90"
-						onClick={readAllNotificationsHandler}
-						disabled={unreadCount === 0}
-					>
-						{t("read_all")}
-					</Button>
+			<DropdownMenuContent align="end" sideOffset={10} className="w-[380px] max-w-[calc(100vw-1rem)] p-0 z-[100] mr-4">
+				<div className="flex items-center justify-between px-4 py-3 border-b">
+					<div className="flex items-center gap-2">
+						<h4 className="text-sm font-semibold">{t("notifications")}</h4>
+						{unreadCount > 0 && (
+							<Badge variant="secondary" className="text-xs px-1.5 py-0 rounded-sm h-5">
+								{unreadCount} {t("new")}
+							</Badge>
+						)}
+					</div>
+					{unreadCount > 0 && (
+						<Button
+							variant="ghost"
+							size="sm"
+							className="h-auto px-2 py-1 text-xs text-muted-foreground hover:text-primary"
+							onClick={readAllNotificationsHandler}
+						>
+							{t("mark_all_read")}
+						</Button>
+					)}
 				</div>
-				<Separator />
-				<ScrollArea className="min-h-60 max-h-140">
+				<ScrollArea className="h-[400px]">
 					{notifications.length > 0 ? (
-						notifications.map((notification: Notification) => (
-							<DropdownMenuItem
-								key={notification._id}
-								className={`flex flex-col items-start p-4 cursor-pointer ${!notification.isRead ? "bg-accent/50" : ""}`}
-							>
-								<div className="flex items-center justify-between w-full">
-									<div className="flex items-center gap-2">
-										<span className="text-sm font-medium">{getNotificationText(notification, t)}</span>
-										<span className="text-xs text-muted-foreground">
-											{format(new Date(notification.createdAt), "MMM d, hh:mm")}
-										</span>
-									</div>
-									{!notification.isRead && (
-										<Button
-											variant="ghost"
-											size="sm"
-											className="h-6 text-xs bg-primary text-primary-foreground hover:bg-primary/90"
-											onClick={(e) => readNotificationHandler(notification, e)}
-										>
-											{t("read")}
-										</Button>
+						<div className="flex flex-col py-2">
+							{notifications.map((notification: Notification) => (
+								<DropdownMenuItem
+									key={notification._id}
+									className={cn(
+										"flex items-start gap-3 px-4 py-3 cursor-pointer focus:bg-accent/50",
+										!notification.isRead && "bg-accent/20",
 									)}
-								</div>
-							</DropdownMenuItem>
-						))
+									onClick={(e) => readNotificationHandler(notification, e)}
+								>
+									<Avatar className="h-9 w-9 border shrink-0">
+										<AvatarImage src={notification.memberData?.memberImage} alt="user-avatar" />
+										<AvatarFallback className="text-xs">
+											{notification.memberData?.memberFullName?.charAt(0).toUpperCase() || "?"}
+										</AvatarFallback>
+									</Avatar>
+
+									<div className="flex-1 min-w-0 space-y-1">
+										<p
+											className={cn(
+												"text-sm leading-snug break-words line-clamp-3",
+												!notification.isRead && "font-medium",
+											)}
+										>
+											{getNotificationText(notification, t)}
+										</p>
+										<p className="text-xs text-muted-foreground">
+											{format(new Date(notification.createdAt), "MMM d, HH:mm")}
+										</p>
+									</div>
+
+									{!notification.isRead && <div className="mt-1.5 h-2 w-2 rounded-full bg-primary shrink-0" />}
+								</DropdownMenuItem>
+							))}
+						</div>
 					) : (
-						<div className="flex items-center justify-center h-32 text-sm text-muted-foreground">
-							{t("no_notifications")}
+						<div className="flex flex-col items-center justify-center h-[300px] text-center p-4">
+							<BellIcon className="h-10 w-10 text-muted-foreground/30 mb-2" />
+							<p className="text-sm text-muted-foreground">{t("no_notifications")}</p>
 						</div>
 					)}
 				</ScrollArea>
