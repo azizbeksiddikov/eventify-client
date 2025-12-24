@@ -47,7 +47,6 @@ import { EventUpdateInput } from "@/libs/types/event/event.update";
 import { FaqByGroup } from "@/libs/types/faq/faq";
 import { FaqInput } from "@/libs/types/faq/faq.input";
 import { FaqUpdate } from "@/libs/types/faq/faq.update";
-import useDeviceDetect from "@/libs/hooks/useDeviceDetect";
 
 interface AdminHomeProps {
 	initialMembersInquiry?: MembersInquiry;
@@ -100,13 +99,16 @@ const AdminHome = ({
 	const router = useRouter();
 	const user = useReactiveVar(userVar);
 	const { t } = useTranslation("admin");
-	const [loading, setLoading] = useState(true);
-	const device = useDeviceDetect();
 
 	const [membersInquiry, setMembersInquiry] = useState<MembersInquiry>(initialMembersInquiry);
 	const [groupsInquiry, setGroupsInquiry] = useState<GroupsInquiry>(initialGroupsInquiry);
 	const [eventsInquiry, setEventsInquiry] = useState<EventsInquiry>(initialEventsInquiry);
-	const [activeTab, setActiveTab] = useState<string>("users");
+	const [activeTab, setActiveTab] = useState<string>(() => {
+		if (typeof window !== "undefined") {
+			return localStorage.getItem("adminActiveTab") || "users";
+		}
+		return "users";
+	});
 
 	/** APOLLO REQUESTS */
 	const [updateMember] = useMutation(UPDATE_MEMBER_BY_ADMIN);
@@ -158,19 +160,14 @@ const AdminHome = ({
 	useEffect(() => {
 		const jwt = getJwtToken();
 		if (jwt) updateUserInfo(jwt);
-
-		const savedTab = localStorage.getItem("adminActiveTab");
-		if (savedTab) setActiveTab(savedTab);
-
-		setLoading(false);
 	}, []);
 
 	useEffect(() => {
-		if (!loading && user.memberType !== MemberType.ADMIN) {
+		if (user._id && user.memberType !== MemberType.ADMIN) {
 			smallError("You are not authorized to access this page");
 			router.push("/");
 		}
-	}, [loading, user, router]);
+	}, [user, router]);
 
 	/** HANDLERS */
 	const updateMemberHandler = async (member: MemberUpdateInput) => {
@@ -248,76 +245,76 @@ const AdminHome = ({
 		}
 	};
 
-	if (device === "mobile") {
-		return (
-			<div className="container mx-auto py-8">
-				<div className="text-center text-2xl font-bold">{t("please_enter_from_desktop")}</div>
-			</div>
-		);
-	}
-
 	return (
 		<div className="content-container py-8">
-			<Tabs value={activeTab} onValueChange={changeTabHandler} className="w-full">
-				{/* TABS LIST */}
-				<TabsList className="grid w-full grid-cols-4 mb-8 h-12">
-					<TabsTrigger value="users" className="flex items-center gap-2">
-						<Users className="h-4 w-4" />
-						{t("users")}
-					</TabsTrigger>
-					<TabsTrigger value="groups" className="flex items-center gap-2">
-						<Users2 className="h-4 w-4" />
-						{t("groups")}
-					</TabsTrigger>
-					<TabsTrigger value="events" className="flex items-center gap-2">
-						<Calendar className="h-4 w-4" />
-						{t("events")}
-					</TabsTrigger>
-					<TabsTrigger value="faqs" className="flex items-center gap-2">
-						<HelpCircle className="h-4 w-4" />
-						{t("faqs")}
-					</TabsTrigger>
-				</TabsList>
-				{/* TABS CONTENT */}
-				<TabsContent value="users" className="mt-0">
-					<UsersModule
-						members={members}
-						initialInquiry={defaultMembersInquiry}
-						membersInquiry={membersInquiry}
-						setMembersInquiry={setMembersInquiry}
-						updateMemberHandler={updateMemberHandler}
-						removeMemberHandler={removeMemberHandler}
-					/>
-				</TabsContent>
-				<TabsContent value="groups" className="mt-0">
-					<GroupsModule
-						groups={groups}
-						initialInquiry={defaultGroupsInquiry}
-						groupsInquiry={groupsInquiry}
-						setGroupsInquiry={setGroupsInquiry}
-						updateGroupHandler={updateGroupHandler}
-						removeGroupHandler={removeGroupHandler}
-					/>
-				</TabsContent>
-				<TabsContent value="events" className="mt-0">
-					<EventsModule
-						events={events}
-						initialInquiry={defaultEventsInquiry}
-						eventsInquiry={eventsInquiry}
-						setEventsInquiry={setEventsInquiry}
-						updateEventHandler={updateEventHandler}
-						removeEventHandler={removeEventHandler}
-					/>
-				</TabsContent>
-				<TabsContent value="faqs" className="mt-0">
-					<FaqsModule
-						faqByGroup={faqs}
-						createFaqHandler={createFaqHandler}
-						updateFaqHandler={updateFaqHandler}
-						removeFaqHandler={removeFaqHandler}
-					/>
-				</TabsContent>
-			</Tabs>
+			{/* Mobile warning - only visible on small screens */}
+			<div className="block md:hidden text-center py-8">
+				<div className="text-2xl font-bold">{t("please_enter_from_desktop")}</div>
+			</div>
+
+			{/* Admin content - only visible on medium+ screens */}
+			<div className="hidden md:block">
+				<Tabs value={activeTab} onValueChange={changeTabHandler} className="w-full">
+					{/* TABS LIST */}
+					<TabsList className="grid w-full grid-cols-4 mb-8 h-12">
+						<TabsTrigger value="users" className="flex items-center gap-2">
+							<Users className="h-4 w-4" />
+							{t("users")}
+						</TabsTrigger>
+						<TabsTrigger value="groups" className="flex items-center gap-2">
+							<Users2 className="h-4 w-4" />
+							{t("groups")}
+						</TabsTrigger>
+						<TabsTrigger value="events" className="flex items-center gap-2">
+							<Calendar className="h-4 w-4" />
+							{t("events")}
+						</TabsTrigger>
+						<TabsTrigger value="faqs" className="flex items-center gap-2">
+							<HelpCircle className="h-4 w-4" />
+							{t("faqs")}
+						</TabsTrigger>
+					</TabsList>
+					{/* TABS CONTENT */}
+					<TabsContent value="users" className="mt-0">
+						<UsersModule
+							members={members}
+							initialInquiry={defaultMembersInquiry}
+							membersInquiry={membersInquiry}
+							setMembersInquiry={setMembersInquiry}
+							updateMemberHandler={updateMemberHandler}
+							removeMemberHandler={removeMemberHandler}
+						/>
+					</TabsContent>
+					<TabsContent value="groups" className="mt-0">
+						<GroupsModule
+							groups={groups}
+							initialInquiry={defaultGroupsInquiry}
+							groupsInquiry={groupsInquiry}
+							setGroupsInquiry={setGroupsInquiry}
+							updateGroupHandler={updateGroupHandler}
+							removeGroupHandler={removeGroupHandler}
+						/>
+					</TabsContent>
+					<TabsContent value="events" className="mt-0">
+						<EventsModule
+							events={events}
+							initialInquiry={defaultEventsInquiry}
+							eventsInquiry={eventsInquiry}
+							setEventsInquiry={setEventsInquiry}
+							updateEventHandler={updateEventHandler}
+							removeEventHandler={removeEventHandler}
+						/>
+					</TabsContent>
+					<TabsContent value="faqs" className="mt-0">
+						<FaqsModule
+							faqByGroup={faqs}
+							createFaqHandler={createFaqHandler}
+							updateFaqHandler={updateFaqHandler}
+							removeFaqHandler={removeFaqHandler}
+						/>
+					</TabsContent>
+				</Tabs>
+			</div>
 		</div>
 	);
 };
