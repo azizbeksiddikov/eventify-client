@@ -1,6 +1,5 @@
 import { useState } from "react";
 import Image from "next/image";
-import axios from "axios";
 import { useTranslation } from "next-i18next";
 import { ImageIcon, RefreshCw } from "lucide-react";
 
@@ -10,12 +9,12 @@ import { Label } from "@/libs/components/ui/label";
 import { Textarea } from "@/libs/components/ui/textarea";
 import { ImageCropper } from "@/libs/components/common/ImageCropper";
 
-import { NEXT_PUBLIC_API_GRAPHQL_URL, NEXT_APP_API_URL, imageTypes } from "@/libs/config";
-import { getJwtToken } from "@/libs/auth";
+import { NEXT_APP_API_URL, imageTypes } from "@/libs/config";
 import { smallError } from "@/libs/alert";
 import { MemberUpdateInput } from "@/libs/types/member/member.update";
 import { Message } from "@/libs/enums/common.enum";
 import { formatPhoneNumber } from "@/libs/utils";
+import { uploadImage } from "@/libs/upload";
 
 interface ProfileSettingsProps {
 	updateMemberHandler: (data: MemberUpdateInput) => void;
@@ -29,7 +28,6 @@ export const ProfileSettings = ({
 	setMemberUpdateInput,
 }: ProfileSettingsProps) => {
 	const { t } = useTranslation("profile");
-	const token = getJwtToken();
 
 	const [imagePreview, setImagePreview] = useState<string | null>(
 		memberUpdateInput.memberImage ? `${NEXT_APP_API_URL}/${memberUpdateInput.memberImage}` : null,
@@ -38,43 +36,14 @@ export const ProfileSettings = ({
 	const [tempImageUrl, setTempImageUrl] = useState<string | null>(null);
 
 	/** HANDLERS */
-	const uploadImage = async (image: File) => {
+	const handleImageUpload = async (image: File) => {
 		try {
-			const formData = new FormData();
-			formData.append(
-				"operations",
-				JSON.stringify({
-					query: `mutation ImageUploader($file: Upload!, $target: String!) {
-						imageUploader(file: $file, target: $target) 
-				  }`,
-					variables: {
-						file: null,
-						target: "member",
-					},
-				}),
-			);
-			formData.append(
-				"map",
-				JSON.stringify({
-					"0": ["variables.file"],
-				}),
-			);
-			formData.append("0", image);
-
-			const response = await axios.post(`${NEXT_PUBLIC_API_GRAPHQL_URL}`, formData, {
-				headers: {
-					"Content-Type": "multipart/form-data",
-					"apollo-require-preflight": true,
-					Authorization: `Bearer ${token}`,
-				},
-			});
-
-			const responseImage = response.data.data.imageUploader;
+			const responseImage = await uploadImage(image, "member");
 			const imageUrl = `${NEXT_APP_API_URL}/${responseImage}`;
-			setImagePreview(imageUrl);
 
 			// Update form data and preview
 			setMemberUpdateInput({ ...memberUpdateInput, memberImage: responseImage });
+			setImagePreview(imageUrl);
 
 			return imageUrl;
 		} catch (err) {
@@ -94,8 +63,15 @@ export const ProfileSettings = ({
 	};
 
 	const cropCompleteHandler = async (croppedFile: File) => {
-		await uploadImage(croppedFile);
-		setTempImageUrl(null);
+		try {
+			const imageUrl = await handleImageUpload(croppedFile);
+			if (imageUrl) {
+				setTempImageUrl(null);
+			}
+		} catch (err) {
+			console.error("Error handling cropped image:", err);
+			smallError(t(Message.UPLOAD_FAILED));
+		}
 	};
 
 	const phoneChangeHandler = (value: string) => {

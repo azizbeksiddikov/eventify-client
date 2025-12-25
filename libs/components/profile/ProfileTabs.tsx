@@ -1,14 +1,15 @@
-import { ProfileGroups } from '@/libs/components/profile/ProfileGroups';
-import { ProfileTickets } from '@/libs/components/profile/ProfileTickets';
-import { ProfileSettings } from '@/libs/components/profile/ProfileSettings';
-import { ProfileFollowings } from '@/libs/components/profile/ProfileFollowings';
-import { ProfileFollowers } from '@/libs/components/profile/ProfileFollowers';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/libs/components/ui/tabs';
+import { ProfileGroups } from "@/libs/components/profile/ProfileGroups";
+import { ProfileTickets } from "@/libs/components/profile/ProfileTickets";
+import { ProfileSettings } from "@/libs/components/profile/ProfileSettings";
+import { ProfileFollowings } from "@/libs/components/profile/ProfileFollowings";
+import { ProfileFollowers } from "@/libs/components/profile/ProfileFollowers";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/libs/components/ui/tabs";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/libs/components/ui/select";
 
-import { Member } from '@/libs/types/member/member';
-import { Group } from '@/libs/types/group/group';
-import { Ticket } from '@/libs/types/ticket/ticket';
-import { MemberUpdateInput } from '@/libs/types/member/member.update';
+import { Member } from "@/libs/types/member/member";
+import { Group } from "@/libs/types/group/group";
+import { Ticket } from "@/libs/types/ticket/ticket";
+import { MemberUpdateInput } from "@/libs/types/member/member.update";
 
 interface ProfileTabsProps {
 	activeTab: string;
@@ -49,17 +50,42 @@ export const ProfileTabs = ({
 	activeTab,
 	setActiveTab,
 }: ProfileTabsProps) => {
+	const activeTabData = tabs.find((tab) => tab.id === activeTab);
+
 	return (
 		<Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-			<TabsList className="w-full justify-between bg-muted/80 p-1 rounded-lg h-16">
+			{/* Dropdown for small screens */}
+			<div className="md:hidden">
+				<Select value={activeTab} onValueChange={setActiveTab}>
+					<SelectTrigger className="w-full h-12">
+						<div className="flex items-center gap-2 flex-1">
+							{activeTabData && <activeTabData.icon className="h-4 w-4 shrink-0" />}
+							<SelectValue>{activeTabData?.label || "Select a tab"}</SelectValue>
+						</div>
+					</SelectTrigger>
+					<SelectContent>
+						{tabs.map((tab) => (
+							<SelectItem key={tab.id} value={tab.id}>
+								<div className="flex items-center gap-2">
+									<tab.icon className="h-4 w-4 shrink-0" />
+									<span>{tab.label}</span>
+								</div>
+							</SelectItem>
+						))}
+					</SelectContent>
+				</Select>
+			</div>
+
+			{/* Tabs for larger screens */}
+			<TabsList className="hidden md:flex w-full justify-between bg-muted/80 p-1.5 rounded-lg h-auto gap-1">
 				{tabs.map((tab) => (
 					<TabsTrigger
 						key={tab.id}
 						value={tab.id}
-						className="flex items-center gap-2 px-4 py-2 text-sm font-medium data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm rounded-md transition-colors duration-200"
+						className="flex items-center gap-2 px-4 py-3 text-sm font-medium data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md rounded-md transition-all duration-200 hover:bg-muted/50 flex-1 justify-center"
 					>
-						<tab.icon className="h-4 w-4" />
-						<span>{tab.label}</span>
+						<tab.icon className="h-4 w-4 shrink-0" />
+						<span className="whitespace-nowrap">{tab.label}</span>
 					</TabsTrigger>
 				))}
 			</TabsList>

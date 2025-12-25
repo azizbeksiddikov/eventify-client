@@ -17,14 +17,13 @@ import { userVar } from "@/apollo/store";
 import { CREATE_GROUP } from "@/apollo/user/mutation";
 import { smallError, smallSuccess } from "@/libs/alert";
 import { useTranslation } from "next-i18next";
-import { Message } from "@/libs/enums/common.enum";
 import { imageTypes, NEXT_APP_API_URL } from "@/libs/config";
 import { uploadImage } from "@/libs/upload";
 import Image from "next/image";
 
 const GroupCreatePage = () => {
 	const router = useRouter();
-	const { t } = useTranslation(["groups", "errors"]);
+	const { t } = useTranslation(["groups", "errors", "events"]);
 	const user = useReactiveVar(userVar);
 
 	const [isSubmitting, setIsSubmitting] = useState(false);
@@ -175,7 +174,7 @@ const GroupCreatePage = () => {
 						{/* Group Name */}
 						<div className="space-y-2">
 							<label htmlFor="groupName" className="text-sm font-medium text-foreground">
-								{t("group_name")}
+								{t("group_name")} *
 							</label>
 							<Input
 								id="groupName"
@@ -184,14 +183,13 @@ const GroupCreatePage = () => {
 								onChange={inputHandler}
 								placeholder={t("enter_group_name")}
 								className="bg-input text-input-foreground border-input"
-								required
 							/>
 						</div>
 
 						{/* Group Description */}
 						<div className="space-y-2">
 							<label htmlFor="groupDesc" className="text-sm font-medium text-foreground">
-								{t("description")}
+								{t("description")} *
 							</label>
 							<Textarea
 								id="groupDesc"
@@ -200,13 +198,12 @@ const GroupCreatePage = () => {
 								onChange={inputHandler}
 								placeholder={t("enter_group_description")}
 								className="min-h-[120px] bg-input text-input-foreground border-input"
-								required
 							/>
 						</div>
 
 						{/* Categories */}
 						<div className="space-y-2">
-							<label className="text-sm font-medium text-foreground">{t("categories_select_up_to_3")}</label>
+							<label className="text-sm font-medium text-foreground">{t("categories_select_up_to_3")} *</label>
 							<div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
 								{Object.values(GroupCategory).map((category) => (
 									<Button
@@ -229,7 +226,7 @@ const GroupCreatePage = () => {
 
 						{/* Image Section */}
 						<div className="space-y-4">
-							<label className="text-sm font-medium text-foreground">{t("group_image")}</label>
+							<label className="text-sm font-medium text-foreground">{t("group_image")} *</label>
 							<div className="relative aspect-video w-full max-w-2xl mx-auto rounded-xl overflow-hidden bg-muted/50">
 								{imagePreview ? (
 									<>
@@ -260,9 +257,8 @@ const GroupCreatePage = () => {
 									accept={imageTypes}
 									onChange={imageChangeHandler}
 									className="hidden"
-									required
 								/>
-								<p className="text-sm text-muted-foreground mt-1">{t("only_jpg_jpeg_png_allowed")}</p>
+								<p className="text-sm text-muted-foreground mt-1">{t("events:only_jpg_jpeg_png_allowed")}</p>
 							</div>
 						</div>
 
