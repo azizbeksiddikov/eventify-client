@@ -99,6 +99,7 @@
 	"events_this_month": "Shu oydagi tadbirlar",
 	"create_new_event": "Yangi tadbir yaratish",
 	"event_type": "Tadbir turi",
+	"one_time_event": "Bir martalik tadbir",
 	"recurring_event": "Takrorlanuvchi tadbir",
 	"select_group": "Guruhni tanlang",
 	"recurrence_settings": "Takrorlanish sozlamalari",

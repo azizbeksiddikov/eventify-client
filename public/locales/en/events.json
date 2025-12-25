@@ -100,6 +100,7 @@
 	"events_this_month": "Events this Month",
 	"create_new_event": "Create New Event",
 	"event_type": "Event Type",
+	"one_time_event": "One Time Event",
 	"recurring_event": "Recurring Event",
 	"select_group": "Select Group",
 	"recurrence_settings": "Recurrence Settings",

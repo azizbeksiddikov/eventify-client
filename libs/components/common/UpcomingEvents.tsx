@@ -44,7 +44,7 @@ const UpcomingEvents = ({ events, organizerName, likeEventHandler }: UpcomingEve
 		return (
 			<Card className="mt-10 p-6 sm:p-8 bg-card hover:bg-accent/5 transition-all duration-300 shadow-sm hover:shadow-md border  /50 text-center">
 				{title}
-				<p className="mt-4 text-muted-foreground">{t("no_events_scheduled_next_30_days")}</p>
+				<p className="mt-4 text-muted-foreground">{t("groups:no_events_scheduled_next_30_days")}</p>
 			</Card>
 		);
 	}

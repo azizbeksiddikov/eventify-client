@@ -100,6 +100,7 @@
 	"events_this_month": "이번 달 이벤트",
 	"create_new_event": "새 이벤트 생성",
 	"event_type": "이벤트 유형",
+	"one_time_event": "일회성 이벤트",
 	"recurring_event": "반복 이벤트",
 	"select_group": "그룹 선택",
 	"recurrence_settings": "반복 설정",

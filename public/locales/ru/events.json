@@ -100,6 +100,7 @@
 	"events_this_month": "События в этом месяце",
 	"create_new_event": "Создать новое событие",
 	"event_type": "Тип события",
+	"one_time_event": "Одноразовое событие",
 	"recurring_event": "Повторяющееся событие",
 	"select_group": "Выбрать группу",
 	"recurrence_settings": "Настройки повторения",
