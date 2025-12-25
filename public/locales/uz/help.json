@@ -8,5 +8,48 @@
 	"question": "Savol",
 	"enter_question": "Savolni kiriting",
 	"enter_answer": "Javobni kiriting",
-	"answer": "Javob"
+	"answer": "Javob",
+	"faq_groups": {
+		"ACCOUNT": "Hisob",
+		"EVENTS": "Tadbirlar",
+		"GROUPS": "Guruhlar"
+	},
+	"faqs_account": [
+		{
+			"question": "Hisob qanday yaratiladi?",
+			"answer": "Hisob yaratish uchun yuqori o'ng burchakdagi 'Ro'yxatdan o'tish' tugmasini bosing, ma'lumotlaringizni to'ldiring va elektron pochta manzilingizni tasdiqlang."
+		},
+		{
+			"question": "Profilni qanday yangilash mumkin?",
+			"answer": "Profil sahifangizga o'ting, 'Sozlamalar' ni bosing va ma'lumotlaringizni yangilang. O'zgarishlarni saqlashni unutmang."
+		}
+	],
+	"faqs_events": [
+		{
+			"question": "Tadbirni qanday yaratish mumkin?",
+			"answer": "Tadbirlar sahifasiga o'ting va 'Tadbir yaratish' ni bosing. Sana, vaqt, joy va tavsifni o'z ichiga olgan barcha kerakli ma'lumotlarni to'ldiring."
+		},
+		{
+			"question": "Chiptalarni qanday sotib olish mumkin?",
+			"answer": "Tadbirlarni ko'rib chiqing, qiziqtirgan tadbirni tanlang va 'Chipta sotib olish' ni bosing. Xaridni yakunlash uchun to'lov jarayoniga amal qiling."
+		},
+		{
+			"question": "Chiptani bekor qila olamanmi?",
+			"answer": "Chipta bekor qilish siyosati tadbirga qarab farq qiladi. Maxsus bekor qilish shartlari va to'lov qaytarish siyosati uchun tadbir tafsilotlari sahifasini tekshiring."
+		}
+	],
+	"faqs_groups": [
+		{
+			"question": "Guruhni qanday yaratish mumkin?",
+			"answer": "Guruhlar sahifasiga o'ting va 'Guruh yaratish' ni bosing. Nom, tavsifni kiriting va guruh sozlamalarini o'rnating."
+		},
+		{
+			"question": "Guruhga qanday qo'shilish mumkin?",
+			"answer": "Mavjud guruhlarni ko'rib chiqing, sizni qiziqtirgan guruhni toping va 'Guruhga qo'shilish' ni bosing. Ba'zi guruhlar moderatorlardan tasdiqlashni talab qilishi mumkin."
+		},
+		{
+			"question": "Guruhni qanday tark etish mumkin?",
+			"answer": "Guruh sahifasiga o'ting, guruh sozlamalarini bosing va 'Guruhni tark etish' ni tanlang. Agar fikringizni o'zgartirsangiz, keyinroq qayta qo'shilishingiz mumkin."
+		}
+	]
 }

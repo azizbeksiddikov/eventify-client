@@ -8,5 +8,48 @@
 	"question": "Question",
 	"enter_question": "Enter question",
 	"enter_answer": "Enter answer",
-	"answer": "Answer"
+	"answer": "Answer",
+	"faq_groups": {
+		"ACCOUNT": "Account",
+		"EVENTS": "Events",
+		"GROUPS": "Groups"
+	},
+	"faqs_account": [
+		{
+			"question": "How do I create an account?",
+			"answer": "To create an account, click on the 'Sign Up' button in the top right corner, fill in your details, and verify your email address."
+		},
+		{
+			"question": "How do I update my profile?",
+			"answer": "Go to your profile page, click on 'Settings', and update your information. Don't forget to save your changes."
+		}
+	],
+	"faqs_events": [
+		{
+			"question": "How do I create an event?",
+			"answer": "Navigate to the Events page and click on 'Create Event'. Fill in all the required information including date, time, location, and description."
+		},
+		{
+			"question": "How do I buy tickets?",
+			"answer": "Browse events, select the event you're interested in, and click 'Buy Tickets'. Follow the checkout process to complete your purchase."
+		},
+		{
+			"question": "Can I cancel my ticket?",
+			"answer": "Ticket cancellation policies vary by event. Check the event details page for specific cancellation terms and refund policies."
+		}
+	],
+	"faqs_groups": [
+		{
+			"question": "How do I create a group?",
+			"answer": "Go to the Groups page and click 'Create Group'. Provide a name, description, and set your group preferences."
+		},
+		{
+			"question": "How do I join a group?",
+			"answer": "Browse available groups, find one that interests you, and click 'Join Group'. Some groups may require approval from moderators."
+		},
+		{
+			"question": "How do I leave a group?",
+			"answer": "Go to the group page, click on the group settings, and select 'Leave Group'. You can rejoin later if you change your mind."
+		}
+	]
 }
