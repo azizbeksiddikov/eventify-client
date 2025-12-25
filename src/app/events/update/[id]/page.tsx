@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import { useRouter, useParams } from "next/navigation";
 import { useMutation, useQuery, useReactiveVar } from "@apollo/client/react";
 import { useTranslation } from "next-i18next";
@@ -29,7 +28,6 @@ import { UPDATE_EVENT_BY_ORGANIZER } from "@/apollo/user/mutation";
 import { EventUpdateInput } from "@/libs/types/event/event.update";
 import { smallError, smallSuccess } from "@/libs/alert";
 import { Currency } from "@/libs/enums/common.enum";
-import { imageTypes } from "@/libs/config";
 import { uploadImage } from "@/libs/upload";
 import { getImageUrl } from "@/libs/utils";
 
@@ -257,10 +255,10 @@ const EventUpdatePage = () => {
 
 					<form onSubmit={submitHandler} className="space-y-6">
 						{/* Event Name */}
-						<EventNameField value={formData.eventName} onChange={inputHandler} />
+						<EventNameField value={formData.eventName || ""} onChange={inputHandler} />
 
 						{/* Event Description */}
-						<EventDescriptionField value={formData.eventDesc} onChange={inputHandler} />
+						<EventDescriptionField value={formData.eventDesc || ""} onChange={inputHandler} />
 
 						{/* Categories */}
 						<EventCategoriesField
@@ -270,20 +268,20 @@ const EventUpdatePage = () => {
 
 						{/* Event Tags */}
 						<EventTagsField
-								value={formSelection.eventTags}
-								onChange={(e) => setFormSelection((prev) => ({ ...prev, eventTags: e.target.value }))}
-							/>
+							value={formSelection.eventTags}
+							onChange={(e) => setFormSelection((prev) => ({ ...prev, eventTags: e.target.value }))}
+						/>
 
 						{/* Is Real Event */}
 						<IsRealEventCheckbox
-								checked={formData.isRealEvent ?? true}
-								onCheckedChange={(checked) => {
+							checked={formData.isRealEvent ?? true}
+							onCheckedChange={(checked) => {
 								setFormData((prev) => (prev ? { ...prev, isRealEvent: checked } : null));
-								}}
-							/>
+							}}
+						/>
 
 						{/* Event Dates */}
-						{formData && (
+						{formData && formData.eventStartAt && formData.eventEndAt && (
 							<EventDateAndTimePicker
 								startDate={formData.eventStartAt}
 								endDate={formData.eventEndAt}
@@ -305,7 +303,7 @@ const EventUpdatePage = () => {
 								onCityChange={inputHandler}
 								onAddressChange={inputHandler}
 								showLocationType={false}
-								/>
+							/>
 						)}
 
 						{/* Capacity and Price */}

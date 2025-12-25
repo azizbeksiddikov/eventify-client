@@ -2,7 +2,7 @@ services:
   eventify-next:
     container_name: eventify-next
     restart: always
-    image: node:20.18.1
+    image: node:24.11.1
     ports:
       - 4000:3000
     environment:
@@ -15,7 +15,7 @@ services:
       - client-network
 
     # FOR PRODUCTION
-    command: bash -c "yarn && yarn run build && yarn run start"
+    command: bash -c "pnpm install && pnpm run build && pnpm run start"
 
 networks:
   client-network:
