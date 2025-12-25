@@ -28,7 +28,7 @@ const ChosenGroupHeader = () => {
 			<div className="flex flex-col md:flex-row items-center justify-between mb-8 max-w-7xl mx-auto px-6 sm:px-12 lg:px-20 gap-3">
 				<Button
 					type="button"
-					onClick={() => router.push("/group")}
+					onClick={() => router.push("/groups")}
 					variant="outline"
 					className="h-10 px-4 w-full md:w-auto border-primary/30 text-primary hover:bg-primary/5 transition-colors duration-200"
 				>

@@ -46,7 +46,7 @@ const PopularGroups = ({
 
 					<Button
 						type="submit"
-						onClick={() => router.push("/event")}
+						onClick={() => router.push("/events")}
 						className="shrink-0 h-9 sm:h-10 md:h-12 px-3 sm:px-4 md:px-6"
 					>
 						<ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
