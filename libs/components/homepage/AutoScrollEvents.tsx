@@ -27,9 +27,9 @@ interface AutoScrollEventsProps {
 const AutoScrollEvents = ({
 	initialInput = {
 		page: 1,
-		limit: 8,
-		sort: "eventViews",
-		direction: Direction.DESC,
+		limit: 12,
+		sort: "eventStartAt",
+		direction: Direction.ASC,
 		search: { eventStatus: EventStatus.UPCOMING },
 	},
 }: AutoScrollEventsProps) => {
