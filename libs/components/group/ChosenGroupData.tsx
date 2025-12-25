@@ -26,7 +26,7 @@ const ChosenGroupData = ({
 	joinGroupHandler,
 	leaveGroupHandler,
 }: ChosenGroupDataProps) => {
-	const { t } = useTranslation("groups");
+	const { t, i18n } = useTranslation("groups");
 	const router = useRouter();
 
 	if (!group) return null;
@@ -123,7 +123,7 @@ const ChosenGroupData = ({
 									<Calendar className="h-5 w-5 shrink-0 text-primary" />
 									<span className="text-sm font-medium">
 										{t("created_on")}{" "}
-										{new Date(group.createdAt).toLocaleDateString("en-US", {
+										{new Date(group.createdAt).toLocaleDateString(i18n.language || "en", {
 											weekday: "short",
 											month: "short",
 											day: "numeric",

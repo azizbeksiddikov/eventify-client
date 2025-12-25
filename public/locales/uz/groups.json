@@ -76,5 +76,6 @@
 	"group_deleted_successfully": "Guruh muvaffaqiyatli o'chirildi",
 	"failed_to_delete_group": "Guruhni o'chirib bo'lmadi",
 	"edit": "Tahrirlash",
-	"cancel": "Bekor qilish"
+	"cancel": "Bekor qilish",
+	"optional": "(ixtiyoriy)"
 }

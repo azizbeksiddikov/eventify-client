@@ -1,6 +1,7 @@
 import * as React from "react";
 import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { DayButton, DayPicker, getDefaultClassNames } from "react-day-picker";
+import { useTranslation } from "next-i18next";
 
 import { cn } from "@/libs/utils";
 import { Button, buttonVariants } from "@/libs/components/ui/button";
@@ -13,11 +14,16 @@ function Calendar({
 	buttonVariant = "ghost",
 	formatters,
 	components,
+	locale,
 	...props
 }: React.ComponentProps<typeof DayPicker> & {
 	buttonVariant?: React.ComponentProps<typeof Button>["variant"];
 }) {
+	const { i18n } = useTranslation();
 	const defaultClassNames = getDefaultClassNames();
+
+	// Get locale code from date-fns locale object or use i18n language
+	const localeCode = locale?.code || i18n.language || "en";
 
 	return (
 		<DayPicker
@@ -29,10 +35,25 @@ function Calendar({
 				className,
 			)}
 			captionLayout={captionLayout}
+			locale={locale}
 			formatters={{
-				formatMonthDropdown: (date) => date.toLocaleString("default", { month: "short" }),
+				formatMonthDropdown: (date) => {
+					const monthName = date.toLocaleString(localeCode, { month: "short" });
+					return monthName.charAt(0).toUpperCase() + monthName.slice(1);
+				},
+				formatCaption: (date) => {
+					const monthName = date.toLocaleString(localeCode, { month: "long" });
+					const capitalizedMonth = monthName.charAt(0).toUpperCase() + monthName.slice(1);
+					return `${capitalizedMonth} ${date.getFullYear()}`;
+				},
 				...formatters,
 			}}
+			labels={
+				props.labels || {
+					labelPrevious: () => i18n.t("calendar:previous", { defaultValue: "Previous" }),
+					labelNext: () => i18n.t("calendar:next", { defaultValue: "Next" }),
+				}
+			}
 			classNames={{
 				root: cn("w-fit", defaultClassNames.root),
 				months: cn("flex gap-4 flex-col md:flex-row relative", defaultClassNames.months),

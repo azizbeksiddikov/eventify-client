@@ -7,6 +7,7 @@
 	"discover_events": "Tadbirlarni kashf eting",
 	"find_and_join_amazing_events": "Hududingizdagi ajoyib tadbirlarni toping va ularga qo'shiling",
 	"create_event": "Tadbir yaratish",
+	"creating": "Yaratilmoqda...",
 	"search_events": "Tadbirlarni qidirish",
 	"total_attendees": "Jami qatnashchilar",
 	"event_capacity": "Tadbir sig'imi",
@@ -163,5 +164,10 @@
 	"sort_newest": "Eng yangi",
 	"sort_event_date": "Tadbir sanasi",
 	"sort_price": "Narx",
-	"sort_popularity": "Mashhurlik"
+	"sort_popularity": "Mashhurlik",
+	"capacity_number": "Sig'im soni",
+	"description": "Tavsif",
+	"optional": "(ixtiyoriy)",
+	"e_g_7_for_weekly": "masalan, haftalik uchun 7",
+	"e_g_15_for_15th_of_each_month": "masalan, har oyning 15-kuni uchun 15"
 }

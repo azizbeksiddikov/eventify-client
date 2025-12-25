@@ -1,11 +1,11 @@
 import { useTranslation } from "next-i18next";
-import { format } from "date-fns";
+import { format, Locale } from "date-fns";
 import { enUS, ko, ru, uz } from "date-fns/locale";
 import { Calendar, ArrowUpDown, X } from "lucide-react";
 
 import { Popover, PopoverContent, PopoverTrigger } from "@/libs/components/ui/popover";
-import { Button, buttonVariants } from "@/libs/components/ui/button";
-import { Calendar as CalendarComponent } from "@/libs/components/ui/calendar";
+import { Button } from "@/libs/components/ui/button";
+import { Calendar as CalendarComponent } from "@/libs/components/common/calendar";
 import { Input } from "@/libs/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/libs/components/ui/select";
 
@@ -24,7 +24,7 @@ interface SortAndFilterProps {
 function SortAndFilter({ updateURL, eventsSearchFilters, initialSearch }: SortAndFilterProps) {
 	const { t, i18n } = useTranslation("events");
 
-	const localeMap: Record<string, any> = {
+	const localeMap: Record<string, Locale> = {
 		en: enUS,
 		ko: ko,
 		ru: ru,

@@ -25,7 +25,7 @@ export default function UpcomingEvents({
 }: UpcomingEventsProps) {
 	const router = useRouter();
 	const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
-	const { t } = useTranslation(["home", "events"]);
+	const { t, i18n } = useTranslation(["home", "events"]);
 	const today = new Date();
 	const startMonth = new Date(today.getFullYear(), today.getMonth(), 1);
 
@@ -79,7 +79,7 @@ export default function UpcomingEvents({
 								{selectedDate !== undefined && <CalendarIcon className="w-4 h-4 sm:w-5 sm:h-5 text-primary mr-2" />}
 
 								<h3 className="text-base font-semibold text-foreground">
-									{selectedDate?.toLocaleDateString("en-US", {
+									{selectedDate?.toLocaleDateString(i18n.language || "en", {
 										month: "long",
 										day: "numeric",
 										year: "numeric",
@@ -103,7 +103,7 @@ export default function UpcomingEvents({
 												</div>
 												<div className="flex items-center mt-1 text-xs text-muted-foreground">
 													<Clock className="w-3 h-3 sm:w-3.5 sm:h-3.5 mr-1 sm:mr-1.5" />
-													{new Date(event.eventStartAt).toLocaleDateString("en-US", {
+													{new Date(event.eventStartAt).toLocaleDateString(i18n.language || "en", {
 														month: "long",
 														day: "numeric",
 														year: "numeric",

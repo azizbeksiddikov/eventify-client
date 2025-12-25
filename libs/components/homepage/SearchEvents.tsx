@@ -9,7 +9,7 @@ import { CalendarIcon, SearchIcon } from "lucide-react";
 import { Input } from "@/libs/components/ui/input";
 import { Button } from "@/libs/components/ui/button";
 import { Card } from "@/libs/components/ui/card";
-import { Calendar } from "@/libs/components/ui/calendar";
+import { Calendar } from "@/libs/components/common/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/libs/components/ui/popover";
 import { formatDateForInput } from "@/libs/utils";
 

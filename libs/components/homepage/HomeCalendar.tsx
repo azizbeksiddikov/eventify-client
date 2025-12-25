@@ -1,5 +1,6 @@
 import * as React from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useTranslation } from "next-i18next";
 
 import { cn } from "@/libs/utils";
 import type { Event } from "@/libs/types/event/event";
@@ -16,10 +17,11 @@ type HomeCalendarProps = {
 
 /**
  * Homepage-only calendar (Upcoming Events).
- * This is intentionally separated from the shared `libs/components/ui/calendar.tsx`
+ * This is intentionally separated from the shared `libs/components/common/calendar.tsx`
  * so we can fully customize the homepage calendar without impacting other pages.
  */
 export function HomeCalendar({ className, events, ...props }: HomeCalendarProps) {
+	const { i18n } = useTranslation();
 	const today = new Date();
 	const selected = props.selected;
 	const onSelect = props.onSelect;
@@ -31,8 +33,18 @@ export function HomeCalendar({ className, events, ...props }: HomeCalendarProps)
 		() => new Date(initialMonth.getFullYear(), initialMonth.getMonth(), 1),
 	);
 
-	const monthLabel = viewMonth.toLocaleDateString("en-US", { month: "long", year: "numeric" });
-	const weekdays = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
+	const monthLabel = viewMonth.toLocaleDateString(i18n.language || "en", { month: "long", year: "numeric" });
+
+	// Get weekdays based on locale
+	const weekdays = React.useMemo(() => {
+		const date = new Date(2024, 0, 7); // Sunday
+		const days = [];
+		for (let i = 0; i < 7; i++) {
+			days.push(date.toLocaleDateString(i18n.language || "en", { weekday: "short" }));
+			date.setDate(date.getDate() + 1);
+		}
+		return days;
+	}, [i18n.language]);
 
 	const startDayOfWeek = new Date(viewMonth.getFullYear(), viewMonth.getMonth(), 1).getDay();
 	const daysInMonth = new Date(viewMonth.getFullYear(), viewMonth.getMonth() + 1, 0).getDate();

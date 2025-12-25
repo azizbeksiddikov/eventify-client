@@ -22,7 +22,6 @@ import { cn, getImageUrl } from "@/libs/utils";
 import { TicketInput } from "@/libs/types/ticket/ticket.input";
 import { EventStatus } from "@/libs/enums/event.enum";
 import { Event } from "@/libs/types/event/event";
-import { format } from "date-fns";
 import { Currency } from "@/libs/enums/common.enum";
 
 interface ChosenEventDataProps {
@@ -43,7 +42,7 @@ const ChosenEventData = ({
 	ticketInput,
 }: ChosenEventDataProps) => {
 	const router = useRouter();
-	const { t } = useTranslation("events");
+	const { t, i18n } = useTranslation("events");
 	const [isPaymentDialogOpen, setIsPaymentDialogOpen] = useState(false);
 
 	if (!event) return null;
@@ -184,7 +183,7 @@ const ChosenEventData = ({
 									<div className="flex items-center gap-3 text-muted-foreground hover:text-foreground transition-colors bg-muted/40 hover:bg-muted/50 p-2 sm:p-3 rounded-xl">
 										<Calendar className="h-5 w-5 shrink-0 text-primary" />
 										<span className="text-sm font-medium">
-											{new Date(event.eventStartAt).toLocaleDateString("en-US", {
+											{new Date(event.eventStartAt).toLocaleDateString(i18n.language || "en", {
 												weekday: "short",
 												month: "short",
 												day: "numeric",
@@ -197,7 +196,15 @@ const ChosenEventData = ({
 									<div className="flex items-center gap-3 text-muted-foreground hover:text-foreground transition-colors bg-muted/40 hover:bg-muted/50 p-2 sm:p-3 rounded-xl">
 										<Clock className="h-5 w-5 shrink-0 text-primary" />
 										<span className="text-sm font-medium">
-											{format(new Date(event.eventStartAt), "HH:mm")} - {format(new Date(event.eventEndAt), "HH:mm")}
+											{new Date(event.eventStartAt).toLocaleTimeString(i18n.language || "en", {
+												hour: "2-digit",
+												minute: "2-digit",
+											})}{" "}
+											-{" "}
+											{new Date(event.eventEndAt).toLocaleTimeString(i18n.language || "en", {
+												hour: "2-digit",
+												minute: "2-digit",
+											})}
 										</span>
 									</div>
 

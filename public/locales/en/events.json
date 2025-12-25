@@ -8,6 +8,7 @@
 	"discover_events": "Discover Events",
 	"find_and_join_amazing_events": "Find and join amazing events in your area",
 	"create_event": "Create Event",
+	"creating": "Creating...",
 	"search_events": "Search events",
 	"total_attendees": "Total attendees",
 	"event_capacity": "Event capacity",
@@ -164,5 +165,10 @@
 	"sort_newest": "Newest",
 	"sort_event_date": "Event Date",
 	"sort_price": "Price",
-	"sort_popularity": "Popularity"
+	"sort_popularity": "Popularity",
+	"capacity_number": "Capacity Number",
+	"description": "Description",
+	"optional": "(opt)",
+	"e_g_7_for_weekly": "e.g. 7 for weekly",
+	"e_g_15_for_15th_of_each_month": "e.g. 15 for 15th of each month"
 }

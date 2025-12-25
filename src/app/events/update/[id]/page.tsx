@@ -6,17 +6,22 @@ import { useRouter, useParams } from "next/navigation";
 import { useMutation, useQuery, useReactiveVar } from "@apollo/client/react";
 import { useTranslation } from "next-i18next";
 import { userVar } from "@/apollo/store";
-import { ImageIcon, RefreshCw, ArrowLeft } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 
 import { Button } from "@/libs/components/ui/button";
-import { Input } from "@/libs/components/ui/input";
-import { Textarea } from "@/libs/components/ui/textarea";
 import { Card } from "@/libs/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/libs/components/ui/select";
-import { ScrollArea } from "@/libs/components/ui/scroll-area";
-import { Checkbox } from "@/libs/components/ui/checkbox";
 import { ImageCropper } from "@/libs/components/common/ImageCropper";
 import Loading from "@/libs/components/common/Loading";
+import { EventNameField } from "@/libs/components/events/EventNameField";
+import { EventDescriptionField } from "@/libs/components/events/EventDescriptionField";
+import { EventCategoriesField } from "@/libs/components/events/EventCategoriesField";
+import { EventTagsField } from "@/libs/components/events/EventTagsField";
+import { IsRealEventCheckbox } from "@/libs/components/events/IsRealEventCheckbox";
+import { EventDateAndTimePicker } from "@/libs/components/events/EventDateAndTimePicker";
+import { LocationFields } from "@/libs/components/events/LocationFields";
+import { CapacityAndPriceFields } from "@/libs/components/events/CapacityAndPriceFields";
+import { EventImageUpload } from "@/libs/components/events/EventImageUpload";
 
 import { EventCategory, EventStatus, EventLocationType } from "@/libs/enums/event.enum";
 import { GET_EVENT } from "@/apollo/user/query";
@@ -26,12 +31,12 @@ import { smallError, smallSuccess } from "@/libs/alert";
 import { Currency } from "@/libs/enums/common.enum";
 import { imageTypes } from "@/libs/config";
 import { uploadImage } from "@/libs/upload";
-import { getImageUrl, formatDateForInput, parseDateFromInput } from "@/libs/utils";
+import { getImageUrl } from "@/libs/utils";
 
 const EventUpdatePage = () => {
 	const router = useRouter();
 	const params = useParams();
-	const { t } = useTranslation(["events", "errors"]);
+	const { t, i18n } = useTranslation(["events", "errors"]);
 	const user = useReactiveVar(userVar);
 	const eventId = params?.id as string;
 
@@ -252,316 +257,70 @@ const EventUpdatePage = () => {
 
 					<form onSubmit={submitHandler} className="space-y-6">
 						{/* Event Name */}
-						<div className="space-y-2">
-							<label htmlFor="eventName" className="text-sm font-medium text-foreground">
-								{t("event_name")} *
-							</label>
-							<Input
-								id="eventName"
-								name="eventName"
-								value={formData.eventName}
-								onChange={inputHandler}
-								placeholder={t("enter_event_name")}
-							/>
-						</div>
+						<EventNameField value={formData.eventName} onChange={inputHandler} />
 
 						{/* Event Description */}
-						<div className="space-y-2">
-							<label htmlFor="eventDesc" className="text-sm font-medium text-foreground">
-								{t("description")} *
-							</label>
-							<Textarea
-								id="eventDesc"
-								name="eventDesc"
-								value={formData.eventDesc}
-								onChange={inputHandler}
-								placeholder={t("describe_your_event")}
-								className="min-h-[120px]"
-							/>
-						</div>
+						<EventDescriptionField value={formData.eventDesc} onChange={inputHandler} />
 
 						{/* Categories */}
-						<div className="space-y-2">
-							<label className="text-sm font-medium text-foreground">{t("categories_select_up_to_3")} *</label>
-							<div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-								{Object.values(EventCategory).map((category) => (
-									<Button
-										key={category}
-										type="button"
-										variant={formSelection.selectedCategories.includes(category) ? "default" : "outline"}
-										onClick={() => categoryHandler(category)}
-										disabled={
-											formSelection.selectedCategories.length >= 3 &&
-											!formSelection.selectedCategories.includes(category)
-										}
-										className="h-10"
-									>
-										{t(category.toLowerCase())}
-									</Button>
-								))}
-							</div>
-						</div>
+						<EventCategoriesField
+							selectedCategories={formSelection.selectedCategories}
+							onCategoryToggle={categoryHandler}
+						/>
 
 						{/* Event Tags */}
-						<div className="space-y-2">
-							<label htmlFor="eventTags" className="text-sm font-medium text-foreground">
-								{t("tags")} * <span className="text-muted-foreground text-xs">({t("comma-separated")})</span>
-							</label>
-							<Input
-								id="eventTags"
+						<EventTagsField
 								value={formSelection.eventTags}
 								onChange={(e) => setFormSelection((prev) => ({ ...prev, eventTags: e.target.value }))}
-								placeholder={t("e_g_networking_workshop_conference")}
 							/>
-						</div>
 
 						{/* Is Real Event */}
-						<div className="flex items-center space-x-2">
-							<Checkbox
-								id="isRealEvent"
+						<IsRealEventCheckbox
 								checked={formData.isRealEvent ?? true}
 								onCheckedChange={(checked) => {
-									setFormData((prev) => (prev ? { ...prev, isRealEvent: checked as boolean } : null));
+								setFormData((prev) => (prev ? { ...prev, isRealEvent: checked } : null));
 								}}
 							/>
-							<label
-								htmlFor="isRealEvent"
-								className="text-sm font-medium text-foreground cursor-pointer leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-							>
-								{t("real_event")}
-							</label>
-						</div>
 
 						{/* Event Dates */}
-						<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-							{/* Start Date & Time */}
-							<div className="space-y-4">
-								<div className="space-y-2">
-									<label className="text-sm font-medium text-foreground">{t("start_date")} *</label>
-									<Input
-										type="date"
-										value={formatDateForInput(formData.eventStartAt ? new Date(formData.eventStartAt) : null)}
-										onChange={(e) => {
-											const selectedDate = parseDateFromInput(e.target.value);
-											if (!selectedDate) return;
-
-											const current = new Date(formData.eventStartAt || Date.now());
-											selectedDate.setHours(current.getHours());
-											selectedDate.setMinutes(current.getMinutes());
-											selectedDate.setSeconds(current.getSeconds());
-											const newStart = selectedDate;
-
-											if (formData.eventEndAt && formData.eventEndAt <= newStart) {
-												const newEnd = new Date(newStart);
-												newEnd.setHours(newEnd.getHours() + 1);
-												setFormData((prev) => (prev ? { ...prev, eventStartAt: newStart, eventEndAt: newEnd } : null));
-											} else {
-												setFormData((prev) => (prev ? { ...prev, eventStartAt: newStart } : null));
-											}
-										}}
-									/>
-								</div>
-								<div className="flex gap-2">
-									<Select
-										value={formData.eventStartAt?.getHours().toString().padStart(2, "0")}
-										onValueChange={(h) => {
-											const d = new Date(formData.eventStartAt || Date.now());
-											d.setHours(Number(h));
-											const newStart = d;
-											if (formData.eventEndAt && formData.eventEndAt <= newStart) {
-												const newEnd = new Date(newStart);
-												newEnd.setHours(newEnd.getHours() + 1);
-												setFormData((prev) => (prev ? { ...prev, eventStartAt: newStart, eventEndAt: newEnd } : null));
-											} else {
-												setFormData((prev) => (prev ? { ...prev, eventStartAt: newStart } : null));
-											}
-										}}
-									>
-										<SelectTrigger className="w-20">
-											<SelectValue placeholder="HH" />
-										</SelectTrigger>
-										<SelectContent>
-											<ScrollArea className="h-[200px]">
-												{[...Array(24)].map((_, i) => (
-													<SelectItem key={i} value={i.toString().padStart(2, "0")}>
-														{i.toString().padStart(2, "0")}
-													</SelectItem>
-												))}
-											</ScrollArea>
-										</SelectContent>
-									</Select>
-									<Select
-										value={formData.eventStartAt?.getMinutes().toString().padStart(2, "0")}
-										onValueChange={(m) => {
-											const d = new Date(formData.eventStartAt || Date.now());
-											d.setMinutes(Number(m));
-											const newStart = d;
-											if (formData.eventEndAt && formData.eventEndAt <= newStart) {
-												const newEnd = new Date(newStart);
-												newEnd.setMinutes(newEnd.getMinutes() + 30);
-												setFormData((prev) => (prev ? { ...prev, eventStartAt: newStart, eventEndAt: newEnd } : null));
-											} else {
-												setFormData((prev) => (prev ? { ...prev, eventStartAt: newStart } : null));
-											}
-										}}
-									>
-										<SelectTrigger className="w-20">
-											<SelectValue placeholder="MM" />
-										</SelectTrigger>
-										<SelectContent>
-											<ScrollArea className="h-[200px]">
-												{[...Array(12)].map((_, i) => (
-													<SelectItem key={i * 5} value={(i * 5).toString().padStart(2, "0")}>
-														{(i * 5).toString().padStart(2, "0")}
-													</SelectItem>
-												))}
-											</ScrollArea>
-										</SelectContent>
-									</Select>
-								</div>
-							</div>
-
-							{/* End Date & Time */}
-							<div className="space-y-4">
-								<div className="space-y-2">
-									<label className="text-sm font-medium text-foreground">{t("end_date")} *</label>
-									<Input
-										type="date"
-										value={formatDateForInput(formData.eventEndAt ? new Date(formData.eventEndAt) : null)}
-										onChange={(e) => {
-											const selectedDate = parseDateFromInput(e.target.value);
-											if (!selectedDate) return;
-
-											const current = new Date(formData.eventEndAt || Date.now());
-											selectedDate.setHours(current.getHours());
-											selectedDate.setMinutes(current.getMinutes());
-											selectedDate.setSeconds(current.getSeconds());
-											setFormData((prev) => (prev ? { ...prev, eventEndAt: selectedDate } : null));
-										}}
-									/>
-								</div>
-								<div className="flex gap-2">
-									<Select
-										value={formData.eventEndAt?.getHours().toString().padStart(2, "0")}
-										onValueChange={(h) => {
-											const d = new Date(formData.eventEndAt || Date.now());
-											d.setHours(Number(h));
-											setFormData((prev) => (prev ? { ...prev, eventEndAt: d } : null));
-										}}
-									>
-										<SelectTrigger className="w-20">
-											<SelectValue placeholder="HH" />
-										</SelectTrigger>
-										<SelectContent>
-											<ScrollArea className="h-[200px]">
-												{[...Array(24)].map((_, i) => (
-													<SelectItem key={i} value={i.toString().padStart(2, "0")}>
-														{i.toString().padStart(2, "0")}
-													</SelectItem>
-												))}
-											</ScrollArea>
-										</SelectContent>
-									</Select>
-									<Select
-										value={formData.eventEndAt?.getMinutes().toString().padStart(2, "0")}
-										onValueChange={(m) => {
-											const d = new Date(formData.eventEndAt || Date.now());
-											d.setMinutes(Number(m));
-											setFormData((prev) => (prev ? { ...prev, eventEndAt: d } : null));
-										}}
-									>
-										<SelectTrigger className="w-20">
-											<SelectValue placeholder="MM" />
-										</SelectTrigger>
-										<SelectContent>
-											<ScrollArea className="h-[200px]">
-												{[...Array(12)].map((_, i) => (
-													<SelectItem key={i * 5} value={(i * 5).toString().padStart(2, "0")}>
-														{(i * 5).toString().padStart(2, "0")}
-													</SelectItem>
-												))}
-											</ScrollArea>
-										</SelectContent>
-									</Select>
-								</div>
-							</div>
-						</div>
+						{formData && (
+							<EventDateAndTimePicker
+								startDate={formData.eventStartAt}
+								endDate={formData.eventEndAt}
+								onStartDateChange={(date) => setFormData((prev) => (prev ? { ...prev, eventStartAt: date } : null))}
+								onEndDateChange={(date) => setFormData((prev) => (prev ? { ...prev, eventEndAt: date } : null))}
+								onStartTimeChange={(date) => setFormData((prev) => (prev ? { ...prev, eventStartAt: date } : null))}
+								onEndTimeChange={(date) => setFormData((prev) => (prev ? { ...prev, eventEndAt: date } : null))}
+								locale={i18n.language}
+								useCalendar={false}
+							/>
+						)}
 
 						{/* Location Details */}
-						<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-							<div className="space-y-2">
-								<label htmlFor="eventCity" className="text-sm font-medium text-foreground">
-									{t("city")} *
-								</label>
-								<Input
-									id="eventCity"
-									name="eventCity"
-									value={formData.eventCity}
-									onChange={inputHandler}
-									placeholder={t("enter_city")}
+						{formData && (
+							<LocationFields
+								city={formData.eventCity || ""}
+								address={formData.eventAddress || ""}
+								locationType={formSelection.locationType}
+								onCityChange={inputHandler}
+								onAddressChange={inputHandler}
+								showLocationType={false}
 								/>
-							</div>
-							<div className="space-y-2">
-								<label htmlFor="eventAddress" className="text-sm font-medium text-foreground">
-									{t("address")} *
-								</label>
-								<Input
-									id="eventAddress"
-									name="eventAddress"
-									value={formData.eventAddress}
-									onChange={inputHandler}
-									placeholder={t("enter_address")}
-								/>
-							</div>
-						</div>
+						)}
 
 						{/* Capacity and Price */}
-						<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-							<div className="space-y-2">
-								<label htmlFor="eventCapacity" className="text-sm font-medium text-foreground">
-									{t("event_capacity_label")}
-								</label>
-								<Input
-									id="eventCapacity"
-									name="eventCapacity"
-									type="number"
-									value={formData.eventCapacity === undefined ? "" : String(formData.eventCapacity)}
-									onChange={inputHandler}
-								/>
-							</div>
-							<div className="space-y-2">
-								<label htmlFor="eventPrice" className="text-sm font-medium text-foreground">
-									{t("price")}
-								</label>
-								<div className="flex gap-2">
-									<Input
-										id="eventPrice"
-										name="eventPrice"
-										type="number"
-										min="0"
-										value={formData.eventPrice === undefined ? "" : String(formData.eventPrice)}
-										onChange={inputHandler}
-									/>
-									<Select
-										value={formData.eventCurrency || Currency.USD}
-										onValueChange={(cur: Currency) =>
-											setFormData((prev) => (prev ? { ...prev, eventCurrency: cur } : null))
-										}
-									>
-										<SelectTrigger className="w-24">
-											<SelectValue />
-										</SelectTrigger>
-										<SelectContent>
-											{Object.values(Currency).map((cur) => (
-												<SelectItem key={cur} value={cur}>
-													{cur}
-												</SelectItem>
-											))}
-										</SelectContent>
-									</Select>
-								</div>
-							</div>
-						</div>
+						{formData && (
+							<CapacityAndPriceFields
+								capacity={formData.eventCapacity}
+								price={formData.eventPrice}
+								currency={formData.eventCurrency || Currency.USD}
+								onCapacityChange={inputHandler}
+								onPriceChange={inputHandler}
+								onCurrencyChange={(currency) => {
+									setFormData((prev) => (prev ? { ...prev, eventCurrency: currency } : null));
+								}}
+							/>
+						)}
 
 						{/* Status */}
 						<div className="space-y-2">
@@ -586,34 +345,11 @@ const EventUpdatePage = () => {
 						</div>
 
 						{/* Image Upload */}
-						<div className="space-y-4">
-							<label className="text-sm font-medium text-foreground">{t("event_image")} *</label>
-							<div className="relative aspect-video w-full rounded-xl overflow-hidden bg-muted/50 border-2">
-								{uiState.imagePreview ? (
-									<>
-										<Image src={uiState.imagePreview} alt="Event preview" className="object-contain" fill />
-										<label
-											htmlFor="image"
-											className="absolute inset-0 flex items-center justify-center bg-black/0 hover:bg-black/20 transition-colors cursor-pointer group"
-										>
-											<div className="flex items-center gap-2 bg-white/90 text-foreground px-4 py-2 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
-												<RefreshCw className="h-4 w-4" />
-												<span className="font-medium">{t("change_image")}</span>
-											</div>
-										</label>
-									</>
-								) : (
-									<label
-										htmlFor="image"
-										className="absolute inset-0 flex flex-col items-center justify-center cursor-pointer hover:bg-muted/60 transition-colors"
-									>
-										<ImageIcon className="h-12 w-12 text-muted-foreground mb-2" />
-										<span className="text-muted-foreground font-medium">{t("click_to_upload_image")}</span>
-									</label>
-								)}
-								<input id="image" type="file" accept={imageTypes} onChange={imageChangeHandler} className="hidden" />
-							</div>
-						</div>
+						<EventImageUpload
+							imagePreview={uiState.imagePreview}
+							onImageChange={imageChangeHandler}
+							changeLabel={t("change_image")}
+						/>
 
 						<ImageCropper
 							isOpen={uiState.isCropperOpen}

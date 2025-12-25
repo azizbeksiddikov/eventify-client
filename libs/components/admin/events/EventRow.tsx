@@ -9,9 +9,9 @@ import { Input } from "@/libs/components/ui/input";
 import { TableCell, TableRow } from "@/libs/components/ui/table";
 import { Popover, PopoverContent, PopoverTrigger } from "@/libs/components/ui/popover";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/libs/components/ui/select";
-import { format } from "date-fns";
+import { format, Locale } from "date-fns";
 import { enUS, ko, ru, uz } from "date-fns/locale";
-import { Calendar as CalendarComponent } from "@/libs/components/ui/calendar";
+import { Calendar as CalendarComponent } from "@/libs/components/common/calendar";
 
 import { Event } from "@/libs/types/event/event";
 import { EventUpdateInput } from "@/libs/types/event/event.update";
@@ -74,7 +74,7 @@ const EventRow = ({
 	const [eventUpdateInput, setEventUpdateInput] = useState<EventUpdateInput>(initialEvent);
 	const [isEditing, setIsEditing] = useState(false);
 
-	const localeMap: Record<string, any> = {
+	const localeMap: Record<string, Locale> = {
 		en: enUS,
 		ko: ko,
 		ru: ru,
@@ -195,7 +195,7 @@ const EventRow = ({
 					</Popover>
 				) : (
 					<span className="text-foreground">
-						{new Date(event.eventEndAt).toLocaleDateString("en-US", {
+						{new Date(event.eventEndAt).toLocaleDateString(i18n.language || "en", {
 							year: "numeric",
 							month: "long",
 							day: "numeric",

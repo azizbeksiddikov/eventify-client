@@ -8,6 +8,7 @@
 	"discover_events": "이벤트 찾기",
 	"find_and_join_amazing_events": "지역의 멋진 이벤트에 참여해 보세요",
 	"create_event": "이벤트 생성",
+	"creating": "생성 중...",
 	"search_events": "이벤트 검색",
 	"total_attendees": "총 참가자",
 	"event_capacity": "이벤트 정원",
@@ -164,5 +165,10 @@
 	"sort_newest": "최신순",
 	"sort_event_date": "이벤트 날짜",
 	"sort_price": "가격",
-	"sort_popularity": "인기순"
+	"sort_popularity": "인기순",
+	"capacity_number": "정원 수",
+	"description": "설명",
+	"optional": "(선택)",
+	"e_g_7_for_weekly": "예: 주간은 7",
+	"e_g_15_for_15th_of_each_month": "예: 매월 15일은 15"
 }
