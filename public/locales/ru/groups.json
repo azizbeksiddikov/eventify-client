@@ -69,5 +69,12 @@
 	"sort_newest": "Новые",
 	"sort_members": "Участники",
 	"sort_views": "Просмотры",
-	"sort_likes": "Лайки"
+	"sort_likes": "Лайки",
+	"delete": "Удалить",
+	"delete_group": "Удалить группу",
+	"delete_group_confirmation_message": "Вы уверены, что хотите удалить эту группу? Это действие нельзя отменить.",
+	"group_deleted_successfully": "Группа успешно удалена",
+	"failed_to_delete_group": "Не удалось удалить группу",
+	"edit": "Редактировать",
+	"cancel": "Отмена"
 }

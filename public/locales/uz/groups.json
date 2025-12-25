@@ -69,5 +69,12 @@
 	"sort_newest": "Eng yangi",
 	"sort_members": "A'zolar",
 	"sort_views": "Ko'rishlar",
-	"sort_likes": "Yoqtirishlar"
+	"sort_likes": "Yoqtirishlar",
+	"delete": "O'chirish",
+	"delete_group": "Guruhni o'chirish",
+	"delete_group_confirmation_message": "Bu guruhni o'chirishni xohlaysizmi? Bu amalni bekor qilib bo'lmaydi.",
+	"group_deleted_successfully": "Guruh muvaffaqiyatli o'chirildi",
+	"failed_to_delete_group": "Guruhni o'chirib bo'lmadi",
+	"edit": "Tahrirlash",
+	"cancel": "Bekor qilish"
 }

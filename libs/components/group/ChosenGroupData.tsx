@@ -1,7 +1,7 @@
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useTranslation } from "next-i18next";
-import { Heart, Eye, Calendar, Bookmark, Users, Ticket, Pencil } from "lucide-react";
+import { Heart, Eye, Calendar, Users, Ticket, Pencil } from "lucide-react";
 
 import { Button } from "@/libs/components/ui/button";
 import { Badge } from "@/libs/components/ui/badge";

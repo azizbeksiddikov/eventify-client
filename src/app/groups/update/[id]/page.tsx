@@ -3,7 +3,7 @@
 import { useRouter, useParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { ImageIcon, RefreshCw, ArrowLeft } from "lucide-react";
+import { ImageIcon, RefreshCw, ArrowLeft, Trash2 } from "lucide-react";
 import { useMutation, useReactiveVar, useQuery } from "@apollo/client/react";
 import { useTranslation } from "next-i18next";
 
@@ -11,11 +11,19 @@ import { Button } from "@/libs/components/ui/button";
 import { Input } from "@/libs/components/ui/input";
 import { Textarea } from "@/libs/components/ui/textarea";
 import { Card } from "@/libs/components/ui/card";
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+} from "@/libs/components/ui/dialog";
 import { ImageCropper } from "@/libs/components/common/ImageCropper";
 import Loading from "@/libs/components/common/Loading";
 
 import { userVar } from "@/apollo/store";
-import { UPDATE_GROUP } from "@/apollo/user/mutation";
+import { DELETE_GROUP, UPDATE_GROUP } from "@/apollo/user/mutation";
 import { GET_GROUP } from "@/apollo/user/query";
 import { smallError, smallSuccess } from "@/libs/alert";
 import { GroupCategory } from "@/libs/enums/group.enum";
@@ -38,6 +46,7 @@ const GroupUpdatePage = () => {
 		imagePreview: null as string | null,
 		isCropperOpen: false,
 		tempImageUrl: null as string | null,
+		isDeleteDialogOpen: false,
 	});
 
 	// Form State
@@ -46,6 +55,7 @@ const GroupUpdatePage = () => {
 
 	/** APOLLO REQUESTS **/
 	const [updateGroup] = useMutation(UPDATE_GROUP);
+	const [deleteGroup] = useMutation(DELETE_GROUP);
 	const { data: groupData, loading: groupLoading } = useQuery(GET_GROUP, {
 		variables: { input: groupId },
 		fetchPolicy: "cache-and-network",
@@ -165,9 +175,29 @@ const GroupUpdatePage = () => {
 		}
 	};
 
+	const deleteGroupHandler = async () => {
+		if (!groupId) return;
+		try {
+			await deleteGroup({
+				variables: { input: groupId },
+			});
+			await smallSuccess(t("group_deleted_successfully"));
+			router.push("/groups");
+		} catch (error: unknown) {
+			if (error instanceof Error) {
+				smallError(error.message);
+			} else {
+				smallError(t("failed_to_delete_group"));
+			}
+		}
+		setUiState((prev) => ({ ...prev, isDeleteDialogOpen: false }));
+	};
+
 	if (groupLoading || !formData) {
 		return <Loading />;
 	}
+
+	const isOwner = groupData?.getGroup?.memberId === user?._id;
 
 	return (
 		<div className="min-h-screen bg-background">
@@ -274,13 +304,53 @@ const GroupUpdatePage = () => {
 							imageUrl={uiState.tempImageUrl || ""}
 						/>
 
-						<div className="flex justify-end pt-4">
+						<div className="flex justify-end gap-3 pt-4">
+							{isOwner && (
+								<Button
+									type="button"
+									size="lg"
+									variant="destructive"
+									onClick={() => setUiState((prev) => ({ ...prev, isDeleteDialogOpen: true }))}
+									className="px-8"
+								>
+									<Trash2 className="h-4 w-4 mr-2" />
+									{t("delete")}
+								</Button>
+							)}
 							<Button type="submit" size="lg" disabled={uiState.isSubmitting} className="px-12">
 								{uiState.isSubmitting ? t("updating") : t("update_group")}
 							</Button>
 						</div>
 					</form>
 				</Card>
+
+				{/* Delete Confirmation Dialog */}
+				<Dialog
+					open={uiState.isDeleteDialogOpen}
+					onOpenChange={(open) => setUiState((prev) => ({ ...prev, isDeleteDialogOpen: open }))}
+				>
+					<DialogContent className="sm:max-w-md max-w-[90vw] rounded-lg">
+						<DialogHeader>
+							<DialogTitle>{t("delete_group")}</DialogTitle>
+							<DialogDescription>{t("delete_group_confirmation_message")}</DialogDescription>
+						</DialogHeader>
+						<DialogFooter className="flex-col sm:flex-row gap-2">
+							<Button
+								variant="outline"
+								onClick={() => setUiState((prev) => ({ ...prev, isDeleteDialogOpen: false }))}
+								className="w-full sm:w-auto"
+							>
+								{t("cancel")}
+							</Button>
+							<Button
+								onClick={deleteGroupHandler}
+								className="bg-destructive hover:bg-destructive/90 text-destructive-foreground w-full sm:w-auto"
+							>
+								{t("delete")}
+							</Button>
+						</DialogFooter>
+					</DialogContent>
+				</Dialog>
 			</div>
 		</div>
 	);

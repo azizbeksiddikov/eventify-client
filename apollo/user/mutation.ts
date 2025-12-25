@@ -330,6 +330,15 @@ export const DELETE_GROUP: TypedDocumentNode<DeleteGroupMutation, DeleteGroupMut
 		deleteGroup(groupId: $input) {
 			_id
 			groupName
+			groupDesc
+			groupImage
+			memberId
+			groupCategories
+			groupViews
+			groupLikes
+			memberCount
+			eventsCount
+			createdAt
 			updatedAt
 		}
 	}
