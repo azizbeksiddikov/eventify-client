@@ -26,7 +26,7 @@ import { smallError, smallSuccess } from "@/libs/alert";
 import { Currency } from "@/libs/enums/common.enum";
 import { imageTypes } from "@/libs/config";
 import { uploadImage } from "@/libs/upload";
-import { getImageUrl } from "@/libs/utils";
+import { getImageUrl, formatDateForInput, parseDateFromInput } from "@/libs/utils";
 
 const EventUpdatePage = () => {
 	const router = useRouter();
@@ -340,12 +340,15 @@ const EventUpdatePage = () => {
 									<label className="text-sm font-medium text-foreground">{t("start_date")} *</label>
 									<Input
 										type="date"
-										value={formData.eventStartAt ? new Date(formData.eventStartAt).toISOString().split("T")[0] : ""}
+										value={formatDateForInput(formData.eventStartAt ? new Date(formData.eventStartAt) : null)}
 										onChange={(e) => {
-											const selectedDate = e.target.value ? new Date(e.target.value) : new Date();
+											const selectedDate = parseDateFromInput(e.target.value);
+											if (!selectedDate) return;
+
 											const current = new Date(formData.eventStartAt || Date.now());
 											selectedDate.setHours(current.getHours());
 											selectedDate.setMinutes(current.getMinutes());
+											selectedDate.setSeconds(current.getSeconds());
 											const newStart = selectedDate;
 
 											if (formData.eventEndAt && formData.eventEndAt <= newStart) {
@@ -424,12 +427,15 @@ const EventUpdatePage = () => {
 									<label className="text-sm font-medium text-foreground">{t("end_date")} *</label>
 									<Input
 										type="date"
-										value={formData.eventEndAt ? new Date(formData.eventEndAt).toISOString().split("T")[0] : ""}
+										value={formatDateForInput(formData.eventEndAt ? new Date(formData.eventEndAt) : null)}
 										onChange={(e) => {
-											const selectedDate = e.target.value ? new Date(e.target.value) : new Date();
+											const selectedDate = parseDateFromInput(e.target.value);
+											if (!selectedDate) return;
+
 											const current = new Date(formData.eventEndAt || Date.now());
 											selectedDate.setHours(current.getHours());
 											selectedDate.setMinutes(current.getMinutes());
+											selectedDate.setSeconds(current.getSeconds());
 											setFormData((prev) => (prev ? { ...prev, eventEndAt: selectedDate } : null));
 										}}
 									/>

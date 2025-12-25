@@ -15,7 +15,7 @@ import CategoriesSidebar from "@/libs/components/events/CategoriesSidebar";
 
 import { GET_EVENTS } from "@/apollo/user/query";
 import { LIKE_TARGET_EVENT } from "@/apollo/user/mutation";
-import { likeEvent, parseDate, readDate } from "@/libs/utils";
+import { likeEvent, parseDateFromInput, formatDateForInput } from "@/libs/utils";
 import { EventCategory, EventStatus } from "@/libs/enums/event.enum";
 import { Event } from "@/libs/types/event/event";
 import { EventsInquiry } from "@/libs/types/event/event.input";
@@ -63,8 +63,8 @@ const EventsPage = ({
 			const statusParam = searchParams.get("status");
 
 			// Parse dates and validate
-			const parsedStartDate = parseDate(startDate || undefined);
-			let parsedEndDate = parseDate(endDate || undefined);
+			const parsedStartDate = parseDateFromInput(startDate || undefined);
+			let parsedEndDate = parseDateFromInput(endDate || undefined);
 
 			// Validate: startDate must be ≤ endDate
 			if (parsedStartDate && parsedEndDate && parsedStartDate > parsedEndDate) {
@@ -119,10 +119,10 @@ const EventsPage = ({
 			params.set("status", newSearch.search.eventStatus);
 		}
 		if (newSearch.search.eventStartDay) {
-			params.set("startDate", `${readDate(newSearch.search.eventStartDay)}`);
+			params.set("startDate", formatDateForInput(newSearch.search.eventStartDay));
 		}
 		if (newSearch.search.eventEndDay) {
-			params.set("endDate", `${readDate(newSearch.search.eventEndDay)}`);
+			params.set("endDate", formatDateForInput(newSearch.search.eventEndDay));
 		}
 
 		router.push(`${pathname}?${params.toString()}`);

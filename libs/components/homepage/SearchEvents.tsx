@@ -2,7 +2,7 @@ import type React from "react";
 import { useState } from "react";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/navigation";
-import { format } from "date-fns";
+import { format, Locale } from "date-fns";
 import { enUS, ko, ru, uz } from "date-fns/locale";
 import { CalendarIcon, SearchIcon } from "lucide-react";
 
@@ -11,13 +11,13 @@ import { Button } from "@/libs/components/ui/button";
 import { Card } from "@/libs/components/ui/card";
 import { Calendar } from "@/libs/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/libs/components/ui/popover";
-import { readDate } from "@/libs/utils";
+import { formatDateForInput } from "@/libs/utils";
 
 const SearchEvents = () => {
 	const router = useRouter();
 	const { t, i18n } = useTranslation("home");
 
-	const localeMap: Record<string, any> = {
+	const localeMap: Record<string, Locale> = {
 		en: enUS,
 		ko: ko,
 		ru: ru,
@@ -52,8 +52,8 @@ const SearchEvents = () => {
 		const query: Record<string, string> = {};
 
 		if (text.trim()) query.text = text.trim();
-		if (startDate) query.startDate = readDate(startDate);
-		if (endDate) query.endDate = readDate(endDate);
+		if (startDate) query.startDate = formatDateForInput(startDate);
+		if (endDate) query.endDate = formatDateForInput(endDate);
 
 		router.push(`/events?${new URLSearchParams(query).toString()}`);
 	};

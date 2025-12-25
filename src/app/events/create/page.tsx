@@ -27,6 +27,7 @@ import { smallError, smallSuccess } from "@/libs/alert";
 import { Currency } from "@/libs/enums/common.enum";
 import { imageTypes, NEXT_APP_API_URL } from "@/libs/config";
 import { uploadImage } from "@/libs/upload";
+import { formatDateForInput, parseDateFromInput, getTodayDateString } from "@/libs/utils";
 
 const EventCreatePage = () => {
 	const router = useRouter();
@@ -678,18 +679,25 @@ const EventCreatePage = () => {
 									<Input
 										id="recurrenceEndDate"
 										type="date"
-										value={
-											recurrenceState.recurrenceEndDate
-												? new Date(recurrenceState.recurrenceEndDate).toISOString().split("T")[0]
-												: ""
-										}
-										onChange={(e) =>
-											setRecurrenceState((prev) => ({
-												...prev,
-												recurrenceEndDate: e.target.value ? new Date(e.target.value) : undefined,
-											}))
-										}
-										min={new Date().toISOString().split("T")[0]}
+										value={formatDateForInput(recurrenceState.recurrenceEndDate)}
+										onChange={(e) => {
+											if (!e.target.value) {
+												setRecurrenceState((prev) => ({
+													...prev,
+													recurrenceEndDate: undefined,
+												}));
+												return;
+											}
+
+											const selectedDate = parseDateFromInput(e.target.value);
+											if (selectedDate) {
+												setRecurrenceState((prev) => ({
+													...prev,
+													recurrenceEndDate: selectedDate,
+												}));
+											}
+										}}
+										min={getTodayDateString()}
 										className="bg-input text-input-foreground border-input"
 									/>
 								</div>
@@ -707,12 +715,15 @@ const EventCreatePage = () => {
 									<Input
 										id="eventStartDate"
 										type="date"
-										value={new Date(formData.eventStartAt).toISOString().split("T")[0]}
+										value={formatDateForInput(new Date(formData.eventStartAt))}
 										onChange={(e) => {
-											const selectedDate = e.target.value ? new Date(e.target.value) : new Date();
+											const selectedDate = parseDateFromInput(e.target.value);
+											if (!selectedDate) return;
+
 											const currentTime = new Date(formData.eventStartAt);
 											selectedDate.setHours(currentTime.getHours());
 											selectedDate.setMinutes(currentTime.getMinutes());
+											selectedDate.setSeconds(currentTime.getSeconds());
 											const newStartDate = selectedDate;
 
 											// If end date is before or equal to new start date, adjust it
@@ -724,7 +735,7 @@ const EventCreatePage = () => {
 												setFormData((prev) => ({ ...prev, eventStartAt: newStartDate }));
 											}
 										}}
-										min={new Date().toISOString().split("T")[0]}
+										min={getTodayDateString()}
 										className="bg-input text-input-foreground border-input"
 									/>
 								</div>
@@ -816,12 +827,15 @@ const EventCreatePage = () => {
 									<Input
 										id="eventEndDate"
 										type="date"
-										value={new Date(formData.eventEndAt).toISOString().split("T")[0]}
+										value={formatDateForInput(new Date(formData.eventEndAt))}
 										onChange={(e) => {
-											const selectedDate = e.target.value ? new Date(e.target.value) : new Date();
+											const selectedDate = parseDateFromInput(e.target.value);
+											if (!selectedDate) return;
+
 											const currentTime = new Date(formData.eventEndAt);
 											selectedDate.setHours(currentTime.getHours());
 											selectedDate.setMinutes(currentTime.getMinutes());
+											selectedDate.setSeconds(currentTime.getSeconds());
 											const newEndDate = selectedDate;
 
 											// If end date is before or equal to start date, adjust it
@@ -833,7 +847,7 @@ const EventCreatePage = () => {
 												setFormData((prev) => ({ ...prev, eventEndAt: newEndDate }));
 											}
 										}}
-										min={new Date(formData.eventStartAt).toISOString().split("T")[0]}
+										min={formatDateForInput(new Date(formData.eventStartAt))}
 										className={`bg-input text-input-foreground border-input ${
 											formData.eventEndAt <= formData.eventStartAt ? "border-destructive" : ""
 										}`}

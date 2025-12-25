@@ -76,19 +76,7 @@ export const formatterStr = (value: number | undefined): string => {
 	return numeral(value).format("0,0") != "0" ? numeral(value).format("0,0") : "";
 };
 
-/**
- * Timezone utilities for Seoul (UTC+9)
- */
 const SEOUL_TIMEZONE = "Asia/Seoul";
-
-/**
- * Convert any date to Seoul timezone
- */
-export const toSeoulDate = (date: string | Date): Date => {
-	const d = new Date(date);
-	// Return date in Seoul timezone
-	return new Date(d.toLocaleString("en-US", { timeZone: SEOUL_TIMEZONE }));
-};
 
 /**
  * Format date in Seoul timezone
@@ -146,19 +134,38 @@ export const formatPhoneNumber = (value: string) => {
 	}
 };
 
-export const readDate = (date: Date): string => {
-	const seoulDate = new Date(date.toLocaleString("en-US", { timeZone: SEOUL_TIMEZONE }));
-	return `${seoulDate.getFullYear()}-${(seoulDate.getMonth() + 1).toString().padStart(2, "0")}-${seoulDate.getDate().toString().padStart(2, "0")}`;
+/**
+ * Format a Date object to YYYY-MM-DD string using local timezone
+ * Use this for date input values to avoid timezone shifting issues
+ */
+export const formatDateForInput = (date: Date | null | undefined): string => {
+	if (!date) return "";
+	const year = date.getFullYear();
+	const month = String(date.getMonth() + 1).padStart(2, "0");
+	const day = String(date.getDate()).padStart(2, "0");
+	return `${year}-${month}-${day}`;
 };
 
-export const parseDate = (dateStr: string | undefined): Date | undefined => {
+/**
+ * Parse a YYYY-MM-DD date string to Date object in local timezone
+ * Use this when reading date input values to avoid timezone shifting issues
+ */
+export const parseDateFromInput = (dateStr: string | null | undefined): Date | undefined => {
 	if (!dateStr) return undefined;
 	const parts = dateStr.split("-").map(Number);
 	if (parts.length !== 3 || parts.some(isNaN)) return undefined;
 
-	// Return a date at noon UTC to avoid timezone shifting issues when converting back to string or sending to API
-	// 12:00 UTC is safe for all timezones between UTC-12 and UTC+12 to stay on the same calendar day
-	return new Date(Date.UTC(parts[0], parts[1] - 1, parts[2], 12, 0, 0));
+	// Create date in local timezone (not UTC) to avoid day shifting
+	return new Date(parts[0], parts[1] - 1, parts[2]);
+};
+
+/**
+ * Get today's date as YYYY-MM-DD string in local timezone
+ * Use this for date input min attributes
+ */
+export const getTodayDateString = (): string => {
+	const today = new Date();
+	return formatDateForInput(today);
 };
 
 export const likeEvent = async (
