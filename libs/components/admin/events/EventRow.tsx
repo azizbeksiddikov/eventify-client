@@ -16,7 +16,7 @@ import { Calendar as CalendarComponent } from "@/libs/components/common/calendar
 import { Event } from "@/libs/types/event/event";
 import { EventUpdateInput } from "@/libs/types/event/event.update";
 import { EventStatus } from "@/libs/enums/event.enum";
-import { getImageUrl } from "@/libs/utils";
+import { getImageUrl, formatPrice } from "@/libs/utils";
 
 // Define status color mapping based on global CSS variables
 const STATUS_COLORS = {
@@ -70,7 +70,7 @@ const EventRow = ({
 		eventEndAt: event.eventEndAt,
 	},
 }: EventRowProps) => {
-	const { i18n } = useTranslation(); // Use translation hook
+	const { i18n, t } = useTranslation("admin"); // Use translation hook
 	const [eventUpdateInput, setEventUpdateInput] = useState<EventUpdateInput>(initialEvent);
 	const [isEditing, setIsEditing] = useState(false);
 
@@ -107,11 +107,11 @@ const EventRow = ({
 	return (
 		<TableRow key={event._id} className="hover:bg-accent/50">
 			{/* ID */}
-			<TableCell className="font-medium text-foreground">{event._id}</TableCell>
+			<TableCell className="w-[8%] font-medium text-foreground truncate">{event._id}</TableCell>
 			{/* EVENT IMAGE + NAME */}
-			<TableCell>
-				<div className="flex items-center gap-2">
-					<Avatar className="h-8 w-8 border border-input flex items-center justify-center">
+			<TableCell className="w-[18%] whitespace-normal">
+				<div className="flex items-center gap-2 min-w-0">
+					<Avatar className="h-8 w-8 border border-input flex items-center justify-center shrink-0">
 						<AvatarImage src={getImageUrl(event.eventImages[0], "event", event.origin)} alt={event.eventName} />
 						<AvatarFallback className="bg-muted text-muted-foreground flex items-center justify-center">
 							<Calendar className="h-4 w-4" />
@@ -126,7 +126,8 @@ const EventRow = ({
 					) : (
 						<Link
 							href={`/events/${event._id}`}
-							className="font-medium text-foreground underline hover:text-primary hover:underline"
+							className="font-medium text-foreground underline hover:text-primary hover:underline truncate block min-w-0"
+							title={event.eventName}
 						>
 							{event.eventName}
 						</Link>
@@ -134,7 +135,7 @@ const EventRow = ({
 				</div>
 			</TableCell>
 			{/* EVENT START DATE */}
-			<TableCell>
+			<TableCell className="w-[12%]">
 				{isEditing ? (
 					<Popover>
 						<PopoverTrigger asChild>
@@ -167,9 +168,9 @@ const EventRow = ({
 						})}
 					</span>
 				)}
-			</TableCell>{" "}
+			</TableCell>
 			{/* EVENT END DATE */}
-			<TableCell>
+			<TableCell className="w-[12%]">
 				{isEditing ? (
 					<Popover>
 						<PopoverTrigger asChild>
@@ -204,25 +205,27 @@ const EventRow = ({
 				)}
 			</TableCell>
 			{/* EVENT ADDRESS */}
-			<TableCell>
+			<TableCell className="w-[15%] whitespace-normal">
 				{isEditing ? (
 					<Input
 						value={eventUpdateInput.eventAddress ?? event.eventAddress ?? ""}
 						onChange={(e) => inputHandler("eventAddress", e.target.value)}
-						className="h-8 w-[180px] bg-background text-foreground border-input"
+						className="h-8 w-full bg-background text-foreground border-input"
 					/>
 				) : (
-					<span className="text-foreground">{event.eventAddress}</span>
+					<span className="text-foreground truncate block max-w-full" title={event.eventAddress}>
+						{event.eventAddress}
+					</span>
 				)}
 			</TableCell>
 			{/* EVENT ATTENDEE COUNT */}
-			<TableCell>
+			<TableCell className="w-[10%]">
 				<Badge variant="outline" className="w-full justify-center bg-card text-foreground border-input">
 					{event.attendeeCount} / {event.eventCapacity}
 				</Badge>
 			</TableCell>
 			{/* EVENT PRICE */}
-			<TableCell>
+			<TableCell className="w-[8%]">
 				{isEditing ? (
 					<Input
 						type="number"
@@ -231,11 +234,11 @@ const EventRow = ({
 						className="h-8 w-[80px] bg-background text-foreground border-input"
 					/>
 				) : (
-					<span className="text-foreground">${event.eventPrice}</span>
+					<span className="text-foreground">{formatPrice(event.eventPrice, event.eventCurrency, t("free"))}</span>
 				)}
 			</TableCell>
 			{/* EVENT STATUS */}
-			<TableCell>
+			<TableCell className="w-[8%]">
 				{isEditing ? (
 					<Select
 						value={eventUpdateInput.eventStatus || event.eventStatus}
@@ -264,7 +267,7 @@ const EventRow = ({
 				)}
 			</TableCell>
 			{/* EVENT ACTIONS */}
-			<TableCell>
+			<TableCell className="w-[7%]">
 				<div className="flex gap-2">
 					{isEditing ? (
 						<>

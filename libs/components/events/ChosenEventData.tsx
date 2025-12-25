@@ -18,11 +18,10 @@ import {
 	DialogTitle,
 } from "@/libs/components/ui/dialog";
 
-import { cn, getImageUrl } from "@/libs/utils";
+import { cn, getImageUrl, formatPrice } from "@/libs/utils";
 import { TicketInput } from "@/libs/types/ticket/ticket.input";
 import { EventStatus } from "@/libs/enums/event.enum";
 import { Event } from "@/libs/types/event/event";
-import { Currency } from "@/libs/enums/common.enum";
 
 interface ChosenEventDataProps {
 	event: Event | null;
@@ -48,18 +47,6 @@ const ChosenEventData = ({
 	if (!event) return null;
 
 	const isExternalEvent = Boolean(event.externalUrl) || (event.origin && event.origin !== "internal");
-
-	const formatPrice = (price: number, currency?: Currency) => {
-		if (!price || price === 0) return t("free");
-		if (currency) {
-			try {
-				return new Intl.NumberFormat(undefined, { style: "currency", currency }).format(price);
-			} catch {
-				// ignore
-			}
-		}
-		return String(price);
-	};
 
 	const quantityHandler = (change: number) => {
 		const newQuantity = ticketInput!.ticketQuantity + change;
@@ -155,7 +142,7 @@ const ChosenEventData = ({
 										variant="secondary"
 										className="bg-primary text-primary-foreground backdrop-blur-sm shadow-md px-2 sm:px-3 py-1 font-medium"
 									>
-										{formatPrice(event.eventPrice, event.eventCurrency)}
+										{formatPrice(event.eventPrice, event.eventCurrency, t("free"))}
 									</Badge>
 								</div>
 							</div>
@@ -305,7 +292,11 @@ const ChosenEventData = ({
 											<div className="flex items-center gap-2">
 												<span className="text-sm text-muted-foreground">{t("total")}</span>
 												<span className="text-sm font-semibold text-primary">
-													{formatPrice((event.eventPrice || 0) * ticketInput!.ticketQuantity, event.eventCurrency)}
+													{formatPrice(
+														(event.eventPrice || 0) * ticketInput!.ticketQuantity,
+														event.eventCurrency,
+														t("free"),
+													)}
 												</span>
 											</div>
 										</div>
@@ -377,7 +368,9 @@ const ChosenEventData = ({
 					<div className="space-y-4 py-4">
 						<div className="flex justify-between items-center">
 							<span className="text-sm text-muted-foreground">{t("price_per_ticket")}</span>
-							<span className="text-sm font-medium">{formatPrice(event.eventPrice, event.eventCurrency)}</span>
+							<span className="text-sm font-medium">
+								{formatPrice(event.eventPrice, event.eventCurrency, t("free"))}
+							</span>
 						</div>
 						<div className="flex justify-between items-center">
 							<span className="text-sm text-muted-foreground">{t("number_of_tickets")}</span>
@@ -387,7 +380,7 @@ const ChosenEventData = ({
 						<div className="flex justify-between items-center">
 							<span className="text-sm font-medium">{t("total_amount")}</span>
 							<span className="text-sm font-semibold text-primary">
-								{formatPrice((event.eventPrice || 0) * ticketInput!.ticketQuantity, event.eventCurrency)}
+								{formatPrice((event.eventPrice || 0) * ticketInput!.ticketQuantity, event.eventCurrency, t("free"))}
 							</span>
 						</div>
 					</div>

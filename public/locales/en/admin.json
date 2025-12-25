@@ -24,6 +24,8 @@
 	"actions": "ACTIONS",
 	"event": "EVENT",
 	"date": "DATE",
+	"start_date": "START DATE",
+	"end_date": "END DATE",
 	"location": "LOCATION",
 	"attendees": "ATTENDEES",
 	"price": "PRICE",
@@ -70,5 +72,6 @@
 	"n_a": "N/A",
 	"organizer": "Organizer",
 	"user": "User",
-	"close": "Close"
+	"close": "Close",
+	"free": "Free"
 }

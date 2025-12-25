@@ -2,6 +2,7 @@ import numeral from "numeral";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { Message } from "@/libs/enums/common.enum";
+import { Currency } from "@/libs/enums/common.enum";
 import { smallError, smallInfo, smallSuccess } from "@/libs/alert";
 import { TFunction } from "i18next";
 import { ApolloLink } from "@apollo/client";
@@ -140,6 +141,25 @@ export const formatPhoneNumber = (value: string) => {
 	} else {
 		return `${numbers.slice(0, 3)}-${numbers.slice(3, 7)}-${numbers.slice(7, 11)}`;
 	}
+};
+
+/**
+ * Format price with currency support
+ * @param price - The price to format
+ * @param currency - Optional currency code (e.g., 'USD', 'EUR')
+ * @param freeText - Optional text to display when price is 0 or free (defaults to "Free")
+ * @returns Formatted price string
+ */
+export const formatPrice = (price: number, currency?: Currency, freeText: string = "Free"): string => {
+	if (!price || price === 0) return freeText;
+	if (currency) {
+		try {
+			return new Intl.NumberFormat(undefined, { style: "currency", currency }).format(price);
+		} catch {
+			// ignore invalid currency codes
+		}
+	}
+	return String(price);
 };
 
 /**

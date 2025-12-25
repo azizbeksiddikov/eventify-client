@@ -35,7 +35,7 @@ const ChosenEventOther = ({ event, likeEventHandler }: ChosenEventOtherProps) =>
 
 					{/* Hosting Group Image and Name */}
 					<Link
-						href={`/groups?${event.hostingGroup._id}`}
+						href={`/groups/${event.hostingGroup._id}`}
 						className="flex items-center gap-2 group hover:scale-[1.02] transition-all duration-300"
 					>
 						<div className="w-14 h-14 rounded-lg overflow-hidden relative">

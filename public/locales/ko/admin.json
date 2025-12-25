@@ -24,6 +24,8 @@
 	"actions": "작업",
 	"event": "이벤트",
 	"date": "날짜",
+	"start_date": "시작 날짜",
+	"end_date": "종료 날짜",
 	"location": "장소",
 	"attendees": "참석자",
 	"price": "가격",
@@ -70,5 +72,6 @@
 	"n_a": "해당 없음",
 	"organizer": "주최자",
 	"user": "사용자",
-	"close": "닫기"
+	"close": "닫기",
+	"free": "무료"
 }

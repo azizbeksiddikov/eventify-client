@@ -1,6 +1,6 @@
 import { Event, CategoryEvents, Events } from "@/libs/types/event/event";
 import { EventsInquiry, EventsByCategoryInquiry, OrdinaryEventInquiry } from "@/libs/types/event/event.input";
-import { TotalCounter, Member, Members } from "@/libs/types/member/member";
+import { Member, Members } from "@/libs/types/member/member";
 import { OrganizersInquiry } from "@/libs/types/member/member.input";
 import { Group, Groups } from "@/libs/types/group/group";
 import { GroupsInquiry } from "@/libs/types/group/group.input";
@@ -10,7 +10,6 @@ import { Comments } from "@/libs/types/comment/comment";
 import { CommentsInquiry } from "@/libs/types/comment/comment.input";
 import { Notifications } from "@/libs/types/notification/notification";
 import { NotificationsInquiry } from "@/libs/types/notification/notification.input";
-import { FaqByGroup } from "@/libs/types/faq/faq";
 import { gql, TypedDocumentNode } from "@apollo/client";
 
 /**************************
@@ -1038,31 +1037,6 @@ export const GET_MEMBER_FOLLOWINGS_LIST: TypedDocumentNode<
 				memberId
 				likeRefId
 				myFavorite
-			}
-		}
-	}
-`;
-
-/**************************
- *         FAQ             *
- *************************/
-
-type GetFaqsQuery = {
-	getFaqs: FaqByGroup[];
-};
-type GetFaqsQueryVariables = Record<string, never>;
-export const GET_FAQS: TypedDocumentNode<GetFaqsQuery, GetFaqsQueryVariables> = gql`
-	query GetFaqs {
-		getFaqs {
-			faqGroup
-			faqs {
-				_id
-				faqGroup
-				faqStatus
-				faqQuestion
-				faqAnswer
-				createdAt
-				updatedAt
 			}
 		}
 	}

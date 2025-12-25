@@ -35,7 +35,7 @@ const navLinks = [
 	{ href: "/organizers", label: "organizers", icon: User2 },
 	{ href: "/help", label: "help", icon: HelpCircle },
 ];
-const adminLink = { href: "/_admin", label: "admin", icon: ShieldAlert };
+const adminLink = { href: "/admin", label: "admin", icon: ShieldAlert };
 
 const languages = [
 	// Using lipis/flag-icons (CSS sprites) instead of emoji flags for cross-browser consistency.

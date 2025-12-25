@@ -10,9 +10,8 @@ import { Badge } from "@/libs/components/ui/badge";
 
 import { Event } from "@/libs/types/event/event";
 import { EventStatus } from "@/libs/enums/event.enum";
-import { Currency } from "@/libs/enums/common.enum";
 
-import { getImageUrl } from "@/libs/utils";
+import { getImageUrl, formatPrice } from "@/libs/utils";
 
 interface EventCardProps {
 	event: Event;
@@ -47,18 +46,6 @@ const EventCard = ({ event, likeEventHandler }: EventCardProps) => {
 			return `${formatLocalDateTime(s)} - ${formatLocalTime(e)}`;
 		}
 		return `${formatLocalDateTime(s)} - ${formatLocalDateTime(e)}`;
-	};
-
-	const formatPrice = (price: number, currency?: Currency) => {
-		if (!price || price === 0) return t("free");
-		if (currency) {
-			try {
-				return new Intl.NumberFormat(undefined, { style: "currency", currency }).format(price);
-			} catch {
-				// fall through
-			}
-		}
-		return String(price);
 	};
 
 	const getStatusColor = (status: EventStatus) => {
@@ -105,7 +92,7 @@ const EventCard = ({ event, likeEventHandler }: EventCardProps) => {
 					<div className="absolute bottom-2 right-2 z-2">
 						<Badge variant="secondary" className="bg-background/80 backdrop-blur-sm shadow-sm text-xs px-2 py-0.5">
 							<DollarSign className="w-3.5 h-3.5 mr-1" />
-							{formatPrice(event.eventPrice, event.eventCurrency)}
+							{formatPrice(event.eventPrice, event.eventCurrency, t("free"))}
 						</Badge>
 					</div>
 				</div>

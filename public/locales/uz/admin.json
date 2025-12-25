@@ -24,6 +24,8 @@
 	"actions": "HARAKATLAR",
 	"event": "TADBIR",
 	"date": "SANA",
+	"start_date": "BOSHLANISH SANASI",
+	"end_date": "TUGASH SANASI",
 	"location": "JOYLASHUV",
 	"attendees": "QATNASHCHILAR",
 	"price": "NARX",
@@ -70,5 +72,6 @@
 	"n_a": "mavjud emas",
 	"organizer": "Tashkilotchi",
 	"user": "Foydalanuvchi",
-	"close": "Yopish"
+	"close": "Yopish",
+	"free": "Bepul"
 }

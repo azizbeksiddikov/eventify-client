@@ -5,9 +5,6 @@ import { Group } from "@/libs/types/group/group";
 import { GroupUpdateInput } from "@/libs/types/group/group.update";
 import { Event } from "@/libs/types/event/event";
 import { EventUpdateInput } from "@/libs/types/event/event.update";
-import { Faq } from "@/libs/types/faq/faq";
-import { FaqInput } from "@/libs/types/faq/faq.input";
-import { FaqUpdate } from "@/libs/types/faq/faq.update";
 
 /**************************
  *         MEMBER          *
@@ -233,67 +230,3 @@ export const REMOVE_EVENT_BY_ADMIN: TypedDocumentNode<RemoveEventByAdminMutation
 			}
 		}
 	`;
-
-/**************************
- *         FAQ             *
- *************************/
-
-type CreateFaqMutation = {
-	createFaq: Faq;
-};
-type CreateFaqMutationVariables = {
-	input: FaqInput;
-};
-export const CREATE_FAQ: TypedDocumentNode<CreateFaqMutation, CreateFaqMutationVariables> = gql`
-	mutation CreateFaq($input: FaqInput!) {
-		createFaq(input: $input) {
-			_id
-			faqGroup
-			faqStatus
-			faqQuestion
-			faqAnswer
-			createdAt
-			updatedAt
-		}
-	}
-`;
-
-type UpdateFaqMutation = {
-	updateFaq: Faq;
-};
-type UpdateFaqMutationVariables = {
-	input: FaqUpdate;
-};
-export const UPDATE_FAQ: TypedDocumentNode<UpdateFaqMutation, UpdateFaqMutationVariables> = gql`
-	mutation UpdateFaq($input: FaqUpdate!) {
-		updateFaq(input: $input) {
-			_id
-			faqGroup
-			faqStatus
-			faqQuestion
-			faqAnswer
-			createdAt
-			updatedAt
-		}
-	}
-`;
-
-type RemoveFaqMutation = {
-	removeFaq: Faq;
-};
-type RemoveFaqMutationVariables = {
-	input: string;
-};
-export const REMOVE_FAQ: TypedDocumentNode<RemoveFaqMutation, RemoveFaqMutationVariables> = gql`
-	mutation RemoveFaq($input: String!) {
-		removeFaq(input: $input) {
-			_id
-			faqGroup
-			faqStatus
-			faqQuestion
-			faqAnswer
-			createdAt
-			updatedAt
-		}
-	}
-`;

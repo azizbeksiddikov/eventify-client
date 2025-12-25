@@ -5,7 +5,6 @@ import { Groups } from "@/libs/types/group/group";
 import { GroupsInquiry } from "@/libs/types/group/group.input";
 import { Events } from "@/libs/types/event/event";
 import { EventsInquiry } from "@/libs/types/event/event.input";
-import { FaqByGroup } from "@/libs/types/faq/faq";
 
 /**************************
  *         MEMBER          *
@@ -135,49 +134,3 @@ export const GET_ALL_EVENTS_BY_ADMIN: TypedDocumentNode<GetAllEventsByAdminQuery
 			}
 		}
 	`;
-
-/**************************
- *         FAQ             *
- *************************/
-
-type GetAllFaqsByAdminQuery = {
-	getAllFaqsByAdmin: FaqByGroup[];
-};
-type GetAllFaqsByAdminQueryVariables = Record<string, never>;
-export const GET_ALL_FAQS_BY_ADMIN: TypedDocumentNode<GetAllFaqsByAdminQuery, GetAllFaqsByAdminQueryVariables> = gql`
-	query GetAllFaqsByAdmin {
-		getAllFaqsByAdmin {
-			faqGroup
-			faqs {
-				_id
-				faqGroup
-				faqStatus
-				faqQuestion
-				faqAnswer
-				createdAt
-				updatedAt
-			}
-		}
-	}
-`;
-
-type GetAllFaqsQuery = {
-	getAllFaqs: FaqByGroup[];
-};
-type GetAllFaqsQueryVariables = Record<string, never>;
-export const GET_ALL_FAQS: TypedDocumentNode<GetAllFaqsQuery, GetAllFaqsQueryVariables> = gql`
-	query GetAllFaqs {
-		getAllFaqs {
-			faqGroup
-			faqs {
-				_id
-				faqGroup
-				faqStatus
-				faqQuestion
-				faqAnswer
-				createdAt
-				updatedAt
-			}
-		}
-	}
-`;

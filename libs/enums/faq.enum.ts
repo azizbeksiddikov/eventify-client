@@ -1,10 +1,10 @@
 export enum FaqGroup {
-	ACCOUNT = 'ACCOUNT',
-	EVENTS = 'EVENTS',
-	GROUPS = 'GROUPS',
+	ACCOUNT = "ACCOUNT",
+	EVENTS = "EVENTS",
+	GROUPS = "GROUPS",
 }
 
 export enum FaqStatus {
-	ACTIVE = 'ACTIVE',
-	INACTIVE = 'INACTIVE',
+	ACTIVE = "ACTIVE",
+	INACTIVE = "INACTIVE",
 }

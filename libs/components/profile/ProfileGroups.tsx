@@ -60,7 +60,7 @@ export const ProfileGroups = ({
 								return (
 									<TableRow key={group._id} className="hover:bg-muted/50">
 										<TableCell>
-											<Link href={`/groups?${group._id}`}>
+											<Link href={`/groups/${group._id}`}>
 												<div className="flex items-center gap-3 underline">
 													<Avatar className="h-10 w-10 ring-2 ring-primary/10">
 														<AvatarImage
@@ -139,7 +139,7 @@ export const ProfileGroups = ({
 														<LogIn className="h-4 w-4" />
 													</Button>
 												)}
-												<Link href={`/groups?${group._id}`}>
+												<Link href={`/groups/${group._id}`}>
 													<Button
 														variant="ghost"
 														size="icon"
