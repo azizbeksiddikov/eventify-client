@@ -145,9 +145,11 @@ const GroupsPage = ({
 							<Loading />
 						) : groups.length > 0 ? (
 							<>
-								<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+								<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6 auto-rows-fr">
 									{groups.map((group) => (
-										<GroupCard key={group._id} group={group} />
+										<div key={group._id} className="min-w-0 w-full">
+											<GroupCard group={group} />
+										</div>
 									))}
 								</div>
 

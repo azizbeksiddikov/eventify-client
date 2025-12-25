@@ -100,12 +100,12 @@ const GroupCard = ({ group }: GroupCardProps) => {
 				</div>
 			</CardContent>
 
-			<CardFooter className="border-t flex items-center justify-around gap-2 px-10 py-3">
-				<div className="ui-like-pill">
+			<CardFooter className="border-t flex items-center justify-between gap-1 px-2 sm:px-4 md:px-6 py-3 w-full min-w-0 overflow-hidden">
+				<div className="ui-like-pill flex items-center justify-center gap-1 flex-1 min-w-0">
 					<Button
 						variant="ghost"
 						size="sm"
-						className={`h-9 w-9 p-0 transition-colors ${
+						className={`h-8 w-8 sm:h-9 sm:w-9 p-0 transition-colors shrink-0 ${
 							group?.meLiked?.[0]?.myFavorite
 								? "text-rose-500 hover:text-rose-500"
 								: "text-muted-foreground hover:text-foreground"
@@ -119,30 +119,38 @@ const GroupCard = ({ group }: GroupCardProps) => {
 							}`}
 						/>
 					</Button>
-					<span className="text-sm font-medium text-muted-foreground tabular-nums">{group.groupLikes || 0}</span>
+					<span className="text-xs sm:text-sm font-medium text-muted-foreground tabular-nums whitespace-nowrap">
+						{group.groupLikes || 0}
+					</span>
 				</div>
 
-				<Button
-					variant={group?.meJoined?.[0]?.meJoined ? "outline" : "default"}
-					size="sm"
-					className={`h-9 px-3 text-sm font-medium transition-colors ${
-						group?.meJoined?.[0]?.meJoined ? "border-primary/30 text-primary hover:bg-primary/5" : ""
-					}`}
-					onClick={() => (group?.meJoined?.[0]?.meJoined ? leaveGroupHandler(group._id) : joinGroupHandler(group._id))}
-				>
-					{group?.meJoined?.[0]?.meJoined ? t("leave") : t("join")}
-				</Button>
-
-				<Link href={`/groups/${group._id}`}>
+				<div className="flex items-center justify-center flex-1 min-w-0">
 					<Button
-						variant="outline"
+						variant={group?.meJoined?.[0]?.meJoined ? "outline" : "default"}
 						size="sm"
-						className="h-9 w-9 p-0 rounded-lg hover:bg-primary/5 border-primary/30 text-primary"
-						aria-label={t("view")}
+						className={`h-8 sm:h-9 px-2 sm:px-3 md:px-4 text-[10px] sm:text-xs md:text-sm font-medium transition-colors ${
+							group?.meJoined?.[0]?.meJoined ? "border-primary/30 text-primary hover:bg-primary/5" : ""
+						}`}
+						onClick={() =>
+							group?.meJoined?.[0]?.meJoined ? leaveGroupHandler(group._id) : joinGroupHandler(group._id)
+						}
 					>
-						<ExternalLink className="w-4 h-4" />
+						{group?.meJoined?.[0]?.meJoined ? t("leave") : t("join")}
 					</Button>
-				</Link>
+				</div>
+
+				<div className="flex items-center justify-center flex-1 min-w-0">
+					<Link href={`/groups/${group._id}`}>
+						<Button
+							variant="outline"
+							size="sm"
+							className="h-9 w-9 p-0 rounded-lg hover:bg-primary/5 border-primary/30 text-primary shrink-0"
+							aria-label={t("view")}
+						>
+							<ExternalLink className="w-4 h-4" />
+						</Button>
+					</Link>
+				</div>
 			</CardFooter>
 		</Card>
 	);
