@@ -4,8 +4,16 @@ import { twMerge } from "tailwind-merge";
 import { Message } from "@/libs/enums/common.enum";
 import { smallError, smallInfo, smallSuccess } from "@/libs/alert";
 import { TFunction } from "i18next";
-import { gql } from "@apollo/client";
+import { ApolloLink } from "@apollo/client";
 import { NEXT_APP_API_URL } from "@/libs/config";
+
+// Type for Apollo Client mutation functions
+// The mutation function from useMutation accepts options with variables
+// Using a flexible type that accepts any function matching the mutation pattern
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type MutationFunction<TData = unknown, TVariables extends Record<string, unknown> = Record<string, unknown>> = (
+	options: { variables: TVariables } & Record<string, any>,
+) => Promise<ApolloLink.Result<TData>>;
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
@@ -171,45 +179,48 @@ export const getTodayDateString = (): string => {
 export const likeEvent = async (
 	memberId: string,
 	likeRefId: string,
-	likeTargetEvent: (options?: any) => Promise<any>,
+	likeTargetEvent: MutationFunction<unknown, { input: string }>,
 ) => {
 	try {
 		if (!likeRefId || likeRefId === "") return;
 		if (!memberId || memberId === "") throw new Error(Message.NOT_AUTHENTICATED);
 
 		await likeTargetEvent({ variables: { input: likeRefId } });
-	} catch (err: any) {
-		smallError(err.message);
+	} catch (err) {
+		const errorMessage = err instanceof Error ? err.message : String(err);
+		smallError(errorMessage);
 	}
 };
 
 export const likeMember = async (
 	memberId: string,
 	likeRefId: string,
-	likeTargetMember: (options?: any) => Promise<any>,
+	likeTargetMember: MutationFunction<unknown, { input: string }>,
 ) => {
 	try {
 		if (!likeRefId || likeRefId === "") return;
 		if (!memberId || memberId === "") throw new Error(Message.NOT_AUTHENTICATED);
 
 		await likeTargetMember({ variables: { input: likeRefId } });
-	} catch (err: any) {
-		smallError(err.message);
+	} catch (err) {
+		const errorMessage = err instanceof Error ? err.message : String(err);
+		smallError(errorMessage);
 	}
 };
 
 export const likeGroup = async (
 	memberId: string,
 	likeRefId: string,
-	likeTargetGroup: (options?: any) => Promise<any>,
+	likeTargetGroup: MutationFunction<unknown, { input: string }>,
 ) => {
 	try {
 		if (!likeRefId || likeRefId === "") return;
 		if (!memberId || memberId === "") throw new Error(Message.NOT_AUTHENTICATED);
 
 		await likeTargetGroup({ variables: { input: likeRefId } });
-	} catch (err: any) {
-		smallError(err.message);
+	} catch (err) {
+		const errorMessage = err instanceof Error ? err.message : String(err);
+		smallError(errorMessage);
 	}
 };
 
@@ -217,7 +228,7 @@ export const likeGroup = async (
 export const followMember = async (
 	memberId: string,
 	followRefId: string,
-	followTargetMember: (options?: any) => Promise<any>,
+	followTargetMember: MutationFunction<unknown, { input: string }>,
 	t: TFunction,
 ) => {
 	try {
@@ -229,16 +240,17 @@ export const followMember = async (
 		});
 
 		await smallSuccess(t("member_subscribed_successfully"));
-	} catch (err: any) {
-		smallError(err.message);
-		console.log("ERROR, subscribeHandler:", err.message);
+	} catch (err) {
+		const errorMessage = err instanceof Error ? err.message : String(err);
+		smallError(errorMessage);
+		console.log("ERROR, subscribeHandler:", errorMessage);
 	}
 };
 
 export const unfollowMember = async (
 	memberId: string,
 	followRefId: string,
-	unfollowTargetMember: (options?: any) => Promise<any>,
+	unfollowTargetMember: MutationFunction<unknown, { input: string }>,
 	t: TFunction,
 ) => {
 	try {
@@ -250,9 +262,10 @@ export const unfollowMember = async (
 		});
 
 		await smallInfo(t("member_unsubscribed_successfully"));
-	} catch (err: any) {
-		smallError(err.message);
-		console.log("ERROR, unsubscribeHandler:", err.message);
+	} catch (err) {
+		const errorMessage = err instanceof Error ? err.message : String(err);
+		smallError(errorMessage);
+		console.log("ERROR, unsubscribeHandler:", errorMessage);
 	}
 };
 
@@ -260,7 +273,7 @@ export const unfollowMember = async (
 export const joinGroup = async (
 	memberId: string,
 	groupId: string,
-	joinTargetGroup: (options?: any) => Promise<any>,
+	joinTargetGroup: MutationFunction<unknown, { input: string }>,
 	t: TFunction,
 ) => {
 	try {
@@ -272,16 +285,17 @@ export const joinGroup = async (
 		});
 
 		await smallSuccess(t("group_joined_successfully"));
-	} catch (err: any) {
-		smallError(err.message);
-		console.log("ERROR, joinGroupHandler:", err.message);
+	} catch (err) {
+		const errorMessage = err instanceof Error ? err.message : String(err);
+		smallError(errorMessage);
+		console.log("ERROR, joinGroupHandler:", errorMessage);
 	}
 };
 
 export const leaveGroup = async (
 	memberId: string,
 	groupId: string,
-	leaveTargetGroup: (options?: any) => Promise<any>,
+	leaveTargetGroup: MutationFunction<unknown, { input: string }>,
 	t: TFunction,
 ) => {
 	try {
@@ -293,8 +307,9 @@ export const leaveGroup = async (
 		});
 
 		await smallSuccess(t("group_left_successfully"));
-	} catch (err: any) {
-		smallError(err.message);
-		console.log("ERROR, leaveGroupHandler:", err.message);
+	} catch (err) {
+		const errorMessage = err instanceof Error ? err.message : String(err);
+		smallError(errorMessage);
+		console.log("ERROR, leaveGroupHandler:", errorMessage);
 	}
 };
