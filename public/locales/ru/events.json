@@ -82,6 +82,7 @@
 	"enter_event_name": "Введите название события",
 	"tags": "Теги",
 	"comma_separated": "через запятую",
+	"e_g_networking_workshop_conference": "например, нетворкинг, мастер-класс, конференция",
 	"real_event": "Реальное событие",
 	"start_date": "Дата начала",
 	"end_date": "Дата окончания",

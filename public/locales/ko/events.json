@@ -82,6 +82,7 @@
 	"enter_event_name": "이벤트 이름을 입력하세요",
 	"tags": "태그",
 	"comma_separated": "쉼표로 구분",
+	"e_g_networking_workshop_conference": "예: 네트워킹, 워크샵, 컨퍼런스",
 	"real_event": "실제 이벤트",
 	"start_date": "시작 날짜",
 	"end_date": "종료 날짜",
