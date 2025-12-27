@@ -1,0 +1,27 @@
+services:
+  eventify-next:
+    container_name: eventify-next
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: deps
+    ports:
+      - "4000:3000"
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=development
+      - CI=true
+    volumes:
+      # Mount source code for hot reload (changes reflected without rebuild)
+      - ./:/app
+      - /app/node_modules
+      - /app/.next
+    command: sh -c "pnpm install && pnpm run dev"
+    networks:
+      - client-network
+
+networks:
+  client-network:
+    driver: bridge

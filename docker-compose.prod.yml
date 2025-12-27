@@ -1,0 +1,21 @@
+services:
+  eventify-next:
+    container_name: eventify-next
+    restart: always
+    image: eventify-next:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_GRAPHQL_URL: ${NEXT_PUBLIC_API_GRAPHQL_URL}
+        NEXT_APP_API_URL: ${NEXT_APP_API_URL}
+    ports:
+      - "4000:3000"
+    env_file:
+      - .env
+    networks:
+      - client-network
+
+networks:
+  client-network:
+    driver: bridge

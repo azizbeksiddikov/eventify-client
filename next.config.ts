@@ -74,6 +74,7 @@ const nextConfig = {
 	trailingSlash: false,
 	reactStrictMode: true,
 	reactCompiler: true,
+	output: "standalone",
 	turbopack: {
 		resolveAlias: {
 			"@": ".",

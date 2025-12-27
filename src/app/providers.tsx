@@ -9,6 +9,7 @@ import { CombinedGraphQLErrors } from "@apollo/client/errors";
 import { getJwtToken, logOut } from "@/libs/auth";
 import { smallError } from "@/libs/alert";
 import { I18nProvider } from "@/libs/i18n/provider";
+import { NEXT_PUBLIC_API_GRAPHQL_URL } from "@/libs/config";
 
 // Auth link: Only add Authorization header when token exists
 const authLink = new ApolloLink((operation, forward) => {
@@ -96,7 +97,7 @@ const link = ApolloLink.from([
 	errorLink, // Handle errors first
 	// retryLink, // Then retry logic (commented off)
 	authLink, // Then add auth headers
-	new HttpLink({ uri: process.env.NEXT_PUBLIC_API_GRAPHQL_URL }), // Finally make the request
+	new HttpLink({ uri: NEXT_PUBLIC_API_GRAPHQL_URL }), // Finally make the request
 ]);
 
 export function Providers({ children }: { children: ReactNode }) {
