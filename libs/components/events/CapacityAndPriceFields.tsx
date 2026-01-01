@@ -36,6 +36,7 @@ export const CapacityAndPriceFields = ({
 					id="eventCapacity"
 					name="eventCapacity"
 					type="number"
+					min="0"
 					value={capacity === undefined ? "" : String(capacity)}
 					onChange={onCapacityChange}
 					placeholder={t("event_capacity_placeholder")}

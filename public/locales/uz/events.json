@@ -76,6 +76,7 @@
 	"please_enter_event_address": "Iltimos, tadbir manzilini kiriting",
 	"event_capacity_must_be_at_least_1": "Tadbir sig'imi kamida 1 bo'lishi kerak",
 	"price_cannot_be_negative": "Narx manfiy bo'lishi mumkin emas",
+	"event_capacity_cannot_be_negative": "Tadbir sig'imi manfiy bo'lishi mumkin emas",
 	"please_upload_event_image": "Iltimos, tadbir rasmiga yuklang",
 	"event_updated_successfully": "Tadbir muvaffaqiyatli yangilandi",
 	"failed_to_update_event": "Tadbirni yangilab bo'lmadi",

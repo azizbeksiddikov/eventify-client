@@ -168,8 +168,8 @@ const EventUpdatePage = () => {
 			if (formSelection.locationType === EventLocationType.OFFLINE) {
 				if (!formData.eventAddress?.trim()) throw new Error(t("please_enter_event_address"));
 			}
-			if (formData.eventCapacity !== undefined && formData.eventCapacity < 1) {
-				throw new Error(t("event_capacity_must_be_at_least_1"));
+			if (formData.eventCapacity !== undefined && formData.eventCapacity < 0) {
+				throw new Error(t("event_capacity_cannot_be_negative"));
 			}
 			if (formData.eventPrice !== undefined && formData.eventPrice < 0) throw new Error(t("price_cannot_be_negative"));
 			if (!formData.eventImages?.length) throw new Error(t("please_upload_event_image"));
@@ -212,6 +212,17 @@ const EventUpdatePage = () => {
 			const cleanedValue = value.replace(/^0+/, "") || "0";
 			const numberValue = Number(cleanedValue);
 			if (isNaN(numberValue)) return;
+
+			// Prevent negative values for capacity and price
+			if (name === "eventCapacity" && numberValue < 0) {
+				smallError(t("event_capacity_cannot_be_negative"));
+				return;
+			}
+			if (name === "eventPrice" && numberValue < 0) {
+				smallError(t("price_cannot_be_negative"));
+				return;
+			}
+
 			setFormData((prev) => (prev ? { ...prev, [name]: numberValue } : null));
 		} else {
 			setFormData((prev) => (prev ? { ...prev, [name]: value } : null));
