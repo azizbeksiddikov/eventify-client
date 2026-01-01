@@ -249,43 +249,45 @@ const AutoScrollEvents = ({
 									{event.eventName}
 								</h2>
 								<div
-									className="text-sm sm:text-base md:text-lg lg:text-xl mb-4 sm:mb-6 md:mb-8 text-white max-w-2xl mx-auto px-2 sm:px-4 py-2 sm:py-3 rounded-lg cursor-pointer line-clamp-2 sm:line-clamp-3 [&>*]:text-white [&>p]:mb-2 [&>p]:last:mb-0 [&>strong]:font-semibold [&>a]:text-white [&>a]:underline [&>a:hover]:text-white/80"
+									className="text-sm sm:text-base md:text-lg lg:text-xl mb-4 sm:mb-6 md:mb-8 text-white max-w-2xl mx-auto px-2 sm:px-4 py-2 sm:py-3 rounded-lg cursor-pointer overflow-hidden"
 									onClick={handleUserInteraction}
 								>
-									<ReactMarkdown
-										components={{
-											a: ({ ...props }) => (
-												<a
-													{...props}
-													className="text-white hover:text-white/80 underline font-medium break-all"
-													target="_blank"
-													rel="noopener noreferrer"
-												/>
-											),
-											strong: ({ ...props }) => <strong {...props} className="font-semibold text-white" />,
-											p: ({ ...props }) => <p {...props} className="mb-2 last:mb-0 text-white" />,
-											ul: ({ ...props }) => <ul {...props} className="list-disc pl-5 mb-2 space-y-1 text-white" />,
-											ol: ({ ...props }) => <ol {...props} className="list-decimal pl-5 mb-2 space-y-1 text-white" />,
-											li: ({ ...props }) => <li {...props} className="pl-1 text-white" />,
-											h1: ({ ...props }) => (
-												<h1 {...props} className="text-lg font-bold text-white mb-2 mt-2 first:mt-0" />
-											),
-											h2: ({ ...props }) => (
-												<h2 {...props} className="text-base font-bold text-white mb-2 mt-2 first:mt-0" />
-											),
-											h3: ({ ...props }) => (
-												<h3 {...props} className="text-sm font-bold text-white mb-2 mt-2 first:mt-0" />
-											),
-											blockquote: ({ ...props }) => (
-												<blockquote
-													{...props}
-													className="border-l-4 border-white/30 pl-4 py-1 italic mb-2 text-white/80"
-												/>
-											),
-										}}
-									>
-										{event.eventDesc}
-									</ReactMarkdown>
+									<div className="line-clamp-2 sm:line-clamp-3 [&>*]:text-white [&>p]:mb-2 [&>p]:last:mb-0 [&>strong]:font-semibold [&>a]:text-white [&>a]:underline [&>a:hover]:text-white/80">
+										<ReactMarkdown
+											components={{
+												a: ({ ...props }) => (
+													<a
+														{...props}
+														className="text-white hover:text-white/80 underline font-medium break-all"
+														target="_blank"
+														rel="noopener noreferrer"
+													/>
+												),
+												strong: ({ ...props }) => <strong {...props} className="font-semibold text-white" />,
+												p: ({ ...props }) => <p {...props} className="mb-2 last:mb-0 text-white" />,
+												ul: ({ ...props }) => <ul {...props} className="list-disc pl-5 mb-2 space-y-1 text-white" />,
+												ol: ({ ...props }) => <ol {...props} className="list-decimal pl-5 mb-2 space-y-1 text-white" />,
+												li: ({ ...props }) => <li {...props} className="pl-1 text-white" />,
+												h1: ({ ...props }) => (
+													<h1 {...props} className="text-lg font-bold text-white mb-2 mt-2 first:mt-0" />
+												),
+												h2: ({ ...props }) => (
+													<h2 {...props} className="text-base font-bold text-white mb-2 mt-2 first:mt-0" />
+												),
+												h3: ({ ...props }) => (
+													<h3 {...props} className="text-sm font-bold text-white mb-2 mt-2 first:mt-0" />
+												),
+												blockquote: ({ ...props }) => (
+													<blockquote
+														{...props}
+														className="border-l-4 border-white/30 pl-4 py-1 italic mb-2 text-white/80"
+													/>
+												),
+											}}
+										>
+											{event.eventDesc}
+										</ReactMarkdown>
+									</div>
 								</div>
 								<div className="flex flex-col sm:flex-row justify-center sm:space-x-4 md:space-x-6 space-y-2 sm:space-y-0 mb-3 sm:mb-4">
 									<span
