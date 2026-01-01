@@ -31,6 +31,7 @@ export const GET_MEMBER: TypedDocumentNode<GetMemberQuery, GetMemberQueryVariabl
 			memberPhone
 			memberFullName
 			memberType
+			memberPoints
 			memberDesc
 			memberImage
 			memberStatus
