@@ -27,6 +27,8 @@
 	"description": "설명",
 	"enter_group_description": "그룹 설명을 입력하세요",
 	"group_image": "그룹 이미지",
+	"click_to_upload_image": "클릭하여 이미지 업로드",
+	"only_jpg_jpeg_png_allowed": "JPG, JPEG, PNG 파일만 허용됩니다",
 	"create_new_group": "새 그룹 만들기",
 	"creating": "생성 중...",
 	"group_not_found": "그룹을 찾을 수 없습니다",

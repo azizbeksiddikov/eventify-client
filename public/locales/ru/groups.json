@@ -27,6 +27,8 @@
 	"description": "Описание",
 	"enter_group_description": "Введите описание группы",
 	"group_image": "Изображение группы",
+	"click_to_upload_image": "Нажмите, чтобы загрузить изображение",
+	"only_jpg_jpeg_png_allowed": "Разрешены только файлы JPG, JPEG и PNG",
 	"create_new_group": "Создать новую группу",
 	"creating": "Создание...",
 	"group_not_found": "Группа не найдена",

@@ -31,6 +31,8 @@
 	"description": "Description",
 	"enter_group_description": "Enter group description",
 	"group_image": "Group Image",
+	"click_to_upload_image": "Click to upload image",
+	"only_jpg_jpeg_png_allowed": "Only JPG, JPEG, and PNG files are allowed",
 	"create_new_group": "Create New Group",
 	"creating": "Creating...",
 	"group_not_found": "Group not found",

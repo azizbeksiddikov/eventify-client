@@ -27,6 +27,8 @@
 	"description": "Tavsif",
 	"enter_group_description": "Guruh tavsifini kiriting",
 	"group_image": "Guruh rasmi",
+	"click_to_upload_image": "Rasmni yuklash uchun bosing",
+	"only_jpg_jpeg_png_allowed": "Faqat JPG, JPEG va PNG fayllariga ruxsat beriladi",
 	"create_new_group": "Yangi guruh yaratish",
 	"creating": "Yaratilmoqda...",
 	"group_not_found": "Guruh topilmadi",

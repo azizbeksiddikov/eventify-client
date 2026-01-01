@@ -23,7 +23,7 @@ import Image from "next/image";
 
 const GroupCreatePage = () => {
 	const router = useRouter();
-	const { t } = useTranslation(["groups", "errors", "events"]);
+	const { t } = useTranslation(["groups", "errors"]);
 	const user = useReactiveVar(userVar);
 
 	const [isSubmitting, setIsSubmitting] = useState(false);
@@ -258,7 +258,7 @@ const GroupCreatePage = () => {
 									onChange={imageChangeHandler}
 									className="hidden"
 								/>
-								<p className="text-sm text-muted-foreground mt-1">{t("events:only_jpg_jpeg_png_allowed")}</p>
+								<p className="text-sm text-muted-foreground mt-1">{t("only_jpg_jpeg_png_allowed")}</p>
 							</div>
 						</div>
 
