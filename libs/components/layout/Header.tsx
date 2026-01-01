@@ -86,15 +86,15 @@ const Header = () => {
 
 	return (
 		<header className="sticky top-0 z-50 bg-background/80 backdrop-blur-sm border-b w-full">
-			<div className="max-w-7xl mx-auto px-6 sm:px-12 lg:px-20 flex items-center justify-between h-14 sm:h-16 md:h-20">
+			<div className="max-w-7xl mx-auto px-6 sm:px-12 lg:px-20 grid grid-cols-3 items-center h-14 sm:h-16 md:h-20">
 				{/* Logo */}
 				<Link href="/" className="flex items-center gap-2 sm:gap-3 hover:scale-95 transition-transform duration-300">
 					<Logo className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8" />
 					<span className="text-lg sm:text-xl font-semibold text-foreground">Eventify</span>
 				</Link>
 
-				{/* Navigation - Hidden on mobile, shown on md+ (tablets and up) */}
-				<nav className="hidden md:flex items-center gap-4 lg:gap-6 xl:gap-8">
+				{/* Navigation - Hidden on mobile, shown on md+ (tablets and up) - Centered */}
+				<nav className="hidden md:flex items-center justify-center gap-4 lg:gap-6 xl:gap-8">
 					{navLinks.map((link, index) => (
 						<Link
 							key={index}
@@ -125,7 +125,7 @@ const Header = () => {
 				</nav>
 
 				{/* Desktop Auth & Controls - Hidden on mobile/tablet, shown on md screens */}
-				<div className="hidden md:flex items-center gap-2 lg:gap-3">
+				<div className="hidden md:flex items-center justify-end gap-2 lg:gap-3">
 					{/* Notification */}
 					{authMember._id && <NotificationDropdown />}
 
