@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useTranslation } from "next-i18next";
+import ReactMarkdown from "react-markdown";
 import { Heart, Calendar, Users, ExternalLink, MapPin, DollarSign, UserPlus } from "lucide-react";
 
 import { Button } from "@/libs/components/ui/button";
@@ -164,7 +165,42 @@ const EventCard = ({ event, likeEventHandler }: EventCardProps) => {
 				<div className="px-0.5 mt-2">
 					<div className="bg-muted/30 p-2 rounded-md min-h-[44px] flex items-center">
 						{event.eventDesc ? (
-							<p className="text-[10px] text-foreground leading-relaxed line-clamp-2">{event.eventDesc}</p>
+							<div className="text-[10px] text-foreground leading-relaxed line-clamp-2 w-full [&>p]:mb-1 [&>p]:last:mb-0 [&>strong]:font-semibold [&>a]:text-primary [&>a]:underline [&>ul]:list-disc [&>ul]:pl-4 [&>ol]:list-decimal [&>ol]:pl-4">
+								<ReactMarkdown
+									components={{
+										a: ({ ...props }) => (
+											<a
+												{...props}
+												className="text-primary hover:underline font-medium break-all text-[10px]"
+												target="_blank"
+												rel="noopener noreferrer"
+											/>
+										),
+										strong: ({ ...props }) => <strong {...props} className="font-semibold text-foreground" />,
+										p: ({ ...props }) => <p {...props} className="mb-1 last:mb-0 text-[10px] text-foreground" />,
+										ul: ({ ...props }) => <ul {...props} className="list-disc pl-4 mb-1 space-y-0.5 text-[10px]" />,
+										ol: ({ ...props }) => <ol {...props} className="list-decimal pl-4 mb-1 space-y-0.5 text-[10px]" />,
+										li: ({ ...props }) => <li {...props} className="pl-1 text-[10px]" />,
+										h1: ({ ...props }) => (
+											<h1 {...props} className="text-xs font-bold text-foreground mb-1 mt-1 first:mt-0" />
+										),
+										h2: ({ ...props }) => (
+											<h2 {...props} className="text-[11px] font-bold text-foreground mb-1 mt-1 first:mt-0" />
+										),
+										h3: ({ ...props }) => (
+											<h3 {...props} className="text-[10px] font-bold text-foreground mb-1 mt-1 first:mt-0" />
+										),
+										blockquote: ({ ...props }) => (
+											<blockquote
+												{...props}
+												className="border-l-2 border-primary/30 pl-2 py-0.5 italic mb-1 text-muted-foreground/80 text-[10px]"
+											/>
+										),
+									}}
+								>
+									{event.eventDesc}
+								</ReactMarkdown>
+							</div>
 						) : (
 							<p className="text-[10px] text-muted-foreground italic flex items-center justify-center py-1 w-full">
 								<span className="bg-muted/50 px-2 py-0.5 rounded-md">{t("no_description_available")}</span>
