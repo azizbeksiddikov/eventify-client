@@ -6,6 +6,9 @@ docker compose -f docker-compose.prod.yml down
 # Builds the pure production image (no dev dependencies)
 docker compose -f docker-compose.prod.yml build
 
+# Clean up dangling images (old images that lost their tags)
+docker image prune -f
+
 # Starts the production container using the new image
 docker compose -f docker-compose.prod.yml up -d
 
