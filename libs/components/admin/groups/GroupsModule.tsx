@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { useTranslation } from "next-i18next";
 
 import { GroupPanelList } from "@/libs/components/admin/groups/GroupList";
@@ -29,11 +29,20 @@ const GroupsModule = ({
 }: GroupsInquiryProps) => {
 	const { t } = useTranslation("admin");
 	const groupsTotal = groups.metaCounter[0]?.total ?? 0;
+	const groupsListRef = useRef<HTMLDivElement>(null);
 
 	/** HANDLERS **/
 
 	const pageChangeHandler = (newPage: number) => {
 		setGroupsInquiry({ ...groupsInquiry, page: newPage });
+		if (groupsListRef.current) {
+			const header = document.querySelector("header");
+			const headerHeight = header ? header.offsetHeight : 80;
+			const extraSpacing = 32; // 32px
+			const elementPosition = groupsListRef.current.getBoundingClientRect().top + window.pageYOffset;
+			const scrollTop = Math.max(0, elementPosition - headerHeight - extraSpacing);
+			window.scrollTo({ top: scrollTop, behavior: "smooth" });
+		}
 	};
 
 	return (
@@ -47,11 +56,13 @@ const GroupsModule = ({
 				/>
 				<Separator className="bg-border" />
 				<div className="p-4 my-4 gap-4 flex flex-col">
-					<GroupPanelList
-						groups={groups}
-						updateGroupHandler={updateGroupHandler}
-						removeGroupHandler={removeGroupHandler}
-					/>
+					<div ref={groupsListRef}>
+						<GroupPanelList
+							groups={groups}
+							updateGroupHandler={updateGroupHandler}
+							removeGroupHandler={removeGroupHandler}
+						/>
+					</div>
 					<PaginationComponent
 						totalItems={groupsTotal ?? 0}
 						currentPage={groupsInquiry.page}

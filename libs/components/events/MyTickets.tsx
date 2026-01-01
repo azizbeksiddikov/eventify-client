@@ -1,24 +1,25 @@
-import { useTranslation } from 'next-i18next';
-import { ChevronDown, Ticket as TicketIcon, Filter } from 'lucide-react';
+import { useRef } from "react";
+import { useTranslation } from "next-i18next";
+import { ChevronDown, Ticket as TicketIcon, Filter } from "lucide-react";
 
-import { Button } from '@/libs/components/ui/button';
-import { Card, CardHeader, CardContent, CardTitle } from '@/libs/components/ui/card';
+import { Button } from "@/libs/components/ui/button";
+import { Card, CardHeader, CardContent, CardTitle } from "@/libs/components/ui/card";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuTrigger,
-} from '@/libs/components/ui/dropdown-menu';
-import { Badge } from '@/libs/components/ui/badge';
-import PaginationComponent from '@/libs/components/common/PaginationComponent';
-import TicketCard from '@/libs/components/events/TicketCard';
+} from "@/libs/components/ui/dropdown-menu";
+import { Badge } from "@/libs/components/ui/badge";
+import PaginationComponent from "@/libs/components/common/PaginationComponent";
+import TicketCard from "@/libs/components/events/TicketCard";
 
-import { Tickets } from '@/libs/types/ticket/ticket';
-import { TicketStatus } from '@/libs/enums/ticket.enum';
-import { TicketInquiry } from '@/libs/types/ticket/ticket.input';
+import { Tickets } from "@/libs/types/ticket/ticket";
+import { TicketStatus } from "@/libs/enums/ticket.enum";
+import { TicketInquiry } from "@/libs/types/ticket/ticket.input";
 
 const LIMIT_OPTIONS = [5, 10, 20, 50];
-const CATEGORY_OPTIONS = [...Object.values(TicketStatus), 'ALL'];
+const CATEGORY_OPTIONS = [...Object.values(TicketStatus), "ALL"];
 
 interface MyTicketsProps {
 	myTickets: Tickets;
@@ -27,11 +28,20 @@ interface MyTicketsProps {
 }
 
 const MyTickets = ({ setTicketInquiry, ticketInquiry, myTickets }: MyTicketsProps) => {
-	const { t } = useTranslation('common');
+	const { t } = useTranslation("common");
 	const totalTickets = myTickets.metaCounter?.[0]?.total ?? 0;
+	const ticketsListRef = useRef<HTMLDivElement>(null);
 
 	const pageChangeHandler = (newPage: number) => {
 		setTicketInquiry({ ...ticketInquiry, page: newPage });
+		if (ticketsListRef.current) {
+			const header = document.querySelector("header");
+			const headerHeight = header ? header.offsetHeight : 80;
+			const extraSpacing = 32; // 32px
+			const elementPosition = ticketsListRef.current.getBoundingClientRect().top + window.pageYOffset;
+			const scrollTop = Math.max(0, elementPosition - headerHeight - extraSpacing);
+			window.scrollTo({ top: scrollTop, behavior: "smooth" });
+		}
 	};
 
 	const limitHandler = (newLimit: number) => {
@@ -39,7 +49,7 @@ const MyTickets = ({ setTicketInquiry, ticketInquiry, myTickets }: MyTicketsProp
 	};
 
 	const categoryHandler = (category: string) => {
-		const newCategory = category === 'ALL' ? undefined : (category as TicketStatus);
+		const newCategory = category === "ALL" ? undefined : (category as TicketStatus);
 		setTicketInquiry({
 			...ticketInquiry,
 			page: 1,
@@ -50,18 +60,18 @@ const MyTickets = ({ setTicketInquiry, ticketInquiry, myTickets }: MyTicketsProp
 		});
 	};
 
-	const currentCategory = ticketInquiry.search?.ticketStatus || 'ALL';
+	const currentCategory = ticketInquiry.search?.ticketStatus || "ALL";
 
 	return (
 		<Card className="mt-10 gap-0">
 			<CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-0 pb-2">
-				<CardTitle className="text-xl font-semibold text-foreground/90 w-full">{t('My Tickets')}</CardTitle>
+				<CardTitle className="text-xl font-semibold text-foreground/90 w-full">{t("My Tickets")}</CardTitle>
 
 				<div className="flex justify-between items-center w-full">
 					<Badge variant="outline" className="flex items-center gap-2">
 						<TicketIcon className="h-4 w-4" />
 						<span className="text-sm font-medium">
-							{totalTickets} {t('tickets')}
+							{totalTickets} {t("tickets")}
 						</span>
 					</Badge>
 
@@ -79,7 +89,7 @@ const MyTickets = ({ setTicketInquiry, ticketInquiry, myTickets }: MyTicketsProp
 								<DropdownMenuItem
 									key={category}
 									onClick={() => categoryHandler(category)}
-									className={category === currentCategory ? 'bg-accent' : ''}
+									className={category === currentCategory ? "bg-accent" : ""}
 								>
 									{category}
 								</DropdownMenuItem>
@@ -100,7 +110,7 @@ const MyTickets = ({ setTicketInquiry, ticketInquiry, myTickets }: MyTicketsProp
 								<DropdownMenuItem
 									key={option}
 									onClick={() => limitHandler(option)}
-									className={option === ticketInquiry.limit ? 'bg-accent' : ''}
+									className={option === ticketInquiry.limit ? "bg-accent" : ""}
 								>
 									{option}
 								</DropdownMenuItem>
@@ -115,12 +125,12 @@ const MyTickets = ({ setTicketInquiry, ticketInquiry, myTickets }: MyTicketsProp
 					<div className="text-center py-12">
 						<div className="flex flex-col items-center">
 							<TicketIcon className="h-12 w-12 text-muted-foreground/50" />
-							<div className="text-muted-foreground/80 text-sm">{t('You have no tickets yet')}</div>
-							<div className="text-muted-foreground/60 text-xs">{t('Purchase tickets to see them here')}</div>
+							<div className="text-muted-foreground/80 text-sm">{t("You have no tickets yet")}</div>
+							<div className="text-muted-foreground/60 text-xs">{t("Purchase tickets to see them here")}</div>
 						</div>
 					</div>
 				) : (
-					<div className="space-y-6">
+					<div ref={ticketsListRef} className="space-y-6">
 						{myTickets.list.map((ticket, index) => (
 							<TicketCard key={ticket._id} ticket={ticket} showSeparator={index < myTickets.list.length - 1} />
 						))}

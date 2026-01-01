@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useQuery } from "@apollo/client/react";
 import { useTranslation } from "next-i18next";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
@@ -40,6 +40,7 @@ const GroupsPage = ({
 	const { t } = useTranslation("groups");
 
 	const [groups, setGroups] = useState<Group[]>([]);
+	const groupsListRef = useRef<HTMLDivElement>(null);
 
 	const readUrl = (): GroupsInquiry => {
 		if (searchParams) {
@@ -117,6 +118,14 @@ const GroupsPage = ({
 
 	const pageChangeHandler = (newPage: number) => {
 		setGroupsSearchFilters({ ...groupsSearchFilters, page: newPage });
+		if (groupsListRef.current) {
+			const header = document.querySelector("header");
+			const headerHeight = header ? header.offsetHeight : 80;
+			const extraSpacing = 32; // 32px
+			const elementPosition = groupsListRef.current.getBoundingClientRect().top + window.pageYOffset;
+			const scrollTop = Math.max(0, elementPosition - headerHeight - extraSpacing);
+			window.scrollTo({ top: scrollTop, behavior: "smooth" });
+		}
 	};
 
 	return (
@@ -145,7 +154,10 @@ const GroupsPage = ({
 							<Loading />
 						) : groups.length > 0 ? (
 							<>
-								<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6 auto-rows-fr">
+								<div
+									ref={groupsListRef}
+									className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6 auto-rows-fr"
+								>
 									{groups.map((group) => (
 										<div key={group._id} className="min-w-0 w-full">
 											<GroupCard group={group} />

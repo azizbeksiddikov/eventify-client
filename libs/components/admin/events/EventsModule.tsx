@@ -1,4 +1,4 @@
-import React from "react";
+import { useRef } from "react";
 import { useTranslation } from "next-i18next";
 
 import { Separator } from "@/libs/components/ui/separator";
@@ -29,11 +29,20 @@ const EventsModule = ({
 }: EventsInquiryProps) => {
 	const { t } = useTranslation("admin");
 	const eventsTotal = events.metaCounter[0]?.total ?? 0;
+	const eventsListRef = useRef<HTMLDivElement>(null);
 
 	/** HANDLERS **/
 
 	const pageChangeHandler = (newPage: number) => {
 		setEventsInquiry({ ...eventsInquiry, page: newPage });
+		if (eventsListRef.current) {
+			const header = document.querySelector("header");
+			const headerHeight = header ? header.offsetHeight : 80;
+			const extraSpacing = 32; // 32px
+			const elementPosition = eventsListRef.current.getBoundingClientRect().top + window.pageYOffset;
+			const scrollTop = Math.max(0, elementPosition - headerHeight - extraSpacing);
+			window.scrollTo({ top: scrollTop, behavior: "smooth" });
+		}
 	};
 
 	return (
@@ -47,11 +56,13 @@ const EventsModule = ({
 				/>
 				<Separator className="bg-border" />
 				<div className="p-4 my-4 gap-4 flex flex-col">
-					<EventPanelList
-						events={events}
-						updateEventHandler={updateEventHandler}
-						removeEventHandler={removeEventHandler}
-					/>
+					<div ref={eventsListRef}>
+						<EventPanelList
+							events={events}
+							updateEventHandler={updateEventHandler}
+							removeEventHandler={removeEventHandler}
+						/>
+					</div>
 					<PaginationComponent
 						totalItems={eventsTotal ?? 0}
 						currentPage={eventsInquiry.page}

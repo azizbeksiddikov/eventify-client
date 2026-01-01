@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { userVar } from "@/apollo/store";
 import { useTranslation } from "next-i18next";
@@ -47,6 +47,7 @@ const EventsPage = ({
 	const { t } = useTranslation("events");
 	const user = useReactiveVar(userVar);
 	const [events, setEvents] = useState<Event[]>([]);
+	const eventsListRef = useRef<HTMLDivElement>(null);
 
 	const readUrl = (): EventsInquiry => {
 		if (searchParams) {
@@ -163,6 +164,14 @@ const EventsPage = ({
 	/** HANDLERS */
 	const pageChangeHandler = (newPage: number) => {
 		setEventsSearchFilters({ ...eventsSearchFilters, page: newPage });
+		if (eventsListRef.current) {
+			const header = document.querySelector("header");
+			const headerHeight = header ? header.offsetHeight : 80;
+			const extraSpacing = 32; // 32px
+			const elementPosition = eventsListRef.current.getBoundingClientRect().top + window.pageYOffset;
+			const scrollTop = Math.max(0, elementPosition - headerHeight - extraSpacing);
+			window.scrollTo({ top: scrollTop, behavior: "smooth" });
+		}
 	};
 
 	const likeEventHandler = async (eventId: string) => {
@@ -191,7 +200,7 @@ const EventsPage = ({
 							<Loading />
 						) : events.length > 0 ? (
 							<>
-								<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+								<div ref={eventsListRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
 									{events.map((event) => (
 										<EventCard key={event._id} event={event} likeEventHandler={likeEventHandler} />
 									))}

@@ -46,6 +46,7 @@ const CommentsComponent = ({ commentRefId, commentGroup, initialCommentsInquiry 
 		commentRefId,
 	});
 	const textareaRef = useRef<HTMLTextAreaElement>(null);
+	const commentsListRef = useRef<HTMLDivElement>(null);
 	const { t } = useTranslation("comments");
 	const user = useReactiveVar(userVar);
 	const [commentInquiry, setCommentInquiry] = useState<CommentsInquiry>(
@@ -91,6 +92,14 @@ const CommentsComponent = ({ commentRefId, commentGroup, initialCommentsInquiry 
 	/** HANDLERS */
 	const pageChangeHandler = (newPage: number) => {
 		setCommentInquiry({ ...commentInquiry, page: newPage });
+		if (commentsListRef.current) {
+			const header = document.querySelector("header");
+			const headerHeight = header ? header.offsetHeight : 80;
+			const extraSpacing = 32; // 32px
+			const elementPosition = commentsListRef.current.getBoundingClientRect().top + window.pageYOffset;
+			const scrollTop = Math.max(0, elementPosition - headerHeight - extraSpacing);
+			window.scrollTo({ top: scrollTop, behavior: "smooth" });
+		}
 	};
 
 	const editHandler = (comment: Comment) => {
@@ -271,7 +280,7 @@ const CommentsComponent = ({ commentRefId, commentGroup, initialCommentsInquiry 
 						</Button>
 					</div>
 				) : (
-					<div className="space-y-6">
+					<div ref={commentsListRef} className="space-y-6">
 						{comments.list.length > 0 &&
 							comments.list
 								.filter((comment) => comment._id !== editingCommentId)

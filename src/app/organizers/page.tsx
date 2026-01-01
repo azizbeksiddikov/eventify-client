@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useTranslation } from "next-i18next";
 import { useMutation, useQuery, useReactiveVar } from "@apollo/client/react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
@@ -80,6 +80,7 @@ const OrganizersPage = ({
 		notifyOnNetworkStatusChange: true,
 	});
 	const organizers: Member[] = organizersData?.getOrganizers?.list || [];
+	const organizersListRef = useRef<HTMLDivElement>(null);
 
 	/** LIFECYCLE */
 	useEffect(() => {
@@ -102,6 +103,14 @@ const OrganizersPage = ({
 
 	const pageChangeHandler = (newPage: number) => {
 		updateURL({ ...organizerSearch, page: newPage });
+		if (organizersListRef.current) {
+			const header = document.querySelector("header");
+			const headerHeight = header ? header.offsetHeight : 80;
+			const extraSpacing = 32; // 32px
+			const elementPosition = organizersListRef.current.getBoundingClientRect().top + window.pageYOffset;
+			const scrollTop = Math.max(0, elementPosition - headerHeight - extraSpacing);
+			window.scrollTo({ top: scrollTop, behavior: "smooth" });
+		}
 	};
 
 	return (
@@ -121,7 +130,7 @@ const OrganizersPage = ({
 					<Loading />
 				) : organizers.length > 0 ? (
 					<>
-						<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+						<div ref={organizersListRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
 							{organizers.map((organizer) => (
 								<OrganizerCard
 									key={organizer._id}

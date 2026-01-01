@@ -1,4 +1,4 @@
-import React from "react";
+import { useRef } from "react";
 import { useTranslation } from "next-i18next";
 
 import { MemberPanelList } from "@/libs/components/admin/users/MemberList";
@@ -29,10 +29,19 @@ const UsersModule = ({
 }: UsersModuleProps) => {
 	const { t } = useTranslation("admin");
 	const membersTotal = members.metaCounter[0]?.total;
+	const membersListRef = useRef<HTMLDivElement>(null);
 
 	/** HANDLERS **/
 	const pageChangeHandler = (newPage: number) => {
 		setMembersInquiry({ ...membersInquiry, page: newPage });
+		if (membersListRef.current) {
+			const header = document.querySelector("header");
+			const headerHeight = header ? header.offsetHeight : 80;
+			const extraSpacing = 32; // 32px
+			const elementPosition = membersListRef.current.getBoundingClientRect().top + window.pageYOffset;
+			const scrollTop = Math.max(0, elementPosition - headerHeight - extraSpacing);
+			window.scrollTo({ top: scrollTop, behavior: "smooth" });
+		}
 	};
 
 	return (
@@ -46,11 +55,13 @@ const UsersModule = ({
 				/>
 				<Separator className="bg-border" />
 				<div className="p-4 my-4 gap-4 flex flex-col">
-					<MemberPanelList
-						members={members}
-						updateMemberHandler={updateMemberHandler}
-						removeMemberHandler={removeMemberHandler}
-					/>
+					<div ref={membersListRef}>
+						<MemberPanelList
+							members={members}
+							updateMemberHandler={updateMemberHandler}
+							removeMemberHandler={removeMemberHandler}
+						/>
+					</div>
 					<PaginationComponent
 						totalItems={membersTotal ?? 0}
 						currentPage={membersInquiry.page}
