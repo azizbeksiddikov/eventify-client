@@ -45,5 +45,20 @@
 	"followers": "Подписчики",
 	"settings": "Настройки",
 	"member_updated_successfully": "Данные пользователя успешно обновлены",
-	"ticket_cancelled_successfully": "Билет успешно отменен"
+	"ticket_cancelled_successfully": "Билет успешно отменен",
+	"username": "Имя пользователя",
+	"full_name": "Полное имя",
+	"email": "Электронная почта",
+	"phone": "Телефон",
+	"description": "Описание",
+	"members": "Участники",
+	"created": "Создано",
+	"owner": "Владелец",
+	"like": "Нравится",
+	"leave_group": "Покинуть группу",
+	"join_group": "Присоединиться к группе",
+	"price": "Цена",
+	"total": "Итого",
+	"user": "Пользователь",
+	"following": "Подписки"
 }

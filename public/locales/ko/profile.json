@@ -45,5 +45,20 @@
 	"followers": "팔로워",
 	"settings": "설정",
 	"member_updated_successfully": "회원 정보가 성공적으로 업데이트되었습니다",
-	"ticket_cancelled_successfully": "티켓이 성공적으로 취소되었습니다"
+	"ticket_cancelled_successfully": "티켓이 성공적으로 취소되었습니다",
+	"username": "사용자 이름",
+	"full_name": "전체 이름",
+	"email": "이메일",
+	"phone": "전화번호",
+	"description": "설명",
+	"members": "회원",
+	"created": "생성됨",
+	"owner": "소유자",
+	"like": "좋아요",
+	"leave_group": "그룹 나가기",
+	"join_group": "그룹 참여하기",
+	"price": "가격",
+	"total": "합계",
+	"user": "사용자",
+	"following": "팔로잉"
 }

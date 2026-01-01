@@ -45,5 +45,20 @@
 	"followers": "Obunachilar",
 	"settings": "Sozlamalar",
 	"member_updated_successfully": "A'zo ma'lumotlari muvaffaqiyatli yangilandi",
-	"ticket_cancelled_successfully": "Chipta muvaffaqiyatli bekor qilindi"
+	"ticket_cancelled_successfully": "Chipta muvaffaqiyatli bekor qilindi",
+	"username": "Foydalanuvchi nomi",
+	"full_name": "To'liq ism",
+	"email": "Elektron pochta",
+	"phone": "Telefon",
+	"description": "Tavsif",
+	"members": "A'zolar",
+	"created": "Yaratilgan",
+	"owner": "Ega",
+	"like": "Yoqtirish",
+	"leave_group": "Guruhdan chiqish",
+	"join_group": "Guruhga qo'shilish",
+	"price": "Narx",
+	"total": "Jami",
+	"user": "Foydalanuvchi",
+	"following": "Kuzatuvlar"
 }

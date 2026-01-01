@@ -45,5 +45,20 @@
 	"followers": "Followers",
 	"settings": "Settings",
 	"member_updated_successfully": "Member updated successfully",
-	"ticket_cancelled_successfully": "Ticket cancelled successfully"
+	"ticket_cancelled_successfully": "Ticket cancelled successfully",
+	"username": "Username",
+	"full_name": "Full Name",
+	"email": "Email",
+	"phone": "Phone",
+	"description": "Description",
+	"members": "Members",
+	"created": "Created",
+	"owner": "Owner",
+	"like": "Like",
+	"leave_group": "Leave Group",
+	"join_group": "Join Group",
+	"price": "Price",
+	"total": "Total",
+	"user": "User",
+	"following": "Following"
 }
