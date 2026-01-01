@@ -52,7 +52,7 @@ export const EventDateAndTimePicker = ({
 		date.setSeconds(currentTime.getSeconds());
 		const newStartDate = date;
 
-		// If end date is before or equal to new start date, adjust it
+		// Allow same-day events, only adjust if end datetime is before or equal to start datetime
 		if (endDate <= newStartDate) {
 			const newEndDate = new Date(newStartDate);
 			newEndDate.setHours(newEndDate.getHours() + 1);
@@ -71,7 +71,7 @@ export const EventDateAndTimePicker = ({
 		date.setSeconds(currentTime.getSeconds());
 		const newEndDate = date;
 
-		// If end date is before or equal to start date, adjust it
+		// Allow same-day events, only adjust if end datetime is before or equal to start datetime
 		if (newEndDate <= startDate) {
 			const adjustedEndDate = new Date(startDate);
 			adjustedEndDate.setHours(adjustedEndDate.getHours() + 1);
@@ -86,6 +86,7 @@ export const EventDateAndTimePicker = ({
 		currentTime.setHours(Number(hour));
 		const newStartDate = currentTime;
 
+		// Allow same-day events, only adjust if end datetime is before or equal to start datetime
 		if (endDate <= newStartDate) {
 			const newEndDate = new Date(newStartDate);
 			newEndDate.setHours(newEndDate.getHours() + 1);
@@ -101,6 +102,7 @@ export const EventDateAndTimePicker = ({
 		currentTime.setMinutes(Number(minute));
 		const newStartDate = currentTime;
 
+		// Allow same-day events, only adjust if end datetime is before or equal to start datetime
 		if (endDate <= newStartDate) {
 			const newEndDate = new Date(newStartDate);
 			newEndDate.setMinutes(newEndDate.getMinutes() + 30);
@@ -116,6 +118,7 @@ export const EventDateAndTimePicker = ({
 		currentTime.setHours(Number(hour));
 		const newEndDate = currentTime;
 
+		// Allow same-day events, only adjust if end datetime is before or equal to start datetime
 		if (newEndDate <= startDate) {
 			const adjustedEndDate = new Date(startDate);
 			adjustedEndDate.setHours(adjustedEndDate.getHours() + 1);
@@ -130,6 +133,7 @@ export const EventDateAndTimePicker = ({
 		currentTime.setMinutes(Number(minute));
 		const newEndDate = currentTime;
 
+		// Allow same-day events, only adjust if end datetime is before or equal to start datetime
 		if (newEndDate <= startDate) {
 			const adjustedEndDate = new Date(startDate);
 			adjustedEndDate.setMinutes(adjustedEndDate.getMinutes() + 30);
@@ -249,7 +253,13 @@ export const EventDateAndTimePicker = ({
 									onSelect={handleEndDateSelect}
 									initialFocus
 									locale={currentLocale}
-									disabled={(date) => date < new Date(startDate)}
+									disabled={(date) => {
+										const startDateOnly = new Date(startDate);
+										startDateOnly.setHours(0, 0, 0, 0);
+										const dateOnly = new Date(date);
+										dateOnly.setHours(0, 0, 0, 0);
+										return dateOnly < startDateOnly;
+									}}
 								/>
 							</PopoverContent>
 						</Popover>
@@ -307,7 +317,7 @@ export const EventDateAndTimePicker = ({
 						</Select>
 					</div>
 					{endDate <= startDate && (
-						<p className="text-sm text-destructive mt-1">{t("end_date_must_be_after_start_date")}</p>
+						<p className="text-sm text-destructive mt-1">{t("end_time_must_be_after_start_time")}</p>
 					)}
 				</div>
 			</div>

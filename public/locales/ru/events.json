@@ -74,6 +74,7 @@
 	"please_select_event_start_date_time": "Пожалуйста, выберите дату и время начала события",
 	"please_select_event_end_date_time": "Пожалуйста, выберите дату и время окончания события",
 	"end_date_must_be_after_start_date": "Дата и время окончания должны быть после даты и времени начала",
+	"end_time_must_be_after_start_time": "Время окончания должно быть после времени начала",
 	"please_enter_event_address": "Пожалуйста, введите адрес события",
 	"event_capacity_must_be_at_least_1": "Вместимость события должна быть не менее 1",
 	"price_cannot_be_negative": "Цена не может быть отрицательной",

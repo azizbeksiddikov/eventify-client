@@ -163,7 +163,7 @@ const EventUpdatePage = () => {
 			if (!formData.eventStartAt) throw new Error(t("please_select_event_start_date_time"));
 			if (!formData.eventEndAt) throw new Error(t("please_select_event_end_date_time"));
 			if (formData.eventEndAt <= formData.eventStartAt) {
-				throw new Error(t("end_date_must_be_after_start_date"));
+				throw new Error(t("end_time_must_be_after_start_time"));
 			}
 			if (formSelection.locationType === EventLocationType.OFFLINE) {
 				if (!formData.eventAddress?.trim()) throw new Error(t("please_enter_event_address"));

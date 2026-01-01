@@ -74,6 +74,7 @@
 	"please_select_event_start_date_time": "Please select event start date and time",
 	"please_select_event_end_date_time": "Please select event end date and time",
 	"end_date_must_be_after_start_date": "End date and time must be after start date and time",
+	"end_time_must_be_after_start_time": "End time must be after start time",
 	"please_enter_event_address": "Please enter event address",
 	"event_capacity_must_be_at_least_1": "Event capacity must be at least 1",
 	"price_cannot_be_negative": "Price cannot be negative",

@@ -1,7 +1,7 @@
 import { useRouter } from "next/navigation";
 import { useTranslation } from "next-i18next";
 import { useReactiveVar } from "@apollo/client/react";
-import { ArrowRight, ArrowLeft } from "lucide-react";
+import { Plus, ArrowLeft } from "lucide-react";
 
 import { Button } from "@/libs/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/libs/components/ui/tooltip";
@@ -52,7 +52,7 @@ const ChosenGroupHeader = () => {
 						>
 							<div className="flex items-center gap-2">
 								{t("create_group")}
-								<ArrowRight className="w-4 h-4" />
+								<Plus className="w-4 h-4" />
 							</div>
 						</Button>
 					</TooltipTrigger>

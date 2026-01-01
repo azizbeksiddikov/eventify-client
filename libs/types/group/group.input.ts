@@ -1,5 +1,5 @@
-import { GroupCategory } from '@/libs/enums/group.enum';
-import { Direction } from '@/libs/enums/common.enum';
+import { GroupCategory } from "@/libs/enums/group.enum";
+import { Direction } from "@/libs/enums/common.enum";
 
 export interface GroupInput {
 	groupName: string;

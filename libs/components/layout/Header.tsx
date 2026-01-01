@@ -5,7 +5,7 @@ import { useState, useCallback, useEffect } from "react";
 import { useTranslation } from "next-i18next";
 import { usePathname, useRouter } from "next/navigation";
 import { useReactiveVar } from "@apollo/client/react";
-import { Menu, X, Home, Calendar, Users, User2, HelpCircle, ShieldAlert } from "lucide-react";
+import { Menu, X, Home, Calendar, Users, User2, HelpCircle, ShieldAlert, User, LogOut } from "lucide-react";
 
 import { Button, buttonVariants } from "@/libs/components/ui/button";
 import {
@@ -23,7 +23,7 @@ import { NotificationDropdown } from "@/libs/components/layout/NotificationDropd
 
 import { cn } from "@/libs/utils";
 import { userVar } from "@/apollo/store";
-import { getValidJwtToken, updateUserInfo } from "@/libs/auth";
+import { getValidJwtToken, updateUserInfo, logOut } from "@/libs/auth";
 import { Member } from "@/libs/types/member/member";
 import { MemberType } from "@/libs/enums/member.enum";
 import { useI18n } from "@/libs/i18n/provider";
@@ -86,15 +86,18 @@ const Header = () => {
 
 	return (
 		<header className="sticky top-0 z-50 bg-background/80 backdrop-blur-sm border-b w-full">
-			<div className="max-w-7xl mx-auto px-6 sm:px-12 lg:px-20 grid grid-cols-3 items-center h-14 sm:h-16 md:h-20">
+			<div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12 lg:px-20 grid grid-cols-2 xl:grid-cols-3 items-center h-14 sm:h-16 md:h-20">
 				{/* Logo */}
-				<Link href="/" className="flex items-center gap-2 sm:gap-3 hover:scale-95 transition-transform duration-300">
-					<Logo className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8" />
-					<span className="text-lg sm:text-xl font-semibold text-foreground">Eventify</span>
+				<Link
+					href="/"
+					className="flex items-center gap-1.5 sm:gap-2 md:gap-3 hover:scale-95 transition-transform duration-300 min-w-0"
+				>
+					<Logo className="h-5 w-5 sm:h-6 sm:w-6 md:h-7 md:w-7 lg:h-8 lg:w-8 shrink-0" />
+					<span className="text-base sm:text-lg md:text-xl font-semibold text-foreground truncate">Eventify</span>
 				</Link>
 
-				{/* Navigation - Hidden on mobile, shown on md+ (tablets and up) - Centered */}
-				<nav className="hidden md:flex items-center justify-center gap-4 lg:gap-6 xl:gap-8">
+				{/* Navigation - Hidden below xl (1200px), shown on xl+ - Centered */}
+				<nav className="hidden xl:flex items-center justify-center gap-4 lg:gap-6 xl:gap-8">
 					{navLinks.map((link, index) => (
 						<Link
 							key={index}
@@ -124,8 +127,8 @@ const Header = () => {
 					)}
 				</nav>
 
-				{/* Desktop Auth & Controls - Hidden on mobile/tablet, shown on md screens */}
-				<div className="hidden md:flex items-center justify-end gap-2 lg:gap-3">
+				{/* Desktop Auth & Controls - Hidden below xl (1200px), shown on xl+ screens */}
+				<div className="hidden xl:flex items-center justify-end gap-2 lg:gap-3">
 					{/* Notification */}
 					{authMember._id && <NotificationDropdown />}
 
@@ -181,14 +184,14 @@ const Header = () => {
 					)}
 				</div>
 
-				{/* Mobile Controls - Shown on mobile/tablet, hidden on md screens */}
-				<div className="flex md:hidden items-center gap-2">
+				{/* Mobile Controls - Shown below xl (1200px), hidden on xl+ screens */}
+				<div className="flex xl:hidden items-center justify-end gap-1.5 sm:gap-2 min-w-0">
 					{/* User Menu on mobile */}
 					{authMember._id ? (
 						<UserNav authMember={authMember} />
 					) : (
 						<Link href="/auth/login">
-							<Button variant="outline" className="text-xs sm:text-sm h-8 px-3">
+							<Button variant="outline" className="text-xs h-8 px-2.5 sm:px-3 shrink-0">
 								{t("login")}
 							</Button>
 						</Link>
@@ -197,32 +200,37 @@ const Header = () => {
 					{/* Mobile Menu Sheet */}
 					<Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
 						<SheetTrigger asChild>
-							<Button variant="ghost" size="icon" className="h-9 w-9">
-								<Menu className="h-5 w-5" />
+							<Button variant="ghost" size="icon" className="h-8 w-8 sm:h-9 sm:w-9 shrink-0">
+								<Menu className="h-4 w-4 sm:h-5 sm:w-5" />
 								<span className="sr-only">Open menu</span>
 							</Button>
 						</SheetTrigger>
-						<SheetContent side="right" className="min-w-[330px] w-[300px] sm:w-[350px]">
+						<SheetContent side="right" className="w-[85vw] max-w-[320px] sm:max-w-[350px] p-0">
 							<div className="flex h-full flex-col">
 								{/* 0. Menu + X (X is rendered by SheetContent itself) */}
 								<SheetHeader className="gap-0 border-b p-0">
-									<div className="flex items-center justify-between px-4 pt-4 pb-3">
-										<div className="w-10" />
-										<SheetTitle className="text-base">{t("menu")}</SheetTitle>
+									<div className="flex items-center justify-between px-3 sm:px-4 pt-3 sm:pt-4 pb-2 sm:pb-3">
+										<div className="w-8 sm:w-10" />
+										<SheetTitle className="text-sm sm:text-base">{t("menu")}</SheetTitle>
 										<SheetClose asChild>
 											<Button
 												variant="ghost"
 												size="icon"
-												className="h-10 w-10 opacity-80 hover:opacity-100"
+												className="h-9 w-9 sm:h-10 sm:w-10 opacity-80 hover:opacity-100"
 												aria-label="Close menu"
 											>
-												<X className="h-5 w-5" />
+												<X className="h-4 w-4 sm:h-5 sm:w-5" />
 											</Button>
 										</SheetClose>
 									</div>
 
 									{/* 1. Notification, Mode, Language */}
-									<div className={cn("grid items-center px-4 pb-4", authMember._id ? "grid-cols-3" : "grid-cols-2")}>
+									<div
+										className={cn(
+											"grid items-center px-3 sm:px-4 pb-3 sm:pb-4 gap-2",
+											authMember._id ? "grid-cols-3" : "grid-cols-2",
+										)}
+									>
 										{authMember._id && (
 											<div className="flex items-center justify-center">
 												<NotificationDropdown isMobile />
@@ -236,11 +244,11 @@ const Header = () => {
 										<div className="flex items-center justify-center">
 											<DropdownMenu>
 												<DropdownMenuTrigger
-													className={cn(buttonVariants({ variant: "ghost", size: "icon" }), "h-9 w-9")}
+													className={cn(buttonVariants({ variant: "ghost", size: "icon" }), "h-8 w-8 sm:h-9 sm:w-9")}
 												>
 													<span
 														className={cn("fi", `fi-${selectedLanguage.flagIcon}`, "rounded-[2px]")}
-														style={{ width: 22, height: 16 }}
+														style={{ width: 20, height: 14 }}
 														aria-hidden
 													/>
 													<span className="sr-only">Current language: {t(selectedLanguage.code)}</span>
@@ -269,7 +277,7 @@ const Header = () => {
 								</SheetHeader>
 
 								{/* 2. Links to different pages */}
-								<nav className="flex flex-1 flex-col space-y-1 overflow-auto px-2 pt-4 pb-2">
+								<nav className="flex flex-1 flex-col space-y-1 overflow-auto px-2 sm:px-3 pt-3 sm:pt-4 pb-2">
 									{navLinks.map((link, index) => {
 										const Icon = link.icon;
 										return (
@@ -278,7 +286,7 @@ const Header = () => {
 												href={link.href}
 												onClick={() => setIsMobileMenuOpen(false)}
 												className={cn(
-													"flex items-center gap-3 min-h-12 px-4 rounded-lg transition-colors duration-200 group relative",
+													"flex items-center gap-2.5 sm:gap-3 min-h-11 sm:min-h-12 px-3 sm:px-4 rounded-lg transition-colors duration-200 group relative",
 													pathname === link.href
 														? "bg-primary/10 text-primary font-medium"
 														: "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
@@ -286,7 +294,7 @@ const Header = () => {
 											>
 												<Icon
 													className={cn(
-														"h-5 w-5 transition-colors duration-200",
+														"h-4 w-4 sm:h-5 sm:w-5 transition-colors duration-200 shrink-0",
 														pathname === link.href ? "text-primary" : "text-muted-foreground group-hover:text-primary",
 													)}
 												/>
@@ -299,7 +307,7 @@ const Header = () => {
 													{t(link.label)}
 												</span>
 												{pathname === link.href && (
-													<div className="absolute right-0 top-0 h-full w-1.5 bg-primary rounded-full" />
+													<div className="absolute right-0 top-0 h-full w-1 sm:w-1.5 bg-primary rounded-full" />
 												)}
 											</Link>
 										);
@@ -309,7 +317,7 @@ const Header = () => {
 											href={adminLink.href}
 											onClick={() => setIsMobileMenuOpen(false)}
 											className={cn(
-												"flex items-center gap-3 min-h-12 px-4 rounded-lg transition-colors duration-200 group relative",
+												"flex items-center gap-2.5 sm:gap-3 min-h-11 sm:min-h-12 px-3 sm:px-4 rounded-lg transition-colors duration-200 group relative",
 												pathname === adminLink.href
 													? "bg-primary/10 text-primary font-medium"
 													: "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
@@ -317,7 +325,7 @@ const Header = () => {
 										>
 											<adminLink.icon
 												className={cn(
-													"h-5 w-5 transition-colors duration-200",
+													"h-4 w-4 sm:h-5 sm:w-5 transition-colors duration-200 shrink-0",
 													pathname === adminLink.href
 														? "text-primary"
 														: "text-muted-foreground group-hover:text-primary",
@@ -334,22 +342,82 @@ const Header = () => {
 												{t(adminLink.label)}
 											</span>
 											{pathname === adminLink.href && (
-												<div className="absolute right-0 top-0 h-full w-1.5 bg-primary rounded-full" />
+												<div className="absolute right-0 top-0 h-full w-1 sm:w-1.5 bg-primary rounded-full" />
 											)}
 										</Link>
+									)}
+
+									{/* Profile and Logout - Only shown when authenticated */}
+									{authMember._id && (
+										<>
+											<div className="border-t my-2" />
+											<Link
+												href="/profile"
+												onClick={() => setIsMobileMenuOpen(false)}
+												className={cn(
+													"flex items-center gap-2.5 sm:gap-3 min-h-11 sm:min-h-12 px-3 sm:px-4 rounded-lg transition-colors duration-200 group relative",
+													pathname === "/profile"
+														? "bg-primary/10 text-primary font-medium"
+														: "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
+												)}
+											>
+												<User
+													className={cn(
+														"h-4 w-4 sm:h-5 sm:w-5 transition-colors duration-200 shrink-0",
+														pathname === "/profile" ? "text-primary" : "text-muted-foreground group-hover:text-primary",
+													)}
+												/>
+												<span
+													className={cn(
+														"text-sm font-medium transition-colors duration-200",
+														pathname === "/profile" ? "text-primary" : "text-muted-foreground group-hover:text-primary",
+													)}
+												>
+													{t("profile")}
+												</span>
+												{pathname === "/profile" && (
+													<div className="absolute right-0 top-0 h-full w-1 sm:w-1.5 bg-primary rounded-full" />
+												)}
+											</Link>
+											<button
+												onClick={() => {
+													setIsMobileMenuOpen(false);
+													logOut();
+												}}
+												className={cn(
+													"flex items-center gap-2.5 sm:gap-3 min-h-11 sm:min-h-12 px-3 sm:px-4 rounded-lg transition-colors duration-200 group text-left w-full",
+													"text-muted-foreground hover:bg-accent hover:text-accent-foreground",
+												)}
+											>
+												<LogOut
+													className={cn(
+														"h-4 w-4 sm:h-5 sm:w-5 transition-colors duration-200 shrink-0",
+														"text-muted-foreground group-hover:text-destructive",
+													)}
+												/>
+												<span
+													className={cn(
+														"text-sm font-medium transition-colors duration-200",
+														"text-muted-foreground group-hover:text-destructive",
+													)}
+												>
+													{t("logout")}
+												</span>
+											</button>
+										</>
 									)}
 								</nav>
 
 								{/* 3. Login/Signup */}
 								{!authMember._id && (
-									<div className="flex flex-col gap-2 border-t px-4 pt-3 pb-[calc(env(safe-area-inset-bottom)+1.25rem)]">
+									<div className="flex flex-col gap-2 border-t px-3 sm:px-4 pt-3 pb-[calc(env(safe-area-inset-bottom)+1rem)] sm:pb-[calc(env(safe-area-inset-bottom)+1.25rem)]">
 										<Link href="/auth/login" onClick={() => setIsMobileMenuOpen(false)}>
-											<Button variant="outline" className="w-full text-sm h-10">
+											<Button variant="outline" className="w-full text-sm h-10 sm:h-11">
 												{t("login")}
 											</Button>
 										</Link>
 										<Link href="/auth/signup" onClick={() => setIsMobileMenuOpen(false)}>
-											<Button className="w-full text-sm h-10">{t("sign_up")}</Button>
+											<Button className="w-full text-sm h-10 sm:h-11">{t("sign_up")}</Button>
 										</Link>
 									</div>
 								)}

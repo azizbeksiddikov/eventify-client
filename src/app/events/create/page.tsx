@@ -80,14 +80,29 @@ const EventCreatePage = () => {
 		recurrenceEndDate: undefined as Date | undefined,
 	});
 
+	// Helper function to get today's date at 00:00:00
+	const getTodayAtMidnight = () => {
+		const today = new Date();
+		today.setHours(0, 0, 0, 0);
+		return today;
+	};
+
+	// Helper function to get tomorrow's date at 00:00:00
+	const getTomorrowAtMidnight = () => {
+		const tomorrow = new Date();
+		tomorrow.setDate(tomorrow.getDate() + 1);
+		tomorrow.setHours(0, 0, 0, 0);
+		return tomorrow;
+	};
+
 	// Main Form Data
 	const [formData, setFormData] = useState<EventInput>({
 		eventType: EventType.ONCE,
 		eventName: "",
 		eventDesc: "",
 		eventImages: [],
-		eventStartAt: new Date(),
-		eventEndAt: new Date(),
+		eventStartAt: getTodayAtMidnight(),
+		eventEndAt: getTomorrowAtMidnight(),
 		locationType: EventLocationType.OFFLINE,
 		eventCity: "",
 		eventAddress: "",
@@ -181,7 +196,7 @@ const EventCreatePage = () => {
 			if (!formData.eventStartAt) throw new Error(t("please_select_event_start_date_time"));
 			if (!formData.eventEndAt) throw new Error(t("please_select_event_end_date_time"));
 			if (formData.eventEndAt <= formData.eventStartAt) {
-				throw new Error(t("end_date_must_be_after_start_date"));
+				throw new Error(t("end_time_must_be_after_start_time"));
 			}
 			if (formSelection.locationType === EventLocationType.OFFLINE) {
 				if (!formData.eventAddress || formData.eventAddress.trim() === "")

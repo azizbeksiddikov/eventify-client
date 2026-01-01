@@ -175,7 +175,7 @@ export const NotificationDropdown = ({ isMobile = false }: NotificationDropdownP
 							className="h-auto px-2 py-1 text-xs text-muted-foreground hover:text-primary"
 							onClick={readAllNotificationsHandler}
 						>
-							{t("mark_all_read")}
+							{t("read_all")}
 						</Button>
 					)}
 				</div>
