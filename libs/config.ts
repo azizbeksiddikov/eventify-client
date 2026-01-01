@@ -3,6 +3,16 @@ import { MemberType } from "./enums/member.enum";
 export const NEXT_APP_API_URL = process.env.NEXT_APP_API_URL;
 export const NEXT_PUBLIC_API_GRAPHQL_URL = process.env.NEXT_PUBLIC_API_GRAPHQL_URL;
 
+// Helper function to get absolute URL
+export const getAbsoluteUrl = (path: string): string => {
+	if (path.startsWith("http://") || path.startsWith("https://")) {
+		return path;
+	}
+	const baseUrl = "https://eventify.azbek.me";
+	const cleanPath = path.startsWith("/") ? path : `/${path}`;
+	return `${baseUrl}${cleanPath}`;
+};
+
 export const eventsSortOptions = [
 	{ value: "createdAt", label: "sort_newest" },
 	{ value: "eventStartAt", label: "sort_event_date" },

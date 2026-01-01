@@ -7,6 +7,7 @@ import { Toaster } from "sonner";
 
 import Header from "@/libs/components/layout/Header";
 import Footer from "@/libs/components/layout/Footer";
+import { getAbsoluteUrl } from "@/libs/config";
 import "./globals.css";
 import "flag-icons/css/flag-icons.min.css";
 
@@ -42,12 +43,13 @@ export const metadata: Metadata = {
 	openGraph: {
 		type: "website",
 		locale: "en_US",
+		url: getAbsoluteUrl("/"),
 		title: "Eventify",
 		description: "Discover local events, join groups, and connect with people who share your interests on Eventify.",
 		siteName: "Eventify",
 		images: [
 			{
-				url: "/images/logo.png",
+				url: getAbsoluteUrl("/images/logo.png"),
 				width: 800,
 				height: 600,
 				alt: "Eventify Logo",
@@ -55,10 +57,10 @@ export const metadata: Metadata = {
 		],
 	},
 	twitter: {
-		card: "summary",
+		card: "summary_large_image",
 		title: "Eventify",
 		description: "Discover local events, join groups, and connect with people who share your interests on Eventify.",
-		images: ["/images/logo.png"],
+		images: [getAbsoluteUrl("/images/logo.png")],
 	},
 };
 
