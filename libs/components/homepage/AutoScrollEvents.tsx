@@ -190,7 +190,7 @@ const AutoScrollEvents = ({
 	return (
 		<section
 			ref={containerRef}
-			className="relative h-[50vh] sm:h-[60vh] md:h-[70vh] lg:h-[calc(100vh-5rem)] overflow-hidden w-full min-w-0"
+			className="relative h-[calc(100vh-3.5rem)] sm:h-[calc(100vh-4rem)] md:h-[calc(100vh-5rem)] overflow-hidden w-full min-w-0"
 			onMouseMove={moveMouseHandler}
 			onContextMenu={(e) => {
 				e.preventDefault(); // Prevent the default context menu
@@ -229,93 +229,99 @@ const AutoScrollEvents = ({
 							<div className="absolute inset-0 bg-gradient-to-b from-black/90 via-black/40 to-black/70" />
 						</div>
 
-						<div className="absolute inset-0 flex items-center justify-center flex-col px-4">
-							<div className="text-center text-white max-w-4xl w-full px-2 sm:px-4 md:px-6 lg:px-8 transform transition-all duration-1000 ease-in-out my-2">
-								<div className="mb-3 sm:mb-4 flex flex-wrap justify-center gap-1.5 sm:gap-2">
-									{event.eventCategories.map((category, catIndex) => (
+						<div className="absolute inset-0 flex flex-col px-4 pb-14 sm:pb-16 md:pb-20">
+							<div className="flex-1 flex items-center justify-center">
+								<div className="text-center text-white max-w-4xl w-full px-2 sm:px-4 md:px-6 lg:px-8 transform transition-all duration-1000 ease-in-out">
+									<div className="mt-2 sm:mt-3 md:mt-4 mb-3 sm:mb-4 flex flex-wrap justify-center gap-1.5 sm:gap-2">
+										{event.eventCategories.map((category, catIndex) => (
+											<span
+												key={catIndex}
+												className="block text-white bg-white/10 backdrop-blur-sm px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs sm:text-sm font-medium hover:bg-white/20 transition-colors duration-300 cursor-pointer"
+												onClick={handleUserInteraction}
+											>
+												#{category}
+											</span>
+										))}
+									</div>
+									<h2
+										className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold mb-3 sm:mb-4 md:mb-6 text-white px-2 sm:px-4 py-2 sm:py-3 rounded-lg cursor-pointer break-words bg-black/30 backdrop-blur-sm"
+										onClick={handleUserInteraction}
+									>
+										{event.eventName}
+									</h2>
+									<div
+										className="text-sm sm:text-base md:text-lg lg:text-xl mb-4 sm:mb-6 md:mb-8 text-white max-w-2xl mx-auto px-2 sm:px-4 py-2 sm:py-3 rounded-lg cursor-pointer overflow-hidden bg-black/30 backdrop-blur-sm"
+										onClick={handleUserInteraction}
+									>
+										<div className="line-clamp-2 sm:line-clamp-3 [&>*]:text-white [&>p]:mb-2 [&>p]:last:mb-0 [&>strong]:font-semibold [&>a]:text-white [&>a]:underline [&>a:hover]:text-white/80">
+											<ReactMarkdown
+												components={{
+													a: ({ ...props }) => (
+														<a
+															{...props}
+															className="text-white hover:text-white/80 underline font-medium break-all"
+															target="_blank"
+															rel="noopener noreferrer"
+														/>
+													),
+													strong: ({ ...props }) => <strong {...props} className="font-semibold text-white" />,
+													p: ({ ...props }) => <p {...props} className="mb-2 last:mb-0 text-white" />,
+													ul: ({ ...props }) => <ul {...props} className="list-disc pl-5 mb-2 space-y-1 text-white" />,
+													ol: ({ ...props }) => (
+														<ol {...props} className="list-decimal pl-5 mb-2 space-y-1 text-white" />
+													),
+													li: ({ ...props }) => <li {...props} className="pl-1 text-white" />,
+													h1: ({ ...props }) => (
+														<h1 {...props} className="text-lg font-bold text-white mb-2 mt-2 first:mt-0" />
+													),
+													h2: ({ ...props }) => (
+														<h2 {...props} className="text-base font-bold text-white mb-2 mt-2 first:mt-0" />
+													),
+													h3: ({ ...props }) => (
+														<h3 {...props} className="text-sm font-bold text-white mb-2 mt-2 first:mt-0" />
+													),
+													blockquote: ({ ...props }) => (
+														<blockquote
+															{...props}
+															className="border-l-4 border-white/30 pl-4 py-1 italic mb-2 text-white/80"
+														/>
+													),
+												}}
+											>
+												{event.eventDesc}
+											</ReactMarkdown>
+										</div>
+									</div>
+									<div className="flex flex-col sm:flex-row justify-center sm:space-x-4 md:space-x-6 space-y-2 sm:space-y-0 mb-3 sm:mb-4">
 										<span
-											key={catIndex}
-											className="block text-white bg-white/10 backdrop-blur-sm px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs sm:text-sm font-medium hover:bg-white/20 transition-colors duration-300 cursor-pointer"
+											className="flex items-center justify-center sm:justify-start bg-black/30 backdrop-blur-sm px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-white text-xs sm:text-sm"
 											onClick={handleUserInteraction}
 										>
-											#{category}
+											<MapPin className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2 shrink-0" />
+											<span className="truncate">{getEventLocation(event)}</span>
 										</span>
-									))}
-								</div>
-								<h2
-									className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold mb-3 sm:mb-4 md:mb-6 text-white px-2 sm:px-4 py-2 sm:py-3 rounded-lg cursor-pointer break-words"
-									onClick={handleUserInteraction}
-								>
-									{event.eventName}
-								</h2>
-								<div
-									className="text-sm sm:text-base md:text-lg lg:text-xl mb-4 sm:mb-6 md:mb-8 text-white max-w-2xl mx-auto px-2 sm:px-4 py-2 sm:py-3 rounded-lg cursor-pointer overflow-hidden"
-									onClick={handleUserInteraction}
-								>
-									<div className="line-clamp-2 sm:line-clamp-3 [&>*]:text-white [&>p]:mb-2 [&>p]:last:mb-0 [&>strong]:font-semibold [&>a]:text-white [&>a]:underline [&>a:hover]:text-white/80">
-										<ReactMarkdown
-											components={{
-												a: ({ ...props }) => (
-													<a
-														{...props}
-														className="text-white hover:text-white/80 underline font-medium break-all"
-														target="_blank"
-														rel="noopener noreferrer"
-													/>
-												),
-												strong: ({ ...props }) => <strong {...props} className="font-semibold text-white" />,
-												p: ({ ...props }) => <p {...props} className="mb-2 last:mb-0 text-white" />,
-												ul: ({ ...props }) => <ul {...props} className="list-disc pl-5 mb-2 space-y-1 text-white" />,
-												ol: ({ ...props }) => <ol {...props} className="list-decimal pl-5 mb-2 space-y-1 text-white" />,
-												li: ({ ...props }) => <li {...props} className="pl-1 text-white" />,
-												h1: ({ ...props }) => (
-													<h1 {...props} className="text-lg font-bold text-white mb-2 mt-2 first:mt-0" />
-												),
-												h2: ({ ...props }) => (
-													<h2 {...props} className="text-base font-bold text-white mb-2 mt-2 first:mt-0" />
-												),
-												h3: ({ ...props }) => (
-													<h3 {...props} className="text-sm font-bold text-white mb-2 mt-2 first:mt-0" />
-												),
-												blockquote: ({ ...props }) => (
-													<blockquote
-														{...props}
-														className="border-l-4 border-white/30 pl-4 py-1 italic mb-2 text-white/80"
-													/>
-												),
-											}}
+										<span
+											className="flex items-center justify-center sm:justify-start bg-black/30 backdrop-blur-sm px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-white text-xs sm:text-sm"
+											onClick={handleUserInteraction}
 										>
-											{event.eventDesc}
-										</ReactMarkdown>
+											<Calendar className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2 shrink-0" />
+											<time dateTime={new Date(event.eventStartAt).toISOString()} className="truncate">
+												{formatDate(event.eventStartAt)}
+											</time>
+										</span>
 									</div>
 								</div>
-								<div className="flex flex-col sm:flex-row justify-center sm:space-x-4 md:space-x-6 space-y-2 sm:space-y-0 mb-3 sm:mb-4">
-									<span
-										className="flex items-center justify-center sm:justify-start bg-black/30 backdrop-blur-sm px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-white text-xs sm:text-sm"
-										onClick={handleUserInteraction}
-									>
-										<MapPin className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2 shrink-0" />
-										<span className="truncate">{getEventLocation(event)}</span>
-									</span>
-									<span
-										className="flex items-center justify-center sm:justify-start bg-black/30 backdrop-blur-sm px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-white text-xs sm:text-sm"
-										onClick={handleUserInteraction}
-									>
-										<Calendar className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2 shrink-0" />
-										<time dateTime={new Date(event.eventStartAt).toISOString()} className="truncate">
-											{formatDate(event.eventStartAt)}
-										</time>
-									</span>
-								</div>
 							</div>
-							<Link
-								href={`/events/${event._id}`}
-								className="inline-block bg-primary text-white px-4 sm:px-6 md:px-8 py-2 sm:py-3 md:py-4 rounded-full text-sm sm:text-base font-medium hover:bg-primary/90 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
-								aria-label={`${t("events_view_details_for")} ${event.eventName}`}
-								onClick={handleUserInteraction}
-							>
-								{t("events_view_details")}
-							</Link>
+							<div className="shrink-0 flex justify-center pb-1 sm:pb-1.5 md:pb-2">
+								<Link
+									href={`/events/${event._id}`}
+									className="inline-block bg-primary text-white px-4 sm:px-6 md:px-8 py-2 sm:py-3 md:py-4 rounded-full text-sm sm:text-base font-medium hover:bg-primary/90 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
+									aria-label={`${t("events_view_details_for")} ${event.eventName}`}
+									onClick={handleUserInteraction}
+								>
+									{t("events_view_details")}
+								</Link>
+							</div>
 						</div>
 					</div>
 				))}
