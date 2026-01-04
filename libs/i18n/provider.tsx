@@ -29,6 +29,7 @@ const namespaces = [
 	"help",
 	"admin",
 	"errors",
+	"calendar",
 ];
 
 const initI18n = async (locale: string) => {

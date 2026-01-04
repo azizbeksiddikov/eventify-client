@@ -32,7 +32,7 @@ const UpcomingEvents = ({ events, organizerName, likeEventHandler }: UpcomingEve
 							variant="secondary"
 							className="hidden sm:inline-flex ml-3 bg-primary/5 text-primary border-primary/10 hover:bg-primary/10 transition-colors px-2 py-0.5 rounded-full font-bold text-[10px] uppercase tracking-wider"
 						>
-							{events.length} {t("events_this_month")}
+							{events.length} {t("events:events_this_month")}
 						</Badge>
 					)}
 				</div>
