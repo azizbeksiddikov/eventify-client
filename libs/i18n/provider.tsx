@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, ReactNode, useRef } from "react";
 import i18n from "i18next";
 import { initReactI18next, I18nextProvider } from "react-i18next";
 import type { Resource } from "i18next";
@@ -32,16 +32,54 @@ const namespaces = [
 	"calendar",
 ];
 
-const initI18n = async (locale: string) => {
+// Cache for loaded translations to avoid re-fetching
+const translationCache = new Map<string, Record<string, unknown>>();
+
+const getCacheKey = (locale: string, namespace: string) => `${locale}:${namespace}`;
+
+const loadAllTranslations = async (locale: string): Promise<Resource> => {
 	const resources: Resource = {};
 
+	// Check which translations need to be loaded
+	const translationsToLoad: Promise<[string, Record<string, unknown>]>[] = [];
+
 	for (const ns of namespaces) {
-		const translations = await loadTranslations(locale, ns);
+		const cacheKey = getCacheKey(locale, ns);
+		const cached = translationCache.get(cacheKey);
+
+		if (cached) {
+			// Use cached translation
+			if (!resources[locale]) {
+				resources[locale] = {};
+			}
+			resources[locale][ns] = cached;
+		} else {
+			// Load translation and cache it
+			translationsToLoad.push(
+				loadTranslations(locale, ns).then((translations) => {
+					translationCache.set(cacheKey, translations);
+					return [ns, translations];
+				}),
+			);
+		}
+	}
+
+	// Load all missing translations in parallel
+	if (translationsToLoad.length > 0) {
+		const loaded = await Promise.all(translationsToLoad);
 		if (!resources[locale]) {
 			resources[locale] = {};
 		}
-		resources[locale][ns] = translations;
+		loaded.forEach(([ns, translations]) => {
+			resources[locale][ns] = translations;
+		});
 	}
+
+	return resources;
+};
+
+const initI18n = async (locale: string) => {
+	const resources = await loadAllTranslations(locale);
 
 	if (!i18n.isInitialized) {
 		await i18n.use(initReactI18next).init({
@@ -89,19 +127,35 @@ export function I18nProvider({ children }: { children: ReactNode }) {
 		}
 		return "en";
 	});
+	const isChangingLanguage = useRef(false);
 
+	// Initial load only
 	useEffect(() => {
-		// Initialize i18n with locale
-		initI18n(locale).then(() => {
-			setIsInitialized(true);
-		});
-	}, [locale]);
+		if (!isInitialized) {
+			initI18n(locale).then(() => {
+				setIsInitialized(true);
+			});
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []); // Only run on mount - locale is captured from initial state
+
+	// Handle language changes after initialization
+	useEffect(() => {
+		if (isInitialized && !isChangingLanguage.current) {
+			isChangingLanguage.current = true;
+			initI18n(locale).finally(() => {
+				isChangingLanguage.current = false;
+			});
+		}
+	}, [locale, isInitialized]);
 
 	const changeLocale = async (newLocale: string) => {
+		if (newLocale === locale) return;
 		localStorage.setItem("locale", newLocale);
 		setLocale(newLocale);
 	};
 
+	// Only show loading on initial mount, not on language changes
 	if (!isInitialized) {
 		return null; // or a loading spinner
 	}

@@ -77,9 +77,8 @@ const Header = () => {
 	const languageHandler = useCallback(
 		(languageCode: string) => {
 			changeLocale(languageCode);
-			router.refresh();
 		},
-		[changeLocale, router],
+		[changeLocale],
 	);
 
 	const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
