@@ -44,6 +44,9 @@
 	--color-sidebar-ring: var(--sidebar-ring);
 	--font-sans: var(--font-sans);
 	--font-mono: var(--font-mono);
+	--font-serif: var(--font-serif);
+	--font-cjk: var(--font-cjk);
+	--font-cyrillic: var(--font-cyrillic);
 	--radius-lg: var(--radius);
 	--radius-md: calc(var(--radius) - 2px);
 	--radius-sm: calc(var(--radius) - 4px);
@@ -79,10 +82,26 @@
 
 	html,
 	body {
-		@apply bg-background text-foreground font-sans text-base leading-normal;
+		@apply bg-background text-foreground text-base leading-normal;
 		margin: 0;
 		padding: 0;
 		width: 100%;
+	}
+
+	/* Apply font family based on language-specific classes */
+	html.font-sans,
+	html.font-sans body {
+		font-family: var(--font-sans);
+	}
+
+	html.font-cjk,
+	html.font-cjk body {
+		font-family: var(--font-cjk);
+	}
+
+	html.font-cyrillic,
+	html.font-cyrillic body {
+		font-family: var(--font-cyrillic);
 	}
 
 	/* Default body text — let most elements inherit from `body` */
@@ -256,6 +275,28 @@
 	.rdp-root .rdp-button_previous:hover,
 	.rdp-root .rdp-button_next:hover {
 		background-color: rgb(var(--color-muted));
+	}
+
+	/* ===== FONT FAMILIES ===== */
+	.font-sans-variable {
+		--font-sans:
+			var(--font-manrope), var(--font-inter), "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+	}
+
+	.font-serif-variable {
+		--font-serif: var(--font-lora), "Times New Roman", Times, serif;
+	}
+
+	.font-mono-variable {
+		--font-mono: var(--font-jetbrains-mono), "SFMono-Regular", Menlo, Consolas, monospace;
+	}
+
+	.font-cjk-kr-variable {
+		--font-cjk: var(--font-noto-sans-kr), var(--font-manrope), "Segoe UI", system-ui, sans-serif;
+	}
+
+	.font-cyrillic-variable {
+		--font-cyrillic: var(--font-noto-sans), var(--font-inter), var(--font-manrope), "Segoe UI", system-ui, sans-serif;
 	}
 }
 

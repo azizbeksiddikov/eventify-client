@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { Manrope, Inter, Noto_Sans_KR, Noto_Sans, JetBrains_Mono, Lora } from "next/font/google";
 
 // Providers
 import { Providers } from "./providers";
@@ -7,9 +8,49 @@ import { Toaster } from "sonner";
 
 import Header from "@/libs/components/layout/Header";
 import Footer from "@/libs/components/layout/Footer";
+import { FontProvider } from "@/libs/components/layout/FontProvider";
 import { getAbsoluteUrl } from "@/libs/config";
 import "./globals.css";
 import "flag-icons/css/flag-icons.min.css";
+
+// Load fonts from Google Fonts
+const manrope = Manrope({
+	subsets: ["latin"],
+	variable: "--font-manrope",
+	display: "swap",
+});
+
+const inter = Inter({
+	subsets: ["latin", "cyrillic"],
+	variable: "--font-inter",
+	display: "swap",
+});
+
+const notoSansKR = Noto_Sans_KR({
+	subsets: ["latin"],
+	weight: ["400", "500", "600", "700"],
+	variable: "--font-noto-sans-kr",
+	display: "swap",
+});
+
+const notoSans = Noto_Sans({
+	subsets: ["latin", "cyrillic"],
+	weight: ["400", "500", "600", "700"],
+	variable: "--font-noto-sans",
+	display: "swap",
+});
+
+const jetbrainsMono = JetBrains_Mono({
+	subsets: ["latin"],
+	variable: "--font-jetbrains-mono",
+	display: "swap",
+});
+
+const lora = Lora({
+	subsets: ["latin", "cyrillic"],
+	variable: "--font-lora",
+	display: "swap",
+});
 
 export const viewport: Viewport = {
 	width: "device-width",
@@ -70,17 +111,23 @@ export default function RootLayout({
 	children: React.ReactNode;
 }>) {
 	return (
-		<html lang="en" suppressHydrationWarning>
+		<html
+			lang="en"
+			suppressHydrationWarning
+			className={`font-sans font-sans-variable font-serif-variable font-mono-variable ${manrope.variable} ${inter.variable} ${notoSansKR.variable} ${notoSans.variable} ${jetbrainsMono.variable} ${lora.variable}`}
+		>
 			<body className="antialiased w-full">
 				<Providers>
-					<ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-						<Toaster richColors position="top-right" closeButton />
-						<div className="flex flex-col min-h-screen w-full">
-							<Header />
-							<main className="flex-1 w-full flex flex-col">{children}</main>
-							<Footer />
-						</div>
-					</ThemeProvider>
+					<FontProvider>
+						<ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+							<Toaster richColors position="top-right" closeButton />
+							<div className="flex flex-col min-h-screen w-full">
+								<Header />
+								<main className="flex-1 w-full flex flex-col">{children}</main>
+								<Footer />
+							</div>
+						</ThemeProvider>
+					</FontProvider>
 				</Providers>
 			</body>
 		</html>
