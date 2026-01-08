@@ -5,22 +5,37 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      target: deps
+      target: base
     ports:
       - "4000:3000"
     env_file:
-      - .env
+      - .env.dev
     environment:
       - NODE_ENV=development
       - CI=true
+      # Optimize Next.js dev server
+      - WATCHPACK_POLLING=false
     volumes:
       # Mount source code for hot reload (changes reflected without rebuild)
       - ./:/app
-      - /app/node_modules
-      - /app/.next
-    command: sh -c "pnpm install && pnpm run dev"
+      # Use named volumes for better performance and to avoid local conflicts
+      - node_modules_cache:/app/node_modules
+      - next_cache:/app/.next
+    # Avoid reinstalling on every start - dependencies are already in base image
+    command: npm run dev
+    # Logging configuration
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "2"
     networks:
       - client-network
+
+# Named volumes for better caching and performance
+volumes:
+  node_modules_cache:
+  next_cache:
 
 networks:
   client-network:

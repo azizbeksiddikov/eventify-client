@@ -109,7 +109,6 @@ Eventify is a comprehensive event management platform that enables users to disc
 ### Additional Libraries
 
 - **date-fns** - Date utility library
-- **moment** - Date manipulation
 - **react-cropper** - Image cropping
 - **browser-image-compression** - Image optimization
 - **react-markdown** - Markdown rendering
@@ -290,18 +289,24 @@ Translation files are located in `public/locales/`. To add a new language:
 
 ## 🐳 Docker Deployment
 
-### Using Docker Compose
+### Production Deployment
 
 1. **Build and run with Docker Compose**
 
    ```bash
-   docker-compose up -d
+   docker-compose -f docker-compose.prod.yml up -d
    ```
 
 2. **The application will be available at**
    ```
    http://localhost:4000
    ```
+
+### Development Deployment
+
+```bash
+docker-compose -f docker-compose.dev.yml up -d
+```
 
 ### Manual Docker Build
 
@@ -316,10 +321,10 @@ docker run -p 4000:3000 eventify-frontend
 
 | Script       | Description              |
 | ------------ | ------------------------ |
-| `pnpm dev`   | Start development server |
-| `pnpm build` | Create production build  |
-| `pnpm start` | Start production server  |
-| `pnpm lint`  | Run ESLint               |
+| `npm dev`   | Start development server |
+| `npm build` | Create production build  |
+| `npm start` | Start production server  |
+| `npm lint`  | Run ESLint               |
 
 ---
 
