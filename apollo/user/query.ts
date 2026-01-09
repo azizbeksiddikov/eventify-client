@@ -1081,3 +1081,22 @@ export const GET_NOTIFICATIONS: TypedDocumentNode<GetNotificationsQuery, GetNoti
 		}
 	}
 `;
+
+/**************************
+ *         CURRENCY        *
+ *************************/
+
+type GetMemberPointsInCurrencyQuery = {
+	getMemberPointsInCurrency: number;
+};
+type GetMemberPointsInCurrencyQueryVariables = {
+	input: string;
+};
+export const GET_MEMBER_POINTS_IN_CURRENCY: TypedDocumentNode<
+	GetMemberPointsInCurrencyQuery,
+	GetMemberPointsInCurrencyQueryVariables
+> = gql`
+	query GetMemberPointsInCurrency($input: String!) {
+		getMemberPointsInCurrency(currencyCode: $input)
+	}
+`;

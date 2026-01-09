@@ -333,3 +333,44 @@ export const leaveGroup = async (
 		console.log("ERROR, leaveGroupHandler:", errorMessage);
 	}
 };
+
+/**
+ * Format currency amount with symbol and code
+ * @param amount - The amount to format
+ * @param currencyCode - Currency code (e.g., 'USD', 'KRW')
+ * @param symbol - Currency symbol (e.g., '$', '₩')
+ * @returns Formatted currency string (e.g., "$10.00 USD")
+ */
+export const formatCurrency = (amount: number, currencyCode: string, symbol: string): string => {
+	// For currencies like KRW that don't use decimals, don't show decimal places
+	const noDecimalCurrencies = ["KRW", "JPY", "VND"];
+	const decimals = noDecimalCurrencies.includes(currencyCode) ? 0 : 2;
+	
+	return `${symbol}${amount.toFixed(decimals)} ${currencyCode}`;
+};
+
+/**
+ * Format points with proper thousand separators
+ * @param points - The points amount to format
+ * @returns Formatted points string (e.g., "1,000 Points")
+ */
+export const formatPoints = (points: number): string => {
+	return `${points.toLocaleString()} Points`;
+};
+
+/**
+ * Format points with currency conversion
+ * @param points - The points amount
+ * @param currencyValue - The equivalent currency value
+ * @param currencyCode - Currency code (e.g., 'USD', 'KRW')
+ * @param symbol - Currency symbol (e.g., '$', '₩')
+ * @returns Formatted string showing both points and currency (e.g., "1,000 Points (≈ $10.00 USD)")
+ */
+export const formatPointsWithCurrency = (
+	points: number,
+	currencyValue: number,
+	currencyCode: string,
+	symbol: string,
+): string => {
+	return `${formatPoints(points)} (≈ ${formatCurrency(currencyValue, currencyCode, symbol)})`;
+};

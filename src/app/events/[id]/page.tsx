@@ -31,9 +31,7 @@ const ChosenEvent = () => {
 	const isExternalEvent = Boolean(event?.externalUrl) || (event?.origin ? event.origin !== "internal" : false);
 	const [ticketInput, setTicketInput] = useState<TicketInput>({
 		eventId: eventId ?? "",
-		ticketPrice: 0,
-		ticketQuantity: 0,
-		totalPrice: 0,
+		ticketQuantity: 1,
 	});
 
 	const [ticketInquiry, setTicketInquiry] = useState<TicketInquiry>({
@@ -87,12 +85,10 @@ const ChosenEvent = () => {
 			const eventData = getEventData.getEvent;
 			setEvent(eventData as Event);
 
-			if (eventData._id && eventData.eventPrice !== undefined) {
+			if (eventData._id) {
 				setTicketInput({
 					eventId: eventData._id,
-					ticketPrice: eventData.eventPrice,
 					ticketQuantity: 1,
-					totalPrice: eventData.eventPrice,
 				});
 			}
 		}

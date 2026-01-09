@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Users, Users2, Calendar } from "lucide-react";
+import { Users, Users2, Calendar, Coins } from "lucide-react";
 import { useMutation, useQuery, useReactiveVar } from "@apollo/client/react";
 import { userVar } from "@/apollo/store";
 import { MemberType } from "@/libs/enums/member.enum";
@@ -12,6 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/libs/components/ui/t
 import UsersModule from "@/libs/components/admin/users/UsersModule";
 import GroupsModule from "@/libs/components/admin/groups/GroupsModule";
 import EventsModule from "@/libs/components/admin/events/EventsModule";
+import CurrenciesModule from "@/libs/components/admin/currencies/CurrenciesModule";
 
 import { useTranslation } from "next-i18next";
 import { GET_ALL_EVENTS_BY_ADMIN, GET_ALL_GROUPS_BY_ADMIN, GET_ALL_MEMBERS_BY_ADMIN } from "@/apollo/admin/query";
@@ -211,7 +212,7 @@ const AdminHome = ({
 			<div className="hidden md:block">
 				<Tabs value={activeTab} onValueChange={changeTabHandler} className="w-full">
 					{/* TABS LIST */}
-					<TabsList className="grid w-full grid-cols-3 mb-8 h-12">
+					<TabsList className="grid w-full grid-cols-4 mb-8 h-12">
 						<TabsTrigger value="users" className="flex items-center gap-2">
 							<Users className="h-4 w-4" />
 							{t("users")}
@@ -223,6 +224,10 @@ const AdminHome = ({
 						<TabsTrigger value="events" className="flex items-center gap-2">
 							<Calendar className="h-4 w-4" />
 							{t("events")}
+						</TabsTrigger>
+						<TabsTrigger value="currencies" className="flex items-center gap-2">
+							<Coins className="h-4 w-4" />
+							Currencies
 						</TabsTrigger>
 					</TabsList>
 					{/* TABS CONTENT */}
@@ -255,6 +260,9 @@ const AdminHome = ({
 							updateEventHandler={updateEventHandler}
 							removeEventHandler={removeEventHandler}
 						/>
+					</TabsContent>
+					<TabsContent value="currencies" className="mt-0">
+						<CurrenciesModule />
 					</TabsContent>
 				</Tabs>
 			</div>

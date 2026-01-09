@@ -4,6 +4,7 @@ import { Calendar, Users, Ticket, Heart, Star, User } from "lucide-react";
 import { getMemberTypeColor, NEXT_APP_API_URL } from "@/libs/config";
 import { Member } from "@/libs/types/member/member";
 import { Avatar, AvatarImage, AvatarFallback } from "@/libs/components/ui/avatar";
+import { CurrencyConverter } from "@/libs/components/common/CurrencyConverter";
 
 interface ProfileHeaderProps {
 	member: Member;
@@ -85,7 +86,11 @@ export const ProfileHeader = ({ member, groupsCount, ticketsCount }: ProfileHead
 								<div key={index} className="flex flex-col items-center min-w-[120px] p-4 rounded-lg bg-card/50">
 									<div className="flex items-center gap-2 mb-1">
 										<stat.icon className="h-5 w-5 text-primary" />
-										<span className="text-2xl font-bold text-card-foreground">{stat.value}</span>
+										{stat.label === t("points") ? (
+											<CurrencyConverter points={stat.value} showSelector={false} />
+										) : (
+											<span className="text-2xl font-bold text-card-foreground">{stat.value}</span>
+										)}
 									</div>
 									<span className="text-sm font-medium text-muted-foreground">{stat.label}</span>
 								</div>

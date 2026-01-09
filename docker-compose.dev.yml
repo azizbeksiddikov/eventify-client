@@ -18,9 +18,6 @@ services:
     volumes:
       # Mount source code for hot reload (changes reflected without rebuild)
       - ./:/app
-      # Use named volumes for better performance and to avoid local conflicts
-      - node_modules_cache:/app/node_modules
-      - next_cache:/app/.next
     # Avoid reinstalling on every start - dependencies are already in base image
     command: npm run dev
     # Logging configuration
@@ -31,11 +28,6 @@ services:
         max-file: "2"
     networks:
       - client-network
-
-# Named volumes for better caching and performance
-volumes:
-  node_modules_cache:
-  next_cache:
 
 networks:
   client-network:

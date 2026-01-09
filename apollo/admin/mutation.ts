@@ -5,6 +5,8 @@ import { Group } from "@/libs/types/group/group";
 import { GroupUpdateInput } from "@/libs/types/group/group.update";
 import { Event } from "@/libs/types/event/event";
 import { EventUpdateInput } from "@/libs/types/event/event.update";
+import { Currency } from "@/libs/types/currency/currency";
+import { CurrencyRateInput } from "@/libs/types/currency/currency.input";
 
 /**************************
  *         MEMBER          *
@@ -230,3 +232,28 @@ export const REMOVE_EVENT_BY_ADMIN: TypedDocumentNode<RemoveEventByAdminMutation
 			}
 		}
 	`;
+
+/**************************
+ *         CURRENCY        *
+ *************************/
+
+type UpdateCurrencyRateMutation = {
+	updateCurrencyRate: Currency;
+};
+type UpdateCurrencyRateMutationVariables = {
+	input: CurrencyRateInput;
+};
+export const UPDATE_CURRENCY_RATE: TypedDocumentNode<
+	UpdateCurrencyRateMutation,
+	UpdateCurrencyRateMutationVariables
+> = gql`
+	mutation UpdateCurrencyRate($input: CurrencyRateInput!) {
+		updateCurrencyRate(input: $input) {
+			currencyCode
+			currencyName
+			exchangeRate
+			symbol
+			updatedAt
+		}
+	}
+`;

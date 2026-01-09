@@ -3,9 +3,7 @@ import { Direction } from '@/libs/enums/common.enum';
 
 export interface TicketInput {
 	eventId: string;
-	ticketPrice: number;
 	ticketQuantity: number;
-	totalPrice: number;
 }
 
 export interface TISearch {
