@@ -24,7 +24,7 @@ import { NotificationsInquiry } from "@/libs/types/notification/notification.inp
 import { Direction } from "@/libs/enums/common.enum";
 import { NotificationType } from "@/libs/enums/notification.enum";
 import { Notification } from "@/libs/types/notification/notification";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 
 const defaultNotificationsInquiry: NotificationsInquiry = {
 	page: 1,
@@ -72,8 +72,6 @@ export const NotificationDropdown = ({ isMobile = false }: NotificationDropdownP
 	const { t } = useTranslation("header");
 	const router = useRouter();
 
-	const [notifications, setNotifications] = useState<Notification[]>([]);
-	const [unreadCount, setUnreadCount] = useState(0);
 	const [isOpen, setIsOpen] = useState(false);
 
 	/** APOLLO REQUESTS */
@@ -87,12 +85,13 @@ export const NotificationDropdown = ({ isMobile = false }: NotificationDropdownP
 		fetchPolicy: "cache-and-network",
 	});
 
-	/** LIFECYCLES */
-	useEffect(() => {
-		if (notificationsData) {
-			setNotifications(notificationsData.getNotifications.list || []);
-			setUnreadCount(notificationsData.getNotifications.metaCounter[0]?.total || 0);
-		}
+	/** DERIVED STATE */
+	const notifications = useMemo<Notification[]>(() => {
+		return notificationsData?.getNotifications?.list || [];
+	}, [notificationsData]);
+
+	const unreadCount = useMemo(() => {
+		return notificationsData?.getNotifications?.metaCounter?.[0]?.total || 0;
 	}, [notificationsData]);
 
 	// Close desktop dropdown on resize to mobile

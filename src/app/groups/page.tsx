@@ -106,7 +106,7 @@ const GroupsPage = ({
 
 	useEffect(() => {
 		getGroupsRefetch({ input: groupsSearchFilters }).then();
-	}, [groupsSearchFilters]);
+	}, [groupsSearchFilters, getGroupsRefetch]);
 
 	useEffect(() => {
 		if (getGroupsData) {

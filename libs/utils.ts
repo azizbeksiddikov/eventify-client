@@ -10,9 +10,8 @@ import { NEXT_APP_API_URL } from "@/libs/config";
 // Type for Apollo Client mutation functions
 // The mutation function from useMutation accepts options with variables
 // Using a flexible type that accepts any function matching the mutation pattern
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type MutationFunction<TData = unknown, TVariables extends Record<string, unknown> = Record<string, unknown>> = (
-	options: { variables: TVariables } & Record<string, any>,
+	options: { variables: TVariables } & Record<string, unknown>,
 ) => Promise<ApolloLink.Result<TData>>;
 
 export function cn(...inputs: ClassValue[]) {
