@@ -11,6 +11,8 @@ import { CommentsInquiry } from "@/libs/types/comment/comment.input";
 import { Notifications } from "@/libs/types/notification/notification";
 import { NotificationsInquiry } from "@/libs/types/notification/notification.input";
 import { gql, TypedDocumentNode } from "@apollo/client";
+import { CurrencyEntity } from "@/libs/types/currency/currency";
+import { CurrencyInquiry } from "@/libs/types/currency/currency.input";
 
 /**************************
  *         MEMBER         *
@@ -1098,5 +1100,66 @@ export const GET_MEMBER_POINTS_IN_CURRENCY: TypedDocumentNode<
 > = gql`
 	query GetMemberPointsInCurrency($input: String!) {
 		getMemberPointsInCurrency(currencyCode: $input)
+	}
+`;
+
+/**************************
+ *         CURRENCY        *
+ *************************/
+
+type GetCurrenciesQuery = {
+	getCurrencies: CurrencyEntity[];
+};
+type GetCurrenciesQueryVariables = {
+	input: CurrencyInquiry;
+};
+export const GET_CURRENCIES: TypedDocumentNode<GetCurrenciesQuery, GetCurrenciesQueryVariables> = gql`
+	query GetCurrencies($input: CurrencyInquiry!) {
+		getCurrencies(input: $input) {
+			_id
+			currencyCode
+			exchangeRate
+			isActive
+			createdAt
+			updatedAt
+		}
+	}
+`;
+
+type GetCurrencyQuery = {
+	getCurrency: CurrencyEntity;
+};
+type GetCurrencyQueryVariables = {
+	input: string;
+};
+export const GET_CURRENCY: TypedDocumentNode<GetCurrencyQuery, GetCurrencyQueryVariables> = gql`
+	query GetCurrency($input: String!) {
+		getCurrency(input: $input) {
+			_id
+			currencyCode
+			exchangeRate
+			isActive
+			createdAt
+			updatedAt
+		}
+	}
+`;
+
+type GetCurrencyByCodeQuery = {
+	getCurrencyByCode: CurrencyEntity;
+};
+type GetCurrencyByCodeQueryVariables = {
+	input: string;
+};
+export const GET_CURRENCY_BY_CODE: TypedDocumentNode<GetCurrencyByCodeQuery, GetCurrencyByCodeQueryVariables> = gql`
+	query GetCurrencyByCode($input: String!) {
+		getCurrencyByCode(input: $input) {
+			_id
+			currencyCode
+			exchangeRate
+			isActive
+			createdAt
+			updatedAt
+		}
 	}
 `;

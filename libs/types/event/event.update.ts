@@ -1,4 +1,3 @@
-import { Currency } from "@/libs/enums/common.enum";
 import { EventStatus, EventCategory, EventLocationType } from "@/libs/enums/event.enum";
 
 export interface EventUpdateInput {
@@ -29,7 +28,7 @@ export interface EventUpdateInput {
 	coordinateLongitude?: number;
 	eventCapacity?: number;
 	eventPrice?: number;
-	eventCurrency?: Currency;
+	eventCurrency?: string;
 
 	// ===== Type and Status =====
 	eventStatus?: EventStatus;

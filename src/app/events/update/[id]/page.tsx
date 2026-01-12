@@ -27,7 +27,6 @@ import { GET_EVENT } from "@/apollo/user/query";
 import { UPDATE_EVENT_BY_ORGANIZER } from "@/apollo/user/mutation";
 import { EventUpdateInput } from "@/libs/types/event/event.update";
 import { smallError, smallSuccess } from "@/libs/alert";
-import { Currency } from "@/libs/enums/common.enum";
 import { uploadImage } from "@/libs/upload";
 import { getImageUrl } from "@/libs/utils";
 
@@ -322,7 +321,7 @@ const EventUpdatePage = () => {
 							<CapacityAndPriceFields
 								capacity={formData.eventCapacity}
 								price={formData.eventPrice}
-								currency={formData.eventCurrency || Currency.USD}
+								currency={formData.eventCurrency || ""}
 								onCapacityChange={inputHandler}
 								onPriceChange={inputHandler}
 								onCurrencyChange={(currency) => {

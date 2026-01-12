@@ -2,7 +2,6 @@ import { EventStatus, EventCategory, EventType, RecurrenceType, EventLocationTyp
 import { Member, TotalCounter } from "@/libs/types/member/member";
 import { Group } from "@/libs/types/group/group";
 import { MeLiked } from "@/libs/types/like/like";
-import { Currency } from "@/libs/enums/common.enum";
 
 export interface Event {
 	// ===== Basic Information =====
@@ -29,7 +28,7 @@ export interface Event {
 	// ===== Event Details =====
 	eventCapacity?: number;
 	eventPrice: number;
-	eventCurrency?: Currency;
+	eventCurrency?: string;
 
 	// ===== Type and Status =====
 	eventStatus: EventStatus;
@@ -93,7 +92,7 @@ export interface EventRecurrence {
 	coordinateLongitude?: number;
 	eventCapacity?: number;
 	eventPrice: number;
-	eventCurrency?: Currency;
+	eventCurrency?: string;
 	eventCategories: EventCategory[];
 	eventTags: string[];
 	eventStatus: EventStatus;

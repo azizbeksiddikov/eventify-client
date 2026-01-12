@@ -68,11 +68,3 @@ export enum Direction {
 	ASC = "ASC",
 	DESC = "DESC",
 }
-
-// ===== Currency =====
-export enum Currency {
-	KRW = "KRW",
-	USD = "USD",
-	JPY = "JPY",
-	EUR = "EUR",
-}

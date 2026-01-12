@@ -1,4 +1,4 @@
-import { Currency, Direction } from "@/libs/enums/common.enum";
+import { Direction } from "@/libs/enums/common.enum";
 import { EventStatus, EventCategory, EventType, RecurrenceType, EventLocationType } from "@/libs/enums/event.enum";
 
 // ============== Event Creation Input ==============
@@ -28,7 +28,7 @@ export interface EventInput {
 	// ===== Event Details =====
 	eventCapacity?: number;
 	eventPrice?: number;
-	eventCurrency?: Currency;
+	eventCurrency?: string;
 
 	// ===== Type and Status =====
 	eventStatus?: EventStatus;
@@ -105,7 +105,7 @@ export interface EventRecurrenceInput {
 	coordinateLongitude?: number;
 	eventCapacity?: number;
 	eventPrice?: number;
-	eventCurrency?: Currency;
+	eventCurrency?: string;
 	eventStatus?: EventStatus;
 	eventCategories: EventCategory[];
 	eventTags: string[];
@@ -143,7 +143,7 @@ export interface EventRecurrenceUpdateInput {
 
 	eventCapacity?: number;
 	eventPrice?: number;
-	eventCurrency?: Currency;
+	eventCurrency?: string;
 	eventStatus?: EventStatus;
 	eventCategories?: EventCategory[];
 	eventTags?: string[];

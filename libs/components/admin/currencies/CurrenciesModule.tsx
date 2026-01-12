@@ -3,37 +3,37 @@
 import { useState } from "react";
 import { useQuery, useMutation } from "@apollo/client/react";
 import { Pencil, Check, X, AlertCircle } from "lucide-react";
-import { GET_CURRENCIES } from "@/apollo/admin/query";
-import { UPDATE_CURRENCY_RATE } from "@/apollo/admin/mutation";
-import { Currency } from "@/libs/types/currency/currency";
+import { GET_CURRENCIES } from "@/apollo/user/query";
+import { UPDATE_CURRENCY } from "@/apollo/admin/mutation";
+import { CurrencyEntity } from "@/libs/types/currency/currency";
+import { CurrencyUpdate } from "@/libs/types/currency/currnecy.update";
 import { smallSuccess, smallError } from "@/libs/alert";
 import { Button } from "@/libs/components/ui/button";
 import { Input } from "@/libs/components/ui/input";
-import {
-	Table,
-	TableBody,
-	TableCell,
-	TableHead,
-	TableHeader,
-	TableRow,
-} from "@/libs/components/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/libs/components/ui/table";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/libs/components/ui/card";
-import { Alert, AlertDescription } from "@/libs/components/ui/alert";
 
 export default function CurrenciesModule() {
 	const [editingCurrency, setEditingCurrency] = useState<string | null>(null);
 	const [newRate, setNewRate] = useState<string>("");
 
 	const { data, loading, error, refetch } = useQuery(GET_CURRENCIES, {
+		variables: {
+			input: {
+				search: {
+					isActive: true,
+				},
+			},
+		},
 		fetchPolicy: "cache-and-network",
 	});
 
-	const [updateCurrencyRate, { loading: updating }] = useMutation(UPDATE_CURRENCY_RATE);
+	const [updateCurrency, { loading: updating }] = useMutation(UPDATE_CURRENCY);
 
-	const currencies: Currency[] = data?.getCurrencies || [];
+	const currencies: CurrencyEntity[] = data?.getCurrencies || [];
 
-	const handleEdit = (currency: Currency) => {
-		setEditingCurrency(currency.currencyCode);
+	const handleEdit = (currency: CurrencyEntity) => {
+		setEditingCurrency(currency._id);
 		setNewRate(currency.exchangeRate.toString());
 	};
 
@@ -42,7 +42,7 @@ export default function CurrenciesModule() {
 		setNewRate("");
 	};
 
-	const handleSave = async (currencyCode: string) => {
+	const handleSave = async (currencyId: string) => {
 		const rate = parseFloat(newRate);
 		if (isNaN(rate) || rate <= 0) {
 			smallError("Please enter a valid positive number");
@@ -50,12 +50,20 @@ export default function CurrenciesModule() {
 		}
 
 		try {
-			await updateCurrencyRate({
+			const currency = currencies.find((c) => c._id === currencyId);
+			if (!currency) {
+				smallError("Currency not found");
+				return;
+			}
+
+			const updateInput: CurrencyUpdate = {
+				_id: currencyId,
+				exchangeRate: rate,
+			};
+
+			await updateCurrency({
 				variables: {
-					input: {
-						currencyCode,
-						exchangeRate: rate,
-					},
+					input: updateInput,
 				},
 			});
 
@@ -83,10 +91,12 @@ export default function CurrenciesModule() {
 
 	if (error) {
 		return (
-			<Alert variant="destructive">
-				<AlertCircle className="h-4 w-4" />
-				<AlertDescription>Failed to load currencies: {error.message}</AlertDescription>
-			</Alert>
+			<div className="p-4 border border-red-300 rounded-md bg-red-50">
+				<div className="flex items-center gap-2">
+					<AlertCircle className="h-4 w-4 text-red-600" />
+					<span className="text-red-600">Failed to load currencies: {error.message}</span>
+				</div>
+			</div>
 		);
 	}
 
@@ -94,25 +104,24 @@ export default function CurrenciesModule() {
 		<Card>
 			<CardHeader>
 				<CardTitle>Currency Management</CardTitle>
-				<CardDescription>
-					Manage exchange rates for the point system. 1 unit of currency = X points.
-				</CardDescription>
-				<Alert>
-					<AlertCircle className="h-4 w-4" />
-					<AlertDescription>
-						<strong>Important:</strong> Rate changes only affect future ticket purchases. Existing tickets keep
-						their original point cost.
-					</AlertDescription>
-				</Alert>
+				<CardDescription>Manage exchange rates for the point system. 1 unit of currency = X points.</CardDescription>
+				<div className="p-4 border border-yellow-300 rounded-md bg-yellow-50">
+					<div className="flex items-start gap-2">
+						<AlertCircle className="h-4 w-4 text-yellow-600 mt-0.5" />
+						<div className="text-yellow-800">
+							<strong>Important:</strong> Rate changes only affect future ticket purchases. Existing tickets keep their
+							original point cost.
+						</div>
+					</div>
+				</div>
 			</CardHeader>
 			<CardContent>
 				<Table>
 					<TableHeader>
 						<TableRow>
 							<TableHead>Currency Code</TableHead>
-							<TableHead>Name</TableHead>
-							<TableHead>Symbol</TableHead>
 							<TableHead>Exchange Rate (Points per 1 Unit)</TableHead>
+							<TableHead>Status</TableHead>
 							<TableHead>Last Updated</TableHead>
 							<TableHead className="text-right">Actions</TableHead>
 						</TableRow>
@@ -120,18 +129,16 @@ export default function CurrenciesModule() {
 					<TableBody>
 						{currencies.length === 0 ? (
 							<TableRow>
-								<TableCell colSpan={6} className="text-center text-muted-foreground">
+								<TableCell colSpan={5} className="text-center text-muted-foreground">
 									No currencies found
 								</TableCell>
 							</TableRow>
 						) : (
 							currencies.map((currency) => (
-								<TableRow key={currency.currencyCode}>
+								<TableRow key={currency._id}>
 									<TableCell className="font-medium">{currency.currencyCode}</TableCell>
-									<TableCell>{currency.currencyName}</TableCell>
-									<TableCell className="text-2xl">{currency.symbol}</TableCell>
 									<TableCell>
-										{editingCurrency === currency.currencyCode ? (
+										{editingCurrency === currency._id ? (
 											<div className="flex items-center gap-2">
 												<Input
 													type="number"
@@ -148,16 +155,19 @@ export default function CurrenciesModule() {
 											<span>{currency.exchangeRate.toFixed(2)} points</span>
 										)}
 									</TableCell>
-									<TableCell className="text-sm text-muted-foreground">
-										{formatDate(currency.updatedAt)}
+									<TableCell>
+										<span className={`text-sm ${currency.isActive ? "text-green-600" : "text-gray-400"}`}>
+											{currency.isActive ? "Active" : "Inactive"}
+										</span>
 									</TableCell>
+									<TableCell className="text-sm text-muted-foreground">{formatDate(currency.updatedAt)}</TableCell>
 									<TableCell className="text-right">
-										{editingCurrency === currency.currencyCode ? (
+										{editingCurrency === currency._id ? (
 											<div className="flex items-center justify-end gap-2">
 												<Button
 													size="sm"
 													variant="default"
-													onClick={() => handleSave(currency.currencyCode)}
+													onClick={() => handleSave(currency._id)}
 													disabled={updating}
 												>
 													<Check className="h-4 w-4" />
@@ -167,12 +177,7 @@ export default function CurrenciesModule() {
 												</Button>
 											</div>
 										) : (
-											<Button
-												size="sm"
-												variant="ghost"
-												onClick={() => handleEdit(currency)}
-												disabled={updating}
-											>
+											<Button size="sm" variant="ghost" onClick={() => handleEdit(currency)} disabled={updating}>
 												<Pencil className="h-4 w-4" />
 											</Button>
 										)}

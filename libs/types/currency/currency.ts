@@ -1,12 +1,19 @@
-export interface Currency {
-	currencyCode: string;
-	currencyName: string;
-	exchangeRate: number;
-	symbol: string;
-	updatedAt?: Date;
-}
+export interface CurrencyEntity {
+	// ===== Basic Information =====
+	_id: string;
 
-export interface Currencies {
-	list: Currency[];
-	metaCounter?: { total: number }[];
+	// ===== Currency Information =====
+	currencyCode: string;
+
+	/**
+	 * Exchange rate: USD per internal point
+	 * Example: If exchangeRate = 0.01, then 1 internal point = 0.01 USD
+	 * This means internal points are the base currency
+	 */
+	exchangeRate: number;
+	isActive: boolean;
+
+	// ===== Timestamps =====
+	createdAt: Date;
+	updatedAt: Date;
 }

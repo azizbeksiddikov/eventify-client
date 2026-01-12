@@ -2,7 +2,6 @@ import numeral from "numeral";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { Message } from "@/libs/enums/common.enum";
-import { Currency } from "@/libs/enums/common.enum";
 import { smallError, smallInfo, smallSuccess } from "@/libs/alert";
 import { TFunction } from "i18next";
 import { ApolloLink } from "@apollo/client";
@@ -150,7 +149,7 @@ export const formatPhoneNumber = (value: string) => {
  * @param freeText - Optional text to display when price is 0 or free (defaults to "Free")
  * @returns Formatted price string
  */
-export const formatPrice = (price: number, currency?: Currency, freeText: string = "Free"): string => {
+export const formatPrice = (price: number, currency?: string, freeText: string = "Free"): string => {
 	if (!price || price === 0) return freeText;
 	if (currency) {
 		try {
@@ -345,7 +344,7 @@ export const formatCurrency = (amount: number, currencyCode: string, symbol: str
 	// For currencies like KRW that don't use decimals, don't show decimal places
 	const noDecimalCurrencies = ["KRW", "JPY", "VND"];
 	const decimals = noDecimalCurrencies.includes(currencyCode) ? 0 : 2;
-	
+
 	return `${symbol}${amount.toFixed(decimals)} ${currencyCode}`;
 };
 

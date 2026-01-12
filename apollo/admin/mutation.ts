@@ -5,8 +5,9 @@ import { Group } from "@/libs/types/group/group";
 import { GroupUpdateInput } from "@/libs/types/group/group.update";
 import { Event } from "@/libs/types/event/event";
 import { EventUpdateInput } from "@/libs/types/event/event.update";
-import { Currency } from "@/libs/types/currency/currency";
-import { CurrencyRateInput } from "@/libs/types/currency/currency.input";
+import { CurrencyEntity } from "@/libs/types/currency/currency";
+import { CurrencyInput } from "@/libs/types/currency/currency.input";
+import { CurrencyUpdate } from "@/libs/types/currency/currnecy.update";
 
 /**************************
  *         MEMBER          *
@@ -237,22 +238,58 @@ export const REMOVE_EVENT_BY_ADMIN: TypedDocumentNode<RemoveEventByAdminMutation
  *         CURRENCY        *
  *************************/
 
-type UpdateCurrencyRateMutation = {
-	updateCurrencyRate: Currency;
+type CreateCurrencyMutation = {
+	createCurrency: CurrencyEntity;
 };
-type UpdateCurrencyRateMutationVariables = {
-	input: CurrencyRateInput;
+type CreateCurrencyMutationVariables = {
+	input: CurrencyInput;
 };
-export const UPDATE_CURRENCY_RATE: TypedDocumentNode<
-	UpdateCurrencyRateMutation,
-	UpdateCurrencyRateMutationVariables
-> = gql`
-	mutation UpdateCurrencyRate($input: CurrencyRateInput!) {
-		updateCurrencyRate(input: $input) {
+export const CREATE_CURRENCY: TypedDocumentNode<CreateCurrencyMutation, CreateCurrencyMutationVariables> = gql`
+	mutation CreateCurrency($input: CurrencyInput!) {
+		createCurrency(input: $input) {
+			_id
 			currencyCode
-			currencyName
 			exchangeRate
-			symbol
+			isActive
+			createdAt
+			updatedAt
+		}
+	}
+`;
+
+type UpdateCurrencyMutation = {
+	updateCurrency: CurrencyEntity;
+};
+type UpdateCurrencyMutationVariables = {
+	input: CurrencyUpdate;
+};
+export const UPDATE_CURRENCY: TypedDocumentNode<UpdateCurrencyMutation, UpdateCurrencyMutationVariables> = gql`
+	mutation UpdateCurrency($input: CurrencyUpdate!) {
+		updateCurrency(input: $input) {
+			_id
+			currencyCode
+			exchangeRate
+			isActive
+			createdAt
+			updatedAt
+		}
+	}
+`;
+
+type RemoveCurrencyMutation = {
+	removeCurrency: CurrencyEntity;
+};
+type RemoveCurrencyMutationVariables = {
+	input: string;
+};
+export const REMOVE_CURRENCY: TypedDocumentNode<RemoveCurrencyMutation, RemoveCurrencyMutationVariables> = gql`
+	mutation RemoveCurrency($input: String!) {
+		removeCurrency(input: $input) {
+			_id
+			currencyCode
+			exchangeRate
+			isActive
+			createdAt
 			updatedAt
 		}
 	}

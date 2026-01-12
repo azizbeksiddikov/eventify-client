@@ -5,7 +5,6 @@ import { Groups } from "@/libs/types/group/group";
 import { GroupsInquiry } from "@/libs/types/group/group.input";
 import { Events } from "@/libs/types/event/event";
 import { EventsInquiry } from "@/libs/types/event/event.input";
-import { Currency } from "@/libs/types/currency/currency";
 
 /**************************
  *         MEMBER          *
@@ -135,23 +134,3 @@ export const GET_ALL_EVENTS_BY_ADMIN: TypedDocumentNode<GetAllEventsByAdminQuery
 			}
 		}
 	`;
-
-/**************************
- *         CURRENCY        *
- *************************/
-
-type GetCurrenciesQuery = {
-	getCurrencies: Currency[];
-};
-type GetCurrenciesQueryVariables = Record<string, never>;
-export const GET_CURRENCIES: TypedDocumentNode<GetCurrenciesQuery, GetCurrenciesQueryVariables> = gql`
-	query GetCurrencies {
-		getCurrencies {
-			currencyCode
-			currencyName
-			exchangeRate
-			symbol
-			updatedAt
-		}
-	}
-`;

@@ -1,17 +1,19 @@
 "use client";
 
 import { useTranslation } from "next-i18next";
+import { useQuery } from "@apollo/client/react";
 import { Input } from "@/libs/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/libs/components/ui/select";
-import { Currency } from "@/libs/enums/common.enum";
+import { GET_CURRENCIES } from "@/apollo/user/query";
+import { CurrencyEntity } from "@/libs/types/currency/currency";
 
 interface CapacityAndPriceFieldsProps {
 	capacity: number | undefined;
 	price: number | undefined;
-	currency: Currency;
+	currency: string;
 	onCapacityChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 	onPriceChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-	onCurrencyChange: (currency: Currency) => void;
+	onCurrencyChange: (currency: string) => void;
 	className?: string;
 }
 
@@ -25,6 +27,25 @@ export const CapacityAndPriceFields = ({
 	className,
 }: CapacityAndPriceFieldsProps) => {
 	const { t } = useTranslation("events");
+
+	// Fetch only active currencies from database for event create/update
+	const { data, loading } = useQuery(GET_CURRENCIES, {
+		variables: {
+			input: {
+				search: {
+					isActive: true,
+				},
+			},
+		},
+		fetchPolicy: "cache-first",
+	});
+
+	const currencies: CurrencyEntity[] = data?.getCurrencies || [];
+	// All currencies returned are already active (filtered by query)
+	const activeCurrencies = currencies;
+	// Set USD if available, otherwise use the first currency
+	const defaultCurrency =
+		activeCurrencies.find((c) => c.currencyCode === "USD")?.currencyCode || activeCurrencies[0]?.currencyCode || "";
 
 	return (
 		<div className={`grid grid-cols-1 sm:grid-cols-2 gap-4 ${className || ""}`}>
@@ -58,14 +79,18 @@ export const CapacityAndPriceFields = ({
 						placeholder={t("enter_event_price")}
 						className={className}
 					/>
-					<Select value={currency || Currency.USD} onValueChange={onCurrencyChange}>
+					<Select
+						value={currency || defaultCurrency}
+						onValueChange={onCurrencyChange}
+						disabled={loading || activeCurrencies.length === 0}
+					>
 						<SelectTrigger className={`w-24 ${className || ""}`}>
-							<SelectValue placeholder={t("currency")} />
+							<SelectValue placeholder={loading ? t("loading") : t("currency")} />
 						</SelectTrigger>
 						<SelectContent className={className}>
-							{Object.values(Currency).map((curr) => (
-								<SelectItem key={curr} value={curr} className={className}>
-									{curr}
+							{activeCurrencies.map((curr) => (
+								<SelectItem key={curr.currencyCode} value={curr.currencyCode} className={className}>
+									{curr.currencyCode}
 								</SelectItem>
 							))}
 						</SelectContent>

@@ -34,8 +34,7 @@ import { CREATE_EVENT, CREATE_RECURRING_EVENT } from "@/apollo/user/mutation";
 import { EventInput, EventRecurrenceInput } from "@/libs/types/event/event.input";
 import { Group } from "@/libs/types/group/group";
 import { smallError, smallSuccess } from "@/libs/alert";
-import { Currency } from "@/libs/enums/common.enum";
-import { imageTypes, NEXT_APP_API_URL } from "@/libs/config";
+import { NEXT_APP_API_URL } from "@/libs/config";
 import { uploadImage } from "@/libs/upload";
 
 const EventCreatePage = () => {
@@ -110,7 +109,7 @@ const EventCreatePage = () => {
 		groupId: "",
 		eventCategories: [],
 		eventTags: [],
-		eventCurrency: Currency.USD,
+		eventCurrency: "",
 		isRealEvent: true,
 	});
 
@@ -721,7 +720,7 @@ const EventCreatePage = () => {
 						<CapacityAndPriceFields
 							capacity={formData.eventCapacity}
 							price={formData.eventPrice}
-							currency={formData.eventCurrency || Currency.USD}
+							currency={formData.eventCurrency || ""}
 							onCapacityChange={inputHandler}
 							onPriceChange={inputHandler}
 							onCurrencyChange={(currency) => {
