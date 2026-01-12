@@ -32,6 +32,8 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
+    # Memory limit for production container (800 MB)
+    mem_limit: 800m
     networks:
       - client-network
 
