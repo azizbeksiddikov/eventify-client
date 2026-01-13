@@ -75,7 +75,6 @@ export function getImageUrl(imageUrl: string, type: "event" | "group" | "member"
 	// If origin is not 'internal', use the original image URL directly
 	if (type === "event" && origin && origin !== "internal") return imageUrl;
 
-	console.log("imageUrl", `${NEXT_APP_API_URL}/${imageUrl}`);
 	return `${NEXT_APP_API_URL}/${imageUrl}`;
 }
 
