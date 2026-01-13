@@ -11,6 +11,6 @@ export async function GET() {
 				total: Math.round(process.memoryUsage().heapTotal / 1024 / 1024),
 			},
 		},
-		{ status: 200 }
+		{ status: 200 },
 	);
 }

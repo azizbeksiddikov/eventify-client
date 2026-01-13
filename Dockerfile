@@ -54,7 +54,7 @@ FROM node:24-alpine AS runner
 WORKDIR /app
 
 # Install only runtime dependencies
-RUN apk add --no-cache dumb-init && \
+RUN apk add --no-cache dumb-init wget && \
     rm -rf /var/cache/apk/*
 
 ENV NODE_ENV=production
@@ -76,6 +76,8 @@ USER nextjs
 EXPOSE 3000
 
 ENV PORT=3000
+# CRITICAL: Bind to 0.0.0.0 to accept connections from Docker health checks
+ENV HOSTNAME=0.0.0.0
 
 # Use dumb-init to handle signals properly
 ENTRYPOINT ["dumb-init", "--"]
