@@ -50,12 +50,15 @@ const Header = () => {
 	const { t } = useTranslation("header");
 	const { locale, changeLocale } = useI18n();
 	const pathname = usePathname();
-	const authMember = useReactiveVar(userVar) as unknown as Member;
+	const authMember = useReactiveVar(userVar);
 	const router = useRouter();
 	// Important: keep the very first render deterministic so SSR === first client render.
 	// We'll sync from localStorage after mount to avoid hydration mismatches (e.g. fi-us vs fi-kr).
 
 	const selectedLanguage = languages.find((l) => l.code === locale) ?? languages[0];
+
+	// Helper to check if user is admin
+	const isAdmin = authMember.memberType === MemberType.ADMIN || authMember.memberType === "ADMIN";
 
 	/** LIFECYCLES **/
 
@@ -85,7 +88,7 @@ const Header = () => {
 
 	return (
 		<header className="sticky top-0 z-50 bg-background/80 backdrop-blur-sm border-b w-full">
-			<div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12 lg:px-20 grid grid-cols-2 xl:grid-cols-3 items-center h-14 sm:h-16 md:h-20">
+			<div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12 lg:px-20 grid grid-cols-2 xl:grid-cols-[auto_1fr_auto] items-center gap-4 h-14 sm:h-16 md:h-20">
 				{/* Logo */}
 				<Link
 					href="/"
@@ -96,7 +99,7 @@ const Header = () => {
 				</Link>
 
 				{/* Navigation - Hidden below xl (1200px), shown on xl+ - Centered */}
-				<nav className="hidden xl:flex items-center justify-center gap-4 lg:gap-6 xl:gap-8">
+				<nav className="hidden xl:flex items-center justify-center gap-3 lg:gap-4 xl:gap-5">
 					{navLinks.map((link, index) => (
 						<Link
 							key={index}
@@ -111,7 +114,7 @@ const Header = () => {
 							{t(link.label)}
 						</Link>
 					))}
-					{authMember.memberType === MemberType.ADMIN && (
+					{isAdmin && (
 						<Link
 							href={adminLink.href}
 							className={cn(
@@ -311,7 +314,7 @@ const Header = () => {
 											</Link>
 										);
 									})}
-									{authMember.memberType === MemberType.ADMIN && (
+									{isAdmin && (
 										<Link
 											href={adminLink.href}
 											onClick={() => setIsMobileMenuOpen(false)}

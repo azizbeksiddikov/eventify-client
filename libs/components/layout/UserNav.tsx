@@ -16,8 +16,9 @@ import {
 
 import { logOut } from "@/libs/auth";
 import { Member } from "@/libs/types/member/member";
+import { CustomJwtPayload } from "@/libs/types/customJwtPayload";
 import { NEXT_APP_API_URL } from "@/libs/config";
-export function UserNav({ authMember }: { authMember: Member }) {
+export function UserNav({ authMember }: { authMember: Member | CustomJwtPayload }) {
 	const router = useRouter();
 	const { t } = useTranslation("header");
 	return (

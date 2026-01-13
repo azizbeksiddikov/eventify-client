@@ -1,25 +1,28 @@
-import { makeVar } from '@apollo/client';
+import { makeVar } from "@apollo/client";
 
-import { CustomJwtPayload } from '@/libs/types/customJwtPayload';
+import { CustomJwtPayload } from "@/libs/types/customJwtPayload";
+import { MemberType, MemberStatus } from "@/libs/enums/member.enum";
+
 export const themeVar = makeVar({});
 
 export const userVar = makeVar<CustomJwtPayload>({
-	_id: '',
-	username: '',
-	memberEmail: '',
-	memberPhone: '',
-	memberFullName: '',
-	memberType: '',
-	memberStatus: '',
+	_id: "",
+	username: "",
+	memberEmail: "",
+	memberPhone: "",
+	memberFullName: "",
+	memberType: "" as MemberType | string,
+	memberStatus: "" as MemberStatus | string,
 	emailVerified: false,
-	memberDesc: '',
-	memberImage: '',
+	memberDesc: "",
+	memberImage: "",
 	memberPoints: 0,
 	memberLikes: 0,
 	memberFollowings: 0,
 	memberFollowers: 0,
 	memberViews: 0,
 	eventOrganizedCount: 0,
+	eventsOrganizedCount: 0,
 	memberRank: 0,
 	memberGroups: 0,
 	memberEvents: 0,

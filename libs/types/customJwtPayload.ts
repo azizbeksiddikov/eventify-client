@@ -1,4 +1,5 @@
-import { JwtPayload } from 'jwt-decode';
+import { JwtPayload } from "jwt-decode";
+import { MemberType, MemberStatus } from "@/libs/enums/member.enum";
 
 export interface CustomJwtPayload extends JwtPayload {
 	_id: string;
@@ -6,8 +7,8 @@ export interface CustomJwtPayload extends JwtPayload {
 	memberEmail: string;
 	memberPhone?: string;
 	memberFullName: string;
-	memberType: string;
-	memberStatus: string;
+	memberType: MemberType | string;
+	memberStatus: MemberStatus | string;
 	emailVerified: boolean;
 	memberDesc?: string;
 	memberImage?: string;
@@ -20,6 +21,7 @@ export interface CustomJwtPayload extends JwtPayload {
 	memberEvents: number;
 	memberRank: number;
 	eventOrganizedCount: number;
+	eventsOrganizedCount: number;
 	createdAt: Date;
 	updatedAt: Date;
 }
