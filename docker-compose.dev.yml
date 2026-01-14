@@ -16,9 +16,19 @@ services:
       # Optimize Next.js dev server
       - WATCHPACK_POLLING=false
     volumes:
-      # Mount source code for hot reload (changes reflected without rebuild)
-      - ./:/app
-    # Avoid reinstalling on every start - dependencies are already in base image
+      # Mount only source code directories for hot reload (exclude node_modules)
+      - ./src:/app/src
+      - ./libs:/app/libs
+      - ./apollo:/app/apollo
+      - ./public:/app/public
+      - ./next.config.ts:/app/next.config.ts
+      - ./tsconfig.json:/app/tsconfig.json
+      - ./postcss.config.mjs:/app/postcss.config.mjs
+      - ./next-i18next.config.js:/app/next-i18next.config.js
+      - ./components.json:/app/components.json
+      - ./package.json:/app/package.json
+      - ./package-lock.json:/app/package-lock.json
+    # Dependencies are already installed in base image, just start dev server
     command: npm run dev
     # Logging configuration
     logging:
