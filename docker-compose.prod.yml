@@ -1,6 +1,6 @@
 services:
   eventify-next:
-    container_name: eventify-next
+    container_name: eventify-next-prod
     restart: always
     image: eventify-next:latest
     build:
@@ -10,7 +10,7 @@ services:
         NEXT_PUBLIC_API_GRAPHQL_URL: ${NEXT_PUBLIC_API_GRAPHQL_URL}
         NEXT_APP_API_URL: ${NEXT_APP_API_URL}
     ports:
-      - "4000:3000"
+      - "5000:3000"
     env_file:
       - .env
     # Health check to ensure container is running properly
@@ -36,9 +36,3 @@ services:
         max-file: "3"
     # Memory limit for production container (800 MB)
     mem_limit: 800m
-    networks:
-      - client-network
-
-networks:
-  client-network:
-    driver: bridge

@@ -36,9 +36,3 @@ services:
       options:
         max-size: "10m"
         max-file: "2"
-    networks:
-      - client-network
-
-networks:
-  client-network:
-    driver: bridge
