@@ -10,7 +10,7 @@ services:
         NEXT_PUBLIC_API_GRAPHQL_URL: ${NEXT_PUBLIC_API_GRAPHQL_URL}
         NEXT_APP_API_URL: ${NEXT_APP_API_URL}
     ports:
-      - "5000:3000"
+      - "4000:3000"
     env_file:
       - .env
     # Health check to ensure container is running properly
