@@ -1,4 +1,5 @@
 import { useTranslation } from "next-i18next";
+import { useEffect } from "react";
 
 import { Button } from "@/libs/components/ui/button";
 import { Input } from "@/libs/components/ui/input";
@@ -7,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { EventCategory, EventStatus } from "@/libs/enums/event.enum";
 import { EventsInquiry } from "@/libs/types/event/event.input";
 import { Direction } from "@/libs/enums/common.enum";
+import { logger } from "@/libs/logger";
 
 interface EventSearchProps {
 	initialInquiry: EventsInquiry;
@@ -17,18 +19,28 @@ interface EventSearchProps {
 export function EventSearch({ initialInquiry, eventsInquiry, setEventsInquiry }: EventSearchProps) {
 	const { t } = useTranslation(["admin", "events"]);
 
+	useEffect(() => {
+		logger.logComponentLifecycle("EventSearch", "mount");
+		return () => {
+			logger.logComponentLifecycle("EventSearch", "unmount");
+		};
+	}, []);
+
 	/**	 HANDLERS */
 	const searchTextHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const searchText = e.target.value;
+		logger.logUserAction("Event search text changed", { searchText });
 		setEventsInquiry({
 			...eventsInquiry,
 			search: {
 				...eventsInquiry.search,
-				text: e.target.value,
+				text: searchText,
 			},
 		});
 	};
 
 	const inputFieldHandler = (field: string, value: number | string) => {
+		logger.logUserAction("Event search field changed", { field, value });
 		setEventsInquiry({
 			...eventsInquiry,
 			[field]: value,
@@ -36,6 +48,7 @@ export function EventSearch({ initialInquiry, eventsInquiry, setEventsInquiry }:
 	};
 
 	const eventCategoryHandler = (value: string) => {
+		logger.logUserAction("Event category filter changed", { category: value });
 		setEventsInquiry({
 			...eventsInquiry,
 			search: {
@@ -46,6 +59,7 @@ export function EventSearch({ initialInquiry, eventsInquiry, setEventsInquiry }:
 	};
 
 	const eventStatusHandler = (value: string) => {
+		logger.logUserAction("Event status filter changed", { status: value });
 		setEventsInquiry({
 			...eventsInquiry,
 			search: {
@@ -56,6 +70,7 @@ export function EventSearch({ initialInquiry, eventsInquiry, setEventsInquiry }:
 	};
 
 	const clearAllHandler = () => {
+		logger.logUserAction("Event search filters cleared");
 		setEventsInquiry(initialInquiry);
 	};
 

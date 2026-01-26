@@ -25,6 +25,7 @@ import { getJwtToken } from "@/libs/auth";
 import { updateUserInfo } from "@/libs/auth";
 import { EventsInquiry } from "@/libs/types/event/event.input";
 import { Events } from "@/libs/types/event/event";
+import { logger } from "@/libs/logger";
 import {
 	REMOVE_EVENT_BY_ADMIN,
 	REMOVE_GROUP_BY_ADMIN,
@@ -138,65 +139,155 @@ const AdminHome = ({
 
 	/** LIFECYCLE */
 	useEffect(() => {
+		logger.logComponentLifecycle("AdminHome", "mount");
 		const jwt = getJwtToken();
 		if (jwt) updateUserInfo(jwt);
+		return () => {
+			logger.logComponentLifecycle("AdminHome", "unmount");
+		};
 	}, []);
 
 	useEffect(() => {
 		if (user._id && user.memberType !== MemberType.ADMIN) {
+			logger.warn("Unauthorized access attempt to admin page", {
+				userId: user._id,
+				memberType: user.memberType,
+			});
 			smallError("You are not authorized to access this page");
 			router.push("/");
 		}
 	}, [user, router]);
 
+	useEffect(() => {
+		if (userData?.getAllMembersByAdmin) {
+			logger.debug("Members data loaded", {
+				count: members.list.length,
+				total: members.metaCounter[0]?.total || 0,
+			});
+		}
+	}, [userData, members]);
+
+	useEffect(() => {
+		if (groupsData?.getAllGroupsByAdmin) {
+			logger.debug("Groups data loaded", {
+				count: groups.list.length,
+				total: groups.metaCounter[0]?.total || 0,
+			});
+		}
+	}, [groupsData, groups]);
+
+	useEffect(() => {
+		if (eventsData?.getAllEventsByAdmin) {
+			logger.debug("Events data loaded", {
+				count: events.list.length,
+				total: events.metaCounter[0]?.total || 0,
+			});
+		}
+	}, [eventsData, events]);
+
 	/** HANDLERS */
 	const updateMemberHandler = async (member: MemberUpdateInput) => {
 		if (user._id && user.memberType === MemberType.ADMIN) {
-			await updateMember({ variables: { input: member } });
-			// refetchMembers(membersInquiry);
-			smallSuccess("Member updated successfully");
+			logger.logUserAction("Update member", { memberId: member._id });
+			const startTime = Date.now();
+			try {
+				await updateMember({ variables: { input: member } });
+				const duration = Date.now() - startTime;
+				logger.logGraphQLSuccess("mutation", "UPDATE_MEMBER_BY_ADMIN", duration, { memberId: member._id });
+				// refetchMembers(membersInquiry);
+				smallSuccess("Member updated successfully");
+			} catch (error) {
+				logger.logGraphQLError("mutation", "UPDATE_MEMBER_BY_ADMIN", error, { memberId: member._id });
+				throw error;
+			}
 		}
 	};
 
 	const removeMemberHandler = async (memberId: string) => {
 		if (user._id && user.memberType === MemberType.ADMIN) {
-			await removeMember({ variables: { input: memberId } });
-			refetchMembers();
-			smallSuccess("Member removed successfully");
+			logger.logUserAction("Remove member", { memberId });
+			const startTime = Date.now();
+			try {
+				await removeMember({ variables: { input: memberId } });
+				const duration = Date.now() - startTime;
+				logger.logGraphQLSuccess("mutation", "REMOVE_MEMBER_BY_ADMIN", duration, { memberId });
+				refetchMembers();
+				smallSuccess("Member removed successfully");
+			} catch (error) {
+				logger.logGraphQLError("mutation", "REMOVE_MEMBER_BY_ADMIN", error, { memberId });
+				throw error;
+			}
 		}
 	};
 
 	const updateGroupHandler = async (group: GroupUpdateInput) => {
 		if (user._id && user.memberType === MemberType.ADMIN) {
-			await updateGroup({ variables: { input: group } });
-			smallSuccess("Group updated successfully");
+			logger.logUserAction("Update group", { groupId: group._id });
+			const startTime = Date.now();
+			try {
+				await updateGroup({ variables: { input: group } });
+				const duration = Date.now() - startTime;
+				logger.logGraphQLSuccess("mutation", "UPDATE_GROUP_BY_ADMIN", duration, { groupId: group._id });
+				smallSuccess("Group updated successfully");
+			} catch (error) {
+				logger.logGraphQLError("mutation", "UPDATE_GROUP_BY_ADMIN", error, { groupId: group._id });
+				throw error;
+			}
 		}
 	};
 
 	const removeGroupHandler = async (groupId: string) => {
 		if (user._id && user.memberType === MemberType.ADMIN) {
-			await removeGroup({ variables: { input: groupId } });
-			refetchGroups();
-			smallSuccess("Group removed successfully");
+			logger.logUserAction("Remove group", { groupId });
+			const startTime = Date.now();
+			try {
+				await removeGroup({ variables: { input: groupId } });
+				const duration = Date.now() - startTime;
+				logger.logGraphQLSuccess("mutation", "REMOVE_GROUP_BY_ADMIN", duration, { groupId });
+				refetchGroups();
+				smallSuccess("Group removed successfully");
+			} catch (error) {
+				logger.logGraphQLError("mutation", "REMOVE_GROUP_BY_ADMIN", error, { groupId });
+				throw error;
+			}
 		}
 	};
 
 	const updateEventHandler = async (event: EventUpdateInput) => {
 		if (user._id && user.memberType === MemberType.ADMIN) {
-			await updateEvent({ variables: { input: event } });
-			smallSuccess("Event updated successfully");
+			logger.logUserAction("Update event", { eventId: event._id });
+			const startTime = Date.now();
+			try {
+				await updateEvent({ variables: { input: event } });
+				const duration = Date.now() - startTime;
+				logger.logGraphQLSuccess("mutation", "UPDATE_EVENT_BY_ADMIN", duration, { eventId: event._id });
+				smallSuccess("Event updated successfully");
+			} catch (error) {
+				logger.logGraphQLError("mutation", "UPDATE_EVENT_BY_ADMIN", error, { eventId: event._id });
+				throw error;
+			}
 		}
 	};
 
 	const removeEventHandler = async (eventId: string) => {
 		if (user._id && user.memberType === MemberType.ADMIN) {
-			await removeEvent({ variables: { input: eventId } });
-			refetchEvents();
-			smallSuccess("Event removed successfully");
+			logger.logUserAction("Remove event", { eventId });
+			const startTime = Date.now();
+			try {
+				await removeEvent({ variables: { input: eventId } });
+				const duration = Date.now() - startTime;
+				logger.logGraphQLSuccess("mutation", "REMOVE_EVENT_BY_ADMIN", duration, { eventId });
+				refetchEvents();
+				smallSuccess("Event removed successfully");
+			} catch (error) {
+				logger.logGraphQLError("mutation", "REMOVE_EVENT_BY_ADMIN", error, { eventId });
+				throw error;
+			}
 		}
 	};
 
 	const changeTabHandler = (value: string) => {
+		logger.logUserAction("Admin tab changed", { from: activeTab, to: value });
 		setActiveTab(value);
 		localStorage.setItem("adminActiveTab", value);
 	};

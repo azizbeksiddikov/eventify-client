@@ -6,12 +6,16 @@ import { LOGIN, SIGN_UP } from "@/apollo/user/mutation";
 import { CustomJwtPayload } from "@/libs/types/customJwtPayload";
 import { Message } from "@/libs/enums/common.enum";
 import { MemberType } from "@/libs/enums/member.enum";
+import { logger } from "@/libs/logger";
 
 /**
  * Creates a standalone Apollo Client for authentication operations
  * Used for login/signup before the main app client is available
  */
 function createAuthApolloClient() {
+	logger.debug("Creating auth Apollo client", {
+		graphqlUrl: process.env.NEXT_PUBLIC_API_GRAPHQL_URL,
+	});
 	return new ApolloClient({
 		link: new HttpLink({
 			uri: process.env.NEXT_PUBLIC_API_GRAPHQL_URL,
@@ -25,24 +29,31 @@ function createAuthApolloClient() {
  * @returns Token string if exists and valid, undefined otherwise
  */
 export function getJwtToken(): string | undefined {
-	if (typeof window === "undefined") return undefined;
+	if (typeof window === "undefined") {
+		logger.debug("getJwtToken called on server side");
+		return undefined;
+	}
 
 	try {
 		const token = localStorage.getItem("accessToken");
 		if (!token || token === "undefined" || token === "null") {
+			logger.debug("No token found in localStorage");
 			return undefined;
 		}
 
 		// Basic JWT format validation (has 3 parts separated by dots)
 		if (token.split(".").length !== 3) {
-			console.warn("Invalid JWT format detected, clearing token");
+			logger.warn("Invalid JWT format detected, clearing token", {
+				tokenLength: token.length,
+			});
 			deleteStorage();
 			return undefined;
 		}
 
+		logger.debug("JWT token retrieved successfully");
 		return token;
 	} catch (error) {
-		console.error("Error reading token from localStorage:", error);
+		logger.error("Error reading token from localStorage", error);
 		return undefined;
 	}
 }
@@ -52,16 +63,20 @@ export function getJwtToken(): string | undefined {
  * @param token - JWT token string
  */
 export function setJwtToken(token: string) {
-	if (typeof window === "undefined") return;
+	if (typeof window === "undefined") {
+		logger.debug("setJwtToken called on server side");
+		return;
+	}
 
 	try {
 		if (!token || token === "undefined" || token === "null") {
-			console.warn("Attempted to set invalid token");
+			logger.warn("Attempted to set invalid token");
 			return;
 		}
 		localStorage.setItem("accessToken", token);
+		logger.debug("JWT token saved to localStorage");
 	} catch (error) {
-		console.error("Error saving token to localStorage:", error);
+		logger.error("Error saving token to localStorage", error);
 	}
 }
 
@@ -73,13 +88,26 @@ export function setJwtToken(token: string) {
 export function isTokenExpired(token: string): boolean {
 	try {
 		const decoded = jwtDecode<CustomJwtPayload>(token);
-		if (!decoded.exp) return true;
+		if (!decoded.exp) {
+			logger.warn("Token missing expiration claim");
+			return true;
+		}
 
 		// JWT exp is in seconds, Date.now() is in milliseconds
 		const currentTime = Date.now() / 1000;
-		return decoded.exp < currentTime;
+		const isExpired = decoded.exp < currentTime;
+		
+		if (isExpired) {
+			logger.debug("Token is expired", {
+				exp: decoded.exp,
+				currentTime,
+				timeUntilExpiry: decoded.exp - currentTime,
+			});
+		}
+		
+		return isExpired;
 	} catch (error) {
-		console.warn("Error decoding token:", error);
+		logger.warn("Error decoding token", { error });
 		return true;
 	}
 }
@@ -90,15 +118,19 @@ export function isTokenExpired(token: string): boolean {
  */
 export function getValidJwtToken(): string | undefined {
 	const token = getJwtToken();
-	if (!token) return undefined;
+	if (!token) {
+		logger.debug("No token available");
+		return undefined;
+	}
 
 	if (isTokenExpired(token)) {
-		console.warn("Token is expired, clearing storage");
+		logger.warn("Token is expired, clearing storage");
 		deleteStorage();
 		deleteUserInfo();
 		return undefined;
 	}
 
+	logger.debug("Valid JWT token retrieved");
 	return token;
 }
 
@@ -109,29 +141,47 @@ export function getValidJwtToken(): string | undefined {
  * @throws Error if login fails
  */
 export const logIn = async (username: string, memberPassword: string): Promise<void> => {
+	logger.logAuth("Login attempt started", { username });
+	const startTime = Date.now();
+
 	try {
 		// Validate inputs
-		if (!username || !memberPassword) throw new Error("Username and password are required");
+		if (!username || !memberPassword) {
+			logger.logAuth("Login failed: missing credentials", { username });
+			throw new Error("Username and password are required");
+		}
 
+		logger.logGraphQLOperation("mutation", "LOGIN", { username });
 		const { jwtToken } = await requestJwtToken({ username, memberPassword });
 
-		if (!jwtToken) throw new Error("No token received from server");
+		if (!jwtToken) {
+			logger.logAuth("Login failed: no token received", { username });
+			throw new Error("No token received from server");
+		}
 
 		// Validate token before storing
 		if (isTokenExpired(jwtToken)) {
+			logger.logAuth("Login failed: received expired token", { username });
 			throw new Error("Received expired token from server");
 		}
 
 		updateStorage({ jwtToken });
 		updateUserInfo(jwtToken);
+		
+		const duration = Date.now() - startTime;
+		logger.logAuth("Login successful", { username, duration: `${duration}ms` });
+		logger.logGraphQLSuccess("mutation", "LOGIN", duration);
 	} catch (err) {
-		console.error("Login error:", err);
+		const duration = Date.now() - startTime;
+		logger.logAuth("Login failed", { username, duration: `${duration}ms` });
+		logger.logGraphQLError("mutation", "LOGIN", err, { username });
 		deleteStorage();
 		deleteUserInfo();
 
 		// Provide more specific error messages
 		if (err instanceof Error) {
 			if (err.message.includes("Unauthorized") || err.message.includes("Invalid credentials")) {
+				logger.logAuth("Login failed: invalid credentials", { username });
 				throw new Error("Invalid username or password");
 			}
 			throw err;
@@ -148,8 +198,10 @@ const requestJwtToken = async ({
 	memberPassword: string;
 }): Promise<{ jwtToken: string }> => {
 	const apolloClient = createAuthApolloClient();
+	const startTime = Date.now();
 
 	try {
+		logger.debug("Requesting JWT token via GraphQL", { username });
 		const result = await apolloClient.mutate({
 			mutation: LOGIN,
 			variables: { input: { username, memberPassword } },
@@ -158,11 +210,17 @@ const requestJwtToken = async ({
 
 		const accessToken = (result?.data as { login?: { accessToken?: string } })?.login?.accessToken;
 
-		if (!accessToken) throw new Error("No access token in response");
+		if (!accessToken) {
+			logger.error("No access token in response", undefined, { username });
+			throw new Error("No access token in response");
+		}
 
+		const duration = Date.now() - startTime;
+		logger.debug("JWT token received successfully", { username, duration: `${duration}ms` });
 		return { jwtToken: accessToken };
 	} catch (err: unknown) {
-		console.error("JWT token request error:", err);
+		const duration = Date.now() - startTime;
+		logger.error("JWT token request error", err, { username, duration: `${duration}ms` });
 		// Extract meaningful error message from GraphQL errors
 		if (err && typeof err === "object" && "graphQLErrors" in err) {
 			const graphQLErrors = (err as { graphQLErrors: Array<{ message: string }> }).graphQLErrors;
@@ -193,12 +251,17 @@ export const signUp = async (
 	memberFullName: string,
 	memberType: MemberType,
 ): Promise<void> => {
+	logger.logAuth("Signup attempt started", { username, memberEmail, memberType });
+	const startTime = Date.now();
+
 	try {
 		// Validate inputs
 		if (!username || !memberPassword || !memberEmail || !memberFullName) {
+			logger.logAuth("Signup failed: missing required fields", { username, memberEmail });
 			throw new Error("All fields are required");
 		}
 
+		logger.logGraphQLOperation("mutation", "SIGN_UP", { username, memberEmail, memberType });
 		const { jwtToken } = await requestSignUpJwtToken({
 			username,
 			memberPassword,
@@ -207,17 +270,27 @@ export const signUp = async (
 			memberType,
 		});
 
-		if (!jwtToken) throw new Error("No token received from server");
+		if (!jwtToken) {
+			logger.logAuth("Signup failed: no token received", { username, memberEmail });
+			throw new Error("No token received from server");
+		}
 
 		// Validate token before storing
 		if (isTokenExpired(jwtToken)) {
+			logger.logAuth("Signup failed: received expired token", { username, memberEmail });
 			throw new Error("Received expired token from server");
 		}
 
 		updateStorage({ jwtToken });
 		updateUserInfo(jwtToken);
+		
+		const duration = Date.now() - startTime;
+		logger.logAuth("Signup successful", { username, memberEmail, duration: `${duration}ms` });
+		logger.logGraphQLSuccess("mutation", "SIGN_UP", duration);
 	} catch (err: unknown) {
-		console.error("Signup error:", err);
+		const duration = Date.now() - startTime;
+		logger.logAuth("Signup failed", { username, memberEmail, duration: `${duration}ms` });
+		logger.logGraphQLError("mutation", "SIGN_UP", err, { username, memberEmail });
 		deleteStorage();
 		deleteUserInfo();
 
@@ -242,8 +315,10 @@ const requestSignUpJwtToken = async ({
 	memberType: MemberType;
 }): Promise<{ jwtToken: string }> => {
 	const apolloClient = createAuthApolloClient();
+	const startTime = Date.now();
 
 	try {
+		logger.debug("Requesting signup JWT token via GraphQL", { username, memberEmail });
 		const result = await apolloClient.mutate({
 			mutation: SIGN_UP,
 			variables: {
@@ -254,11 +329,17 @@ const requestSignUpJwtToken = async ({
 
 		const accessToken = (result?.data as { signup?: { accessToken?: string } })?.signup?.accessToken;
 
-		if (!accessToken) throw new Error("No access token in response");
+		if (!accessToken) {
+			logger.error("No access token in signup response", undefined, { username, memberEmail });
+			throw new Error("No access token in response");
+		}
 
+		const duration = Date.now() - startTime;
+		logger.debug("Signup JWT token received successfully", { username, memberEmail, duration: `${duration}ms` });
 		return { jwtToken: accessToken };
 	} catch (err: unknown) {
-		console.error("Signup token request error:", err);
+		const duration = Date.now() - startTime;
+		logger.error("Signup token request error", err, { username, memberEmail, duration: `${duration}ms` });
 		// Extract meaningful error message from GraphQL errors
 		if (err && typeof err === "object" && "graphQLErrors" in err) {
 			const graphQLErrors = (err as { graphQLErrors: Array<{ message: string }> }).graphQLErrors;
@@ -278,13 +359,17 @@ const requestSignUpJwtToken = async ({
  * @param jwtToken - JWT token to store
  */
 export const updateStorage = ({ jwtToken }: { jwtToken: string }) => {
-	if (typeof window === "undefined") return;
+	if (typeof window === "undefined") {
+		logger.debug("updateStorage called on server side");
+		return;
+	}
 
 	try {
 		setJwtToken(jwtToken);
 		window.localStorage.setItem("login", Date.now().toString());
+		logger.debug("Storage updated successfully");
 	} catch (error) {
-		console.error("Error updating storage:", error);
+		logger.error("Error updating storage", error);
 	}
 };
 
@@ -295,7 +380,7 @@ export const updateStorage = ({ jwtToken }: { jwtToken: string }) => {
  */
 export const updateUserInfo = (jwtToken: string): boolean => {
 	if (!jwtToken) {
-		console.warn("Cannot update user info: no token provided");
+		logger.warn("Cannot update user info: no token provided");
 		return false;
 	}
 
@@ -304,7 +389,10 @@ export const updateUserInfo = (jwtToken: string): boolean => {
 
 		// Validate essential claims
 		if (!claims._id || !claims.username) {
-			console.error("Invalid token: missing essential claims");
+			logger.error("Invalid token: missing essential claims", undefined, {
+				hasId: !!claims._id,
+				hasUsername: !!claims.username,
+			});
 			return false;
 		}
 
@@ -333,9 +421,14 @@ export const updateUserInfo = (jwtToken: string): boolean => {
 			updatedAt: claims.updatedAt ?? new Date(),
 		});
 
+		logger.logAuth("User info updated", {
+			userId: claims._id,
+			username: claims.username,
+			memberType: claims.memberType,
+		});
 		return true;
 	} catch (error) {
-		console.error("Error decoding JWT token:", error);
+		logger.error("Error decoding JWT token", error);
 		return false;
 	}
 };
@@ -345,16 +438,19 @@ export const updateUserInfo = (jwtToken: string): boolean => {
  * @param redirect - Whether to reload the page after logout (default: true)
  */
 export const logOut = (redirect: boolean = true) => {
+	logger.logAuth("Logout initiated", { redirect });
 	try {
 		deleteStorage();
 		deleteUserInfo();
 
 		if (redirect && typeof window !== "undefined") {
+			logger.logAuth("Redirecting to login page");
 			// Use router if available, otherwise reload
 			window.location.href = "/auth/login";
 		}
+		logger.logAuth("Logout completed successfully");
 	} catch (error) {
-		console.error("Error during logout:", error);
+		logger.error("Error during logout", error);
 		// Fallback: force reload to clear everything
 		if (typeof window !== "undefined") {
 			window.location.reload();
@@ -366,13 +462,17 @@ export const logOut = (redirect: boolean = true) => {
  * Removes JWT token and related data from localStorage
  */
 const deleteStorage = () => {
-	if (typeof window === "undefined") return;
+	if (typeof window === "undefined") {
+		logger.debug("deleteStorage called on server side");
+		return;
+	}
 
 	try {
 		localStorage.removeItem("accessToken");
 		window.localStorage.setItem("logout", Date.now().toString());
+		logger.debug("Storage deleted successfully");
 	} catch (error) {
-		console.error("Error deleting storage:", error);
+		logger.error("Error deleting storage", error);
 	}
 };
 
@@ -405,7 +505,8 @@ const deleteUserInfo = () => {
 			memberEvents: 0,
 			memberRank: 0,
 		});
+		logger.debug("User info deleted successfully");
 	} catch (error) {
-		console.error("Error deleting user info:", error);
+		logger.error("Error deleting user info", error);
 	}
 };

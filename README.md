@@ -308,6 +308,12 @@ Translation files are located in `public/locales/`. To add a new language:
 docker-compose -f docker-compose.dev.yml up -d
 ```
 
+**The development application will be available at**
+
+```
+http://localhost:4020
+```
+
 ### Manual Docker Build
 
 ```bash
@@ -319,8 +325,8 @@ docker run -p 4000:3000 eventify-frontend
 
 ## 📜 Scripts
 
-| Script       | Description              |
-| ------------ | ------------------------ |
+| Script      | Description              |
+| ----------- | ------------------------ |
 | `npm dev`   | Start development server |
 | `npm build` | Create production build  |
 | `npm start` | Start production server  |
