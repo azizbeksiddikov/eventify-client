@@ -157,6 +157,8 @@
 	"business": "Бизнес",
 	"politics": "Политика",
 	"religion": "Религия",
+	"culture": "Культура",
+	"community": "Сообщество",
 	"other": "Другое",
 	"you_need_to_create_a_group_first_before_creating_events": "Сначала вам нужно создать группу, прежде чем создавать события",
 	"select_a_group": "Выберите группу",

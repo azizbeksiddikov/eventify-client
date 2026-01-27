@@ -159,6 +159,8 @@
 	"business": "Business",
 	"politics": "Politics",
 	"religion": "Religion",
+	"culture": "Culture",
+	"community": "Community",
 	"other": "Other",
 	"you_need_to_create_a_group_first_before_creating_events": "You need to create a group first before creating events",
 	"select_a_group": "Select a group",

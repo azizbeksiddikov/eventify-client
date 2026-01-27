@@ -5,7 +5,7 @@ import { Badge } from "@/libs/components/ui/badge";
 import { Card, CardContent } from "@/libs/components/ui/card";
 import { Separator } from "@/libs/components/ui/separator";
 
-import { formatSeoulDateTime } from "@/libs/utils";
+import { formatSeoulDateTime, formatPrice } from "@/libs/utils";
 import { Ticket } from "@/libs/types/ticket/ticket";
 import { TicketStatus } from "@/libs/enums/ticket.enum";
 
@@ -53,7 +53,9 @@ const TicketCard = ({ ticket, showSeparator = true }: TicketCardProps) => {
 							{/* Price */}
 							<div className="flex flex-col">
 								<span className="inline text-sm text-muted-foreground/60">{t("price_per_ticket")}</span>
-								<span className="text-base font-medium mt-0 sm:mt-1">${ticket.ticketPrice}</span>
+								<span className="text-base font-medium mt-0 sm:mt-1">
+									{formatPrice(ticket.ticketPrice, ticket.event?.eventCurrency, t("free"))}
+								</span>
 							</div>
 							{/* Quantity */}
 							<div className="flex flex-col">
@@ -63,7 +65,9 @@ const TicketCard = ({ ticket, showSeparator = true }: TicketCardProps) => {
 							{/* Total */}
 							<div className="flex flex-col">
 								<span className="inline text-sm text-muted-foreground/60">{t("total_cost")}</span>
-								<span className="text-base font-medium mt-0 sm:mt-1">${ticket.totalPrice}</span>
+								<span className="text-base font-medium mt-0 sm:mt-1">
+									{formatPrice(ticket.totalPrice, ticket.event?.eventCurrency, t("free"))}
+								</span>
 							</div>
 						</div>
 					</div>

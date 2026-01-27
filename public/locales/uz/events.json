@@ -158,6 +158,8 @@
 	"business": "Biznes",
 	"politics": "Siyosat",
 	"religion": "Din",
+	"culture": "Madaniyat",
+	"community": "Jamiyat",
 	"other": "Boshqa",
 	"you_need_to_create_a_group_first_before_creating_events": "Tadbir yaratishdan oldin avval guruh yaratishingiz kerak",
 	"select_a_group": "Guruhni tanlang",

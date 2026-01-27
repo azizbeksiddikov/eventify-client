@@ -159,6 +159,8 @@
 	"business": "비즈니스",
 	"politics": "정치",
 	"religion": "종교",
+	"culture": "문화",
+	"community": "커뮤니티",
 	"other": "기타",
 	"you_need_to_create_a_group_first_before_creating_events": "이벤트를 생성하기 전에 먼저 그룹을 생성해야 합니다",
 	"select_a_group": "그룹 선택",
