@@ -10,6 +10,8 @@ import ChosenEventData from "@/libs/components/events/ChosenEventData";
 import ChosenEventHeader from "@/libs/components/events/ChosenEventHeader";
 import ChosenEventOther from "@/libs/components/events/ChosenEventOther";
 import NotFound from "@/libs/components/common/NotFound";
+import CommentsComponent from "@/libs/components/common/CommentsComponent";
+import { CommentGroup } from "@/libs/enums/comment.enum";
 
 import { GET_EVENT, GET_MY_TICKETS } from "@/apollo/user/query";
 import { CREATE_TICKET, LIKE_TARGET_EVENT } from "@/apollo/user/mutation";
@@ -158,6 +160,9 @@ const ChosenEvent = () => {
 							{!isExternalEvent && (
 								<MyTickets myTickets={myTickets} ticketInquiry={ticketInquiry} setTicketInquiry={setTicketInquiry} />
 							)}
+
+							{/* Comments Section */}
+							{!isExternalEvent && <CommentsComponent commentRefId={event._id} commentGroup={CommentGroup.EVENT} />}
 						</div>
 
 						<ChosenEventOther event={event} likeEventHandler={likeEventHandler} />
