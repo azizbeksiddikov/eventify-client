@@ -332,18 +332,18 @@ export const leaveGroup = async (
 };
 
 /**
- * Format currency amount with symbol and code
+ * Format currency amount using Intl.NumberFormat
  * @param amount - The amount to format
  * @param currencyCode - Currency code (e.g., 'USD', 'KRW')
- * @param symbol - Currency symbol (e.g., '$', '₩')
- * @returns Formatted currency string (e.g., "$10.00 USD")
+ * @returns Formatted currency string (e.g., "$10.00", "₩20,000")
  */
-export const formatCurrency = (amount: number, currencyCode: string, symbol: string): string => {
-	// For currencies like KRW that don't use decimals, don't show decimal places
-	const noDecimalCurrencies = ["KRW", "JPY", "VND"];
-	const decimals = noDecimalCurrencies.includes(currencyCode) ? 0 : 2;
-
-	return `${symbol}${amount.toFixed(decimals)} ${currencyCode}`;
+export const formatCurrency = (amount: number, currencyCode: string): string => {
+	try {
+		return new Intl.NumberFormat(undefined, { style: "currency", currency: currencyCode }).format(amount);
+	} catch {
+		// Fallback for invalid currency codes
+		return `${amount.toFixed(2)} ${currencyCode}`;
+	}
 };
 
 /**
@@ -360,14 +360,8 @@ export const formatPoints = (points: number): string => {
  * @param points - The points amount
  * @param currencyValue - The equivalent currency value
  * @param currencyCode - Currency code (e.g., 'USD', 'KRW')
- * @param symbol - Currency symbol (e.g., '$', '₩')
- * @returns Formatted string showing both points and currency (e.g., "1,000 Points (≈ $10.00 USD)")
+ * @returns Formatted string showing both points and currency (e.g., "1,000 Points (≈ $10.00)")
  */
-export const formatPointsWithCurrency = (
-	points: number,
-	currencyValue: number,
-	currencyCode: string,
-	symbol: string,
-): string => {
-	return `${formatPoints(points)} (≈ ${formatCurrency(currencyValue, currencyCode, symbol)})`;
+export const formatPointsWithCurrency = (points: number, currencyValue: number, currencyCode: string): string => {
+	return `${formatPoints(points)} (≈ ${formatCurrency(currencyValue, currencyCode)})`;
 };

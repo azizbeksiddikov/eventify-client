@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { useTranslation } from "next-i18next";
 import { formatDistanceToNow } from "date-fns";
-import { Calendar, Users, DollarSign, Clock, Link as LinkIcon, Ticket as TicketIcon } from "lucide-react";
+import { Calendar, Users, Clock, Link as LinkIcon, Ticket as TicketIcon } from "lucide-react";
+import { formatPrice } from "@/libs/utils";
 
 import { Badge } from "@/libs/components/ui/badge";
 import { Button } from "@/libs/components/ui/button";
@@ -93,14 +94,16 @@ export const ProfileTickets = ({ tickets, cancelTicketHandler }: ProfileTicketsP
 										</TableCell>
 										<TableCell className="text-center px-2">
 											<div className="flex items-center justify-center gap-2">
-												<DollarSign className="h-4 w-4 text-muted-foreground" />
-												<span className="text-sm text-muted-foreground">{ticket.ticketPrice}</span>
+												<span className="text-sm text-muted-foreground">
+													{formatPrice(ticket.ticketPrice, ticket.event?.eventCurrency, t("free"))}
+												</span>
 											</div>
 										</TableCell>
 										<TableCell className="text-center px-2">
 											<div className="flex items-center justify-center gap-2">
-												<DollarSign className="h-4 w-4 text-primary" />
-												<span className="text-sm font-medium text-primary">{totalPrice}</span>
+												<span className="text-sm font-medium text-primary">
+													{formatPrice(totalPrice, ticket.event?.eventCurrency, t("free"))}
+												</span>
 											</div>
 										</TableCell>
 										<TableCell className="text-center px-2">

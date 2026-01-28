@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useTranslation } from "next-i18next";
 import ReactMarkdown from "react-markdown";
-import { Heart, Calendar, Users, ExternalLink, MapPin, DollarSign, UserPlus } from "lucide-react";
+import { Heart, Calendar, Users, ExternalLink, MapPin, UserPlus } from "lucide-react";
 
 import { Button } from "@/libs/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/libs/components/ui/card";
@@ -92,7 +92,6 @@ const EventCard = ({ event, likeEventHandler }: EventCardProps) => {
 					</div>
 					<div className="absolute bottom-2 right-2 z-2">
 						<Badge variant="secondary" className="bg-background/80 backdrop-blur-sm shadow-sm text-xs px-2 py-0.5">
-							<DollarSign className="w-3.5 h-3.5 mr-1" />
 							{formatPrice(event.eventPrice, event.eventCurrency, t("free"))}
 						</Badge>
 					</div>

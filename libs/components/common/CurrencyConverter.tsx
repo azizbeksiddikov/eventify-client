@@ -14,28 +14,6 @@ interface CurrencyConverterProps {
 	showSelector?: boolean;
 }
 
-// Currency symbol mapping (since backend doesn't store symbols)
-const CURRENCY_SYMBOLS: Record<string, string> = {
-	USD: "$",
-	EUR: "€",
-	GBP: "£",
-	JPY: "¥",
-	KRW: "₩",
-	CNY: "¥",
-	INR: "₹",
-	AUD: "A$",
-	CAD: "C$",
-	CHF: "CHF",
-	SEK: "kr",
-	NOK: "kr",
-	DKK: "kr",
-	PLN: "zł",
-	RUB: "₽",
-	BRL: "R$",
-	MXN: "$",
-	ZAR: "R",
-};
-
 export const CurrencyConverter = ({ points, currencyCode, showSelector = true }: CurrencyConverterProps) => {
 	const { data: currenciesData } = useQuery(GET_CURRENCIES, {
 		variables: {
@@ -65,7 +43,6 @@ export const CurrencyConverter = ({ points, currencyCode, showSelector = true }:
 		fetchPolicy: "cache-first",
 	});
 
-	const currencySymbol = CURRENCY_SYMBOLS[currentCurrency] || currentCurrency;
 	const currencyValue = data?.getMemberPointsInCurrency;
 
 	if (!points || points === 0) {
@@ -80,9 +57,7 @@ export const CurrencyConverter = ({ points, currencyCode, showSelector = true }:
 					<span>{formatPoints(points)}</span>
 				</div>
 			) : currencyValue ? (
-				<span className="font-semibold">
-					{formatPointsWithCurrency(points, currencyValue, currentCurrency, currencySymbol)}
-				</span>
+				<span className="font-semibold">{formatPointsWithCurrency(points, currencyValue, currentCurrency)}</span>
 			) : (
 				<span className="font-semibold">{formatPoints(points)}</span>
 			)}
