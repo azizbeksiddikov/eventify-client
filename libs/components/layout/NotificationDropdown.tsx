@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslation } from "next-i18next";
-import { useMutation, useQuery } from "@apollo/client/react";
+import { useMutation, useQuery, useReactiveVar } from "@apollo/client/react";
 import { useRouter } from "next/navigation";
 import { BellIcon } from "lucide-react";
 import { format } from "date-fns";
@@ -17,6 +17,7 @@ import { ScrollArea } from "@/libs/components/ui/scroll-area";
 import { Badge } from "@/libs/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/libs/components/ui/avatar";
 import { cn } from "@/libs/utils";
+import { NEXT_APP_API_URL } from "@/libs/config";
 
 import { GET_NOTIFICATIONS } from "@/apollo/user/query";
 import { READ_ALL_NOTIFICATIONS, UPDATE_NOTIFICATION } from "@/apollo/user/mutation";
@@ -25,6 +26,7 @@ import { Direction } from "@/libs/enums/common.enum";
 import { NotificationType } from "@/libs/enums/notification.enum";
 import { Notification } from "@/libs/types/notification/notification";
 import { useEffect, useState, useMemo } from "react";
+import { userVar } from "@/apollo/store";
 
 const defaultNotificationsInquiry: NotificationsInquiry = {
 	page: 1,
@@ -71,8 +73,11 @@ interface NotificationDropdownProps {
 export const NotificationDropdown = ({ isMobile = false }: NotificationDropdownProps) => {
 	const { t } = useTranslation("header");
 	const router = useRouter();
+	const user = useReactiveVar(userVar);
 
 	const [isOpen, setIsOpen] = useState(false);
+
+	const isLoggedIn = Boolean(user?._id);
 
 	/** APOLLO REQUESTS */
 	const [updateNotification] = useMutation(UPDATE_NOTIFICATION);
@@ -83,6 +88,7 @@ export const NotificationDropdown = ({ isMobile = false }: NotificationDropdownP
 			input: defaultNotificationsInquiry,
 		},
 		fetchPolicy: "cache-and-network",
+		skip: !isLoggedIn,
 	});
 
 	/** DERIVED STATE */
@@ -108,6 +114,11 @@ export const NotificationDropdown = ({ isMobile = false }: NotificationDropdownP
 		mediaQuery.addEventListener("change", handleChange);
 		return () => mediaQuery.removeEventListener("change", handleChange);
 	}, [isMobile]);
+
+	// Don't render notifications for unauthenticated users
+	if (!isLoggedIn) {
+		return null;
+	}
 
 	const readNotificationHandler = async (notification: Notification, e: React.MouseEvent) => {
 		e.stopPropagation();
@@ -191,7 +202,14 @@ export const NotificationDropdown = ({ isMobile = false }: NotificationDropdownP
 									onClick={(e) => readNotificationHandler(notification, e)}
 								>
 									<Avatar className="h-9 w-9 border shrink-0">
-										<AvatarImage src={notification.memberData?.memberImage} alt="user-avatar" />
+										<AvatarImage
+											src={
+												notification.memberData?.memberImage
+													? `${NEXT_APP_API_URL}/${notification.memberData.memberImage}`
+													: undefined
+											}
+											alt="user-avatar"
+										/>
 										<AvatarFallback className="text-xs">
 											{notification.memberData?.memberFullName?.charAt(0).toUpperCase() || "?"}
 										</AvatarFallback>
