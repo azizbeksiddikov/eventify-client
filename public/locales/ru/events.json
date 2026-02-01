@@ -78,6 +78,7 @@
 	"please_enter_event_address": "Пожалуйста, введите адрес события",
 	"event_capacity_must_be_at_least_1": "Вместимость события должна быть не менее 1",
 	"price_cannot_be_negative": "Цена не может быть отрицательной",
+	"currency_required_when_price_set": "Валюта обязательна при установке цены",
 	"event_capacity_cannot_be_negative": "Вместимость события не может быть отрицательной",
 	"please_upload_event_image": "Пожалуйста, загрузите изображение события",
 	"event_updated_successfully": "Событие успешно обновлено",

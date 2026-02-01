@@ -205,6 +205,9 @@ const EventCreatePage = () => {
 				throw new Error(t("event_capacity_must_be_at_least_1"));
 			}
 			if (formData.eventPrice !== undefined && formData.eventPrice < 0) throw new Error(t("price_cannot_be_negative"));
+			if (formData.eventPrice !== undefined && formData.eventPrice > 0 && !formData.eventCurrency) {
+				throw new Error(t("currency_required_when_price_set"));
+			}
 			if (!formData.eventImages.length) throw new Error(t("please_upload_event_image"));
 
 			// Parse event tags from comma-separated string

@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { useTranslation } from "next-i18next";
 import { useQuery } from "@apollo/client/react";
 import { Input } from "@/libs/components/ui/input";
@@ -46,6 +47,13 @@ export const CapacityAndPriceFields = ({
 	// Set USD if available, otherwise use the first currency
 	const defaultCurrency =
 		activeCurrencies.find((c) => c.currencyCode === "USD")?.currencyCode || activeCurrencies[0]?.currencyCode || "";
+
+	// Auto-set currency to default when currencies load and no currency is selected
+	useEffect(() => {
+		if (!loading && defaultCurrency && !currency) {
+			onCurrencyChange(defaultCurrency);
+		}
+	}, [loading, defaultCurrency, currency, onCurrencyChange]);
 
 	return (
 		<div className={`grid grid-cols-1 sm:grid-cols-2 gap-4 ${className || ""}`}>
