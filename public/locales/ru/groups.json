@@ -76,6 +76,8 @@
 	"delete_group": "Удалить группу",
 	"delete_group_confirmation_message": "Вы уверены, что хотите удалить эту группу? Это действие нельзя отменить.",
 	"group_deleted_successfully": "Группа успешно удалена",
+	"group_joined_successfully": "Вы успешно присоединились к группе",
+	"group_left_successfully": "Вы успешно покинули группу",
 	"failed_to_delete_group": "Не удалось удалить группу",
 	"edit": "Редактировать",
 	"cancel": "Отмена",

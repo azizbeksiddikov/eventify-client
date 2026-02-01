@@ -76,6 +76,8 @@
 	"delete_group": "Guruhni o'chirish",
 	"delete_group_confirmation_message": "Bu guruhni o'chirishni xohlaysizmi? Bu amalni bekor qilib bo'lmaydi.",
 	"group_deleted_successfully": "Guruh muvaffaqiyatli o'chirildi",
+	"group_joined_successfully": "Guruhga muvaffaqiyatli qo'shildingiz",
+	"group_left_successfully": "Guruhdan muvaffaqiyatli chiqdingiz",
 	"failed_to_delete_group": "Guruhni o'chirib bo'lmadi",
 	"edit": "Tahrirlash",
 	"cancel": "Bekor qilish",

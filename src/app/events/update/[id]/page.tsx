@@ -181,6 +181,7 @@ const EventUpdatePage = () => {
 
 			const updatedInput: EventUpdateInput = {
 				...formData,
+				eventCurrency: formData.eventCurrency || undefined,
 				eventCategories: formSelection.selectedCategories,
 				eventTags: tagsArray,
 				locationType: formSelection.locationType,

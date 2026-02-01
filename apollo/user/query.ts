@@ -165,6 +165,7 @@ export const GET_ORGANIZER: TypedDocumentNode<GetOrganizerQuery, GetOrganizerQue
 				eventAddress
 				eventCapacity
 				eventPrice
+				eventCurrency
 				eventStatus
 				eventCategories
 				groupId
@@ -375,6 +376,7 @@ export const GET_GROUP: TypedDocumentNode<GetGroupQuery, GetGroupQueryVariables>
 				eventAddress
 				eventCapacity
 				eventPrice
+				eventCurrency
 				eventStatus
 				eventCategories
 				groupId
@@ -547,6 +549,7 @@ export const GET_EVENT: TypedDocumentNode<GetEventQuery, GetEventQueryVariables>
 			coordinateLongitude
 			eventCapacity
 			eventPrice
+			eventCurrency
 			eventStatus
 			eventCategories
 			eventTags
@@ -620,6 +623,7 @@ export const GET_EVENT: TypedDocumentNode<GetEventQuery, GetEventQueryVariables>
 				coordinateLongitude
 				eventCapacity
 				eventPrice
+				eventCurrency
 				eventStatus
 				eventCategories
 				eventTags
@@ -640,7 +644,6 @@ export const GET_EVENT: TypedDocumentNode<GetEventQuery, GetEventQueryVariables>
 					myFavorite
 				}
 			}
-			eventCurrency
 		}
 	}
 `;
@@ -719,6 +722,7 @@ export const GET_FAVORITES: TypedDocumentNode<GetFavoritesQuery, GetFavoritesQue
 				eventAddress
 				eventCapacity
 				eventPrice
+				eventCurrency
 				eventStatus
 				eventCategories
 				groupId
@@ -850,6 +854,7 @@ export const GET_MY_TICKETS: TypedDocumentNode<GetMyTicketsQuery, GetMyTicketsQu
 					eventAddress
 					eventCapacity
 					eventPrice
+					eventCurrency
 					eventStatus
 					eventCategories
 					groupId
@@ -899,6 +904,7 @@ export const GET_ALL_TICKETS_LIST: TypedDocumentNode<GetAllTicketsListQuery, Get
 				eventAddress
 				eventCapacity
 				eventPrice
+				eventCurrency
 				eventStatus
 				eventCategories
 				groupId

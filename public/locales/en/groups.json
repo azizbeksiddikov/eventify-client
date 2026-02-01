@@ -80,6 +80,8 @@
 	"delete_group": "Delete Group",
 	"delete_group_confirmation_message": "Are you sure you want to delete this group? This action cannot be undone.",
 	"group_deleted_successfully": "Group deleted successfully",
+	"group_joined_successfully": "Group joined successfully",
+	"group_left_successfully": "Group left successfully",
 	"failed_to_delete_group": "Failed to delete group",
 	"optional": "(opt)"
 }

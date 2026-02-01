@@ -23,7 +23,7 @@ export const CurrencyConverter = ({ points, currencyCode, showSelector = true }:
 				},
 			},
 		},
-		fetchPolicy: "cache-first",
+		fetchPolicy: "cache-and-network",
 	});
 
 	const currencies: CurrencyEntity[] = currenciesData?.getCurrencies || [];

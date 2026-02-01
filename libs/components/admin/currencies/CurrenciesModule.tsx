@@ -294,7 +294,7 @@ export default function CurrenciesModule() {
 												<span className="text-sm text-muted-foreground">points</span>
 											</div>
 										) : (
-											<span>{currency.exchangeRate.toFixed(2)} points</span>
+											<span>{currency.exchangeRate} points</span>
 										)}
 									</TableCell>
 									<TableCell>

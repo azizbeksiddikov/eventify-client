@@ -228,7 +228,7 @@ const EventCreatePage = () => {
 				eventAddress: formData.eventAddress,
 				eventCapacity: formData.eventCapacity,
 				eventPrice: formData.eventPrice,
-				eventCurrency: formData.eventCurrency,
+				eventCurrency: formData.eventCurrency || undefined,
 				eventStatus: formData.eventStatus,
 				eventCategories: formSelection.selectedCategories,
 				eventTags: tagsArray,

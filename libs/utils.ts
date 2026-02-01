@@ -145,18 +145,23 @@ export const formatPhoneNumber = (value: string) => {
  * @param price - The price to format
  * @param currency - Optional currency code (e.g., 'USD', 'EUR')
  * @param freeText - Optional text to display when price is 0 or free (defaults to "Free")
- * @returns Formatted price string
+ * @returns Formatted price string (e.g., "$50.00", "₩50,000", "50,000 KRW")
  */
 export const formatPrice = (price: number, currency?: string, freeText: string = "Free"): string => {
 	if (!price || price === 0) return freeText;
+
+	// Try to format with currency symbol using Intl.NumberFormat
 	if (currency) {
 		try {
 			return new Intl.NumberFormat(undefined, { style: "currency", currency }).format(price);
 		} catch {
-			// ignore invalid currency codes
+			// If currency code is invalid, format number with thousand separators and append currency code
+			return `${price.toLocaleString()} ${currency}`;
 		}
 	}
-	return String(price);
+
+	// No currency provided - just format with thousand separators
+	return price.toLocaleString();
 };
 
 /**

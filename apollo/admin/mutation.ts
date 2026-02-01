@@ -176,6 +176,7 @@ export const UPDATE_EVENT_BY_ADMIN: TypedDocumentNode<UpdateEventByAdminMutation
 				eventAddress
 				eventCapacity
 				eventPrice
+				eventCurrency
 				eventStatus
 				eventCategories
 				groupId

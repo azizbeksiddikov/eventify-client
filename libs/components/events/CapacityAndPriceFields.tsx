@@ -37,7 +37,7 @@ export const CapacityAndPriceFields = ({
 				},
 			},
 		},
-		fetchPolicy: "cache-first",
+		fetchPolicy: "cache-and-network",
 	});
 
 	const currencies: CurrencyEntity[] = data?.getCurrencies || [];

@@ -70,7 +70,7 @@ const defaultGroupsInquiry: GroupsInquiry = {
 const defaultEventsInquiry: EventsInquiry = {
 	page: 1,
 	limit: 10,
-	sort: "createdAt",
+	sort: "eventStartAt",
 	direction: Direction.DESC,
 	search: {
 		text: "",

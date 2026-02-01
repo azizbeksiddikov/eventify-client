@@ -135,8 +135,8 @@ export function EventSearch({ initialInquiry, eventsInquiry, setEventsInquiry }:
 					<SelectValue placeholder={t("sort_by")} />
 				</SelectTrigger>
 				<SelectContent className="bg-card text-foreground  ">
+					<SelectItem value="eventStartAt">{t("event_date")}</SelectItem>
 					<SelectItem value="createdAt">{t("created_at")}</SelectItem>
-					<SelectItem value="eventDate">{t("event_date")}</SelectItem>
 					<SelectItem value="attendeeCount">{t("attendees")}</SelectItem>
 					<SelectItem value="eventPrice">{t("price")}</SelectItem>
 				</SelectContent>
