@@ -1,5 +1,5 @@
 import { useTranslation } from "next-i18next";
-import { Ticket as TicketIcon } from "lucide-react";
+import { Ticket as TicketIcon, Star } from "lucide-react";
 
 import { Badge } from "@/libs/components/ui/badge";
 import { Card, CardContent } from "@/libs/components/ui/card";
@@ -66,7 +66,11 @@ const TicketCard = ({ ticket, showSeparator = true }: TicketCardProps) => {
 							<div className="flex flex-col">
 								<span className="inline text-sm text-muted-foreground/60">{t("total_cost")}</span>
 								<span className="text-base font-medium mt-0 sm:mt-1">
-									{formatPrice(ticket.totalPrice, ticket.event?.eventCurrency, t("free"))}
+									{formatPrice(ticket.ticketPrice * ticket.ticketQuantity, ticket.event?.eventCurrency, t("free"))}
+								</span>
+								<span className="inline-flex items-center gap-1 text-sm text-muted-foreground mt-0.5">
+									<Star className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />
+									{ticket.totalPrice.toLocaleString()} pts
 								</span>
 							</div>
 						</div>
