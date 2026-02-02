@@ -16,7 +16,7 @@ import { CommentGroup } from "@/libs/enums/comment.enum";
 import { GET_EVENT, GET_MY_TICKETS } from "@/apollo/user/query";
 import { CREATE_TICKET, LIKE_TARGET_EVENT } from "@/apollo/user/mutation";
 import { Event } from "@/libs/types/event/event";
-import { smallSuccess } from "@/libs/alert";
+import { smallSuccess, smallError } from "@/libs/alert";
 import { likeEvent } from "@/libs/utils";
 import MyTickets from "@/libs/components/events/MyTickets";
 import { TicketInput, TicketInquiry } from "@/libs/types/ticket/ticket.input";
@@ -122,8 +122,18 @@ const ChosenEvent = () => {
 
 			await smallSuccess(t("ticket_purchased_successfully"));
 		} catch (error: unknown) {
-			const errorMessage = error instanceof Error ? error.message : "Unknown error";
-			console.log("ERROR, purchaseTicketHandler:", errorMessage);
+			// Handle Apollo GraphQL errors
+			const apolloError = error as { message?: string; graphQLErrors?: Array<{ message: string }> };
+			const rawMessage = apolloError.graphQLErrors?.[0]?.message || apolloError.message || "";
+
+			// Map known backend errors to translated messages
+			let errorMessage: string;
+			if (rawMessage.includes("do not have enough points")) {
+				errorMessage = t("errors:insufficient_points");
+			} else {
+				errorMessage = rawMessage || t("errors:something_went_wrong");
+			}
+			smallError(errorMessage);
 		}
 	};
 

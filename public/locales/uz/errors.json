@@ -45,5 +45,6 @@
 	"content_not_found": "Ma'lumot topilmadi",
 	"the_requested_information_could_not_be_found_it_may_have_been_removed_or_the_id_is_incorrect": "Siz so'ragan ma'lumot topilmadi. U o'chirilgan bo'lishi yoki ID noto'g'ri bo'lishi mumkin.",
 	"go_back": "Ortga qaytish",
-	"not_authorized_to_update_event": "Ushbu tadbirni yangilash uchun ruxsatingiz yo'q"
+	"not_authorized_to_update_event": "Ushbu tadbirni yangilash uchun ruxsatingiz yo'q",
+	"insufficient_points": "Ushbu amal uchun ballaringiz yetarli emas."
 }

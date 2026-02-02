@@ -45,5 +45,6 @@
 	"content_not_found": "Контент не найден",
 	"the_requested_information_could_not_be_found_it_may_have_been_removed_or_the_id_is_incorrect": "Запрошенная информация не найдена. Возможно, она была удалена или указан неверный ID.",
 	"go_back": "Назад",
-	"not_authorized_to_update_event": "Вы не авторизованы для обновления этого события"
+	"not_authorized_to_update_event": "Вы не авторизованы для обновления этого события",
+	"insufficient_points": "У вас недостаточно баллов для этого действия."
 }

@@ -354,10 +354,10 @@ export const formatCurrency = (amount: number, currencyCode: string): string => 
 /**
  * Format points with proper thousand separators
  * @param points - The points amount to format
- * @returns Formatted points string (e.g., "1,000 Points")
+ * @returns Formatted points string (e.g., "1,000")
  */
 export const formatPoints = (points: number): string => {
-	return `${points.toLocaleString()} Points`;
+	return points.toLocaleString();
 };
 
 /**
@@ -365,7 +365,7 @@ export const formatPoints = (points: number): string => {
  * @param points - The points amount
  * @param currencyValue - The equivalent currency value
  * @param currencyCode - Currency code (e.g., 'USD', 'KRW')
- * @returns Formatted string showing both points and currency (e.g., "1,000 Points (≈ $10.00)")
+ * @returns Formatted string showing points and currency (e.g., "1,000 (≈ $10.00)")
  */
 export const formatPointsWithCurrency = (points: number, currencyValue: number, currencyCode: string): string => {
 	return `${formatPoints(points)} (≈ ${formatCurrency(currencyValue, currencyCode)})`;

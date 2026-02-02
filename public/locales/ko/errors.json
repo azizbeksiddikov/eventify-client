@@ -45,5 +45,6 @@
 	"content_not_found": "콘텐츠를 찾을 수 없음",
 	"the_requested_information_could_not_be_found_it_may_have_been_removed_or_the_id_is_incorrect": "요청하신 정보를 찾을 수 없습니다. 삭제되었거나 ID가 올바르지 않을 수 있습니다.",
 	"go_back": "뒤로 가기",
-	"not_authorized_to_update_event": "이 이벤트를 업데이트할 권한이 없습니다"
+	"not_authorized_to_update_event": "이 이벤트를 업데이트할 권한이 없습니다",
+	"insufficient_points": "이 작업을 수행하기에 포인트가 부족합니다."
 }

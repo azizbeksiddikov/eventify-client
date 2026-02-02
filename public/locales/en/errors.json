@@ -45,5 +45,6 @@
 	"content_not_found": "Content Not Found",
 	"the_requested_information_could_not_be_found_it_may_have_been_removed_or_the_id_is_incorrect": "The requested information could not be found. It may have been removed or the ID is incorrect.",
 	"go_back": "Go Back",
-	"not_authorized_to_update_event": "You are not authorized to update this event"
+	"not_authorized_to_update_event": "You are not authorized to update this event",
+	"insufficient_points": "You do not have enough points for this action."
 }

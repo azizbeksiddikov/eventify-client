@@ -29,8 +29,9 @@ import { CapacityAndPriceFields } from "@/libs/components/events/CapacityAndPric
 import { EventImageUpload } from "@/libs/components/events/EventImageUpload";
 
 import { EventCategory, EventStatus, EventType, EventLocationType, RecurrenceType } from "@/libs/enums/event.enum";
-import { GET_MY_GROUPS } from "@/apollo/user/query";
+import { GET_MY_GROUPS, GET_CURRENCIES } from "@/apollo/user/query";
 import { CREATE_EVENT, CREATE_RECURRING_EVENT } from "@/apollo/user/mutation";
+import { CurrencyEntity } from "@/libs/types/currency/currency";
 import { EventInput, EventRecurrenceInput } from "@/libs/types/event/event.input";
 import { Group } from "@/libs/types/group/group";
 import { smallError, smallSuccess } from "@/libs/alert";
@@ -132,6 +133,14 @@ const EventCreatePage = () => {
 		skip: !user._id,
 		notifyOnNetworkStatusChange: true,
 	});
+
+	// Fetch currencies for the dropdown
+	const { data: currenciesData, loading: currenciesLoading } = useQuery(GET_CURRENCIES, {
+		variables: { input: { search: { isActive: true } } },
+		fetchPolicy: "cache-and-network",
+	});
+
+	const currencies: CurrencyEntity[] = currenciesData?.getCurrencies || [];
 
 	useEffect(() => {
 		if (groupsData?.getMyGroups) setGroups(groupsData.getMyGroups);
@@ -724,11 +733,11 @@ const EventCreatePage = () => {
 							capacity={formData.eventCapacity}
 							price={formData.eventPrice}
 							currency={formData.eventCurrency || ""}
+							currencies={currencies}
+							currenciesLoading={currenciesLoading}
 							onCapacityChange={inputHandler}
 							onPriceChange={inputHandler}
-							onCurrencyChange={(currency) => {
-								setFormData((prev) => ({ ...prev, eventCurrency: currency }));
-							}}
+							onCurrencyChange={(currency) => setFormData((prev) => ({ ...prev, eventCurrency: currency }))}
 							className="bg-input text-input-foreground border-input bg-popover text-popover-foreground"
 						/>
 

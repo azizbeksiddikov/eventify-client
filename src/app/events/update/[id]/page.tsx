@@ -23,8 +23,9 @@ import { CapacityAndPriceFields } from "@/libs/components/events/CapacityAndPric
 import { EventImageUpload } from "@/libs/components/events/EventImageUpload";
 
 import { EventCategory, EventStatus, EventLocationType } from "@/libs/enums/event.enum";
-import { GET_EVENT } from "@/apollo/user/query";
+import { GET_EVENT, GET_CURRENCIES } from "@/apollo/user/query";
 import { UPDATE_EVENT_BY_ORGANIZER } from "@/apollo/user/mutation";
+import { CurrencyEntity } from "@/libs/types/currency/currency";
 import { EventUpdateInput } from "@/libs/types/event/event.update";
 import { smallError, smallSuccess } from "@/libs/alert";
 import { uploadImage } from "@/libs/upload";
@@ -63,6 +64,14 @@ const EventUpdatePage = () => {
 		fetchPolicy: "cache-and-network",
 		skip: !eventId,
 	});
+
+	// Fetch currencies for the dropdown
+	const { data: currenciesData, loading: currenciesLoading } = useQuery(GET_CURRENCIES, {
+		variables: { input: { search: { isActive: true } } },
+		fetchPolicy: "cache-and-network",
+	});
+
+	const currencies: CurrencyEntity[] = currenciesData?.getCurrencies || [];
 
 	useEffect(() => {
 		if (eventData?.getEvent) {
@@ -108,7 +117,6 @@ const EventUpdatePage = () => {
 	}, [eventData, user?._id, router, t]);
 
 	/** HANDLERS */
-
 	const handleImageUpload = async (image: File) => {
 		try {
 			const responseImage = await uploadImage(image, "event");
@@ -326,11 +334,13 @@ const EventUpdatePage = () => {
 								capacity={formData.eventCapacity}
 								price={formData.eventPrice}
 								currency={formData.eventCurrency || ""}
+								currencies={currencies}
+								currenciesLoading={currenciesLoading}
 								onCapacityChange={inputHandler}
 								onPriceChange={inputHandler}
-								onCurrencyChange={(currency) => {
-									setFormData((prev) => (prev ? { ...prev, eventCurrency: currency } : null));
-								}}
+								onCurrencyChange={(currency) =>
+									setFormData((prev) => (prev ? { ...prev, eventCurrency: currency } : null))
+								}
 							/>
 						)}
 

@@ -1,17 +1,16 @@
 "use client";
 
-import { useEffect } from "react";
 import { useTranslation } from "next-i18next";
-import { useQuery } from "@apollo/client/react";
 import { Input } from "@/libs/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/libs/components/ui/select";
-import { GET_CURRENCIES } from "@/apollo/user/query";
 import { CurrencyEntity } from "@/libs/types/currency/currency";
 
 interface CapacityAndPriceFieldsProps {
 	capacity: number | undefined;
 	price: number | undefined;
 	currency: string;
+	currencies: CurrencyEntity[];
+	currenciesLoading?: boolean;
 	onCapacityChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 	onPriceChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 	onCurrencyChange: (currency: string) => void;
@@ -22,38 +21,14 @@ export const CapacityAndPriceFields = ({
 	capacity,
 	price,
 	currency,
+	currencies,
+	currenciesLoading = false,
 	onCapacityChange,
 	onPriceChange,
 	onCurrencyChange,
 	className,
 }: CapacityAndPriceFieldsProps) => {
 	const { t } = useTranslation("events");
-
-	// Fetch only active currencies from database for event create/update
-	const { data, loading } = useQuery(GET_CURRENCIES, {
-		variables: {
-			input: {
-				search: {
-					isActive: true,
-				},
-			},
-		},
-		fetchPolicy: "cache-and-network",
-	});
-
-	const currencies: CurrencyEntity[] = data?.getCurrencies || [];
-	// All currencies returned are already active (filtered by query)
-	const activeCurrencies = currencies;
-	// Set USD if available, otherwise use the first currency
-	const defaultCurrency =
-		activeCurrencies.find((c) => c.currencyCode === "USD")?.currencyCode || activeCurrencies[0]?.currencyCode || "";
-
-	// Auto-set currency to default when currencies load and no currency is selected
-	useEffect(() => {
-		if (!loading && defaultCurrency && !currency) {
-			onCurrencyChange(defaultCurrency);
-		}
-	}, [loading, defaultCurrency, currency, onCurrencyChange]);
 
 	return (
 		<div className={`grid grid-cols-1 sm:grid-cols-2 gap-4 ${className || ""}`}>
@@ -88,15 +63,15 @@ export const CapacityAndPriceFields = ({
 						className={className}
 					/>
 					<Select
-						value={currency || defaultCurrency}
+						value={currency}
 						onValueChange={onCurrencyChange}
-						disabled={loading || activeCurrencies.length === 0}
+						disabled={currenciesLoading || currencies.length === 0}
 					>
 						<SelectTrigger className={`w-24 ${className || ""}`}>
-							<SelectValue placeholder={loading ? t("loading") : t("currency")} />
+							<SelectValue placeholder={currenciesLoading ? "..." : "-"} />
 						</SelectTrigger>
 						<SelectContent className={className}>
-							{activeCurrencies.map((curr) => (
+							{currencies.map((curr) => (
 								<SelectItem key={curr.currencyCode} value={curr.currencyCode} className={className}>
 									{curr.currencyCode}
 								</SelectItem>

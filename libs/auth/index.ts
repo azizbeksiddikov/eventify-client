@@ -47,6 +47,7 @@ export function getJwtToken(): string | undefined {
 				tokenLength: token.length,
 			});
 			deleteStorage();
+			deleteUserInfo();
 			return undefined;
 		}
 
@@ -96,7 +97,7 @@ export function isTokenExpired(token: string): boolean {
 		// JWT exp is in seconds, Date.now() is in milliseconds
 		const currentTime = Date.now() / 1000;
 		const isExpired = decoded.exp < currentTime;
-		
+
 		if (isExpired) {
 			logger.debug("Token is expired", {
 				exp: decoded.exp,
@@ -104,7 +105,7 @@ export function isTokenExpired(token: string): boolean {
 				timeUntilExpiry: decoded.exp - currentTime,
 			});
 		}
-		
+
 		return isExpired;
 	} catch (error) {
 		logger.warn("Error decoding token", { error });
@@ -167,7 +168,7 @@ export const logIn = async (username: string, memberPassword: string): Promise<v
 
 		updateStorage({ jwtToken });
 		updateUserInfo(jwtToken);
-		
+
 		const duration = Date.now() - startTime;
 		logger.logAuth("Login successful", { username, duration: `${duration}ms` });
 		logger.logGraphQLSuccess("mutation", "LOGIN", duration);
@@ -283,7 +284,7 @@ export const signUp = async (
 
 		updateStorage({ jwtToken });
 		updateUserInfo(jwtToken);
-		
+
 		const duration = Date.now() - startTime;
 		logger.logAuth("Signup successful", { username, memberEmail, duration: `${duration}ms` });
 		logger.logGraphQLSuccess("mutation", "SIGN_UP", duration);

@@ -46,7 +46,7 @@ export const CurrencyConverter = ({ points, currencyCode, showSelector = true }:
 	const currencyValue = data?.getMemberPointsInCurrency;
 
 	if (!points || points === 0) {
-		return <span className="text-muted-foreground">0 Points</span>;
+		return <span className="text-2xl font-bold text-card-foreground">0</span>;
 	}
 
 	return (
