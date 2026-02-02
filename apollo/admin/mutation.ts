@@ -60,38 +60,29 @@ export const UPDATE_MEMBER_BY_ADMIN: TypedDocumentNode<
 	UpdateMemberByAdminMutation,
 	UpdateMemberByAdminMutationVariables
 > = gql`
-	mutation UpdateEventByAdmin($input: EventUpdateInput!) {
-		updateEventByAdmin(input: $input) {
+	mutation UpdateMemberByAdmin($input: MemberUpdateInput!) {
+		updateMemberByAdmin(input: $input) {
 			_id
-			eventType
-			recurrenceId
-			eventName
-			eventDesc
-			eventImages
-			eventStartAt
-			eventEndAt
-			locationType
-			eventCity
-			eventAddress
-			coordinateLatitude
-			coordinateLongitude
-			eventCapacity
-			eventPrice
-			eventStatus
-			eventCategories
-			eventTags
-			groupId
-			memberId
-			origin
-			externalId
-			externalUrl
-			isRealEvent
-			attendeeCount
-			eventLikes
-			eventViews
+			username
+			memberEmail
+			memberPhone
+			memberFullName
+			memberType
+			memberStatus
+			emailVerified
+			memberDesc
+			memberImage
+			memberPoints
+			memberLikes
+			memberFollowings
+			memberFollowers
+			memberViews
+			memberRank
+			memberGroups
+			memberEvents
+			eventsOrganizedCount
 			createdAt
 			updatedAt
-			eventCurrency
 		}
 	}
 `;

@@ -129,7 +129,7 @@ const MemberRow = ({
 					<Input
 						type="number"
 						value={memberUpdateInput.memberPoints ?? 0}
-						onChange={(e) => inputHandler("memberPoints", parseInt(e.target.value))}
+						onChange={(e) => inputHandler("memberPoints", parseInt(e.target.value) || 0)}
 						className="h-8"
 					/>
 				) : (
