@@ -193,7 +193,7 @@ const Header = () => {
 						<UserNav authMember={authMember} />
 					) : (
 						<Link href="/auth/login">
-							<Button variant="outline" className="text-xs h-8 px-2.5 sm:px-3 shrink-0">
+							<Button variant="outline" className="text-xs h-10 px-3 shrink-0">
 								{t("login")}
 							</Button>
 						</Link>
@@ -202,7 +202,7 @@ const Header = () => {
 					{/* Mobile Menu Sheet */}
 					<Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
 						<SheetTrigger asChild>
-							<Button variant="ghost" size="icon" className="h-8 w-8 sm:h-9 sm:w-9 shrink-0">
+							<Button variant="ghost" size="icon" className="h-10 w-10 shrink-0">
 								<Menu className="h-4 w-4 sm:h-5 sm:w-5" />
 								<span className="sr-only">Open menu</span>
 							</Button>

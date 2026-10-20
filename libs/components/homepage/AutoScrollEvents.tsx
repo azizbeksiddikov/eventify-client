@@ -265,7 +265,7 @@ const AutoScrollEvents = ({
 														/>
 													),
 													strong: ({ ...props }) => <strong {...props} className="font-semibold text-white" />,
-													p: ({ ...props }) => <p {...props} className="mb-2 last:mb-0 text-white" />,
+													p: ({ ...props }) => <p {...props} className="mb-2 last:mb-0 text-white break-words" />,
 													ul: ({ ...props }) => <ul {...props} className="list-disc pl-5 mb-2 space-y-1 text-white" />,
 													ol: ({ ...props }) => (
 														<ol {...props} className="list-decimal pl-5 mb-2 space-y-1 text-white" />

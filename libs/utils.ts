@@ -72,8 +72,12 @@ const PLACEHOLDER_IMAGES = {
 export function getImageUrl(imageUrl: string, type: "event" | "group" | "member" | "other", origin?: string): string {
 	if (!imageUrl) return PLACEHOLDER_IMAGES[type];
 
-	// If origin is not 'internal', use the original image URL directly
-	if (type === "event" && origin && origin !== "internal") return imageUrl;
+	// Absolute / inline URLs (e.g. external event sources) are used as-is
+	if (/^(https?:)?\/\//.test(imageUrl) || imageUrl.startsWith("data:")) return imageUrl;
+
+	// External-origin events may still store a relative upload path (e.g. "uploads/event/x.jpg"),
+	// so only skip the API prefix when the URL is actually absolute (handled above).
+	void origin;
 
 	return `${NEXT_APP_API_URL}/${imageUrl}`;
 }
