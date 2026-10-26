@@ -1,5 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+	// Lets the dev server be opened through an ngrok tunnel (dev only, ignored in production builds)
+	allowedDevOrigins: ["*.ngrok-free.app", "*.ngrok-free.dev", "*.ngrok.app", "*.ngrok.dev"],
 	env: {
 		NEXT_APP_API_URL: process.env.NEXT_APP_API_URL,
 		NEXT_PUBLIC_API_GRAPHQL_URL: process.env.NEXT_PUBLIC_API_GRAPHQL_URL,
