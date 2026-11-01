@@ -1,19 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useTranslation } from "next-i18next";
 import { useMutation, useQuery, useReactiveVar } from "@apollo/client/react";
-import { Users, Ticket as TicketIcon, Settings, UserPlus, UserCheck } from "lucide-react";
+import { Settings, Ticket as TicketIcon, UserCheck, UserPlus, Users } from "lucide-react";
+import { useTranslation } from "next-i18next";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 import { userVar } from "@/apollo/store";
-import {
-	GET_JOINED_GROUPS,
-	GET_MEMBER,
-	GET_MEMBER_FOLLOWERS_LIST,
-	GET_MEMBER_FOLLOWINGS_LIST,
-	GET_ALL_TICKETS_LIST,
-} from "@/apollo/user/query";
 import {
 	CANCEL_TICKET,
 	JOIN_GROUP,
@@ -24,18 +17,26 @@ import {
 	UNSUBSCRIBE,
 	UPDATE_MEMBER,
 } from "@/apollo/user/mutation";
-import { getJwtToken, updateStorage, updateUserInfo } from "@/libs/auth";
+import {
+	GET_ALL_TICKETS_LIST,
+	GET_JOINED_GROUPS,
+	GET_MEMBER,
+	GET_MEMBER_FOLLOWERS_LIST,
+	GET_MEMBER_FOLLOWINGS_LIST,
+} from "@/apollo/user/query";
 import { smallSuccess } from "@/libs/alert";
+import { getJwtToken, updateStorage, updateUserInfo } from "@/libs/auth";
 import NotFound from "@/libs/components/common/NotFound";
 import { ProfileHeader } from "@/libs/components/profile/ProfileHeader";
 import { ProfileTabs } from "@/libs/components/profile/ProfileTabs";
 
-import { Member } from "@/libs/types/member/member";
-import { Group } from "@/libs/types/group/group";
-import { Ticket } from "@/libs/types/ticket/ticket";
-import { MemberUpdateInput } from "@/libs/types/member/member.update";
-import { followMember, joinGroup, leaveGroup, likeGroup, likeMember, unfollowMember } from "@/libs/utils";
 import Loading from "@/libs/components/common/Loading";
+import { AppError } from "@/libs/errorMessages";
+import { Group } from "@/libs/types/group/group";
+import { Member } from "@/libs/types/member/member";
+import { MemberUpdateInput } from "@/libs/types/member/member.update";
+import { Ticket } from "@/libs/types/ticket/ticket";
+import { followMember, joinGroup, leaveGroup, likeGroup, likeMember, unfollowMember } from "@/libs/utils";
 
 const ProfilePage = () => {
 	const user = useReactiveVar(userVar);
@@ -175,7 +176,7 @@ const ProfilePage = () => {
 
 	const updateMemberHandler = async (memberUpdateInput: MemberUpdateInput) => {
 		try {
-			if (!user?._id) throw new Error(t("errors:not_authenticated"));
+			if (!user?._id) throw new AppError("NOT_AUTHENTICATED");
 
 			const excludedFields = ["_id", "memberStatus", "emailVerified"];
 			const cleanedMemberUpdateInput = Object.fromEntries(
@@ -214,7 +215,7 @@ const ProfilePage = () => {
 
 	const cancelTicketHandler = async (ticketId: string) => {
 		try {
-			if (!user?._id) throw new Error(t("errors:not_authenticated"));
+			if (!user?._id) throw new AppError("NOT_AUTHENTICATED");
 
 			await cancelTicket({
 				variables: { input: ticketId },

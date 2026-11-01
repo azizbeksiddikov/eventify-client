@@ -1,5 +1,7 @@
 {
 	"previous": "Oldingi",
 	"next": "Keyingi",
-	"today": "Bugun"
+	"today": "Bugun",
+	"previous_month": "Oldingi oy",
+	"next_month": "Keyingi oy"
 }

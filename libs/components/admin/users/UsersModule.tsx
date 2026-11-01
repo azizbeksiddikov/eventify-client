@@ -9,6 +9,7 @@ import PaginationComponent from "@/libs/components/common/PaginationComponent";
 import { MembersInquiry } from "@/libs/types/member/member.input";
 import { Members } from "@/libs/types/member/member";
 import { MemberUpdateInput } from "@/libs/types/member/member.update";
+import { smoothBehavior } from "@/libs/motion";
 
 interface UsersModuleProps {
 	members: Members;
@@ -40,7 +41,7 @@ const UsersModule = ({
 			const extraSpacing = 32; // 32px
 			const elementPosition = membersListRef.current.getBoundingClientRect().top + window.pageYOffset;
 			const scrollTop = Math.max(0, elementPosition - headerHeight - extraSpacing);
-			window.scrollTo({ top: scrollTop, behavior: "smooth" });
+			window.scrollTo({ top: scrollTop, behavior: smoothBehavior() });
 		}
 	};
 

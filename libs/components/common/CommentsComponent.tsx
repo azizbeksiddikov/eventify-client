@@ -1,32 +1,33 @@
-import { useState, useRef, useEffect } from "react";
-import { useTranslation } from "next-i18next";
 import { userVar } from "@/apollo/store";
-import { useReactiveVar } from "@apollo/client/react";
-import { useMutation, useQuery } from "@apollo/client/react";
-import { MessageSquare, Plus, Pencil, Trash2, User, ChevronDown } from "lucide-react";
+import { useMutation, useQuery, useReactiveVar } from "@apollo/client/react";
+import { ChevronDown, MessageSquare, Pencil, Plus, Trash2, User } from "lucide-react";
+import { useTranslation } from "next-i18next";
+import { useEffect, useRef, useState } from "react";
 
-import { Button } from "@/libs/components/ui/button";
-import { Textarea } from "@/libs/components/ui/textarea";
-import { Avatar, AvatarFallback, AvatarImage } from "@/libs/components/ui/avatar";
-import { Separator } from "@/libs/components/ui/separator";
-import { Card, CardHeader, CardContent } from "@/libs/components/ui/card";
 import PaginationComponent from "@/libs/components/common/PaginationComponent";
+import { Avatar, AvatarFallback, AvatarImage } from "@/libs/components/ui/avatar";
+import { Button } from "@/libs/components/ui/button";
+import { Card, CardContent, CardHeader } from "@/libs/components/ui/card";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@/libs/components/ui/dropdown-menu";
+import { Separator } from "@/libs/components/ui/separator";
+import { Textarea } from "@/libs/components/ui/textarea";
 
-import { GET_COMMENTS } from "@/apollo/user/query";
 import { CREATE_COMMENT, UPDATE_COMMENT } from "@/apollo/user/mutation";
-import { smallSuccess } from "@/libs/alert";
-import { Message, Direction } from "@/libs/enums/common.enum";
+import { GET_COMMENTS } from "@/apollo/user/query";
+import { smallError, smallSuccess } from "@/libs/alert";
 import { NEXT_APP_API_URL } from "@/libs/config";
-import { formatSeoulDateTime } from "@/libs/utils";
-import type { Comment, Comments } from "@/libs/types/comment/comment";
 import { CommentGroup, CommentStatus } from "@/libs/enums/comment.enum";
+import { Direction } from "@/libs/enums/common.enum";
+import { AppError, friendlyErrorMessage } from "@/libs/errorMessages";
+import { smoothBehavior } from "@/libs/motion";
+import type { Comment, Comments } from "@/libs/types/comment/comment";
 import { CommentInput, CommentsInquiry } from "@/libs/types/comment/comment.input";
+import { formatDateTime } from "@/libs/utils";
 
 const LIMIT_OPTIONS = [5, 10, 20, 50];
 
@@ -98,7 +99,7 @@ const CommentsComponent = ({ commentRefId, commentGroup, initialCommentsInquiry 
 			const extraSpacing = 32; // 32px
 			const elementPosition = commentsListRef.current.getBoundingClientRect().top + window.pageYOffset;
 			const scrollTop = Math.max(0, elementPosition - headerHeight - extraSpacing);
-			window.scrollTo({ top: scrollTop, behavior: "smooth" });
+			window.scrollTo({ top: scrollTop, behavior: smoothBehavior() });
 		}
 	};
 
@@ -114,7 +115,7 @@ const CommentsComponent = ({ commentRefId, commentGroup, initialCommentsInquiry 
 
 	const deleteHandler = async (comment: Comment) => {
 		try {
-			if (!user._id) throw new Error(Message.NOT_AUTHENTICATED);
+			if (!user._id) throw new AppError("NOT_AUTHENTICATED");
 			await updateComment({
 				variables: {
 					input: {
@@ -127,17 +128,15 @@ const CommentsComponent = ({ commentRefId, commentGroup, initialCommentsInquiry 
 			await getCommentsRefetch();
 			await smallSuccess(t("comment_deleted_successfully"));
 		} catch (error: unknown) {
-			if (error instanceof Error) {
-				console.log(error.message);
-			}
+			smallError(friendlyErrorMessage(error));
 		}
 	};
 
 	const submitHandler = async (e: React.FormEvent) => {
 		e.preventDefault();
 		try {
-			if (!user._id) throw new Error(Message.NOT_AUTHENTICATED);
-			if (!newCommentData.commentContent.trim()) throw new Error(Message.COMMENT_CONTENT_REQUIRED);
+			if (!user._id) throw new AppError("NOT_AUTHENTICATED");
+			if (!newCommentData.commentContent.trim()) throw new AppError("COMMENT_CONTENT_REQUIRED");
 
 			if (editingCommentId) {
 				await updateComment({
@@ -164,9 +163,7 @@ const CommentsComponent = ({ commentRefId, commentGroup, initialCommentsInquiry 
 			setIsWriting(false);
 			await getCommentsRefetch();
 		} catch (error: unknown) {
-			if (error instanceof Error) {
-				console.log(error.message);
-			}
+			smallError(friendlyErrorMessage(error));
 		}
 	};
 
@@ -176,10 +173,10 @@ const CommentsComponent = ({ commentRefId, commentGroup, initialCommentsInquiry 
 	return (
 		<Card className="mt-5">
 			<CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-2 sm:gap-8">
-				<h3 className="text-xl font-semibold text-foreground/90">{t("comments")}</h3>
+				<h3 className="text-xl font-semibold text-foreground">{t("comments")}</h3>
 				<div className="flex flex-col sm:flex-row w-full sm:w-auto items-start sm:items-center gap-3 sm:gap-6">
-					<div className="flex flex-row justify-between w-full sm:gap-6">
-						<div className="flex items-center gap-2 text-muted-foreground/80">
+					<div className="flex flex-row flex-wrap items-center justify-between gap-2 w-full sm:gap-6">
+						<div className="flex items-center gap-2 text-muted-foreground">
 							<MessageSquare className="h-5 w-5" />
 							<span className="text-sm font-medium">
 								{totalComments} {t("comments")}
@@ -189,7 +186,11 @@ const CommentsComponent = ({ commentRefId, commentGroup, initialCommentsInquiry 
 							<span className="text-sm text-muted-foreground">{t("per page")}:</span>
 							<DropdownMenu>
 								<DropdownMenuTrigger asChild>
-									<Button variant="outline" size="sm" className="h-8 w-[70px] flex items-center justify-between">
+									<Button
+										variant="outline"
+										size="sm"
+										className="h-11 fine:h-8 w-[70px] flex items-center justify-between"
+									>
 										{commentInquiry.limit}
 										<ChevronDown className="h-4 w-4 ml-1" />
 									</Button>
@@ -221,7 +222,7 @@ const CommentsComponent = ({ commentRefId, commentGroup, initialCommentsInquiry 
 									commentRefId,
 								});
 							}}
-							className="w-full sm:w-auto text-muted-foreground/80 hover:text-foreground transition-colors mt-2 sm:mt-0"
+							className="h-auto min-h-11 whitespace-normal py-2 w-full sm:w-auto text-muted-foreground hover:text-foreground transition-colors mt-2 sm:mt-0"
 						>
 							<Plus className="h-4 w-4 mr-2" />
 							{t("write_a_comment")}
@@ -253,7 +254,7 @@ const CommentsComponent = ({ commentRefId, commentGroup, initialCommentsInquiry 
 												setIsWriting(false);
 												setEditingCommentId(null);
 											}}
-											className="text-muted-foreground/80 hover:text-foreground"
+											className="text-muted-foreground hover:text-foreground"
 										>
 											{t("cancel")}
 										</Button>
@@ -270,11 +271,11 @@ const CommentsComponent = ({ commentRefId, commentGroup, initialCommentsInquiry 
 
 				{totalComments <= 0 && !isWriting ? (
 					<div className="text-center py-8 sm:py-12">
-						<div className="text-muted-foreground/80 mb-4 text-sm">{t("no_comments_yet")}</div>
+						<div className="text-muted-foreground mb-4 text-sm">{t("no_comments_yet")}</div>
 						<Button
 							variant="outline"
 							onClick={() => setIsWriting(true)}
-							className="text-muted-foreground/80 hover:text-foreground transition-colors"
+							className="h-auto min-h-11 whitespace-normal py-2 text-muted-foreground hover:text-foreground transition-colors"
 						>
 							{t("be_the_first_to_comment")}
 						</Button>
@@ -312,26 +313,24 @@ const CommentsComponent = ({ commentRefId, commentGroup, initialCommentsInquiry 
 												{/* Member Info and Comment Content */}
 												<div className="flex-1">
 													<div className="flex flex-row items-center justify-between">
-														<h4 className="font-medium text-foreground/90 text-sm">{memberName}</h4>
+														<h4 className="font-medium text-foreground text-sm">{memberName}</h4>
 														<div className="flex items-center justify-end">
-															<span className="text-xs text-muted-foreground/80">
-																{formatSeoulDateTime(comment.createdAt)}
-															</span>
+															<span className="text-xs text-muted-foreground">{formatDateTime(comment.createdAt)}</span>
 															{isOwner && (
 																<div className="flex items-center space-x-2 ml-4">
 																	<Button
 																		variant="ghost"
 																		size="sm"
 																		onClick={() => editHandler(comment)}
-																		className="h-8 w-8 p-0"
+																		className="h-11 w-11 fine:h-8 fine:w-8 p-0"
 																	>
-																		<Pencil className="h-4 w-4 text-muted-foreground/80 hover:text-foreground" />
+																		<Pencil className="h-4 w-4 text-muted-foreground hover:text-foreground" />
 																	</Button>
 																	<Button
 																		variant="ghost"
 																		size="sm"
 																		onClick={() => deleteHandler(comment)}
-																		className="h-8 w-8 p-0"
+																		className="h-11 w-11 fine:h-8 fine:w-8 p-0"
 																	>
 																		<Trash2 className="h-4 w-4 text-destructive/80 hover:text-destructive" />
 																	</Button>
@@ -341,7 +340,7 @@ const CommentsComponent = ({ commentRefId, commentGroup, initialCommentsInquiry 
 													</div>
 
 													{/* Comment Content */}
-													<p className="mt-1.5 text-muted-foreground/80 text-sm">{comment.commentContent}</p>
+													<p className="mt-1.5 text-muted-foreground text-sm">{comment.commentContent}</p>
 												</div>
 											</div>
 											{index < comments.list.length - 1 && <Separator className="my-6" />}

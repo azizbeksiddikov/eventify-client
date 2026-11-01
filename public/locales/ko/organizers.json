@@ -34,5 +34,13 @@
 	"sort_followers": "팔로워",
 	"sort_events": "이벤트",
 	"sort_groups": "그룹",
-	"sort_rank": "순위"
+	"sort_rank": "순위",
+	"filters": "필터",
+	"load_failed": "목록을 불러오지 못했습니다. 연결을 확인하고 다시 시도하세요.",
+	"try_again": "다시 시도",
+	"member_subscribed_successfully": "구독했습니다",
+	"member_unsubscribed_successfully": "구독을 취소했습니다",
+	"group_joined_successfully": "그룹에 가입했습니다",
+	"group_left_successfully": "그룹을 나갔습니다",
+	"free": "무료"
 }

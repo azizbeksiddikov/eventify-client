@@ -5,7 +5,7 @@ import { Badge } from "@/libs/components/ui/badge";
 import { Card, CardContent } from "@/libs/components/ui/card";
 import { Separator } from "@/libs/components/ui/separator";
 
-import { formatSeoulDateTime, formatPrice } from "@/libs/utils";
+import { formatDateTime, formatPrice } from "@/libs/utils";
 import { Ticket } from "@/libs/types/ticket/ticket";
 import { TicketStatus } from "@/libs/enums/ticket.enum";
 
@@ -52,19 +52,19 @@ const TicketCard = ({ ticket, showSeparator = true }: TicketCardProps) => {
 						<div className="grid grid-cols-3 gap-4 text-center sm:text-left">
 							{/* Price */}
 							<div className="flex flex-col">
-								<span className="inline text-sm text-muted-foreground/60">{t("price_per_ticket")}</span>
+								<span className="inline text-sm text-muted-foreground">{t("price_per_ticket")}</span>
 								<span className="text-base font-medium mt-0 sm:mt-1">
 									{formatPrice(ticket.ticketPrice, ticket.event?.eventCurrency, t("free"))}
 								</span>
 							</div>
 							{/* Quantity */}
 							<div className="flex flex-col">
-								<span className="inline text-sm text-muted-foreground/60">{t("quantity")}</span>
+								<span className="inline text-sm text-muted-foreground">{t("quantity")}</span>
 								<span className="text-base font-medium mt-0 sm:mt-1">{ticket.ticketQuantity}</span>
 							</div>
 							{/* Total */}
 							<div className="flex flex-col">
-								<span className="inline text-sm text-muted-foreground/60">{t("total_cost")}</span>
+								<span className="inline text-sm text-muted-foreground">{t("total_cost")}</span>
 								<span className="text-base font-medium mt-0 sm:mt-1">
 									{formatPrice(ticket.ticketPrice * ticket.ticketQuantity, ticket.event?.eventCurrency, t("free"))}
 								</span>
@@ -78,8 +78,8 @@ const TicketCard = ({ ticket, showSeparator = true }: TicketCardProps) => {
 
 					{/* Timestamp - hidden on small screens */}
 					<div className="hidden lg:block min-w-40 text-right">
-						<div className="text-xs text-muted-foreground/60">{t("last_change")}</div>
-						<div className="text-sm text-muted-foreground/60 mt-1">{formatSeoulDateTime(ticket.createdAt)}</div>
+						<div className="text-xs text-muted-foreground">{t("last_change")}</div>
+						<div className="text-sm text-muted-foreground mt-1">{formatDateTime(ticket.createdAt)}</div>
 					</div>
 				</CardContent>
 			</Card>

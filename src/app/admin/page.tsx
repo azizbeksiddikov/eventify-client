@@ -1,31 +1,19 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { Users, Users2, Calendar, Coins } from "lucide-react";
-import { useMutation, useQuery, useReactiveVar } from "@apollo/client/react";
 import { userVar } from "@/apollo/store";
-import { MemberType } from "@/libs/enums/member.enum";
 import { smallError, smallSuccess } from "@/libs/alert";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/libs/components/ui/tabs";
+import { MemberType } from "@/libs/enums/member.enum";
+import { useMutation, useQuery, useReactiveVar } from "@apollo/client/react";
+import { Calendar, Coins, Users, Users2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
-import UsersModule from "@/libs/components/admin/users/UsersModule";
-import GroupsModule from "@/libs/components/admin/groups/GroupsModule";
-import EventsModule from "@/libs/components/admin/events/EventsModule";
 import CurrenciesModule from "@/libs/components/admin/currencies/CurrenciesModule";
+import EventsModule from "@/libs/components/admin/events/EventsModule";
+import GroupsModule from "@/libs/components/admin/groups/GroupsModule";
+import UsersModule from "@/libs/components/admin/users/UsersModule";
 
-import { useTranslation } from "next-i18next";
-import { GET_ALL_EVENTS_BY_ADMIN, GET_ALL_GROUPS_BY_ADMIN, GET_ALL_MEMBERS_BY_ADMIN } from "@/apollo/admin/query";
-import { Members } from "@/libs/types/member/member";
-import { MembersInquiry } from "@/libs/types/member/member.input";
-import { Direction } from "@/libs/enums/common.enum";
-import { GroupsInquiry } from "@/libs/types/group/group.input";
-import { Groups } from "@/libs/types/group/group";
-import { getJwtToken } from "@/libs/auth";
-import { updateUserInfo } from "@/libs/auth";
-import { EventsInquiry } from "@/libs/types/event/event.input";
-import { Events } from "@/libs/types/event/event";
-import { logger } from "@/libs/logger";
 import {
 	REMOVE_EVENT_BY_ADMIN,
 	REMOVE_GROUP_BY_ADMIN,
@@ -34,15 +22,20 @@ import {
 	UPDATE_GROUP_BY_ADMIN,
 	UPDATE_MEMBER_BY_ADMIN,
 } from "@/apollo/admin/mutation";
-import { MemberUpdateInput } from "@/libs/types/member/member.update";
-import { GroupUpdateInput } from "@/libs/types/group/group.update";
+import { GET_ALL_EVENTS_BY_ADMIN, GET_ALL_GROUPS_BY_ADMIN, GET_ALL_MEMBERS_BY_ADMIN } from "@/apollo/admin/query";
+import { getJwtToken, updateUserInfo } from "@/libs/auth";
+import { Direction } from "@/libs/enums/common.enum";
+import { logger } from "@/libs/logger";
+import { Events } from "@/libs/types/event/event";
+import { EventsInquiry } from "@/libs/types/event/event.input";
 import { EventUpdateInput } from "@/libs/types/event/event.update";
-
-interface AdminHomeProps {
-	initialMembersInquiry?: MembersInquiry;
-	initialGroupsInquiry?: GroupsInquiry;
-	initialEventsInquiry?: EventsInquiry;
-}
+import { Groups } from "@/libs/types/group/group";
+import { GroupsInquiry } from "@/libs/types/group/group.input";
+import { GroupUpdateInput } from "@/libs/types/group/group.update";
+import { Members } from "@/libs/types/member/member";
+import { MembersInquiry } from "@/libs/types/member/member.input";
+import { MemberUpdateInput } from "@/libs/types/member/member.update";
+import { useTranslation } from "next-i18next";
 
 const defaultMembersInquiry: MembersInquiry = {
 	page: 1,
@@ -81,11 +74,11 @@ const defaultEventsInquiry: EventsInquiry = {
 	},
 };
 
-const AdminHome = ({
-	initialMembersInquiry = defaultMembersInquiry,
-	initialGroupsInquiry = defaultGroupsInquiry,
-	initialEventsInquiry = defaultEventsInquiry,
-}: AdminHomeProps) => {
+// Next.js pages must not take props, so the defaults are used directly.
+const AdminHome = () => {
+	const initialMembersInquiry = defaultMembersInquiry;
+	const initialGroupsInquiry = defaultGroupsInquiry;
+	const initialEventsInquiry = defaultEventsInquiry;
 	const router = useRouter();
 	const user = useReactiveVar(userVar);
 	const { t } = useTranslation("admin");
@@ -153,10 +146,10 @@ const AdminHome = ({
 				userId: user._id,
 				memberType: user.memberType,
 			});
-			smallError("You are not authorized to access this page");
+			smallError(t("admin_not_authorized"));
 			router.push("/");
 		}
-	}, [user, router]);
+	}, [user, router, t]);
 
 	useEffect(() => {
 		if (userData?.getAllMembersByAdmin) {
@@ -195,7 +188,7 @@ const AdminHome = ({
 				const duration = Date.now() - startTime;
 				logger.logGraphQLSuccess("mutation", "UPDATE_MEMBER_BY_ADMIN", duration, { memberId: member._id });
 				// refetchMembers(membersInquiry);
-				smallSuccess("Member updated successfully");
+				smallSuccess(t("member_updated"));
 			} catch (error) {
 				logger.logGraphQLError("mutation", "UPDATE_MEMBER_BY_ADMIN", error, { memberId: member._id });
 				throw error;
@@ -212,7 +205,7 @@ const AdminHome = ({
 				const duration = Date.now() - startTime;
 				logger.logGraphQLSuccess("mutation", "REMOVE_MEMBER_BY_ADMIN", duration, { memberId });
 				refetchMembers();
-				smallSuccess("Member removed successfully");
+				smallSuccess(t("member_removed"));
 			} catch (error) {
 				logger.logGraphQLError("mutation", "REMOVE_MEMBER_BY_ADMIN", error, { memberId });
 				throw error;
@@ -228,7 +221,7 @@ const AdminHome = ({
 				await updateGroup({ variables: { input: group } });
 				const duration = Date.now() - startTime;
 				logger.logGraphQLSuccess("mutation", "UPDATE_GROUP_BY_ADMIN", duration, { groupId: group._id });
-				smallSuccess("Group updated successfully");
+				smallSuccess(t("group_updated"));
 			} catch (error) {
 				logger.logGraphQLError("mutation", "UPDATE_GROUP_BY_ADMIN", error, { groupId: group._id });
 				throw error;
@@ -245,7 +238,7 @@ const AdminHome = ({
 				const duration = Date.now() - startTime;
 				logger.logGraphQLSuccess("mutation", "REMOVE_GROUP_BY_ADMIN", duration, { groupId });
 				refetchGroups();
-				smallSuccess("Group removed successfully");
+				smallSuccess(t("group_removed"));
 			} catch (error) {
 				logger.logGraphQLError("mutation", "REMOVE_GROUP_BY_ADMIN", error, { groupId });
 				throw error;
@@ -261,7 +254,7 @@ const AdminHome = ({
 				await updateEvent({ variables: { input: event } });
 				const duration = Date.now() - startTime;
 				logger.logGraphQLSuccess("mutation", "UPDATE_EVENT_BY_ADMIN", duration, { eventId: event._id });
-				smallSuccess("Event updated successfully");
+				smallSuccess(t("event_updated"));
 			} catch (error) {
 				logger.logGraphQLError("mutation", "UPDATE_EVENT_BY_ADMIN", error, { eventId: event._id });
 				throw error;
@@ -278,7 +271,7 @@ const AdminHome = ({
 				const duration = Date.now() - startTime;
 				logger.logGraphQLSuccess("mutation", "REMOVE_EVENT_BY_ADMIN", duration, { eventId });
 				refetchEvents();
-				smallSuccess("Event removed successfully");
+				smallSuccess(t("event_removed"));
 			} catch (error) {
 				logger.logGraphQLError("mutation", "REMOVE_EVENT_BY_ADMIN", error, { eventId });
 				throw error;

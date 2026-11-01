@@ -38,5 +38,7 @@
 	"loading": "Yuklanmoqda",
 	"events_view_details": "Tafsilotlarni ko'rish",
 	"events_view_details_for": "Tafsilotlar:",
-	"there_are_no_events_in_these_categories_yet_check_back_later_or_explore_other_categories": "Ushbu kategoriyalarda hali tadbirlar yo'q. Keyinroq qaytib ko'ring yoki boshqa kategoriyalarni ko'ring."
+	"there_are_no_events_in_these_categories_yet_check_back_later_or_explore_other_categories": "Ushbu kategoriyalarda hali tadbirlar yo'q. Keyinroq qaytib ko'ring yoki boshqa kategoriyalarni ko'ring.",
+	"previous_event": "Oldingi tadbir",
+	"next_event": "Keyingi tadbir"
 }

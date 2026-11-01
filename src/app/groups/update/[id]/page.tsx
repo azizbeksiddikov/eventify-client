@@ -1,15 +1,15 @@
 "use client";
 
-import { useRouter, useParams } from "next/navigation";
-import { useState, useEffect } from "react";
-import Image from "next/image";
-import { ImageIcon, RefreshCw, ArrowLeft, Trash2 } from "lucide-react";
-import { useMutation, useReactiveVar, useQuery } from "@apollo/client/react";
+import { useMutation, useQuery, useReactiveVar } from "@apollo/client/react";
+import { ArrowLeft, ImageIcon, RefreshCw, Trash2 } from "lucide-react";
 import { useTranslation } from "next-i18next";
+import Image from "next/image";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
+import { ImageCropper } from "@/libs/components/common/ImageCropper";
+import Loading from "@/libs/components/common/Loading";
 import { Button } from "@/libs/components/ui/button";
-import { Input } from "@/libs/components/ui/input";
-import { Textarea } from "@/libs/components/ui/textarea";
 import { Card } from "@/libs/components/ui/card";
 import {
 	Dialog,
@@ -19,19 +19,21 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "@/libs/components/ui/dialog";
-import { ImageCropper } from "@/libs/components/common/ImageCropper";
-import Loading from "@/libs/components/common/Loading";
+import { Input } from "@/libs/components/ui/input";
+import { Textarea } from "@/libs/components/ui/textarea";
 
 import { userVar } from "@/apollo/store";
 import { DELETE_GROUP, UPDATE_GROUP } from "@/apollo/user/mutation";
 import { GET_GROUP } from "@/apollo/user/query";
 import { smallError, smallSuccess } from "@/libs/alert";
-import { GroupCategory } from "@/libs/enums/group.enum";
-import { GroupUpdateInput } from "@/libs/types/group/group.update";
 import { imageTypes } from "@/libs/config";
+import { GroupCategory } from "@/libs/enums/group.enum";
+import { AppError, friendlyErrorMessage } from "@/libs/errorMessages";
+import { useInlineValidation } from "@/libs/hooks/useInlineValidation";
+import { GroupUpdateInput } from "@/libs/types/group/group.update";
+import { GroupMember } from "@/libs/types/groupMembers/groupMember";
 import { uploadImage } from "@/libs/upload";
 import { getImageUrl } from "@/libs/utils";
-import { GroupMember } from "@/libs/types/groupMembers/groupMember";
 
 const GroupUpdatePage = () => {
 	const router = useRouter();
@@ -52,6 +54,20 @@ const GroupUpdatePage = () => {
 	// Form State
 	const [selectedCategories, setSelectedCategories] = useState<GroupCategory[]>([]);
 	const [formData, setFormData] = useState<GroupUpdateInput | null>(null);
+
+	// Inline validation (same behaviour as the create form)
+	const errors = {
+		groupName: !formData?.groupName?.trim() ? t("group_name_is_required") : undefined,
+		groupDesc: !formData?.groupDesc?.trim() ? t("group_description_is_required") : undefined,
+		groupCategories: selectedCategories.length === 0 ? t("group_category_is_required") : undefined,
+		groupImage: !formData?.groupImage ? t("group_image_is_required") : undefined,
+	};
+	const { errorProps, errorText, validate, touch } = useInlineValidation(errors, [
+		"groupName",
+		"groupDesc",
+		"groupCategories",
+		"groupImage",
+	]);
 
 	/** APOLLO REQUESTS **/
 	const [updateGroup] = useMutation(UPDATE_GROUP);
@@ -133,15 +149,12 @@ const GroupUpdatePage = () => {
 	const submitHandler = async (e: React.FormEvent) => {
 		e.preventDefault();
 		if (!formData) return;
+		if (!validate()) return;
 
 		setUiState((prev) => ({ ...prev, isSubmitting: true }));
 
 		try {
-			if (!user._id) throw new Error(t("errors:not_authenticated"));
-			if (!formData.groupName?.trim()) throw new Error(t("please_enter_group_name"));
-			if (!formData.groupDesc?.trim()) throw new Error(t("please_enter_group_description"));
-			if (selectedCategories.length === 0) throw new Error(t("please_select_at_least_one_category"));
-			if (!formData.groupImage) throw new Error(t("please_upload_group_image"));
+			if (!user._id) throw new AppError("NOT_AUTHENTICATED");
 
 			const updatedInput: GroupUpdateInput = {
 				...formData,
@@ -155,8 +168,7 @@ const GroupUpdatePage = () => {
 			await smallSuccess(t("group_updated_successfully"));
 			router.push(`/groups/${formData._id}`);
 		} catch (error: unknown) {
-			const errorMessage = error instanceof Error ? error.message : t("errors:something_went_wrong");
-			smallError(errorMessage);
+			smallError(friendlyErrorMessage(error));
 		} finally {
 			setUiState((prev) => ({ ...prev, isSubmitting: false }));
 		}
@@ -185,7 +197,7 @@ const GroupUpdatePage = () => {
 			router.push("/groups");
 		} catch (error: unknown) {
 			if (error instanceof Error) {
-				smallError(error.message);
+				smallError(friendlyErrorMessage(error));
 			} else {
 				smallError(t("failed_to_delete_group"));
 			}
@@ -213,10 +225,10 @@ const GroupUpdatePage = () => {
 					</Button>
 				</div>
 
-				<Card className="p-6 bg-card text-card-foreground">
-					<h1 className="text-3xl font-semibold text-foreground mb-6">{t("update_group")}</h1>
+				<Card className="p-4 sm:p-6 bg-card text-card-foreground">
+					<h1 className="text-2xl sm:text-3xl font-semibold text-foreground mb-4 sm:mb-6">{t("update_group")}</h1>
 
-					<form onSubmit={submitHandler} className="space-y-6">
+					<form noValidate onSubmit={submitHandler} className="space-y-6">
 						{/* Group Name */}
 						<div className="space-y-2">
 							<label htmlFor="groupName" className="text-sm font-medium text-foreground">
@@ -224,12 +236,13 @@ const GroupUpdatePage = () => {
 							</label>
 							<Input
 								id="groupName"
+								{...errorProps("groupName")}
 								name="groupName"
 								value={formData.groupName}
 								onChange={inputHandler}
 								placeholder={t("enter_group_name")}
-								required
 							/>
+							{errorText("groupName")}
 						</div>
 
 						{/* Group Description */}
@@ -239,17 +252,18 @@ const GroupUpdatePage = () => {
 							</label>
 							<Textarea
 								id="groupDesc"
+								{...errorProps("groupDesc")}
 								name="groupDesc"
 								value={formData.groupDesc}
 								onChange={inputHandler}
 								placeholder={t("enter_group_description")}
 								className="min-h-[120px]"
-								required
 							/>
+							{errorText("groupDesc")}
 						</div>
 
 						{/* Categories */}
-						<div className="space-y-2">
+						<div className="space-y-2" id="groupCategories" tabIndex={-1}>
 							<label className="text-sm font-medium text-foreground">{t("categories_select_up_to_3")} *</label>
 							<div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
 								{Object.values(GroupCategory).map((category) => (
@@ -257,18 +271,23 @@ const GroupUpdatePage = () => {
 										key={category}
 										type="button"
 										variant={selectedCategories.includes(category) ? "default" : "outline"}
-										onClick={() => categoryHandler(category)}
+										onClick={() => {
+											categoryHandler(category);
+											touch("groupCategories");
+										}}
+										aria-pressed={selectedCategories.includes(category)}
 										disabled={selectedCategories.length >= 3 && !selectedCategories.includes(category)}
-										className="h-10"
+										className="h-11 fine:h-10"
 									>
 										{t(category.toLowerCase())}
 									</Button>
 								))}
 							</div>
+							{errorText("groupCategories")}
 						</div>
 
 						{/* Image Upload */}
-						<div className="space-y-4">
+						<div className="space-y-4" id="groupImage" tabIndex={-1}>
 							<label className="text-sm font-medium text-foreground">{t("group_image")} *</label>
 							<div className="relative aspect-video w-full rounded-xl overflow-hidden bg-muted/50 border-2">
 								{uiState.imagePreview ? (
@@ -295,6 +314,7 @@ const GroupUpdatePage = () => {
 								)}
 								<input id="image" type="file" accept={imageTypes} onChange={imageChangeHandler} className="hidden" />
 							</div>
+							{errorText("groupImage")}
 						</div>
 
 						<ImageCropper

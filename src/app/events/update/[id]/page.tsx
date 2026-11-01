@@ -1,33 +1,36 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter, useParams } from "next/navigation";
-import { useMutation, useQuery, useReactiveVar } from "@apollo/client/react";
-import { useTranslation } from "next-i18next";
 import { userVar } from "@/apollo/store";
+import { useMutation, useQuery, useReactiveVar } from "@apollo/client/react";
 import { ArrowLeft } from "lucide-react";
+import { useTranslation } from "next-i18next";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
+import { ImageCropper } from "@/libs/components/common/ImageCropper";
+import Loading from "@/libs/components/common/Loading";
+import { CapacityAndPriceFields } from "@/libs/components/events/CapacityAndPriceFields";
+import { EventCategoriesField } from "@/libs/components/events/EventCategoriesField";
+import { EventDateAndTimePicker } from "@/libs/components/events/EventDateAndTimePicker";
+import { EventDescriptionField } from "@/libs/components/events/EventDescriptionField";
+import { EventImageUpload } from "@/libs/components/events/EventImageUpload";
+import { EventNameField } from "@/libs/components/events/EventNameField";
+import { EventTagsField } from "@/libs/components/events/EventTagsField";
+import { IsRealEventCheckbox } from "@/libs/components/events/IsRealEventCheckbox";
+import { LocationFields } from "@/libs/components/events/LocationFields";
 import { Button } from "@/libs/components/ui/button";
 import { Card } from "@/libs/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/libs/components/ui/select";
-import { ImageCropper } from "@/libs/components/common/ImageCropper";
-import Loading from "@/libs/components/common/Loading";
-import { EventNameField } from "@/libs/components/events/EventNameField";
-import { EventDescriptionField } from "@/libs/components/events/EventDescriptionField";
-import { EventCategoriesField } from "@/libs/components/events/EventCategoriesField";
-import { EventTagsField } from "@/libs/components/events/EventTagsField";
-import { IsRealEventCheckbox } from "@/libs/components/events/IsRealEventCheckbox";
-import { EventDateAndTimePicker } from "@/libs/components/events/EventDateAndTimePicker";
-import { LocationFields } from "@/libs/components/events/LocationFields";
-import { CapacityAndPriceFields } from "@/libs/components/events/CapacityAndPriceFields";
-import { EventImageUpload } from "@/libs/components/events/EventImageUpload";
 
-import { EventCategory, EventStatus, EventLocationType } from "@/libs/enums/event.enum";
-import { GET_EVENT, GET_CURRENCIES } from "@/apollo/user/query";
 import { UPDATE_EVENT_BY_ORGANIZER } from "@/apollo/user/mutation";
+import { GET_CURRENCIES, GET_EVENT } from "@/apollo/user/query";
+import { smallError, smallSuccess } from "@/libs/alert";
+import { ConfirmAction } from "@/libs/components/common/ConfirmAction";
+import { EventCategory, EventLocationType, EventStatus } from "@/libs/enums/event.enum";
+import { AppError, friendlyErrorMessage } from "@/libs/errorMessages";
+import { useInlineValidation } from "@/libs/hooks/useInlineValidation";
 import { CurrencyEntity } from "@/libs/types/currency/currency";
 import { EventUpdateInput } from "@/libs/types/event/event.update";
-import { smallError, smallSuccess } from "@/libs/alert";
 import { uploadImage } from "@/libs/upload";
 import { getImageUrl } from "@/libs/utils";
 
@@ -55,6 +58,42 @@ const EventUpdatePage = () => {
 
 	// Main Form Data
 	const [formData, setFormData] = useState<EventUpdateInput | null>(null);
+	const [originalStatus, setOriginalStatus] = useState<EventStatus | undefined>(undefined);
+
+	// Inline validation (same behaviour as the create form)
+	const errors: Record<string, string | undefined> = {
+		eventName: !formData?.eventName?.trim() ? t("event_name_is_required") : undefined,
+		eventDesc: !formData?.eventDesc?.trim() ? t("event_description_is_required") : undefined,
+		eventCategories: formSelection.selectedCategories.length === 0 ? t("event_category_is_required") : undefined,
+		eventEndTime:
+			formData?.eventStartAt && formData?.eventEndAt && new Date(formData.eventEndAt) <= new Date(formData.eventStartAt)
+				? t("end_time_must_be_after_start_time")
+				: undefined,
+		eventAddress:
+			formSelection.locationType === EventLocationType.OFFLINE && !formData?.eventAddress?.trim()
+				? t("event_address_is_required")
+				: undefined,
+		eventCapacity:
+			formData?.eventCapacity !== undefined && formData.eventCapacity < 0
+				? t("event_capacity_cannot_be_negative")
+				: undefined,
+		eventPrice:
+			formData?.eventPrice !== undefined && formData.eventPrice < 0 ? t("price_cannot_be_negative") : undefined,
+		eventCurrency:
+			(formData?.eventPrice ?? 0) > 0 && !formData?.eventCurrency ? t("currency_required_when_price_set") : undefined,
+		eventImages: !formData?.eventImages?.length ? t("please_upload_event_image") : undefined,
+	};
+	const validation = useInlineValidation(errors, [
+		"eventName",
+		"eventDesc",
+		"eventCategories",
+		"eventEndTime",
+		"eventAddress",
+		"eventCapacity",
+		"eventPrice",
+		"eventCurrency",
+		"eventImages",
+	]);
 
 	/** APOLLO REQUESTS **/
 	const [updateEventByOrganizer] = useMutation(UPDATE_EVENT_BY_ORGANIZER);
@@ -76,6 +115,7 @@ const EventUpdatePage = () => {
 	useEffect(() => {
 		if (eventData?.getEvent) {
 			const event = eventData.getEvent;
+			setOriginalStatus(event.eventStatus);
 
 			// Check if user is authorized to update the event
 			if (event.memberId !== user?._id) {
@@ -154,35 +194,29 @@ const EventUpdatePage = () => {
 		}
 	};
 
-	const submitHandler = async (e: React.FormEvent) => {
+	// Cancelling or deleting an event cannot be taken back: ask before saving that status.
+	const [confirmStatusOpen, setConfirmStatusOpen] = useState(false);
+	const isDestructiveStatus = (status?: EventStatus) =>
+		status === EventStatus.CANCELLED || status === EventStatus.DELETED;
+
+	const formSubmitHandler = (e: React.FormEvent) => {
 		e.preventDefault();
+		if (!validation.validate()) return;
+		if (formData && isDestructiveStatus(formData.eventStatus) && formData.eventStatus !== originalStatus) {
+			setConfirmStatusOpen(true);
+			return;
+		}
+		submitHandler();
+	};
+
+	const submitHandler = async () => {
 		if (!formData) return;
 
 		setUiState((prev) => ({ ...prev, isSubmitting: true }));
 
 		try {
-			// Validation
-			if (!formData._id) throw new Error(t("errors:event_not_found"));
-			if (!user._id) throw new Error(t("errors:not_authenticated"));
-			if (!formData.eventName?.trim()) throw new Error(t("please_enter_event_name"));
-			if (!formData.eventDesc?.trim()) throw new Error(t("please_enter_event_description"));
-			if (formSelection.selectedCategories.length === 0) throw new Error(t("please_select_at_least_one_category"));
-			if (!formData.eventStartAt) throw new Error(t("please_select_event_start_date_time"));
-			if (!formData.eventEndAt) throw new Error(t("please_select_event_end_date_time"));
-			if (formData.eventEndAt <= formData.eventStartAt) {
-				throw new Error(t("end_time_must_be_after_start_time"));
-			}
-			if (formSelection.locationType === EventLocationType.OFFLINE) {
-				if (!formData.eventAddress?.trim()) throw new Error(t("please_enter_event_address"));
-			}
-			if (formData.eventCapacity !== undefined && formData.eventCapacity < 0) {
-				throw new Error(t("event_capacity_cannot_be_negative"));
-			}
-			if (formData.eventPrice !== undefined && formData.eventPrice < 0) throw new Error(t("price_cannot_be_negative"));
-			if (formData.eventPrice !== undefined && formData.eventPrice > 0 && !formData.eventCurrency) {
-				throw new Error(t("currency_required_when_price_set"));
-			}
-			if (!formData.eventImages?.length) throw new Error(t("please_upload_event_image"));
+			if (!formData._id) throw new AppError("EVENT_NOT_FOUND");
+			if (!user._id) throw new AppError("NOT_AUTHENTICATED");
 
 			// Parse event tags
 			const tagsArray = formSelection.eventTags
@@ -192,7 +226,7 @@ const EventUpdatePage = () => {
 
 			const updatedInput: EventUpdateInput = {
 				...formData,
-				eventCurrency: formData.eventCurrency || undefined,
+				eventCurrency: (formData.eventPrice ?? 0) > 0 ? formData.eventCurrency || undefined : undefined,
 				eventCategories: formSelection.selectedCategories,
 				eventTags: tagsArray,
 				locationType: formSelection.locationType,
@@ -205,8 +239,7 @@ const EventUpdatePage = () => {
 			await smallSuccess(t("event_updated_successfully"));
 			router.push(`/events/${formData._id}`);
 		} catch (error: unknown) {
-			const errorMessage = error instanceof Error ? error.message : t("errors:failed_to_update");
-			smallError(errorMessage);
+			smallError(friendlyErrorMessage(error));
 		} finally {
 			setUiState((prev) => ({ ...prev, isSubmitting: false }));
 		}
@@ -223,16 +256,6 @@ const EventUpdatePage = () => {
 			const cleanedValue = value.replace(/^0+/, "") || "0";
 			const numberValue = Number(cleanedValue);
 			if (isNaN(numberValue)) return;
-
-			// Prevent negative values for capacity and price
-			if (name === "eventCapacity" && numberValue < 0) {
-				smallError(t("event_capacity_cannot_be_negative"));
-				return;
-			}
-			if (name === "eventPrice" && numberValue < 0) {
-				smallError(t("price_cannot_be_negative"));
-				return;
-			}
 
 			setFormData((prev) => (prev ? { ...prev, [name]: numberValue } : null));
 		} else {
@@ -272,26 +295,28 @@ const EventUpdatePage = () => {
 					</Button>
 				</div>
 
-				<Card className="p-6 bg-card text-card-foreground">
-					<h1 className="text-3xl font-semibold text-foreground mb-6">{t("update_event")}</h1>
+				<Card className="p-4 sm:p-6 bg-card text-card-foreground">
+					<h1 className="text-2xl sm:text-3xl font-semibold text-foreground mb-4 sm:mb-6">{t("update_event")}</h1>
 
-					<form onSubmit={submitHandler} className="space-y-6">
+					<form noValidate onSubmit={formSubmitHandler} className="space-y-6">
 						{/* Event Name */}
-						<EventNameField value={formData.eventName || ""} onChange={inputHandler} />
+						<EventNameField value={formData.eventName || ""} onChange={inputHandler} validation={validation} />
 
 						{/* Event Description */}
-						<EventDescriptionField value={formData.eventDesc || ""} onChange={inputHandler} />
+						<EventDescriptionField value={formData.eventDesc || ""} onChange={inputHandler} validation={validation} />
 
 						{/* Categories */}
 						<EventCategoriesField
 							selectedCategories={formSelection.selectedCategories}
 							onCategoryToggle={categoryHandler}
+							validation={validation}
 						/>
 
 						{/* Event Tags */}
 						<EventTagsField
 							value={formSelection.eventTags}
 							onChange={(e) => setFormSelection((prev) => ({ ...prev, eventTags: e.target.value }))}
+							validation={validation}
 						/>
 
 						{/* Is Real Event */}
@@ -311,8 +336,6 @@ const EventUpdatePage = () => {
 								onEndDateChange={(date) => setFormData((prev) => (prev ? { ...prev, eventEndAt: date } : null))}
 								onStartTimeChange={(date) => setFormData((prev) => (prev ? { ...prev, eventStartAt: date } : null))}
 								onEndTimeChange={(date) => setFormData((prev) => (prev ? { ...prev, eventEndAt: date } : null))}
-								locale={i18n.language}
-								useCalendar={false}
 							/>
 						)}
 
@@ -325,6 +348,7 @@ const EventUpdatePage = () => {
 								onCityChange={inputHandler}
 								onAddressChange={inputHandler}
 								showLocationType={false}
+								validation={validation}
 							/>
 						)}
 
@@ -341,6 +365,7 @@ const EventUpdatePage = () => {
 								onCurrencyChange={(currency) =>
 									setFormData((prev) => (prev ? { ...prev, eventCurrency: currency } : null))
 								}
+								validation={validation}
 							/>
 						)}
 
@@ -371,6 +396,7 @@ const EventUpdatePage = () => {
 							imagePreview={uiState.imagePreview}
 							onImageChange={imageChangeHandler}
 							changeLabel={t("change_image")}
+							validation={validation}
 						/>
 
 						<ImageCropper
@@ -378,6 +404,16 @@ const EventUpdatePage = () => {
 							onClose={() => setUiState((prev) => ({ ...prev, isCropperOpen: false, tempImageUrl: null }))}
 							onCropComplete={cropCompleteHandler}
 							imageUrl={uiState.tempImageUrl || ""}
+						/>
+
+						<ConfirmAction
+							open={confirmStatusOpen}
+							onOpenChange={setConfirmStatusOpen}
+							title={t("confirm_status_title")}
+							description={t("confirm_status_description")}
+							confirmLabel={t("confirm_status_confirm")}
+							cancelLabel={t("confirm_status_back")}
+							onConfirm={submitHandler}
 						/>
 
 						<div className="flex justify-end pt-4">

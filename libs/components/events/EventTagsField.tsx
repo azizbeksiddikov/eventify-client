@@ -1,15 +1,17 @@
 "use client";
 
 import { useTranslation } from "next-i18next";
+import type { InlineValidation } from "@/libs/hooks/useInlineValidation";
 import { Input } from "@/libs/components/ui/input";
 
 interface EventTagsFieldProps {
 	value: string;
 	onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 	className?: string;
+	validation?: InlineValidation;
 }
 
-export const EventTagsField = ({ value, onChange, className }: EventTagsFieldProps) => {
+export const EventTagsField = ({ value, onChange, className, validation }: EventTagsFieldProps) => {
 	const { t } = useTranslation("events");
 
 	return (
@@ -19,12 +21,14 @@ export const EventTagsField = ({ value, onChange, className }: EventTagsFieldPro
 			</label>
 			<Input
 				id="eventTags"
+				{...validation?.errorProps("eventTags")}
 				name="eventTags"
 				value={value}
 				onChange={onChange}
 				placeholder={t("e_g_networking_workshop_conference")}
 				className={className}
 			/>
+			{validation?.errorText("eventTags")}
 		</div>
 	);
 };

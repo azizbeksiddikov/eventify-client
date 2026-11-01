@@ -16,14 +16,13 @@ import { GroupCategory } from "@/libs/enums/group.enum";
 import { GroupsInquiry } from "@/libs/types/group/group.input";
 import { Direction } from "@/libs/enums/common.enum";
 import { Group } from "@/libs/types/group/group";
-import Loading from "@/libs/components/common/Loading";
+import { ListSkeleton } from "@/libs/components/common/ListSkeleton";
+import { EmptyState } from "@/libs/components/common/EmptyState";
+import { smoothBehavior } from "@/libs/motion";
 
-interface GroupsPageProps {
-	initialSearch?: GroupsInquiry;
-}
-
-const GroupsPage = ({
-	initialSearch = {
+const GroupsPage = () => {
+	// Next.js pages must not take props, so the defaults live here.
+	const initialSearch: GroupsInquiry = {
 		page: 1,
 		limit: 10,
 		sort: "createdAt",
@@ -32,8 +31,7 @@ const GroupsPage = ({
 			text: "",
 			groupCategories: [],
 		},
-	},
-}: GroupsPageProps) => {
+	};
 	const router = useRouter();
 	const searchParams = useSearchParams();
 	const pathname = usePathname();
@@ -90,6 +88,7 @@ const GroupsPage = ({
 	const {
 		data: getGroupsData,
 		loading,
+		error: groupsError,
 		refetch: getGroupsRefetch,
 	} = useQuery(GET_GROUPS, {
 		fetchPolicy: "cache-and-network",
@@ -124,14 +123,14 @@ const GroupsPage = ({
 			const extraSpacing = 32; // 32px
 			const elementPosition = groupsListRef.current.getBoundingClientRect().top + window.pageYOffset;
 			const scrollTop = Math.max(0, elementPosition - headerHeight - extraSpacing);
-			window.scrollTo({ top: scrollTop, behavior: "smooth" });
+			window.scrollTo({ top: scrollTop, behavior: smoothBehavior() });
 		}
 	};
 
 	return (
 		<div>
 			<GroupsHeader />
-			<div className="px-6 sm:px-12 lg:px-20">
+			<div className="px-4 sm:px-12 lg:px-20">
 				<SortAndFilterGroups
 					updateURL={updateURL}
 					groupsSearchFilters={groupsSearchFilters}
@@ -139,7 +138,7 @@ const GroupsPage = ({
 				/>
 			</div>
 
-			<div className="max-w-7xl mx-auto px-6 sm:px-12 lg:px-20 py-10 mb-10">
+			<div className="max-w-7xl mx-auto px-4 sm:px-12 lg:px-20 py-6 sm:py-10 mb-6 sm:mb-10">
 				<div className="flex flex-col lg:flex-row gap-8">
 					{/* Categories Sidebar */}
 					<CategoriesSidebarGroup
@@ -151,7 +150,13 @@ const GroupsPage = ({
 					{/* Events Grid */}
 					<div className="flex-1">
 						{loading ? (
-							<Loading />
+							<ListSkeleton />
+						) : groupsError && groups.length === 0 ? (
+							<EmptyState
+								message={t("load_failed")}
+								actionLabel={t("try_again")}
+								onAction={() => void getGroupsRefetch()}
+							/>
 						) : groups.length > 0 ? (
 							<>
 								<div
@@ -176,9 +181,11 @@ const GroupsPage = ({
 								</div>
 							</>
 						) : (
-							<div className="py-16 text-center">
-								<p className="text-muted-foreground">{t("no_groups_found")}</p>
-							</div>
+							<EmptyState
+								message={t("no_groups_found")}
+								actionLabel={t("clear")}
+								onAction={() => updateURL(initialSearch)}
+							/>
 						)}
 					</div>
 				</div>

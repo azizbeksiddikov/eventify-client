@@ -6,6 +6,9 @@
 
 /* @custom-variant dark (&:is(.dark *)); */
 
+/* "fine": a wide screen driven by a mouse. Phones, and tablets or phones in landscape (touch), keep 44px targets. */
+@custom-variant fine (@media (min-width: 640px) and (pointer: fine));
+
 @theme {
 	/* --radius-sm: calc(var(--radius) - 4px);
 	--radius-md: calc(var(--radius) - 2px);
@@ -309,11 +312,12 @@
 	--popover: oklch(1 0 0);
 	--popover-foreground: oklch(0.141 0.005 285.823);
 	--primary: oklch(0.541 0.281 293.009);
+	--primary-text: var(--primary);
 	--primary-foreground: oklch(0.969 0.016 293.756);
 	--secondary: oklch(0.967 0.001 286.375);
 	--secondary-foreground: oklch(0.21 0.006 285.885);
 	--muted: oklch(0.967 0.001 286.375);
-	--muted-foreground: oklch(0.552 0.016 285.938);
+	--muted-foreground: oklch(0.5 0.016 285.938); /* darkened from 0.552: 4.4:1 on muted backgrounds, now above 4.5:1 */
 	--accent: oklch(0.967 0.001 286.375);
 	--accent-foreground: oklch(0.21 0.006 285.885);
 	--destructive: oklch(0.577 0.245 27.325);
@@ -342,7 +346,8 @@
 	--card-foreground: oklch(0.985 0 0);
 	--popover: oklch(0.21 0.006 285.885);
 	--popover-foreground: oklch(0.985 0 0);
-	--primary: oklch(0.606 0.25 292.717);
+	--primary: oklch(0.541 0.281 293.009); /* same as light: white text on it passes 4.5:1 */
+	--primary-text: oklch(0.74 0.16 293); /* violet used for text and links on dark backgrounds */
 	--primary-foreground: oklch(0.969 0.016 293.756);
 	--secondary: oklch(0.274 0.006 286.033);
 	--secondary-foreground: oklch(0.985 0 0);
@@ -367,4 +372,23 @@
 	--sidebar-accent-foreground: oklch(0.985 0 0);
 	--sidebar-border: oklch(1 0 0 / 10%);
 	--sidebar-ring: oklch(0.38 0.189 293.745);
+}
+
+/* Respect "reduce motion": no animations or transitions, no animated scrolling */
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+		scroll-behavior: auto !important;
+	}
+}
+
+/* Text and links in the accent colour need a lighter violet on dark backgrounds (3.8:1 with the button violet). */
+.dark .text-primary,
+.dark .hover\:text-primary:hover,
+.dark .group:hover .group-hover\:text-primary {
+	color: var(--primary-text);
 }

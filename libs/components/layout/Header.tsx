@@ -1,11 +1,11 @@
 "use client";
 
-import Link from "next/link";
-import { useState, useCallback, useEffect } from "react";
-import { useTranslation } from "next-i18next";
-import { usePathname, useRouter } from "next/navigation";
 import { useReactiveVar } from "@apollo/client/react";
-import { Menu, X, Home, Calendar, Users, User2, HelpCircle, ShieldAlert, User, LogOut } from "lucide-react";
+import { Calendar, HelpCircle, Home, LogOut, Menu, ShieldAlert, User, User2, Users, X } from "lucide-react";
+import { useTranslation } from "next-i18next";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
 
 import { Button, buttonVariants } from "@/libs/components/ui/button";
 import {
@@ -14,19 +14,18 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@/libs/components/ui/dropdown-menu";
-import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/libs/components/ui/sheet";
 import { ModeToggle } from "@/libs/components/ui/mode-toggle";
+import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/libs/components/ui/sheet";
 // import { ModeToggle } from "@/libs/components/layout/ModeToggle";
 import { Logo } from "@/libs/components/common/Logo";
-import { UserNav } from "@/libs/components/layout/UserNav";
 import { NotificationDropdown } from "@/libs/components/layout/NotificationDropdown";
+import { UserNav } from "@/libs/components/layout/UserNav";
 
-import { cn } from "@/libs/utils";
 import { userVar } from "@/apollo/store";
-import { getValidJwtToken, updateUserInfo, logOut } from "@/libs/auth";
-import { Member } from "@/libs/types/member/member";
+import { getValidJwtToken, logOut, updateUserInfo } from "@/libs/auth";
 import { MemberType } from "@/libs/enums/member.enum";
 import { useI18n } from "@/libs/i18n/provider";
+import { cn } from "@/libs/utils";
 
 const navLinks = [
 	{ href: "/", label: "home", icon: Home },
@@ -87,14 +86,14 @@ const Header = () => {
 	const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
 	return (
-		<header className="sticky top-0 z-50 bg-background/80 backdrop-blur-sm border-b w-full">
-			<div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12 lg:px-20 grid grid-cols-2 xl:grid-cols-[auto_1fr_auto] items-center gap-4 h-14 sm:h-16 md:h-20">
+		<header className="sticky top-0 z-50 bg-background/80 backdrop-blur-sm border-b w-full pt-[env(safe-area-inset-top)]">
+			<div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12 lg:px-20 grid grid-cols-[minmax(0,1fr)_auto] xl:grid-cols-[auto_1fr_auto] items-center gap-4 h-14 sm:h-16 md:h-20">
 				{/* Logo */}
 				<Link
 					href="/"
-					className="flex items-center gap-1.5 sm:gap-2 md:gap-3 hover:scale-95 transition-transform duration-300 min-w-0"
+					className="flex min-h-11 items-center gap-1.5 sm:gap-2 md:gap-3 hover:scale-95 transition-transform duration-300 min-w-0"
 				>
-					<Logo className="h-5 w-5 sm:h-6 sm:w-6 md:h-7 md:w-7 lg:h-8 lg:w-8 shrink-0" />
+					<Logo className="h-5 w-5 fine:h-6 fine:w-6 fine:h-7 fine:w-7 fine:h-8 fine:w-8 shrink-0" />
 					<span className="text-base sm:text-lg md:text-xl font-semibold text-foreground truncate">Eventify</span>
 				</Link>
 
@@ -140,7 +139,7 @@ const Header = () => {
 					{/* Language Selector */}
 					<DropdownMenu>
 						<DropdownMenuTrigger
-							className={cn(buttonVariants({ variant: "ghost", size: "icon" }), "h-9 w-9 lg:h-10 lg:w-10")}
+							className={cn(buttonVariants({ variant: "ghost", size: "icon" }), "h-9 w-9 fine:h-10 fine:w-10")}
 						>
 							<span
 								className={cn("fi", `fi-${selectedLanguage.flagIcon}`, "rounded-[2px]")}
@@ -175,25 +174,25 @@ const Header = () => {
 					) : (
 						<div className="flex items-center gap-2 lg:gap-4">
 							<Link href="/auth/login">
-								<Button variant="outline" className="text-xs sm:text-sm h-8 lg:h-9 px-3 lg:px-4">
+								<Button variant="outline" className="text-xs sm:text-sm h-9 fine:h-9 px-3 lg:px-4">
 									{t("login")}
 								</Button>
 							</Link>
 							<Link href="/auth/signup">
-								<Button className="text-xs sm:text-sm h-8 lg:h-9 px-3 lg:px-4">{t("sign_up")}</Button>
+								<Button className="text-xs sm:text-sm h-9 fine:h-9 px-3 lg:px-4">{t("sign_up")}</Button>
 							</Link>
 						</div>
 					)}
 				</div>
 
 				{/* Mobile Controls - Shown below xl (1200px), hidden on xl+ screens */}
-				<div className="flex xl:hidden items-center justify-end gap-1.5 sm:gap-2 min-w-0">
+				<div className="flex xl:hidden items-center justify-end gap-2 min-w-0">
 					{/* User Menu on mobile */}
 					{authMember._id ? (
 						<UserNav authMember={authMember} />
 					) : (
 						<Link href="/auth/login">
-							<Button variant="outline" className="text-xs h-10 px-3 shrink-0">
+							<Button variant="outline" className="text-sm h-11 px-4 shrink-0">
 								{t("login")}
 							</Button>
 						</Link>
@@ -202,24 +201,24 @@ const Header = () => {
 					{/* Mobile Menu Sheet */}
 					<Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
 						<SheetTrigger asChild>
-							<Button variant="ghost" size="icon" className="h-10 w-10 shrink-0">
+							<Button variant="ghost" size="icon" className="h-11 w-11 shrink-0">
 								<Menu className="h-4 w-4 sm:h-5 sm:w-5" />
 								<span className="sr-only">Open menu</span>
 							</Button>
 						</SheetTrigger>
 						<SheetContent side="right" className="w-[85vw] max-w-[320px] sm:max-w-[350px] p-0">
-							<div className="flex h-full flex-col">
+							<div className="flex h-full flex-col pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]">
 								{/* 0. Menu + X (X is rendered by SheetContent itself) */}
 								<SheetHeader className="gap-0 border-b p-0">
 									<div className="flex items-center justify-between px-3 sm:px-4 pt-3 sm:pt-4 pb-2 sm:pb-3">
-										<div className="w-8 sm:w-10" />
+										<div className="w-8 fine:w-10" />
 										<SheetTitle className="text-sm sm:text-base">{t("menu")}</SheetTitle>
 										<SheetClose asChild>
 											<Button
 												variant="ghost"
 												size="icon"
-												className="h-9 w-9 sm:h-10 sm:w-10 opacity-80 hover:opacity-100"
-												aria-label="Close menu"
+												className="h-9 w-9 fine:h-10 fine:w-10 opacity-80 hover:opacity-100"
+												aria-label={t("close_menu")}
 											>
 												<X className="h-4 w-4 sm:h-5 sm:w-5" />
 											</Button>
@@ -246,7 +245,10 @@ const Header = () => {
 										<div className="flex items-center justify-center">
 											<DropdownMenu>
 												<DropdownMenuTrigger
-													className={cn(buttonVariants({ variant: "ghost", size: "icon" }), "h-8 w-8 sm:h-9 sm:w-9")}
+													className={cn(
+														buttonVariants({ variant: "ghost", size: "icon" }),
+														"h-8 w-8 fine:h-9 fine:w-9",
+													)}
 												>
 													<span
 														className={cn("fi", `fi-${selectedLanguage.flagIcon}`, "rounded-[2px]")}
@@ -414,12 +416,12 @@ const Header = () => {
 								{!authMember._id && (
 									<div className="flex flex-col gap-2 border-t px-3 sm:px-4 pt-3 pb-[calc(env(safe-area-inset-bottom)+1rem)] sm:pb-[calc(env(safe-area-inset-bottom)+1.25rem)]">
 										<Link href="/auth/login" onClick={() => setIsMobileMenuOpen(false)}>
-											<Button variant="outline" className="w-full text-sm h-10 sm:h-11">
+											<Button variant="outline" className="w-full text-sm h-11">
 												{t("login")}
 											</Button>
 										</Link>
 										<Link href="/auth/signup" onClick={() => setIsMobileMenuOpen(false)}>
-											<Button className="w-full text-sm h-10 sm:h-11">{t("sign_up")}</Button>
+											<Button className="w-full text-sm h-11">{t("sign_up")}</Button>
 										</Link>
 									</div>
 								)}

@@ -12,6 +12,7 @@ import { TableCell, TableRow } from "@/libs/components/ui/table";
 import { NEXT_APP_API_URL } from "@/libs/config";
 import { GroupUpdateInput } from "@/libs/types/group/group.update";
 import { Group } from "@/libs/types/group/group";
+import { ConfirmAction } from "@/libs/components/common/ConfirmAction";
 
 interface GroupRowProps {
 	group: Group;
@@ -167,14 +168,22 @@ const GroupRow = ({
 							>
 								<Edit className="h-4 w-4" />
 							</Button>
-							<Button
-								variant="outline"
-								size="icon"
-								onClick={removeHandler}
-								className="text-destructive hover:bg-destructive hover:text-destructive-foreground border-destructive"
+							<ConfirmAction
+								title={t("remove_confirm_title")}
+								description={t("remove_confirm_description")}
+								confirmLabel={t("remove_confirm_yes")}
+								cancelLabel={t("remove_confirm_no")}
+								onConfirm={removeHandler}
 							>
-								<Trash2 className="h-4 w-4" />
-							</Button>
+								<Button
+									variant="outline"
+									size="icon"
+									aria-label={t("remove_confirm_yes")}
+									className="text-destructive hover:bg-destructive hover:text-destructive-foreground border-destructive"
+								>
+									<Trash2 className="h-4 w-4" />
+								</Button>
+							</ConfirmAction>
 						</>
 					)}
 				</div>

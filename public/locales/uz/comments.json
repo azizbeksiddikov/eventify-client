@@ -11,5 +11,6 @@
 	"owner_avatar": "Egasi avatarlari",
 	"comment_deleted_successfully": "Izoh muvaffaqiyatli o'chirildi",
 	"comment_updated_successfully": "Izoh muvaffaqiyatli yangilandi",
-	"comment_created_successfully": "Izoh muvaffaqiyatli yaratildi"
+	"comment_created_successfully": "Izoh muvaffaqiyatli yaratildi",
+	"per page": "sahifada"
 }

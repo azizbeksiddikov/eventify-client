@@ -20,6 +20,7 @@ module.exports = {
 		"help",
 		"admin",
 		"errors",
+		"calendar",
 	],
 	reloadOnPrerender: process.env.NODE_ENV === "development",
 };

@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslation } from "next-i18next";
+import type { InlineValidation } from "@/libs/hooks/useInlineValidation";
 import { Input } from "@/libs/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/libs/components/ui/select";
 import { EventLocationType } from "@/libs/enums/event.enum";
@@ -14,6 +15,7 @@ interface LocationFieldsProps {
 	showLocationType?: boolean;
 	onLocationTypeChange?: (locationType: EventLocationType) => void;
 	className?: string;
+	validation?: InlineValidation;
 }
 
 export const LocationFields = ({
@@ -25,6 +27,7 @@ export const LocationFields = ({
 	showLocationType = false,
 	onLocationTypeChange,
 	className,
+	validation,
 }: LocationFieldsProps) => {
 	const { t } = useTranslation("events");
 
@@ -71,12 +74,14 @@ export const LocationFields = ({
 						</label>
 						<Input
 							id="eventAddress"
+							{...validation?.errorProps("eventAddress")}
 							name="eventAddress"
 							value={address || ""}
 							onChange={onAddressChange}
 							placeholder={t("enter_address")}
 							className={className}
 						/>
+						{validation?.errorText("eventAddress")}
 					</div>
 				</div>
 			)}

@@ -1,12 +1,12 @@
-import { jwtDecode } from "jwt-decode";
-import { ApolloClient, InMemoryCache, HttpLink } from "@apollo/client";
 import { userVar } from "@/apollo/store";
+import { ApolloClient, HttpLink, InMemoryCache } from "@apollo/client";
+import { jwtDecode } from "jwt-decode";
 
 import { LOGIN, SIGN_UP } from "@/apollo/user/mutation";
-import { CustomJwtPayload } from "@/libs/types/customJwtPayload";
-import { Message } from "@/libs/enums/common.enum";
 import { MemberType } from "@/libs/enums/member.enum";
+import { AppError, toAppError } from "@/libs/errorMessages";
 import { logger } from "@/libs/logger";
+import { CustomJwtPayload } from "@/libs/types/customJwtPayload";
 
 /**
  * Creates a standalone Apollo Client for authentication operations
@@ -181,13 +181,15 @@ export const logIn = async (username: string, memberPassword: string): Promise<v
 
 		// Provide more specific error messages
 		if (err instanceof Error) {
+			// An error that already has a code (WRONG_PASSWORD, BLOCKED_USER, ...) is translated by that code
+			if (err instanceof AppError) throw err;
 			if (err.message.includes("Unauthorized") || err.message.includes("Invalid credentials")) {
 				logger.logAuth("Login failed: invalid credentials", { username });
-				throw new Error("Invalid username or password");
+				throw new AppError("LOGIN_INVALID");
 			}
 			throw err;
 		}
-		throw new Error(Message.LOGIN_FAILED);
+		throw new AppError("LOGIN_FAILED");
 	}
 };
 
@@ -222,17 +224,8 @@ const requestJwtToken = async ({
 	} catch (err: unknown) {
 		const duration = Date.now() - startTime;
 		logger.error("JWT token request error", err, { username, duration: `${duration}ms` });
-		// Extract meaningful error message from GraphQL errors
-		if (err && typeof err === "object" && "graphQLErrors" in err) {
-			const graphQLErrors = (err as { graphQLErrors: Array<{ message: string }> }).graphQLErrors;
-			if (graphQLErrors && graphQLErrors.length > 0) {
-				throw new Error(graphQLErrors[0].message);
-			}
-		}
-		if (err instanceof Error) {
-			throw new Error(err.message || "Failed to authenticate");
-		}
-		throw new Error("Failed to authenticate");
+		// Keep the error code from the API so the screen can translate it
+		throw toAppError(err, "LOGIN_FAILED");
 	}
 };
 
@@ -298,7 +291,7 @@ export const signUp = async (
 		// Provide more specific error messages
 		if (err instanceof Error) throw err;
 
-		throw new Error("Failed to create account");
+		throw new AppError("SIGNUP_FAILED");
 	}
 };
 
@@ -341,17 +334,8 @@ const requestSignUpJwtToken = async ({
 	} catch (err: unknown) {
 		const duration = Date.now() - startTime;
 		logger.error("Signup token request error", err, { username, memberEmail, duration: `${duration}ms` });
-		// Extract meaningful error message from GraphQL errors
-		if (err && typeof err === "object" && "graphQLErrors" in err) {
-			const graphQLErrors = (err as { graphQLErrors: Array<{ message: string }> }).graphQLErrors;
-			if (graphQLErrors && graphQLErrors.length > 0) {
-				throw new Error(graphQLErrors[0].message);
-			}
-		}
-		if (err instanceof Error) {
-			throw new Error(err.message || "Failed to create account");
-		}
-		throw new Error("Failed to create account");
+		// Keep the error code from the API so the screen can translate it
+		throw toAppError(err, "SIGNUP_FAILED");
 	}
 };
 

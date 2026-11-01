@@ -6,7 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslation } from "next-i18next";
 import { Eye, EyeOff, User, Star } from "lucide-react";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/libs/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader } from "@/libs/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/libs/components/ui/radio-group";
 import { Button } from "@/libs/components/ui/button";
 import { Input } from "@/libs/components/ui/input";
@@ -15,9 +15,11 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/libs
 
 import { MemberInput } from "@/libs/types/member/member.input";
 import { MemberType } from "@/libs/enums/member.enum";
+import { friendlyErrorMessage } from "@/libs/errorMessages";
 import { smallError } from "@/libs/alert";
 import { Message } from "@/libs/enums/common.enum";
 import { signUp } from "@/libs/auth";
+import { useInlineValidation } from "@/libs/hooks/useInlineValidation";
 
 interface SignupForm extends MemberInput {
 	confirmPassword: string;
@@ -53,47 +55,37 @@ const Signup = () => {
 		}));
 	};
 
-	const validateForm = () => {
-		if (!formData.username.trim()) {
-			smallError(t("username_required"));
-			return false;
-		}
-
-		if (!formData.memberEmail.trim()) {
-			smallError(t("email_required"));
-			return false;
-		} else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.memberEmail)) {
-			smallError(t("valid_email_required"));
-			return false;
-		}
-
-		if (!formData.memberFullName.trim()) {
-			smallError(t("full_name_required"));
-			return false;
-		}
-
-		if (!formData.memberPassword) {
-			smallError(t("password_required"));
-			return false;
-		} else if (formData.memberPassword.length < 8) {
-			smallError(t("password_min_length"));
-			return false;
-		}
-
-		if (!formData.confirmPassword) {
-			smallError(t("confirm_password_required"));
-			return false;
-		} else if (formData.confirmPassword !== formData.memberPassword) {
-			smallError(t("passwords_mismatch"));
-			return false;
-		}
-
-		return true;
+	// Inline validation (shared hook): a field shows its error after it was left or after a failed submit.
+	const errors: Record<string, string | undefined> = {
+		username: !formData.username.trim() ? t("username_required") : undefined,
+		memberEmail: !formData.memberEmail.trim()
+			? t("email_required")
+			: !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.memberEmail)
+				? t("valid_email_required")
+				: undefined,
+		memberFullName: !formData.memberFullName.trim() ? t("full_name_required") : undefined,
+		memberPassword: !formData.memberPassword
+			? t("password_required")
+			: formData.memberPassword.length < 8
+				? t("password_min_length")
+				: undefined,
+		confirmPassword: !formData.confirmPassword
+			? t("confirm_password_required")
+			: formData.confirmPassword !== formData.memberPassword
+				? t("passwords_mismatch")
+				: undefined,
 	};
+	const { errorProps, errorText, validate } = useInlineValidation(errors, [
+		"username",
+		"memberEmail",
+		"memberFullName",
+		"memberPassword",
+		"confirmPassword",
+	]);
 
 	const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		if (!validateForm()) return;
+		if (!validate()) return;
 
 		setIsLoading(true);
 		try {
@@ -107,8 +99,7 @@ const Signup = () => {
 			const referrer = searchParams.get("referrer");
 			router.push(referrer || "/");
 		} catch (err: unknown) {
-			const error = err instanceof Error ? err : new Error("Unknown error");
-			smallError(error.message);
+			smallError(friendlyErrorMessage(err));
 			console.log("err", err);
 		} finally {
 			setIsLoading(false);
@@ -116,15 +107,15 @@ const Signup = () => {
 	};
 
 	return (
-		<div className="flex-1 my-20 flex items-center justify-center px-4 sm:px-6 lg:px-8">
+		<div className="flex-1 my-8 sm:my-20 flex items-center justify-center px-4 sm:px-6 lg:px-8">
 			<Card className="w-full max-w-md">
 				<CardHeader className="text-center">
-					<CardTitle className="text-3xl font-semibold">{t("create_your_account")}</CardTitle>
+					<h1 className="text-2xl sm:text-3xl font-semibold leading-none">{t("create_your_account")}</h1>
 					<CardDescription>
 						{t("or")}{" "}
 						<Link
 							href="/auth/login"
-							className="font-medium text-primary hover:text-primary/80 transition-colors duration-300 underline"
+							className="inline-block py-3 font-medium text-primary hover:text-primary transition-colors duration-300 underline"
 						>
 							{t("sign_in_to_account")}
 						</Link>
@@ -140,7 +131,7 @@ const Signup = () => {
 										defaultValue={MemberType.USER}
 										value={formData.memberType}
 										onValueChange={changeMemberTypeHandler}
-										className="flex flex-row justify-center gap-8"
+										className="flex flex-row flex-wrap justify-center gap-4"
 									>
 										<Tooltip>
 											<TooltipTrigger asChild>
@@ -197,14 +188,18 @@ const Signup = () => {
 								</Label>
 								<Input
 									id="username"
+									{...errorProps("username")}
 									name="username"
 									type="text"
 									autoComplete="username"
+									autoCapitalize="none"
+									spellCheck={false}
 									value={formData.username}
 									onChange={(e) => inputHandler(e.target.name, e.target.value)}
 									placeholder={t("enter_username")}
 									tabIndex={3}
 								/>
+								{errorText("username")}
 							</div>
 
 							<div className="space-y-2">
@@ -213,14 +208,19 @@ const Signup = () => {
 								</Label>
 								<Input
 									id="memberEmail"
+									{...errorProps("memberEmail")}
 									name="memberEmail"
 									type="text"
 									autoComplete="email"
+									inputMode="email"
+									autoCapitalize="none"
+									spellCheck={false}
 									value={formData.memberEmail}
 									onChange={(e) => inputHandler(e.target.name, e.target.value)}
 									placeholder={t("enter_email")}
 									tabIndex={4}
 								/>
+								{errorText("memberEmail")}
 							</div>
 
 							<div className="space-y-2">
@@ -229,6 +229,7 @@ const Signup = () => {
 								</Label>
 								<Input
 									id="memberFullName"
+									{...errorProps("memberFullName")}
 									name="memberFullName"
 									type="text"
 									autoComplete="name"
@@ -237,6 +238,7 @@ const Signup = () => {
 									placeholder={t("enter_full_name")}
 									tabIndex={5}
 								/>
+								{errorText("memberFullName")}
 							</div>
 
 							<div className="space-y-2">
@@ -246,6 +248,7 @@ const Signup = () => {
 								<div className="relative">
 									<Input
 										id="memberPassword"
+										{...errorProps("memberPassword")}
 										name="memberPassword"
 										type={showPassword ? "text" : "password"}
 										autoComplete="new-password"
@@ -260,12 +263,15 @@ const Signup = () => {
 										variant="ghost"
 										size="icon"
 										onClick={() => setShowPassword(!showPassword)}
+										aria-label={showPassword ? t("hide_password") : t("show_password")}
+										aria-pressed={showPassword}
 										className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
 										tabIndex={-1}
 									>
 										{showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
 									</Button>
 								</div>
+								{errorText("memberPassword")}
 							</div>
 
 							<div className="space-y-2">
@@ -275,6 +281,7 @@ const Signup = () => {
 								<div className="relative">
 									<Input
 										id="confirmPassword"
+										{...errorProps("confirmPassword")}
 										name="confirmPassword"
 										type={showConfirmPassword ? "text" : "password"}
 										autoComplete="new-password"
@@ -289,16 +296,19 @@ const Signup = () => {
 										variant="ghost"
 										size="icon"
 										onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+										aria-label={showConfirmPassword ? t("hide_password") : t("show_password")}
+										aria-pressed={showConfirmPassword}
 										className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
 										tabIndex={-1}
 									>
 										{showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
 									</Button>
 								</div>
+								{errorText("confirmPassword")}
 							</div>
 						</div>
 
-						<Button type="submit" className="w-full" disabled={isLoading} tabIndex={8}>
+						<Button type="submit" className="w-full h-11 fine:h-9" disabled={isLoading} tabIndex={8}>
 							{isLoading ? t("creating_account") : t("create_account")}
 						</Button>
 					</form>

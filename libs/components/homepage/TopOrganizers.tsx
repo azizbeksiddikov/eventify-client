@@ -1,10 +1,8 @@
 import { userVar } from "@/apollo/store";
-import { ArrowRight } from "lucide-react";
 import { useMutation, useQuery, useReactiveVar } from "@apollo/client/react";
 import { useTranslation } from "next-i18next";
-import { useRouter } from "next/navigation";
 
-import { Button } from "@/libs/components/ui/button";
+import { SectionHeader } from "@/libs/components/common/SectionHeader";
 import OrganizerCard from "@/libs/components/common/OrganizerCard";
 
 import { GET_ORGANIZERS } from "@/apollo/user/query";
@@ -29,7 +27,6 @@ const TopOrganizers = ({
 	},
 }: TopOrganizersProps) => {
 	const { t } = useTranslation("home");
-	const router = useRouter();
 	const user = useReactiveVar(userVar);
 
 	/** APOLLO */
@@ -61,17 +58,12 @@ const TopOrganizers = ({
 
 	return (
 		<section className="bg-secondary/50 py-8 sm:py-12 md:py-16 lg:py-20 w-full">
-			<div className="max-w-7xl mx-auto px-6 sm:px-12 lg:px-20">
-				<div className="flex flex-row items-center justify-start gap-3 mb-6 sm:mb-8">
-					<h2 className="text-foreground">{t("top_organizers")}</h2>
-					<Button
-						type="submit"
-						onClick={() => router.push("/organizers")}
-						className="shrink-0 h-9 sm:h-10 md:h-12 px-3 sm:px-4 md:px-6 bg-card text-card-foreground hover:bg-card/90"
-					>
-						<ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-					</Button>
-				</div>
+			<div className="max-w-7xl mx-auto px-4 sm:px-12 lg:px-20">
+				<SectionHeader
+					title={t("top_organizers")}
+					href="/organizers"
+					linkClassName="bg-card text-card-foreground hover:bg-card/90"
+				/>
 
 				<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
 					{loading ? (

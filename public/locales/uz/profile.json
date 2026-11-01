@@ -60,5 +60,18 @@
 	"price": "Narx",
 	"total": "Jami",
 	"user": "Foydalanuvchi",
-	"following": "Kuzatuvlar"
+	"following": "Kuzatuvlar",
+	"cancel_ticket_title": "Bu chiptani bekor qilasizmi?",
+	"cancel_ticket_description": "Ballaringiz hisobingizga qaytariladi va joy bo'shatiladi. Buni ortga qaytarib bo'lmaydi.",
+	"cancel_ticket_confirm": "Chiptani bekor qilish",
+	"cancel_ticket_keep": "Chiptani saqlash",
+	"leave_group_title": "Guruhdan chiqasizmi?",
+	"leave_group_description": "Guruh tadbirlari va yangiliklarini olmay qo'yasiz. Istalgan vaqtda qayta qo'shilishingiz mumkin.",
+	"leave_group_confirm": "Guruhdan chiqish",
+	"leave_group_stay": "Guruhda qolish",
+	"member_subscribed_successfully": "Obuna bo'ldingiz",
+	"member_unsubscribed_successfully": "Obunadan chiqdingiz",
+	"group_joined_successfully": "Guruhga qo'shildingiz",
+	"group_left_successfully": "Guruhdan chiqdingiz",
+	"free": "Bepul"
 }

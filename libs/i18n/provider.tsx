@@ -149,6 +149,11 @@ export function I18nProvider({ children }: { children: ReactNode }) {
 		}
 	}, [locale, isInitialized]);
 
+	// Keep <html lang> in step with the chosen language (screen readers pick the voice from it)
+	useEffect(() => {
+		document.documentElement.lang = locale;
+	}, [locale]);
+
 	const changeLocale = async (newLocale: string) => {
 		if (newLocale === locale) return;
 		localStorage.setItem("locale", newLocale);

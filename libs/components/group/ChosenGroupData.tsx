@@ -1,5 +1,5 @@
 import { useRouter } from "next/navigation";
-import Image from "next/image";
+import { SafeImage } from "@/libs/components/common/SafeImage";
 import { useTranslation } from "next-i18next";
 import { Heart, Eye, Calendar, Users, Ticket, Pencil } from "lucide-react";
 
@@ -10,6 +10,7 @@ import { Separator } from "@/libs/components/ui/separator";
 
 import { cn, getImageUrl } from "@/libs/utils";
 import { Group } from "@/libs/types/group/group";
+import { ConfirmAction } from "@/libs/components/common/ConfirmAction";
 
 interface ChosenGroupDataProps {
 	group: Group | null;
@@ -65,14 +66,15 @@ const ChosenGroupData = ({
 				<div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-4 sm:p-6 pb-4">
 					{/* Group Name and Image */}
 					<div className="relative w-full flex flex-col justify-start items-start">
-						<h2 className="text-lg sm:text-xl md:text-2xl font-semibold tracking-tight text-foreground mb-3 text-left">
+						<h1 className="text-lg sm:text-xl md:text-2xl font-semibold tracking-tight text-foreground mb-3 text-left">
 							{group.groupName}
-						</h2>
+						</h1>
 
 						{/* Group Image */}
 						<div className="relative aspect-video w-full group rounded-xl overflow-hidden border-2">
-							<Image
+							<SafeImage
 								src={getImageUrl(group.groupImage, "group")}
+								fallbackType="group"
 								alt={group.groupName}
 								fill
 								className="object-contain transition-transform duration-500"
@@ -150,7 +152,7 @@ const ChosenGroupData = ({
 							</div>
 
 							{/* Group Likes and Views */}
-							<div className="grid grid-cols-2 gap-2 h-10">
+							<div className="grid grid-cols-2 gap-2 h-11 fine:h-10">
 								<Button
 									onClick={() => likeGroupHandler(group._id)}
 									className={cn(
@@ -161,7 +163,7 @@ const ChosenGroupData = ({
 									<Heart
 										className={cn(
 											"h-5 w-5 transition-all duration-200",
-											isLiked ? "fill-destructive text-destructive" : "text-primary/70",
+											isLiked ? "fill-destructive text-destructive" : "text-primary",
 										)}
 									/>
 									<span className="font-medium text-sm">{group.groupLikes}</span>
@@ -169,7 +171,7 @@ const ChosenGroupData = ({
 
 								{/* Group Views */}
 								<div className="flex items-center justify-center gap-2 text-muted-foreground bg-muted/40 hover:bg-muted/50 transition-colors rounded-xl">
-									<Eye className="h-5 w-5 text-primary/70" />
+									<Eye className="h-5 w-5 text-primary" />
 									<span className="font-medium text-sm">{group.groupViews}</span>
 								</div>
 							</div>
@@ -177,21 +179,47 @@ const ChosenGroupData = ({
 
 						{/* Join/Leave Button */}
 						<div className="bg-accent/30 p-3 sm:p-4 rounded-xl">
-							<Button
-								onClick={joinHandler}
-								size="sm"
-								disabled={isOwner}
-								className={cn(
-									"w-full h-9 transition-all duration-200 shadow-sm hover:shadow",
-									isOwner
-										? "bg-muted text-muted-foreground cursor-not-allowed"
-										: isJoined
-											? "bg-destructive hover:bg-destructive/90 text-white"
-											: "bg-primary hover:bg-primary/90 text-primary-foreground",
-								)}
-							>
-								{isOwner ? t("owner_cannot_leave_group") : isJoined ? t("leave_group") : t("join_group")}
-							</Button>
+							{isJoined && !isOwner ? (
+								<ConfirmAction
+									title={t("leave_group_title")}
+									description={t("leave_group_description")}
+									confirmLabel={t("leave_group_confirm")}
+									cancelLabel={t("leave_group_stay")}
+									onConfirm={() => leaveGroupHandler(group._id)}
+								>
+									<Button
+										onClick={isJoined ? undefined : joinHandler}
+										size="sm"
+										disabled={isOwner}
+										className={cn(
+											"w-full h-11 fine:h-9 transition-all duration-200 shadow-sm hover:shadow",
+											isOwner
+												? "bg-muted text-muted-foreground cursor-not-allowed"
+												: isJoined
+													? "bg-destructive hover:bg-destructive/90 text-white"
+													: "bg-primary hover:bg-primary/90 text-primary-foreground",
+										)}
+									>
+										{isOwner ? t("owner_cannot_leave_group") : isJoined ? t("leave_group") : t("join_group")}
+									</Button>
+								</ConfirmAction>
+							) : (
+								<Button
+									onClick={isJoined ? undefined : joinHandler}
+									size="sm"
+									disabled={isOwner}
+									className={cn(
+										"w-full h-11 fine:h-9 transition-all duration-200 shadow-sm hover:shadow",
+										isOwner
+											? "bg-muted text-muted-foreground cursor-not-allowed"
+											: isJoined
+												? "bg-destructive hover:bg-destructive/90 text-white"
+												: "bg-primary hover:bg-primary/90 text-primary-foreground",
+									)}
+								>
+									{isOwner ? t("owner_cannot_leave_group") : isJoined ? t("leave_group") : t("join_group")}
+								</Button>
+							)}
 						</div>
 					</div>
 				</div>
@@ -200,7 +228,7 @@ const ChosenGroupData = ({
 			{/* Section: Description */}
 			<Separator />
 			<div className="px-4 sm:px-6 py-4">
-				<h3 className="text-sm font-semibold mb-2 text-foreground/90">{t("description")}</h3>
+				<h3 className="text-sm font-semibold mb-2 text-foreground">{t("description")}</h3>
 				<p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">{group.groupDesc}</p>
 			</div>
 		</Card>

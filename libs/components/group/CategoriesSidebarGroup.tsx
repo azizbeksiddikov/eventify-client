@@ -66,7 +66,7 @@ const CategoriesSidebarGroup = ({ groupsSearchFilters, updateURL, initialSearch 
 						/>
 						<Label
 							htmlFor={`sidebar-${category}`}
-							className="text-sm cursor-pointer text-foreground/90 hover:text-primary transition-colors duration-200 pointer-events-none"
+							className="text-sm cursor-pointer text-foreground hover:text-primary transition-colors duration-200 pointer-events-none"
 						>
 							{formatCategory(category)}
 						</Label>
@@ -90,7 +90,7 @@ const CategoriesSidebarGroup = ({ groupsSearchFilters, updateURL, initialSearch 
 							type="button"
 							variant="secondary"
 							onClick={() => changeCategoryHandler(category)}
-							className="h-8 px-2.5 rounded-full bg-background/70 hover:bg-accent/70"
+							className="h-11 fine:h-8 px-2.5 rounded-full bg-background/70 hover:bg-accent/70"
 						>
 							<span className="text-xs">{formatCategory(category)}</span>
 							<X className="ml-1.5 h-3.5 w-3.5 opacity-80" />
@@ -105,7 +105,8 @@ const CategoriesSidebarGroup = ({ groupsSearchFilters, updateURL, initialSearch 
 		<Button
 			type="button"
 			onClick={clearAllHandler}
-			className={`${mobile ? "h-8 px-3" : "h-10 px-6"} bg-secondary/50 text-card-foreground ${mobile ? "" : "my-4"} ${clearButtonClasses}`}
+			disabled={!hasSelectedCategories}
+			className={`${mobile ? "h-11 px-3" : "h-10 px-6"} bg-secondary/50 text-card-foreground ${mobile ? "" : "my-4"} ${clearButtonClasses}`}
 		>
 			<div className="flex items-center gap-1">
 				<X className="w-4 h-4" />

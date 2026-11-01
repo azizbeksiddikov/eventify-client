@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslation } from "next-i18next";
+import type { InlineValidation } from "@/libs/hooks/useInlineValidation";
 import { Input } from "@/libs/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/libs/components/ui/select";
 import { CurrencyEntity } from "@/libs/types/currency/currency";
@@ -15,6 +16,7 @@ interface CapacityAndPriceFieldsProps {
 	onPriceChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 	onCurrencyChange: (currency: string) => void;
 	className?: string;
+	validation?: InlineValidation;
 }
 
 export const CapacityAndPriceFields = ({
@@ -27,6 +29,7 @@ export const CapacityAndPriceFields = ({
 	onPriceChange,
 	onCurrencyChange,
 	className,
+	validation,
 }: CapacityAndPriceFieldsProps) => {
 	const { t } = useTranslation("events");
 
@@ -38,14 +41,17 @@ export const CapacityAndPriceFields = ({
 				</label>
 				<Input
 					id="eventCapacity"
+					{...validation?.errorProps("eventCapacity")}
 					name="eventCapacity"
 					type="number"
+					inputMode="numeric"
 					min="0"
 					value={capacity === undefined ? "" : String(capacity)}
 					onChange={onCapacityChange}
 					placeholder={t("event_capacity_placeholder")}
 					className={className}
 				/>
+				{validation?.errorText("eventCapacity")}
 			</div>
 			<div className="space-y-2">
 				<label htmlFor="eventPrice" className="text-sm font-medium text-foreground">
@@ -54,31 +60,46 @@ export const CapacityAndPriceFields = ({
 				<div className="flex gap-2">
 					<Input
 						id="eventPrice"
+						{...validation?.errorProps("eventPrice")}
 						name="eventPrice"
 						type="number"
+						inputMode="decimal"
 						min="0"
 						value={price === undefined ? "" : String(price)}
 						onChange={onPriceChange}
 						placeholder={t("enter_event_price")}
 						className={className}
 					/>
-					<Select
-						value={currency}
-						onValueChange={onCurrencyChange}
-						disabled={currenciesLoading || currencies.length === 0}
-					>
-						<SelectTrigger className={`w-24 ${className || ""}`}>
-							<SelectValue placeholder={currenciesLoading ? "..." : "-"} />
-						</SelectTrigger>
-						<SelectContent className={className}>
-							{currencies.map((curr) => (
-								<SelectItem key={curr.currencyCode} value={curr.currencyCode} className={className}>
-									{curr.currencyCode}
-								</SelectItem>
-							))}
-						</SelectContent>
-					</Select>
+					{/* A currency only matters for a paid event: hidden while the price is empty or 0 */}
+					{(price ?? 0) > 0 && (
+						<Select
+							value={currency}
+							onValueChange={onCurrencyChange}
+							disabled={currenciesLoading || currencies.length === 0}
+						>
+							<SelectTrigger
+								id="eventCurrency"
+								{...validation?.errorProps("eventCurrency")}
+								aria-label={t("currency")}
+								className={`w-24 ${className || ""}`}
+							>
+								<SelectValue placeholder={currenciesLoading ? "..." : "-"} />
+							</SelectTrigger>
+							<SelectContent className={className}>
+								{currencies.map((curr) => (
+									<SelectItem key={curr.currencyCode} value={curr.currencyCode} className={className}>
+										{curr.currencyCode}
+									</SelectItem>
+								))}
+							</SelectContent>
+						</Select>
+					)}
 				</div>
+				{validation?.errorText("eventPrice")}
+				{validation?.errorText("eventCurrency")}
+				{(price ?? 0) > 0 && !validation?.fieldError("eventCurrency") && (
+					<p className="text-sm text-muted-foreground">{t("currency_required_hint")}</p>
+				)}
 			</div>
 		</div>
 	);

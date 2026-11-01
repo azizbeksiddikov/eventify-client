@@ -9,6 +9,7 @@ import PaginationComponent from "@/libs/components/common/PaginationComponent";
 import { Groups } from "@/libs/types/group/group";
 import { GroupsInquiry } from "@/libs/types/group/group.input";
 import { GroupUpdateInput } from "@/libs/types/group/group.update";
+import { smoothBehavior } from "@/libs/motion";
 
 interface GroupsInquiryProps {
 	groups: Groups;
@@ -41,7 +42,7 @@ const GroupsModule = ({
 			const extraSpacing = 32; // 32px
 			const elementPosition = groupsListRef.current.getBoundingClientRect().top + window.pageYOffset;
 			const scrollTop = Math.max(0, elementPosition - headerHeight - extraSpacing);
-			window.scrollTo({ top: scrollTop, behavior: "smooth" });
+			window.scrollTo({ top: scrollTop, behavior: smoothBehavior() });
 		}
 	};
 

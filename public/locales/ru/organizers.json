@@ -34,5 +34,13 @@
 	"sort_followers": "Подписчики",
 	"sort_events": "События",
 	"sort_groups": "Группы",
-	"sort_rank": "Рейтинг"
+	"sort_rank": "Рейтинг",
+	"filters": "Фильтры",
+	"load_failed": "Не удалось загрузить список. Проверьте соединение и повторите попытку.",
+	"try_again": "Повторить",
+	"member_subscribed_successfully": "Вы подписались",
+	"member_unsubscribed_successfully": "Вы отписались",
+	"group_joined_successfully": "Вы вступили в группу",
+	"group_left_successfully": "Вы вышли из группы",
+	"free": "Бесплатно"
 }

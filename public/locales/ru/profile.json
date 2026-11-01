@@ -60,5 +60,18 @@
 	"price": "Цена",
 	"total": "Итого",
 	"user": "Пользователь",
-	"following": "Подписки"
+	"following": "Подписки",
+	"cancel_ticket_title": "Отменить этот билет?",
+	"cancel_ticket_description": "Баллы вернутся на ваш счёт, место освободится. Это нельзя отменить.",
+	"cancel_ticket_confirm": "Отменить билет",
+	"cancel_ticket_keep": "Оставить билет",
+	"leave_group_title": "Выйти из группы?",
+	"leave_group_description": "Вы перестанете получать её события и новости. Вступить снова можно в любой момент.",
+	"leave_group_confirm": "Выйти из группы",
+	"leave_group_stay": "Остаться",
+	"member_subscribed_successfully": "Вы подписались",
+	"member_unsubscribed_successfully": "Вы отписались",
+	"group_joined_successfully": "Вы вступили в группу",
+	"group_left_successfully": "Вы вышли из группы",
+	"free": "Бесплатно"
 }

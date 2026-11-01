@@ -1,14 +1,15 @@
-import { useRef } from "react";
 import { useTranslation } from "next-i18next";
+import { useRef } from "react";
 
-import { Separator } from "@/libs/components/ui/separator";
 import PaginationComponent from "@/libs/components/common/PaginationComponent";
+import { Separator } from "@/libs/components/ui/separator";
 
-import { EventUpdateInput } from "@/libs/types/event/event.update";
-import { EventsInquiry } from "@/libs/types/event/event.input";
+import { smoothBehavior } from "@/libs/motion";
 import { Events } from "@/libs/types/event/event";
-import { EventSearch } from "./EventSearch";
+import { EventsInquiry } from "@/libs/types/event/event.input";
+import { EventUpdateInput } from "@/libs/types/event/event.update";
 import { EventPanelList } from "./EventList";
+import { EventSearch } from "./EventSearch";
 
 interface EventsInquiryProps {
 	events: Events;
@@ -41,7 +42,7 @@ const EventsModule = ({
 			const extraSpacing = 32; // 32px
 			const elementPosition = eventsListRef.current.getBoundingClientRect().top + window.pageYOffset;
 			const scrollTop = Math.max(0, elementPosition - headerHeight - extraSpacing);
-			window.scrollTo({ top: scrollTop, behavior: "smooth" });
+			window.scrollTo({ top: scrollTop, behavior: smoothBehavior() });
 		}
 	};
 

@@ -17,14 +17,13 @@ import { OrganizersInquiry } from "@/libs/types/member/member.input";
 import { Member } from "@/libs/types/member/member";
 import { userVar } from "@/apollo/store";
 import { followMember, likeMember, unfollowMember } from "@/libs/utils";
-import Loading from "@/libs/components/common/Loading";
+import { ListSkeleton } from "@/libs/components/common/ListSkeleton";
+import { EmptyState } from "@/libs/components/common/EmptyState";
+import { smoothBehavior } from "@/libs/motion";
 
-interface OrganizersPageProps {
-	initialSearch?: OrganizersInquiry;
-}
-
-const OrganizersPage = ({
-	initialSearch = {
+const OrganizersPage = () => {
+	// Next.js pages must not take props, so the defaults live here.
+	const initialSearch: OrganizersInquiry = {
 		page: 1,
 		limit: 6,
 		sort: "createdAt",
@@ -32,8 +31,7 @@ const OrganizersPage = ({
 		search: {
 			text: "",
 		},
-	},
-}: OrganizersPageProps) => {
+	};
 	const router = useRouter();
 	const searchParams = useSearchParams();
 	const pathname = usePathname();
@@ -72,7 +70,12 @@ const OrganizersPage = ({
 	const [subscribe] = useMutation(SUBSCRIBE);
 	const [unsubscribe] = useMutation(UNSUBSCRIBE);
 
-	const { data: organizersData, loading } = useQuery(GET_ORGANIZERS, {
+	const {
+		data: organizersData,
+		loading,
+		error: organizersError,
+		refetch: organizersRefetch,
+	} = useQuery(GET_ORGANIZERS, {
 		fetchPolicy: "cache-and-network",
 		variables: {
 			input: organizerSearch,
@@ -109,14 +112,14 @@ const OrganizersPage = ({
 			const extraSpacing = 32; // 32px
 			const elementPosition = organizersListRef.current.getBoundingClientRect().top + window.pageYOffset;
 			const scrollTop = Math.max(0, elementPosition - headerHeight - extraSpacing);
-			window.scrollTo({ top: scrollTop, behavior: "smooth" });
+			window.scrollTo({ top: scrollTop, behavior: smoothBehavior() });
 		}
 	};
 
 	return (
 		<div>
 			<OrganizersHeader />
-			<div className="px-6 sm:px-12 lg:px-20">
+			<div className="px-4 sm:px-12 lg:px-20">
 				<SortAndFilterOrganizers
 					updateURL={updateURL}
 					organizerSearch={organizerSearch}
@@ -125,9 +128,15 @@ const OrganizersPage = ({
 			</div>
 
 			{/* Organizers Grid */}
-			<div className="max-w-7xl mx-auto px-6 sm:px-12 lg:px-20 py-10 mb-10">
+			<div className="max-w-7xl mx-auto px-4 sm:px-12 lg:px-20 py-6 sm:py-10 mb-6 sm:mb-10">
 				{loading ? (
-					<Loading />
+					<ListSkeleton variant="row" />
+				) : organizersError && organizers.length === 0 ? (
+					<EmptyState
+						message={t("load_failed")}
+						actionLabel={t("try_again")}
+						onAction={() => void organizersRefetch()}
+					/>
 				) : organizers.length > 0 ? (
 					<>
 						<div ref={organizersListRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -152,9 +161,11 @@ const OrganizersPage = ({
 						</div>
 					</>
 				) : (
-					<div className="py-16 text-center">
-						<p className="text-muted-foreground">{t("no_organizers_found")}</p>
-					</div>
+					<EmptyState
+						message={t("no_organizers_found")}
+						actionLabel={t("clear")}
+						onAction={() => updateURL(initialSearch)}
+					/>
 				)}
 			</div>
 		</div>

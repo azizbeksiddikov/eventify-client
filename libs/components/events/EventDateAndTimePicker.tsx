@@ -1,323 +1,129 @@
 "use client";
 
 import { useTranslation } from "next-i18next";
-import { format, Locale } from "date-fns";
-import { enUS, ko, ru, uz } from "date-fns/locale";
-import { CalendarIcon } from "lucide-react";
-import { Button } from "@/libs/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/libs/components/ui/select";
-import { ScrollArea } from "@/libs/components/ui/scroll-area";
-import { Popover, PopoverContent, PopoverTrigger } from "@/libs/components/ui/popover";
-import { Calendar } from "@/libs/components/common/calendar";
+import { Input } from "@/libs/components/ui/input";
 
 interface EventDateAndTimePickerProps {
 	startDate: Date;
 	endDate: Date;
 	onStartDateChange: (date: Date) => void;
 	onEndDateChange: (date: Date) => void;
-	onStartTimeChange: (date: Date) => void;
-	onEndTimeChange: (date: Date) => void;
-	locale?: string;
+	// kept for the existing callers: time changes are reported through the same setters
+	onStartTimeChange?: (date: Date) => void;
+	onEndTimeChange?: (date: Date) => void;
 	className?: string;
-	useCalendar?: boolean; // For create page (uses Calendar), update page uses native date input
 }
 
+const pad = (n: number) => String(n).padStart(2, "0");
+const toDateValue = (d: Date) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+const toTimeValue = (d: Date) => `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+
+/** Combine a "yyyy-mm-dd" and an "hh:mm" string into a local Date (null when either is empty). */
+const combine = (dateValue: string, timeValue: string): Date | null => {
+	if (!dateValue || !timeValue) return null;
+	const [y, m, d] = dateValue.split("-").map(Number);
+	const [hh, mm] = timeValue.split(":").map(Number);
+	const date = new Date(y, m - 1, d, hh, mm, 0, 0);
+	return Number.isNaN(date.getTime()) ? null : date;
+};
+
+/**
+ * Start and end date and time using the phone's own pickers (native date and time inputs),
+ * which are the standard pattern on phones and work with the keyboard on desktop.
+ * Moving the start past the end pushes the end one hour after it. An end before the start is
+ * kept as typed and explained under the field, never silently changed.
+ */
 export const EventDateAndTimePicker = ({
-	startDate,
-	endDate,
+	startDate: startValue,
+	endDate: endValue,
 	onStartDateChange,
 	onEndDateChange,
-	onStartTimeChange,
-	onEndTimeChange,
-	locale = "en",
 	className,
-	useCalendar = true,
 }: EventDateAndTimePickerProps) => {
-	const { t, i18n } = useTranslation("events");
+	const { t } = useTranslation("events");
+	// the edit page may hand over ISO strings
+	const startDate = new Date(startValue);
+	const endDate = new Date(endValue);
 
-	const localeMap: Record<string, Locale> = {
-		en: enUS,
-		ko: ko,
-		ru: ru,
-		uz: uz,
+	const changeStart = (dateValue: string, timeValue: string) => {
+		const next = combine(dateValue, timeValue);
+		if (!next) return;
+		onStartDateChange(next);
+		if (endDate <= next) onEndDateChange(new Date(next.getTime() + 60 * 60 * 1000));
+	};
+	const changeEnd = (dateValue: string, timeValue: string) => {
+		const next = combine(dateValue, timeValue);
+		if (next) onEndDateChange(next);
 	};
 
-	const currentLocale = localeMap[locale || i18n.language] || enUS;
-
-	const handleStartDateSelect = (date: Date | undefined) => {
-		if (!date) return;
-		const currentTime = new Date(startDate);
-		date.setHours(currentTime.getHours());
-		date.setMinutes(currentTime.getMinutes());
-		date.setSeconds(currentTime.getSeconds());
-		const newStartDate = date;
-
-		// Allow same-day events, only adjust if end datetime is before or equal to start datetime
-		if (endDate <= newStartDate) {
-			const newEndDate = new Date(newStartDate);
-			newEndDate.setHours(newEndDate.getHours() + 1);
-			onStartDateChange(newStartDate);
-			onEndDateChange(newEndDate);
-		} else {
-			onStartDateChange(newStartDate);
-		}
-	};
-
-	const handleEndDateSelect = (date: Date | undefined) => {
-		if (!date) return;
-		const currentTime = new Date(endDate);
-		date.setHours(currentTime.getHours());
-		date.setMinutes(currentTime.getMinutes());
-		date.setSeconds(currentTime.getSeconds());
-		const newEndDate = date;
-
-		// Allow same-day events, only adjust if end datetime is before or equal to start datetime
-		if (newEndDate <= startDate) {
-			const adjustedEndDate = new Date(startDate);
-			adjustedEndDate.setHours(adjustedEndDate.getHours() + 1);
-			onEndDateChange(adjustedEndDate);
-		} else {
-			onEndDateChange(newEndDate);
-		}
-	};
-
-	const handleStartHourChange = (hour: string) => {
-		const currentTime = new Date(startDate);
-		currentTime.setHours(Number(hour));
-		const newStartDate = currentTime;
-
-		// Allow same-day events, only adjust if end datetime is before or equal to start datetime
-		if (endDate <= newStartDate) {
-			const newEndDate = new Date(newStartDate);
-			newEndDate.setHours(newEndDate.getHours() + 1);
-			onStartTimeChange(newStartDate);
-			onEndTimeChange(newEndDate);
-		} else {
-			onStartTimeChange(newStartDate);
-		}
-	};
-
-	const handleStartMinuteChange = (minute: string) => {
-		const currentTime = new Date(startDate);
-		currentTime.setMinutes(Number(minute));
-		const newStartDate = currentTime;
-
-		// Allow same-day events, only adjust if end datetime is before or equal to start datetime
-		if (endDate <= newStartDate) {
-			const newEndDate = new Date(newStartDate);
-			newEndDate.setMinutes(newEndDate.getMinutes() + 30);
-			onStartTimeChange(newStartDate);
-			onEndTimeChange(newEndDate);
-		} else {
-			onStartTimeChange(newStartDate);
-		}
-	};
-
-	const handleEndHourChange = (hour: string) => {
-		const currentTime = new Date(endDate);
-		currentTime.setHours(Number(hour));
-		const newEndDate = currentTime;
-
-		// Allow same-day events, only adjust if end datetime is before or equal to start datetime
-		if (newEndDate <= startDate) {
-			const adjustedEndDate = new Date(startDate);
-			adjustedEndDate.setHours(adjustedEndDate.getHours() + 1);
-			onEndTimeChange(adjustedEndDate);
-		} else {
-			onEndTimeChange(newEndDate);
-		}
-	};
-
-	const handleEndMinuteChange = (minute: string) => {
-		const currentTime = new Date(endDate);
-		currentTime.setMinutes(Number(minute));
-		const newEndDate = currentTime;
-
-		// Allow same-day events, only adjust if end datetime is before or equal to start datetime
-		if (newEndDate <= startDate) {
-			const adjustedEndDate = new Date(startDate);
-			adjustedEndDate.setMinutes(adjustedEndDate.getMinutes() + 30);
-			onEndTimeChange(adjustedEndDate);
-		} else {
-			onEndTimeChange(newEndDate);
-		}
-	};
+	const today = toDateValue(new Date());
+	const inputClass = "bg-background border-input";
 
 	return (
 		<div className={`grid grid-cols-1 sm:grid-cols-2 gap-4 ${className || ""}`}>
-			{/* Start Date and Time */}
 			<div className="space-y-4">
 				<div className="space-y-2">
 					<label htmlFor="eventStartDate" className="text-sm font-medium text-foreground">
 						{t("start_date")} *
 					</label>
-					{useCalendar ? (
-						<Popover>
-							<PopoverTrigger asChild>
-								<Button
-									variant="outline"
-									className="w-full justify-start text-left font-normal bg-input text-input-foreground border-input"
-								>
-									<CalendarIcon className="mr-2 h-4 w-4" />
-									{format(new Date(startDate), "PPP", { locale: currentLocale })}
-								</Button>
-							</PopoverTrigger>
-							<PopoverContent className="w-auto p-0" align="start">
-								<Calendar
-									mode="single"
-									selected={new Date(startDate)}
-									onSelect={handleStartDateSelect}
-									initialFocus
-									locale={currentLocale}
-									disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
-								/>
-							</PopoverContent>
-						</Popover>
-					) : (
-						<input
-							type="date"
-							id="eventStartDate"
-							value={format(new Date(startDate), "yyyy-MM-dd")}
-							onChange={(e) => {
-								if (!e.target.value) return;
-								const selectedDate = new Date(e.target.value + "T00:00:00");
-								if (!isNaN(selectedDate.getTime())) {
-									handleStartDateSelect(selectedDate);
-								}
-							}}
-							className="w-full px-3 py-2 border rounded-md bg-input text-input-foreground border-input"
-						/>
-					)}
+					<Input
+						id="eventStartDate"
+						type="date"
+						min={today}
+						value={toDateValue(startDate)}
+						onChange={(e) => changeStart(e.target.value, toTimeValue(startDate))}
+						className={inputClass}
+					/>
 				</div>
 				<div className="space-y-2">
 					<label htmlFor="eventStartTime" className="text-sm font-medium text-foreground">
 						{t("start_time")} *
 					</label>
-					<div className="flex gap-2">
-						<Select value={startDate.getHours().toString().padStart(2, "0")} onValueChange={handleStartHourChange}>
-							<SelectTrigger className={`w-20 ${className || ""}`}>
-								<SelectValue placeholder="HH" />
-							</SelectTrigger>
-							<SelectContent className={className}>
-								<ScrollArea className="h-[200px]">
-									{[...Array(24)].map((_, i) => (
-										<SelectItem key={i} value={i.toString().padStart(2, "0")} className={className}>
-											{i.toString().padStart(2, "0")}
-										</SelectItem>
-									))}
-								</ScrollArea>
-							</SelectContent>
-						</Select>
-						<Select value={startDate.getMinutes().toString().padStart(2, "0")} onValueChange={handleStartMinuteChange}>
-							<SelectTrigger className={`w-20 ${className || ""}`}>
-								<SelectValue placeholder="MM" />
-							</SelectTrigger>
-							<SelectContent className={className}>
-								<ScrollArea className="h-[200px]">
-									{[...Array(12)].map((_, i) => {
-										const minute = (i * 5).toString().padStart(2, "0");
-										return (
-											<SelectItem key={minute} value={minute} className={className}>
-												{minute}
-											</SelectItem>
-										);
-									})}
-								</ScrollArea>
-							</SelectContent>
-						</Select>
-					</div>
+					<Input
+						id="eventStartTime"
+						type="time"
+						step={300}
+						value={toTimeValue(startDate)}
+						onChange={(e) => changeStart(toDateValue(startDate), e.target.value)}
+						className={inputClass}
+					/>
 				</div>
 			</div>
 
-			{/* End Date and Time */}
 			<div className="space-y-4">
 				<div className="space-y-2">
 					<label htmlFor="eventEndDate" className="text-sm font-medium text-foreground">
 						{t("end_date")} *
 					</label>
-					{useCalendar ? (
-						<Popover>
-							<PopoverTrigger asChild>
-								<Button
-									variant="outline"
-									className="w-full justify-start text-left font-normal bg-input text-input-foreground border-input"
-								>
-									<CalendarIcon className="mr-2 h-4 w-4" />
-									{format(new Date(endDate), "PPP", { locale: currentLocale })}
-								</Button>
-							</PopoverTrigger>
-							<PopoverContent className="w-auto p-0" align="start">
-								<Calendar
-									mode="single"
-									selected={new Date(endDate)}
-									onSelect={handleEndDateSelect}
-									initialFocus
-									locale={currentLocale}
-									disabled={(date) => {
-										const startDateOnly = new Date(startDate);
-										startDateOnly.setHours(0, 0, 0, 0);
-										const dateOnly = new Date(date);
-										dateOnly.setHours(0, 0, 0, 0);
-										return dateOnly < startDateOnly;
-									}}
-								/>
-							</PopoverContent>
-						</Popover>
-					) : (
-						<input
-							type="date"
-							id="eventEndDate"
-							value={format(new Date(endDate), "yyyy-MM-dd")}
-							onChange={(e) => {
-								if (!e.target.value) return;
-								const selectedDate = new Date(e.target.value + "T00:00:00");
-								if (!isNaN(selectedDate.getTime())) {
-									handleEndDateSelect(selectedDate);
-								}
-							}}
-							className="w-full px-3 py-2 border rounded-md bg-input text-input-foreground border-input"
-						/>
-					)}
+					<Input
+						id="eventEndDate"
+						type="date"
+						min={toDateValue(startDate)}
+						value={toDateValue(endDate)}
+						onChange={(e) => changeEnd(e.target.value, toTimeValue(endDate))}
+						aria-invalid={endDate <= startDate ? true : undefined}
+						aria-describedby={endDate <= startDate ? "eventEndTime-error" : undefined}
+						className={inputClass}
+					/>
 				</div>
 				<div className="space-y-2">
 					<label htmlFor="eventEndTime" className="text-sm font-medium text-foreground">
 						{t("end_time")} *
 					</label>
-					<div className="flex gap-2">
-						<Select value={endDate.getHours().toString().padStart(2, "0")} onValueChange={handleEndHourChange}>
-							<SelectTrigger className={`w-20 ${className || ""}`}>
-								<SelectValue placeholder="HH" />
-							</SelectTrigger>
-							<SelectContent className={className}>
-								<ScrollArea className="h-[200px]">
-									{[...Array(24)].map((_, i) => (
-										<SelectItem key={i} value={i.toString().padStart(2, "0")} className={className}>
-											{i.toString().padStart(2, "0")}
-										</SelectItem>
-									))}
-								</ScrollArea>
-							</SelectContent>
-						</Select>
-						<Select value={endDate.getMinutes().toString().padStart(2, "0")} onValueChange={handleEndMinuteChange}>
-							<SelectTrigger className={`w-20 ${className || ""}`}>
-								<SelectValue placeholder="MM" />
-							</SelectTrigger>
-							<SelectContent className={className}>
-								<ScrollArea className="h-[200px]">
-									{[...Array(12)].map((_, i) => {
-										const minute = (i * 5).toString().padStart(2, "0");
-										return (
-											<SelectItem key={minute} value={minute} className={className}>
-												{minute}
-											</SelectItem>
-										);
-									})}
-								</ScrollArea>
-							</SelectContent>
-						</Select>
-					</div>
+					<Input
+						id="eventEndTime"
+						type="time"
+						step={300}
+						value={toTimeValue(endDate)}
+						onChange={(e) => changeEnd(toDateValue(endDate), e.target.value)}
+						aria-invalid={endDate <= startDate ? true : undefined}
+						aria-describedby={endDate <= startDate ? "eventEndTime-error" : undefined}
+						className={inputClass}
+					/>
 					{endDate <= startDate && (
-						<p className="text-sm text-destructive mt-1">{t("end_time_must_be_after_start_time")}</p>
+						<p id="eventEndTime-error" role="alert" className="text-sm text-destructive">
+							{t("end_time_must_be_after_start_time")}
+						</p>
 					)}
 				</div>
 			</div>

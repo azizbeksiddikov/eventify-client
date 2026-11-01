@@ -3,22 +3,25 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
+import { ImageCropper } from "@/libs/components/common/ImageCropper";
 import { Button } from "@/libs/components/ui/button";
+import { Card } from "@/libs/components/ui/card";
 import { Input } from "@/libs/components/ui/input";
 import { Textarea } from "@/libs/components/ui/textarea";
-import { Card } from "@/libs/components/ui/card";
-import { ImageIcon, RefreshCw } from "lucide-react";
 import { GroupCategory } from "@/libs/enums/group.enum";
 import { GroupInput } from "@/libs/types/group/group.input";
-import { ImageCropper } from "@/libs/components/common/ImageCropper";
+import { ImageIcon, RefreshCw } from "lucide-react";
 
-import { useMutation, useReactiveVar } from "@apollo/client/react";
 import { userVar } from "@/apollo/store";
 import { CREATE_GROUP } from "@/apollo/user/mutation";
 import { smallError, smallSuccess } from "@/libs/alert";
-import { useTranslation } from "next-i18next";
 import { imageTypes, NEXT_APP_API_URL } from "@/libs/config";
+import { AppError, friendlyErrorMessage } from "@/libs/errorMessages";
+import { useInlineValidation } from "@/libs/hooks/useInlineValidation";
+import { smoothBehavior } from "@/libs/motion";
 import { uploadImage } from "@/libs/upload";
+import { useMutation, useReactiveVar } from "@apollo/client/react";
+import { useTranslation } from "next-i18next";
 import Image from "next/image";
 
 const GroupCreatePage = () => {
@@ -38,6 +41,20 @@ const GroupCreatePage = () => {
 		groupImage: "",
 		groupCategories: [],
 	});
+
+	// Inline validation: errors show under each field; the button stays enabled and explains what is missing
+	const errors = {
+		groupName: !formData.groupName.trim() ? t("group_name_is_required") : undefined,
+		groupDesc: !formData.groupDesc.trim() ? t("group_description_is_required") : undefined,
+		groupCategories: selectedCategories.length === 0 ? t("group_category_is_required") : undefined,
+		groupImage: !formData.groupImage ? t("group_image_is_required") : undefined,
+	};
+	const { errorProps, errorText, validate, touch } = useInlineValidation(errors, [
+		"groupName",
+		"groupDesc",
+		"groupCategories",
+		"groupImage",
+	]);
 
 	/** APOLLO REQUESTS **/
 	const [createGroup] = useMutation(CREATE_GROUP);
@@ -84,14 +101,11 @@ const GroupCreatePage = () => {
 
 	const submitHandler = async (e: React.FormEvent) => {
 		e.preventDefault();
+		if (!validate()) return;
 		setIsSubmitting(true);
 
 		try {
-			if (!user._id) throw new Error(t("errors:not_authenticated"));
-			if (!formData.groupName) throw new Error(t("group_name_is_required"));
-			if (!formData.groupDesc) throw new Error(t("group_description_is_required"));
-			if (selectedCategories.length === 0) throw new Error(t("group_category_is_required"));
-			if (!formData.groupImage) throw new Error(t("group_image_is_required"));
+			if (!user._id) throw new AppError("NOT_AUTHENTICATED");
 
 			const updatedFormData = {
 				...formData,
@@ -107,12 +121,12 @@ const GroupCreatePage = () => {
 				router.push(`/groups/${response.data.createGroup._id}`);
 				// Scroll to top after navigation (with small delay to ensure page has loaded)
 				setTimeout(() => {
-					window.scrollTo({ top: 0, behavior: "smooth" });
+					window.scrollTo({ top: 0, behavior: smoothBehavior() });
 				}, 100);
 			}
 		} catch (error: unknown) {
 			if (error instanceof Error) {
-				smallError(error.message);
+				smallError(friendlyErrorMessage(error));
 			} else {
 				smallError(t("errors:something_went_wrong"));
 			}
@@ -167,10 +181,10 @@ const GroupCreatePage = () => {
 					</Button>
 				</div>
 
-				<Card className="p-6 bg-card text-card-foreground">
-					<h1 className="text-3xl font-semibold text-foreground mb-6">{t("create_new_group")}</h1>
+				<Card className="p-4 sm:p-6 bg-card text-card-foreground">
+					<h1 className="text-2xl sm:text-3xl font-semibold text-foreground mb-4 sm:mb-6">{t("create_new_group")}</h1>
 
-					<form onSubmit={submitHandler} className="space-y-6">
+					<form noValidate onSubmit={submitHandler} className="space-y-6">
 						{/* Group Name */}
 						<div className="space-y-2">
 							<label htmlFor="groupName" className="text-sm font-medium text-foreground">
@@ -178,12 +192,14 @@ const GroupCreatePage = () => {
 							</label>
 							<Input
 								id="groupName"
+								{...errorProps("groupName")}
 								name="groupName"
 								value={formData.groupName}
 								onChange={inputHandler}
 								placeholder={t("enter_group_name")}
-								className="bg-input text-input-foreground border-input"
+								className="bg-background border-input"
 							/>
+							{errorText("groupName")}
 						</div>
 
 						{/* Group Description */}
@@ -193,16 +209,18 @@ const GroupCreatePage = () => {
 							</label>
 							<Textarea
 								id="groupDesc"
+								{...errorProps("groupDesc")}
 								name="groupDesc"
 								value={formData.groupDesc}
 								onChange={inputHandler}
 								placeholder={t("enter_group_description")}
-								className="min-h-[120px] bg-input text-input-foreground border-input"
+								className="min-h-[120px] bg-background border-input"
 							/>
+							{errorText("groupDesc")}
 						</div>
 
 						{/* Categories */}
-						<div className="space-y-2">
+						<div className="space-y-2" id="groupCategories" tabIndex={-1}>
 							<label className="text-sm font-medium text-foreground">{t("categories_select_up_to_3")} *</label>
 							<div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
 								{Object.values(GroupCategory).map((category) => (
@@ -210,9 +228,13 @@ const GroupCreatePage = () => {
 										key={category}
 										type="button"
 										variant={selectedCategories.includes(category) ? "default" : "outline"}
-										onClick={() => categoryHandler(category)}
+										onClick={() => {
+											categoryHandler(category);
+											touch("groupCategories");
+										}}
+										aria-pressed={selectedCategories.includes(category)}
 										disabled={selectedCategories.length >= 3 && !selectedCategories.includes(category)}
-										className={`h-10 transition-all duration-200 ${
+										className={`h-11 fine:h-10 transition-all duration-200 ${
 											selectedCategories.includes(category)
 												? "bg-primary text-primary-foreground font-semibold shadow-sm hover:bg-primary/90"
 												: "bg-transparent text-foreground hover:bg-accent hover:text-accent-foreground"
@@ -222,10 +244,11 @@ const GroupCreatePage = () => {
 									</Button>
 								))}
 							</div>
+							{errorText("groupCategories")}
 						</div>
 
 						{/* Image Section */}
-						<div className="space-y-4">
+						<div className="space-y-4" id="groupImage" tabIndex={-1}>
 							<label className="text-sm font-medium text-foreground">{t("group_image")} *</label>
 							<div className="relative aspect-video w-full max-w-2xl mx-auto rounded-xl overflow-hidden bg-muted/50">
 								{imagePreview ? (
@@ -259,6 +282,7 @@ const GroupCreatePage = () => {
 									className="hidden"
 								/>
 								<p className="text-sm text-muted-foreground mt-1">{t("only_jpg_jpeg_png_allowed")}</p>
+								{errorText("groupImage")}
 							</div>
 						</div>
 
@@ -278,7 +302,7 @@ const GroupCreatePage = () => {
 							<Button
 								type="submit"
 								size="lg"
-								disabled={isSubmitting || selectedCategories.length === 0}
+								disabled={isSubmitting}
 								className="bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed px-8"
 							>
 								{isSubmitting ? t("creating") : t("create_group")}

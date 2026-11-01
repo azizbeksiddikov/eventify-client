@@ -33,5 +33,12 @@
 	"commented_on_your_group": "прокомментировал вашу группу",
 	"liked_your_profile": "понравился ваш профиль",
 	"commented_on_your_profile": "прокомментировал ваш профиль",
-	"followed_you": "подписался на вас"
+	"followed_you": "подписался на вас",
+	"new": "новых",
+	"toggle_theme": "Переключить тему",
+	"theme_light": "Светлая",
+	"theme_dark": "Тёмная",
+	"theme_system": "Системная",
+	"loading": "Загрузка",
+	"close_menu": "Закрыть меню"
 }

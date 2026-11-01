@@ -13,6 +13,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { userVar } from "@/apollo/store";
 import { NEXT_APP_API_URL } from "@/libs/config";
 import { Group } from "@/libs/types/group/group";
+import { ConfirmAction } from "@/libs/components/common/ConfirmAction";
 
 interface ProfileGroupsProps {
 	groups: Group[];
@@ -60,7 +61,7 @@ export const ProfileGroups = ({
 								return (
 									<TableRow key={group._id} className="hover:bg-muted/50">
 										<TableCell>
-											<Link href={`/groups/${group._id}`}>
+											<Link href={`/groups/${group._id}`} className="flex min-h-11 items-center">
 												<div className="flex items-center gap-3 underline">
 													<Avatar className="h-10 w-10 ring-2 ring-primary/10">
 														<AvatarImage
@@ -119,15 +120,22 @@ export const ProfileGroups = ({
 													<Heart className={`h-4 w-4 ${isLiked ? "fill-current" : ""}`} />
 												</Button>
 												{isJoined ? (
-													<Button
-														variant="ghost"
-														size="icon"
-														onClick={() => leaveGroupHandler(group._id)}
-														className="text-destructive hover:text-destructive/80 transition-colors duration-200"
-														aria-label={t("leave_group")}
+													<ConfirmAction
+														title={t("leave_group_title")}
+														description={t("leave_group_description")}
+														confirmLabel={t("leave_group_confirm")}
+														cancelLabel={t("leave_group_stay")}
+														onConfirm={() => leaveGroupHandler(group._id)}
 													>
-														<LogOut className="h-4 w-4" />
-													</Button>
+														<Button
+															variant="ghost"
+															size="icon"
+															className="text-destructive hover:text-destructive/80 transition-colors duration-200"
+															aria-label={t("leave_group")}
+														>
+															<LogOut className="h-4 w-4" />
+														</Button>
+													</ConfirmAction>
 												) : (
 													<Button
 														variant="ghost"

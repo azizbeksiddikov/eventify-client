@@ -12,7 +12,7 @@ services:
     ports:
       - "4000:3000"
     env_file:
-      - .env
+      - .env.production
     # Health check to ensure container is running properly
     healthcheck:
       test:

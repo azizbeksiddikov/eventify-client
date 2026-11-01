@@ -1,11 +1,10 @@
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useTranslation } from "next-i18next";
 import { useMutation, useQuery, useReactiveVar } from "@apollo/client/react";
 import { userVar } from "@/apollo/store";
 import { ArrowRight } from "lucide-react";
 
-import { Button } from "@/libs/components/ui/button";
+import { SectionHeader } from "@/libs/components/common/SectionHeader";
 import SmallEventCard from "@/libs/components/common/SmallEventCard";
 import Loading from "@/libs/components/common/Loading";
 
@@ -26,7 +25,6 @@ const EventsByCategory = ({
 		categories: [EventCategory.TECHNOLOGY, EventCategory.ENTERTAINMENT, EventCategory.TRAVEL],
 	},
 }: EventsByCategoryProps) => {
-	const router = useRouter();
 	const { t } = useTranslation(["home", "events"]);
 	const user = useReactiveVar(userVar);
 
@@ -47,20 +45,8 @@ const EventsByCategory = ({
 
 	return (
 		<section className="bg-secondary/50 py-8 sm:py-12 md:py-16 lg:py-20 w-full">
-			<div className="max-w-7xl mx-auto px-6 sm:px-12 lg:px-20">
-				<div className="flex flex-row items-center justify-start gap-3 mb-6 sm:mb-8">
-					<h2 className="flex-1 min-w-0 text-foreground">{t("events_by_category")}</h2>
-					<Button
-						type="submit"
-						onClick={() => router.push("/events")}
-						className="shrink-0 h-9 sm:h-10 md:h-12 px-3 sm:px-4 md:px-6"
-					>
-						<div className="flex items-center gap-1">
-							{t("view_all_events")}
-							<ArrowRight className="w-3 h-3 sm:w-4 sm:h-4" />
-						</div>
-					</Button>
-				</div>
+			<div className="max-w-7xl mx-auto px-4 sm:px-12 lg:px-20">
+				<SectionHeader title={t("events_by_category")} href="/events" linkLabel={t("view_all_events")} />
 
 				{loading ? (
 					<Loading />
@@ -100,9 +86,10 @@ const EventsByCategory = ({
 								<div className="p-2.5 sm:p-3 border-t mt-auto">
 									<Link
 										href={`/events?categories=${categoryData.category.toUpperCase()}`}
-										className="text-primary hover:text-primary/80 font-medium flex items-center justify-center gap-1 transition-colors duration-200"
+										aria-label={`${t("view_all_events")}: ${t(`events:${categoryData.category.toLowerCase()}`)}`}
+										className="text-primary hover:text-primary font-medium flex min-h-11 items-center justify-center gap-1 transition-colors duration-200"
 									>
-										<ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+										<ArrowRight className="w-4 h-4" />
 									</Link>
 								</div>
 							</div>

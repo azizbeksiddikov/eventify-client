@@ -1,20 +1,20 @@
-import { useState } from "react";
-import Image from "next/image";
-import { useTranslation } from "next-i18next";
 import { ImageIcon, RefreshCw } from "lucide-react";
+import { useTranslation } from "next-i18next";
+import Image from "next/image";
+import { useState } from "react";
 
+import { ImageCropper } from "@/libs/components/common/ImageCropper";
 import { Button } from "@/libs/components/ui/button";
 import { Input } from "@/libs/components/ui/input";
 import { Label } from "@/libs/components/ui/label";
 import { Textarea } from "@/libs/components/ui/textarea";
-import { ImageCropper } from "@/libs/components/common/ImageCropper";
 
-import { NEXT_APP_API_URL, imageTypes } from "@/libs/config";
 import { smallError } from "@/libs/alert";
+import { NEXT_APP_API_URL, imageTypes } from "@/libs/config";
+import { useInlineValidation } from "@/libs/hooks/useInlineValidation";
 import { MemberUpdateInput } from "@/libs/types/member/member.update";
-import { Message } from "@/libs/enums/common.enum";
-import { formatPhoneNumber } from "@/libs/utils";
 import { uploadImage } from "@/libs/upload";
+import { formatPhoneNumber } from "@/libs/utils";
 
 interface ProfileSettingsProps {
 	updateMemberHandler: (data: MemberUpdateInput) => void;
@@ -35,6 +35,21 @@ export const ProfileSettings = ({
 	const [cropModalOpen, setCropModalOpen] = useState(false);
 	const [tempImageUrl, setTempImageUrl] = useState<string | null>(null);
 
+	// Inline validation: shown under each field once it was left or after a failed save
+	const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(memberUpdateInput.memberEmail || "");
+	const phoneDigits = (memberUpdateInput.memberPhone || "").replace(/\D/g, "");
+	const errors = {
+		username: !memberUpdateInput.username?.trim() ? t("errors:username_required") : undefined,
+		fullName: !memberUpdateInput.memberFullName?.trim() ? t("errors:full_name_required") : undefined,
+		email: !memberUpdateInput.memberEmail?.trim()
+			? t("errors:email_required")
+			: !emailOk
+				? t("errors:valid_email_required")
+				: undefined,
+		phone: phoneDigits.length > 0 && phoneDigits.length < 9 ? t("errors:valid_phone_required") : undefined,
+	};
+	const { errorProps, errorText, validate } = useInlineValidation(errors, ["username", "fullName", "email", "phone"]);
+
 	/** HANDLERS */
 	const handleImageUpload = async (image: File) => {
 		try {
@@ -48,7 +63,7 @@ export const ProfileSettings = ({
 			return imageUrl;
 		} catch (err) {
 			console.error("Error uploading image:", err);
-			smallError(t(Message.UPLOAD_FAILED));
+			smallError(t("errors:failed_to_upload"));
 			return null;
 		}
 	};
@@ -70,7 +85,7 @@ export const ProfileSettings = ({
 			}
 		} catch (err) {
 			console.error("Error handling cropped image:", err);
-			smallError(t(Message.UPLOAD_FAILED));
+			smallError(t("errors:failed_to_upload"));
 		}
 	};
 
@@ -82,11 +97,7 @@ export const ProfileSettings = ({
 	const submitHandler = (e: React.FormEvent) => {
 		e.preventDefault();
 
-		// Validate email if it's being updated
-		if (memberUpdateInput.memberEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(memberUpdateInput.memberEmail)) {
-			smallError(Message.INVALID_EMAIL);
-			return;
-		}
+		if (!validate()) return;
 
 		updateMemberHandler(memberUpdateInput);
 	};
@@ -96,7 +107,7 @@ export const ProfileSettings = ({
 			<div className="px-6 py-4 border-b  ">
 				<h2 className="text-lg font-medium text-card-foreground">{t("profile_settings")}</h2>
 			</div>
-			<form onSubmit={submitHandler} className="p-6 space-y-6">
+			<form noValidate onSubmit={submitHandler} className="p-6 space-y-6">
 				{/* Image Upload Section */}
 				<div className="space-y-4">
 					<label className="text-sm font-medium text-foreground">{t("profile_image")}</label>
@@ -146,41 +157,61 @@ export const ProfileSettings = ({
 					<Label htmlFor="username">{t("username")}</Label>
 					<Input
 						id="username"
+						{...errorProps("username")}
+						autoComplete="username"
+						autoCapitalize="none"
+						spellCheck={false}
 						value={memberUpdateInput.username}
 						onChange={(e) => setMemberUpdateInput({ ...memberUpdateInput, username: e.target.value.toLowerCase() })}
 						className="bg-background"
 					/>
+					{errorText("username")}
 				</div>
 
 				<div className="space-y-2">
 					<Label htmlFor="fullName">{t("full_name")}</Label>
 					<Input
 						id="fullName"
+						{...errorProps("fullName")}
+						autoComplete="name"
 						value={memberUpdateInput.memberFullName}
 						onChange={(e) => setMemberUpdateInput({ ...memberUpdateInput, memberFullName: e.target.value })}
 						className="bg-background"
 					/>
+					{errorText("fullName")}
 				</div>
 
 				<div className="space-y-2">
 					<Label htmlFor="email">{t("email")}</Label>
 					<Input
 						id="email"
+						{...errorProps("email")}
+						type="text"
+						inputMode="email"
+						autoComplete="email"
+						autoCapitalize="none"
+						spellCheck={false}
 						value={memberUpdateInput.memberEmail}
 						onChange={(e) => setMemberUpdateInput({ ...memberUpdateInput, memberEmail: e.target.value })}
 						className="bg-background"
 					/>
+					{errorText("email")}
 				</div>
 
 				<div className="space-y-2">
 					<Label htmlFor="phone">{t("phone")}</Label>
 					<Input
 						id="phone"
+						{...errorProps("phone")}
+						type="tel"
+						inputMode="tel"
+						autoComplete="tel"
 						value={memberUpdateInput.memberPhone}
 						onChange={(e) => phoneChangeHandler(e.target.value)}
 						placeholder="XXX-XXXX-XXXX"
 						className="bg-background"
 					/>
+					{errorText("phone")}
 				</div>
 
 				<div className="space-y-2">

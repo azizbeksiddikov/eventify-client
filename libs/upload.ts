@@ -1,5 +1,6 @@
-import { NEXT_APP_API_URL } from "./config";
 import { getValidJwtToken } from "./auth";
+import { NEXT_APP_API_URL } from "./config";
+import { AppError } from "./errorMessages";
 
 /**
  * Upload a single image file to the server
@@ -14,7 +15,7 @@ export async function uploadImage(file: File, target: string): Promise<string> {
 	formData.append("target", target);
 
 	const token = getValidJwtToken();
-	if (!token) throw new Error("Authentication required. Please log in to upload images.");
+	if (!token) throw new AppError("NOT_AUTHENTICATED");
 
 	const headers: HeadersInit = {
 		Authorization: `Bearer ${token}`,
@@ -36,7 +37,7 @@ export async function uploadImage(file: File, target: string): Promise<string> {
 			} catch {
 				errorData = { message: errorText || "Upload failed" };
 			}
-			throw new Error(errorData.message || `Upload failed with status ${response.status}`);
+			throw errorData.code ? new AppError(errorData.code, errorData.params) : new AppError("UPLOAD_FAILED");
 		}
 
 		const data = await response.json();
@@ -45,7 +46,7 @@ export async function uploadImage(file: File, target: string): Promise<string> {
 		if (error instanceof Error) {
 			throw error;
 		}
-		throw new Error("Failed to upload image");
+		throw new AppError("UPLOAD_FAILED");
 	}
 }
 
@@ -58,11 +59,11 @@ export async function uploadImage(file: File, target: string): Promise<string> {
  */
 export async function uploadImages(files: File[], target: string): Promise<string[]> {
 	if (!files || files.length === 0) {
-		throw new Error("At least one file is required");
+		throw new AppError("UPLOAD_FAILED");
 	}
 
 	if (!target) {
-		throw new Error("Target parameter is required");
+		throw new AppError("UPLOAD_TARGET_REQUIRED");
 	}
 
 	const formData = new FormData();
@@ -72,7 +73,7 @@ export async function uploadImages(files: File[], target: string): Promise<strin
 	formData.append("target", target);
 
 	const token = getValidJwtToken();
-	if (!token) throw new Error("Authentication required. Please log in to upload images.");
+	if (!token) throw new AppError("NOT_AUTHENTICATED");
 
 	const headers: HeadersInit = {
 		Authorization: `Bearer ${token}`,
@@ -95,7 +96,7 @@ export async function uploadImages(files: File[], target: string): Promise<strin
 			} catch {
 				errorData = { message: errorText || "Upload failed" };
 			}
-			throw new Error(errorData.message || `Upload failed with status ${response.status}`);
+			throw errorData.code ? new AppError(errorData.code, errorData.params) : new AppError("UPLOAD_FAILED");
 		}
 
 		const data = await response.json();
@@ -107,6 +108,6 @@ export async function uploadImages(files: File[], target: string): Promise<strin
 		if (error instanceof Error) {
 			throw error;
 		}
-		throw new Error("Failed to upload images");
+		throw new AppError("UPLOAD_FAILED");
 	}
 }

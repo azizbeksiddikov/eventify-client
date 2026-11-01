@@ -8,13 +8,13 @@ const OrganizerHeader = () => {
 	const { t } = useTranslation("organizers");
 
 	return (
-		<section className="bg-gradient-to-b from-muted-foreground/10 to-background py-8">
-			<div className="max-w-7xl px-4 sm:px-6 md:px-8 lg:px-10 mx-auto flex items-center justify-start mb-4 md:mb-8">
+		<section className="bg-gradient-to-b from-muted-foreground/10 to-background py-4 sm:py-8">
+			<div className="max-w-7xl px-4 sm:px-6 md:px-8 lg:px-10 mx-auto flex items-center justify-start md:mb-8">
 				<Button
 					type="button"
 					variant="ghost"
 					onClick={() => router.push("/organizers")}
-					className="h-9 sm:h-11 md:h-12 px-3 sm:px-5 md:px-6 hover:bg-black/5 dark:hover:bg-white/5 transition-all duration-200 group"
+					className="h-auto min-h-11 md:min-h-12 whitespace-normal text-left py-2 px-3 sm:px-5 md:px-6 hover:bg-black/5 dark:hover:bg-white/5 transition-all duration-200 group"
 				>
 					<div className="flex items-center gap-2">
 						<ArrowLeft className="w-4 h-4 mr-1 transition-transform group-hover:-translate-x-1" />

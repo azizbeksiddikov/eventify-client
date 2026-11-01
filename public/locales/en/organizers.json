@@ -34,5 +34,13 @@
 	"sort_followers": "Followers",
 	"sort_events": "Events",
 	"sort_groups": "Groups",
-	"sort_rank": "Rank"
+	"sort_rank": "Rank",
+	"filters": "Filters",
+	"load_failed": "Couldn't load the list. Check your connection and try again.",
+	"try_again": "Try again",
+	"member_subscribed_successfully": "Subscribed",
+	"member_unsubscribed_successfully": "Unsubscribed",
+	"group_joined_successfully": "Group joined successfully",
+	"group_left_successfully": "You left the group",
+	"free": "Free"
 }

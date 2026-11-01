@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { SafeImage } from "@/libs/components/common/SafeImage";
 import Link from "next/link";
 import { useTranslation } from "next-i18next";
 import { Users, Calendar } from "lucide-react";
@@ -7,7 +7,7 @@ import { Card } from "@/libs/components/ui/card";
 import Owner from "@/libs/components/common/Owner";
 import SmallEventCard from "@/libs/components/common/SmallEventCard";
 
-import { NEXT_APP_API_URL } from "@/libs/config";
+import { getImageUrl } from "@/libs/utils";
 import type { Event } from "@/libs/types/event/event";
 
 interface ChosenEventOtherProps {
@@ -39,8 +39,9 @@ const ChosenEventOther = ({ event, likeEventHandler }: ChosenEventOtherProps) =>
 						className="flex items-center gap-2 group hover:scale-[1.02] transition-all duration-300"
 					>
 						<div className="w-14 h-14 rounded-lg overflow-hidden relative">
-							<Image
-								src={`${NEXT_APP_API_URL}/${event.hostingGroup.groupImage}`}
+							<SafeImage
+								src={getImageUrl(event.hostingGroup.groupImage, "group")}
+								fallbackType="group"
 								alt={event.hostingGroup.groupName}
 								fill
 								className="object-cover group-hover:scale-105 transition-transform duration-200"
@@ -54,19 +55,19 @@ const ChosenEventOther = ({ event, likeEventHandler }: ChosenEventOtherProps) =>
 
 					<div className="flex flex-col items-start gap-3 sm:gap-4">
 						<div className="space-y-2 w-full">
-							<p className="text-card-foreground leading-relaxed group-hover:text-card-foreground/80 transition-colors duration-200">
+							<p className="text-card-foreground leading-relaxed group-hover:text-card-foreground transition-colors duration-200">
 								{event.hostingGroup.groupDesc.slice(0, 35)}
 								{event.hostingGroup.groupDesc.length > 35 ? "..." : ""}
 							</p>
-							<div className="flex flex-row items-center gap-3 sm:gap-4 pt-1">
+							<div className="flex flex-row flex-wrap items-center gap-x-4 gap-y-2 pt-1">
 								<div className="flex items-center gap-2 text-card-foreground">
-									<Users className="w-4 h-4  text-card-foreground/70" />
+									<Users className="w-4 h-4  text-muted-foreground" />
 									<span>
 										{event.hostingGroup.memberCount} {t("members")}
 									</span>
 								</div>
 								<div className="flex items-center gap-2 text-card-foreground">
-									<Calendar className="w-4 h-4  text-card-foreground/70" />
+									<Calendar className="w-4 h-4  text-muted-foreground" />
 									<span>
 										{event?.hostingGroup.eventsCount ?? 0} {t("events")}
 									</span>
@@ -90,7 +91,7 @@ const ChosenEventOther = ({ event, likeEventHandler }: ChosenEventOtherProps) =>
 					) : (
 						<div className="py-6">
 							<div className="rounded-lg border border-dashed bg-muted/20 px-4 py-4 text-center">
-								<div className="text-sm font-medium text-foreground/90">{t("no_similar_events_found")}</div>
+								<div className="text-sm font-medium text-foreground">{t("no_similar_events_found")}</div>
 								<div className="mt-1 text-xs text-muted-foreground">{t("try_checking_back_later")}</div>
 							</div>
 						</div>

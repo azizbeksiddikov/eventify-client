@@ -11,5 +11,6 @@
 	"owner_avatar": "소유자 아바타",
 	"comment_deleted_successfully": "댓글이 성공적으로 삭제되었습니다",
 	"comment_updated_successfully": "댓글이 성공적으로 업데이트되었습니다",
-	"comment_created_successfully": "댓글이 성공적으로 작성되었습니다"
+	"comment_created_successfully": "댓글이 성공적으로 작성되었습니다",
+	"per page": "페이지당"
 }

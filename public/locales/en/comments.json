@@ -11,5 +11,6 @@
 	"owner_avatar": "Owner avatar",
 	"comment_deleted_successfully": "Comment deleted successfully",
 	"comment_updated_successfully": "Comment updated successfully",
-	"comment_created_successfully": "Comment created successfully"
+	"comment_created_successfully": "Comment created successfully",
+	"per page": "per page"
 }

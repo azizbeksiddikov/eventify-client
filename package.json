@@ -8,7 +8,11 @@
 		"dev": "next dev",
 		"build": "next build",
 		"start": "next start",
-		"lint": "npx eslint ."
+		"lint": "npx eslint .",
+		"test": "node --test --experimental-strip-types tests/*.test.ts",
+		"check:graphql": "node scripts/check-graphql-ops.js",
+		"check:i18n": "node scripts/check-locales.js",
+		"format:files": "node scripts/format-files.js"
 	},
 	"dependencies": {
 		"@apollo/client": "^4.0.12",

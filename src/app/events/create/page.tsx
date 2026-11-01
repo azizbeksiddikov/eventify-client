@@ -1,41 +1,43 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { useMutation, useQuery, useReactiveVar } from "@apollo/client/react";
-import { useTranslation } from "next-i18next";
 import { userVar } from "@/apollo/store";
-import { ArrowLeft, CalendarIcon } from "lucide-react";
-import { format, Locale } from "date-fns";
-import { enUS, ko, ru, uz } from "date-fns/locale";
-import { Popover, PopoverContent, PopoverTrigger } from "@/libs/components/ui/popover";
 import { Calendar } from "@/libs/components/common/calendar";
 import { Input } from "@/libs/components/ui/input";
+import { Popover, PopoverContent, PopoverTrigger } from "@/libs/components/ui/popover";
+import { useMutation, useQuery, useReactiveVar } from "@apollo/client/react";
+import { format, Locale } from "date-fns";
+import { enUS, ko, ru, uz } from "date-fns/locale";
+import { ArrowLeft, CalendarIcon } from "lucide-react";
+import { useTranslation } from "next-i18next";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
 
+import { ImageCropper } from "@/libs/components/common/ImageCropper";
+import Loading from "@/libs/components/common/Loading";
+import { CapacityAndPriceFields } from "@/libs/components/events/CapacityAndPriceFields";
+import { EventCategoriesField } from "@/libs/components/events/EventCategoriesField";
+import { EventDateAndTimePicker } from "@/libs/components/events/EventDateAndTimePicker";
+import { EventDescriptionField } from "@/libs/components/events/EventDescriptionField";
+import { EventImageUpload } from "@/libs/components/events/EventImageUpload";
+import { EventNameField } from "@/libs/components/events/EventNameField";
+import { EventTagsField } from "@/libs/components/events/EventTagsField";
+import { IsRealEventCheckbox } from "@/libs/components/events/IsRealEventCheckbox";
+import { LocationFields } from "@/libs/components/events/LocationFields";
 import { Button } from "@/libs/components/ui/button";
 import { Card } from "@/libs/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/libs/components/ui/select";
-import { ImageCropper } from "@/libs/components/common/ImageCropper";
-import Loading from "@/libs/components/common/Loading";
-import { EventNameField } from "@/libs/components/events/EventNameField";
-import { EventDescriptionField } from "@/libs/components/events/EventDescriptionField";
-import { EventCategoriesField } from "@/libs/components/events/EventCategoriesField";
-import { EventTagsField } from "@/libs/components/events/EventTagsField";
-import { IsRealEventCheckbox } from "@/libs/components/events/IsRealEventCheckbox";
-import { EventDateAndTimePicker } from "@/libs/components/events/EventDateAndTimePicker";
-import { LocationFields } from "@/libs/components/events/LocationFields";
-import { CapacityAndPriceFields } from "@/libs/components/events/CapacityAndPriceFields";
-import { EventImageUpload } from "@/libs/components/events/EventImageUpload";
 
-import { EventCategory, EventStatus, EventType, EventLocationType, RecurrenceType } from "@/libs/enums/event.enum";
-import { GET_MY_GROUPS, GET_CURRENCIES } from "@/apollo/user/query";
 import { CREATE_EVENT, CREATE_RECURRING_EVENT } from "@/apollo/user/mutation";
+import { GET_CURRENCIES, GET_MY_GROUPS } from "@/apollo/user/query";
+import { smallError, smallSuccess } from "@/libs/alert";
+import { NEXT_APP_API_URL } from "@/libs/config";
+import { EventCategory, EventLocationType, EventStatus, EventType, RecurrenceType } from "@/libs/enums/event.enum";
+import { AppError, friendlyErrorMessage } from "@/libs/errorMessages";
+import { useInlineValidation } from "@/libs/hooks/useInlineValidation";
 import { CurrencyEntity } from "@/libs/types/currency/currency";
 import { EventInput, EventRecurrenceInput } from "@/libs/types/event/event.input";
 import { Group } from "@/libs/types/group/group";
-import { smallError, smallSuccess } from "@/libs/alert";
-import { NEXT_APP_API_URL } from "@/libs/config";
 import { uploadImage } from "@/libs/upload";
 
 const EventCreatePage = () => {
@@ -124,6 +126,68 @@ const EventCreatePage = () => {
 		setFormData((prev) => ({ ...prev, eventType: formSelection.eventType }));
 	}, [formSelection.eventType]);
 
+	// Inline validation: every message appears next to its field; the button stays enabled
+	const errors: Record<string, string | undefined> = {
+		groupId: !formData.groupId ? t("please_select_group") : undefined,
+		eventName: !formData.eventName?.trim() ? t("event_name_is_required") : undefined,
+		eventDesc: !formData.eventDesc?.trim() ? t("event_description_is_required") : undefined,
+		eventCategories: formSelection.selectedCategories.length === 0 ? t("event_category_is_required") : undefined,
+		eventTags: !formSelection.eventTags.trim() ? t("please_enter_event_tags") : undefined,
+		eventEndTime: formData.eventEndAt <= formData.eventStartAt ? t("end_time_must_be_after_start_time") : undefined,
+		eventAddress:
+			formSelection.locationType === EventLocationType.OFFLINE && !formData.eventAddress?.trim()
+				? t("event_address_is_required")
+				: undefined,
+		eventCapacity:
+			formData.eventCapacity !== undefined && formData.eventCapacity < 1
+				? t("event_capacity_must_be_at_least_1")
+				: undefined,
+		eventPrice:
+			formData.eventPrice !== undefined && formData.eventPrice < 0 ? t("price_cannot_be_negative") : undefined,
+		eventCurrency:
+			(formData.eventPrice ?? 0) > 0 && !formData.eventCurrency ? t("currency_required_when_price_set") : undefined,
+		eventImages: !formData.eventImages.length ? t("please_upload_event_image") : undefined,
+		recurrenceType:
+			formSelection.eventType === EventType.RECURRING && !recurrenceState.recurrenceType
+				? t("please_select_recurrence_type")
+				: undefined,
+		recurrenceInterval:
+			formSelection.eventType === EventType.RECURRING &&
+			recurrenceState.recurrenceType === RecurrenceType.INTERVAL &&
+			!recurrenceState.recurrenceInterval
+				? t("please_enter_recurrence_interval")
+				: undefined,
+		recurrenceDaysOfWeek:
+			formSelection.eventType === EventType.RECURRING &&
+			recurrenceState.recurrenceType === RecurrenceType.DAYS_OF_WEEK &&
+			recurrenceState.recurrenceDaysOfWeek.length === 0
+				? t("please_select_at_least_one_day_of_week")
+				: undefined,
+		recurrenceDayOfMonth:
+			formSelection.eventType === EventType.RECURRING &&
+			recurrenceState.recurrenceType === RecurrenceType.DAY_OF_MONTH &&
+			!recurrenceState.recurrenceDayOfMonth
+				? t("please_enter_day_of_month")
+				: undefined,
+	};
+	const validation = useInlineValidation(errors, [
+		"groupId",
+		"eventName",
+		"eventDesc",
+		"eventCategories",
+		"eventTags",
+		"recurrenceType",
+		"recurrenceInterval",
+		"recurrenceDaysOfWeek",
+		"recurrenceDayOfMonth",
+		"eventEndTime",
+		"eventAddress",
+		"eventCapacity",
+		"eventPrice",
+		"eventCurrency",
+		"eventImages",
+	]);
+
 	/** APOLLO REQUESTS **/
 	const [createEvent] = useMutation(CREATE_EVENT);
 	const [createRecurringEvent] = useMutation(CREATE_RECURRING_EVENT);
@@ -140,7 +204,15 @@ const EventCreatePage = () => {
 		fetchPolicy: "cache-and-network",
 	});
 
-	const currencies: CurrencyEntity[] = currenciesData?.getCurrencies || [];
+	const currencies: CurrencyEntity[] = useMemo(() => currenciesData?.getCurrencies || [], [currenciesData]);
+
+	// When a price is entered, preselect the first currency so the organizer only changes it if needed
+	useEffect(() => {
+		const preferred = currencies.find((c) => c.currencyCode === "USD") ?? currencies[0];
+		if ((formData.eventPrice ?? 0) > 0 && !formData.eventCurrency && preferred) {
+			setFormData((prev) => ({ ...prev, eventCurrency: preferred.currencyCode }));
+		}
+	}, [formData.eventPrice, formData.eventCurrency, currencies]);
 
 	useEffect(() => {
 		if (groupsData?.getMyGroups) setGroups(groupsData.getMyGroups);
@@ -187,37 +259,12 @@ const EventCreatePage = () => {
 
 	const submitHandler = async (e: React.FormEvent) => {
 		e.preventDefault();
+		if (!validation.validate()) return;
 		setUiState((prev) => ({ ...prev, isSubmitting: true }));
 
 		try {
-			if (!user._id) throw new Error(t("errors:not_authenticated"));
-			if (!formData) throw new Error(t("errors:invalid_form_data"));
-
-			// Validate in order of form appearance
-			if (!formData?.groupId) throw new Error(t("please_select_group"));
-			if (!formData?.eventName || formData.eventName.trim() === "") throw new Error(t("please_enter_event_name"));
-			if (!formData?.eventDesc || formData.eventDesc.trim() === "")
-				throw new Error(t("please_enter_event_description"));
-			if (formSelection.selectedCategories.length === 0) throw new Error(t("please_select_at_least_one_category"));
-			if (!formSelection.eventTags || formSelection.eventTags.trim() === "")
-				throw new Error(t("please_enter_event_tags"));
-			if (!formData.eventStartAt) throw new Error(t("please_select_event_start_date_time"));
-			if (!formData.eventEndAt) throw new Error(t("please_select_event_end_date_time"));
-			if (formData.eventEndAt <= formData.eventStartAt) {
-				throw new Error(t("end_time_must_be_after_start_time"));
-			}
-			if (formSelection.locationType === EventLocationType.OFFLINE) {
-				if (!formData.eventAddress || formData.eventAddress.trim() === "")
-					throw new Error(t("please_enter_event_address"));
-			}
-			if (formData.eventCapacity !== undefined && formData.eventCapacity < 1) {
-				throw new Error(t("event_capacity_must_be_at_least_1"));
-			}
-			if (formData.eventPrice !== undefined && formData.eventPrice < 0) throw new Error(t("price_cannot_be_negative"));
-			if (formData.eventPrice !== undefined && formData.eventPrice > 0 && !formData.eventCurrency) {
-				throw new Error(t("currency_required_when_price_set"));
-			}
-			if (!formData.eventImages.length) throw new Error(t("please_upload_event_image"));
+			if (!user._id) throw new AppError("NOT_AUTHENTICATED");
+			if (!formData) throw new AppError("BAD_REQUEST");
 
 			// Parse event tags from comma-separated string
 			const tagsArray = formSelection.eventTags
@@ -240,7 +287,8 @@ const EventCreatePage = () => {
 				eventAddress: formData.eventAddress,
 				eventCapacity: formData.eventCapacity,
 				eventPrice: formData.eventPrice,
-				eventCurrency: formData.eventCurrency || undefined,
+				// a currency is only sent for a paid event
+				eventCurrency: (formData.eventPrice ?? 0) > 0 ? formData.eventCurrency || undefined : undefined,
 				eventStatus: formData.eventStatus,
 				eventCategories: formSelection.selectedCategories,
 				eventTags: tagsArray,
@@ -249,21 +297,6 @@ const EventCreatePage = () => {
 			};
 
 			if (formSelection.eventType === EventType.RECURRING) {
-				// Validate recurring event fields
-				if (!recurrenceState.recurrenceType) throw new Error(t("please_select_recurrence_type"));
-				if (recurrenceState.recurrenceType === RecurrenceType.INTERVAL && !recurrenceState.recurrenceInterval) {
-					throw new Error(t("please_enter_recurrence_interval"));
-				}
-				if (
-					recurrenceState.recurrenceType === RecurrenceType.DAYS_OF_WEEK &&
-					recurrenceState.recurrenceDaysOfWeek.length === 0
-				) {
-					throw new Error(t("please_select_at_least_one_day_of_week"));
-				}
-				if (recurrenceState.recurrenceType === RecurrenceType.DAY_OF_MONTH && !recurrenceState.recurrenceDayOfMonth) {
-					throw new Error(t("please_enter_day_of_month"));
-				}
-
 				const recurringEventInput: EventRecurrenceInput = {
 					...commonData,
 					recurrenceType: recurrenceState.recurrenceType as RecurrenceType,
@@ -299,9 +332,8 @@ const EventCreatePage = () => {
 				router.push(`/events/${createEventData?.createEvent?._id}`);
 			}
 		} catch (error: unknown) {
-			const errorMessage = error instanceof Error ? error.message : t("errors:something_went_wrong");
-			smallError(errorMessage);
-			console.log(errorMessage);
+			smallError(friendlyErrorMessage(error));
+			console.log(error);
 		} finally {
 			setUiState((prev) => ({ ...prev, isSubmitting: false }));
 		}
@@ -320,16 +352,7 @@ const EventCreatePage = () => {
 			const cleanedValue = value.replace(/^0+/, "") || "0";
 			const numberValue = Number(cleanedValue);
 
-			if (isNaN(numberValue)) {
-				smallError(t("invalid_number"));
-				return;
-			}
-
-			// Prevent negative values for price
-			if (name === "eventPrice" && numberValue < 0) {
-				smallError(t("price_cannot_be_negative"));
-				return;
-			}
+			if (isNaN(numberValue)) return;
 
 			setFormData((prev) => ({ ...prev, [name]: numberValue }));
 		} else {
@@ -371,7 +394,7 @@ const EventCreatePage = () => {
 						</Button>
 					</div>
 
-					<Card className="p-6 bg-card text-card-foreground">
+					<Card className="p-4 sm:p-6 bg-card text-card-foreground">
 						<div className="text-center py-8">
 							<h2 className="text-2xl font-semibold text-foreground mb-4">{t("no_groups_found")}</h2>
 							<p className="text-muted-foreground mb-6">
@@ -404,10 +427,10 @@ const EventCreatePage = () => {
 					</Button>
 				</div>
 
-				<Card className="p-6 bg-card text-card-foreground">
-					<h1 className="text-3xl font-semibold text-foreground mb-6">{t("create_new_event")}</h1>
+				<Card className="p-4 sm:p-6 bg-card text-card-foreground">
+					<h1 className="text-2xl sm:text-3xl font-semibold text-foreground mb-4 sm:mb-6">{t("create_new_event")}</h1>
 
-					<form onSubmit={submitHandler} className="space-y-6">
+					<form noValidate onSubmit={submitHandler} className="space-y-6">
 						{/* Event Type Selection */}
 						<div className="space-y-2">
 							<label className="text-sm font-medium text-foreground">
@@ -429,7 +452,7 @@ const EventCreatePage = () => {
 									}
 								}}
 							>
-								<SelectTrigger className="w-full bg-input text-input-foreground border-input">
+								<SelectTrigger className="w-full bg-background border-input">
 									<SelectValue />
 								</SelectTrigger>
 								<SelectContent className="bg-popover text-popover-foreground">
@@ -441,7 +464,7 @@ const EventCreatePage = () => {
 						{/* Group Selection */}
 						<div className="space-y-2">
 							<label htmlFor="groupId" className="text-sm font-medium text-foreground">
-								{t("select_group")} {t("events:optional")}
+								{t("select_group")} *
 							</label>
 							<Select
 								value={formData.groupId}
@@ -453,7 +476,11 @@ const EventCreatePage = () => {
 									}
 								}}
 							>
-								<SelectTrigger className="w-full bg-input text-input-foreground border-input">
+								<SelectTrigger
+									id="groupId"
+									{...validation.errorProps("groupId")}
+									className="w-full bg-background border-input"
+								>
 									<SelectValue placeholder={t("select_a_group")}>
 										{formData.groupId && (
 											<div className="flex items-center space-x-3">
@@ -497,33 +524,38 @@ const EventCreatePage = () => {
 									))}
 								</SelectContent>
 							</Select>
+							{validation.errorText("groupId")}
 						</div>
 
 						{/* Event Name */}
 						<EventNameField
 							value={formData.eventName}
 							onChange={inputHandler}
-							className="bg-input text-input-foreground border-input"
+							className="bg-background border-input"
+							validation={validation}
 						/>
 
 						{/* Event Description */}
 						<EventDescriptionField
 							value={formData.eventDesc}
 							onChange={inputHandler}
-							className="bg-input text-input-foreground border-input"
+							className="bg-background border-input"
+							validation={validation}
 						/>
 
 						{/* Categories */}
 						<EventCategoriesField
 							selectedCategories={formSelection.selectedCategories}
 							onCategoryToggle={categoryHandler}
+							validation={validation}
 						/>
 
 						{/* Event Tags */}
 						<EventTagsField
 							value={formSelection.eventTags}
 							onChange={(e) => setFormSelection((prev) => ({ ...prev, eventTags: e.target.value }))}
-							className="bg-input text-input-foreground border-input"
+							className="bg-background border-input"
+							validation={validation}
 						/>
 
 						{/* Is Real Event */}
@@ -554,7 +586,11 @@ const EventCreatePage = () => {
 											}));
 										}}
 									>
-										<SelectTrigger className="w-full bg-input text-input-foreground border-input">
+										<SelectTrigger
+											id="recurrenceType"
+											{...validation.errorProps("recurrenceType")}
+											className="w-full bg-background border-input"
+										>
 											<SelectValue placeholder={t("select_recurrence_type")} />
 										</SelectTrigger>
 										<SelectContent className="bg-popover text-popover-foreground">
@@ -563,6 +599,7 @@ const EventCreatePage = () => {
 											<SelectItem value={RecurrenceType.DAY_OF_MONTH}>{t("monthly_on_specific_day")}</SelectItem>
 										</SelectContent>
 									</Select>
+									{validation.errorText("recurrenceType")}
 								</div>
 
 								{/* Recurrence Interval */}
@@ -573,7 +610,9 @@ const EventCreatePage = () => {
 										</label>
 										<Input
 											id="recurrenceInterval"
+											{...validation.errorProps("recurrenceInterval")}
 											type="number"
+											inputMode="numeric"
 											min="1"
 											value={
 												recurrenceState.recurrenceInterval === undefined
@@ -587,14 +626,15 @@ const EventCreatePage = () => {
 												}))
 											}
 											placeholder={t("e_g_7_for_weekly")}
-											className="bg-input text-input-foreground border-input"
+											className="bg-background border-input"
 										/>
+										{validation.errorText("recurrenceInterval")}
 									</div>
 								)}
 
 								{/* Days of Week */}
 								{recurrenceState.recurrenceType === RecurrenceType.DAYS_OF_WEEK && (
-									<div className="space-y-2">
+									<div className="space-y-2" id="recurrenceDaysOfWeek" tabIndex={-1}>
 										<label className="text-sm font-medium text-foreground">{t("days_of_week")} *</label>
 										<div className="grid grid-cols-7 gap-2">
 											{[
@@ -623,7 +663,7 @@ const EventCreatePage = () => {
 															}));
 														}
 													}}
-													className={`h-10 ${
+													className={`h-11 fine:h-10 ${
 														recurrenceState.recurrenceDaysOfWeek.includes(day.value)
 															? "bg-primary text-primary-foreground"
 															: "bg-transparent"
@@ -633,6 +673,7 @@ const EventCreatePage = () => {
 												</Button>
 											))}
 										</div>
+										{validation.errorText("recurrenceDaysOfWeek")}
 									</div>
 								)}
 
@@ -644,7 +685,9 @@ const EventCreatePage = () => {
 										</label>
 										<Input
 											id="recurrenceDayOfMonth"
+											{...validation.errorProps("recurrenceDayOfMonth")}
 											type="number"
+											inputMode="numeric"
 											min="1"
 											max="31"
 											value={
@@ -659,8 +702,9 @@ const EventCreatePage = () => {
 												}))
 											}
 											placeholder={t("e_g_15_for_15th_of_each_month")}
-											className="bg-input text-input-foreground border-input"
+											className="bg-background border-input"
 										/>
+										{validation.errorText("recurrenceDayOfMonth")}
 									</div>
 								)}
 
@@ -673,7 +717,7 @@ const EventCreatePage = () => {
 										<PopoverTrigger asChild>
 											<Button
 												variant="outline"
-												className="w-full justify-start text-left font-normal bg-input text-input-foreground border-input"
+												className="w-full justify-start text-left font-normal bg-background border-input"
 											>
 												<CalendarIcon className="mr-2 h-4 w-4" />
 												{recurrenceState.recurrenceEndDate
@@ -709,9 +753,7 @@ const EventCreatePage = () => {
 							onEndDateChange={(date) => setFormData((prev) => ({ ...prev, eventEndAt: date }))}
 							onStartTimeChange={(date) => setFormData((prev) => ({ ...prev, eventStartAt: date }))}
 							onEndTimeChange={(date) => setFormData((prev) => ({ ...prev, eventEndAt: date }))}
-							locale={i18n.language}
-							useCalendar={true}
-							className="bg-input text-input-foreground border-input bg-popover text-popover-foreground data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
+							className="border-input bg-popover text-popover-foreground data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
 						/>
 
 						{/* Location Type and Fields */}
@@ -725,7 +767,8 @@ const EventCreatePage = () => {
 							onLocationTypeChange={(value) => {
 								setFormSelection((prev) => ({ ...prev, locationType: value }));
 							}}
-							className="bg-input text-input-foreground border-input bg-popover text-popover-foreground"
+							className="border-input bg-popover text-popover-foreground"
+							validation={validation}
 						/>
 
 						{/* Capacity and Price */}
@@ -738,7 +781,8 @@ const EventCreatePage = () => {
 							onCapacityChange={inputHandler}
 							onPriceChange={inputHandler}
 							onCurrencyChange={(currency) => setFormData((prev) => ({ ...prev, eventCurrency: currency }))}
-							className="bg-input text-input-foreground border-input bg-popover text-popover-foreground"
+							className="border-input bg-popover text-popover-foreground"
+							validation={validation}
 						/>
 
 						{/* Image Section */}
@@ -746,6 +790,7 @@ const EventCreatePage = () => {
 							imagePreview={uiState.imagePreview}
 							onImageChange={imageChangeHandler}
 							className="rounded-t-xl"
+							validation={validation}
 						/>
 
 						{/* Image Cropper Modal */}

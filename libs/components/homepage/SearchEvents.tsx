@@ -60,7 +60,7 @@ const SearchEvents = () => {
 
 	return (
 		<div className="bg-secondary/70 py-6 sm:py-8 md:py-12 lg:py-16 xl:py-20 shadow-lg w-full">
-			<div className="px-6 sm:px-12 lg:px-20 max-w-7xl mx-auto">
+			<div className="px-4 sm:px-12 lg:px-20 max-w-7xl mx-auto">
 				<h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl mb-4 sm:mb-6 md:mb-8 text-center font-bold">
 					{t("find_events")}
 				</h2>
@@ -71,9 +71,11 @@ const SearchEvents = () => {
 					>
 						<div className="flex-1 relative w-full">
 							<Input
-								type="text"
+								type="search"
+								enterKeyHint="search"
+								aria-label={t("search_events")}
 								placeholder={t("search_events")}
-								className="w-full h-10 sm:h-11 md:h-12 lg:h-14 text-sm sm:text-base md:text-lg pl-9 sm:pl-10 rounded-md focus:ring-2 focus:ring-primary/50 transition-all"
+								className="w-full h-11 md:h-12 lg:h-14 text-base md:text-lg pl-9 sm:pl-10 rounded-md focus:ring-2 focus:ring-primary/50 transition-all"
 								value={text}
 								onChange={(e) => setText(e.target.value)}
 							/>
@@ -85,7 +87,7 @@ const SearchEvents = () => {
 								<PopoverTrigger asChild>
 									<Button
 										variant="outline"
-										className="h-10 sm:h-11 md:h-12 lg:h-14 justify-start text-left font-normal border border-input hover:bg-accent/50 transition-colors text-xs sm:text-sm md:text-base w-full sm:flex-1"
+										className="h-11 md:h-12 lg:h-14 justify-start text-left font-normal border border-input hover:bg-accent/50 transition-colors text-xs sm:text-sm md:text-base w-full sm:flex-1"
 									>
 										<CalendarIcon className="mr-1.5 sm:mr-2 h-3 w-3 sm:h-3.5 sm:w-3.5 md:h-4 md:w-4 shrink-0" />
 										<span className="truncate">
@@ -108,7 +110,7 @@ const SearchEvents = () => {
 								<PopoverTrigger asChild>
 									<Button
 										variant="outline"
-										className="h-10 sm:h-11 md:h-12 lg:h-14 justify-start text-left font-normal border border-input hover:bg-accent/50 transition-colors text-xs sm:text-sm md:text-base w-full sm:flex-1"
+										className="h-11 md:h-12 lg:h-14 justify-start text-left font-normal border border-input hover:bg-accent/50 transition-colors text-xs sm:text-sm md:text-base w-full sm:flex-1"
 									>
 										<CalendarIcon className="mr-1.5 sm:mr-2 h-3 w-3 sm:h-3.5 sm:w-3.5 md:h-4 md:w-4 shrink-0" />
 										<span className="truncate">
@@ -130,7 +132,7 @@ const SearchEvents = () => {
 						</div>
 						<Button
 							type="submit"
-							className="h-10 sm:h-11 md:h-12 lg:h-14 px-4 sm:px-5 md:px-6 lg:px-8 bg-primary text-primary-foreground hover:bg-primary/90 transition-colors font-medium text-sm sm:text-base w-full md:w-auto"
+							className="h-11 md:h-12 lg:h-14 px-4 sm:px-5 md:px-6 lg:px-8 bg-primary text-primary-foreground hover:bg-primary/90 transition-colors font-medium text-sm sm:text-base w-full md:w-auto"
 						>
 							{t("search")}
 						</Button>

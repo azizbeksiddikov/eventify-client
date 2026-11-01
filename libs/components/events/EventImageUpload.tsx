@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useTranslation } from "next-i18next";
+import type { InlineValidation } from "@/libs/hooks/useInlineValidation";
 import { ImageIcon, RefreshCw } from "lucide-react";
 import { imageTypes } from "@/libs/config";
 
@@ -10,13 +11,20 @@ interface EventImageUploadProps {
 	onImageChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 	className?: string;
 	changeLabel?: string;
+	validation?: InlineValidation;
 }
 
-export const EventImageUpload = ({ imagePreview, onImageChange, className, changeLabel }: EventImageUploadProps) => {
+export const EventImageUpload = ({
+	imagePreview,
+	onImageChange,
+	className,
+	changeLabel,
+	validation,
+}: EventImageUploadProps) => {
 	const { t } = useTranslation("events");
 
 	return (
-		<div className="space-y-4">
+		<div className="space-y-4" id="eventImages" tabIndex={-1}>
 			<label className="text-sm font-medium text-foreground">{t("event_image")} *</label>
 			<div
 				className={`relative aspect-video w-full max-w-2xl mx-auto rounded-xl overflow-hidden bg-muted/50 ${className || ""}`}
@@ -47,6 +55,7 @@ export const EventImageUpload = ({ imagePreview, onImageChange, className, chang
 				<input id="image" name="image" type="file" accept={imageTypes} onChange={onImageChange} className="hidden" />
 				<p className="text-sm text-muted-foreground mt-1">{t("only_jpg_jpeg_png_allowed")}</p>
 			</div>
+			{validation?.errorText("eventImages")}
 		</div>
 	);
 };

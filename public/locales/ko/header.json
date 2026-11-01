@@ -33,5 +33,12 @@
 	"commented_on_your_group": "님이 회원님의 그룹에 댓글을 남겼습니다",
 	"liked_your_profile": "님이 회원님의 프로필을 좋아합니다",
 	"commented_on_your_profile": "님이 회원님의 프로필에 댓글을 남겼습니다",
-	"followed_you": "님이 회원님을 팔로우하기 시작했습니다"
+	"followed_you": "님이 회원님을 팔로우하기 시작했습니다",
+	"new": "새 알림",
+	"toggle_theme": "테마 전환",
+	"theme_light": "라이트",
+	"theme_dark": "다크",
+	"theme_system": "시스템",
+	"loading": "로딩 중",
+	"close_menu": "메뉴 닫기"
 }

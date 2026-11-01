@@ -11,6 +11,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 
 import { TicketStatus } from "@/libs/enums/ticket.enum";
 import { Ticket } from "@/libs/types/ticket/ticket";
+import { ConfirmAction } from "@/libs/components/common/ConfirmAction";
 
 interface ProfileTicketsProps {
 	tickets: Ticket[];
@@ -119,14 +120,21 @@ export const ProfileTickets = ({ tickets, cancelTicketHandler }: ProfileTicketsP
 										<TableCell className="text-right px-4">
 											<div className="flex items-center justify-end gap-2">
 												{ticket.ticketStatus === TicketStatus.PURCHASED && (
-													<Button
-														variant="outline"
-														size="sm"
-														onClick={() => cancelTicketHandler(ticket._id)}
-														className="bg-destructive/10 border-destructive text-destructive hover:bg-destructive/20 hover:text-destructive transition-colors duration-200"
+													<ConfirmAction
+														title={t("cancel_ticket_title")}
+														description={t("cancel_ticket_description")}
+														confirmLabel={t("cancel_ticket_confirm")}
+														cancelLabel={t("cancel_ticket_keep")}
+														onConfirm={() => cancelTicketHandler(ticket._id)}
 													>
-														{t("cancel")}
-													</Button>
+														<Button
+															variant="outline"
+															size="sm"
+															className="bg-destructive/10 border-destructive text-destructive hover:bg-destructive/20 hover:text-destructive transition-colors duration-200"
+														>
+															{t("cancel")}
+														</Button>
+													</ConfirmAction>
 												)}
 												<Link href={`/events/${ticket.event?._id}`}>
 													<Button

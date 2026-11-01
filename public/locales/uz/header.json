@@ -33,5 +33,12 @@
 	"commented_on_your_group": "guruhingizga izoh qoldirdi",
 	"liked_your_profile": "profilingizga layk bosdi",
 	"commented_on_your_profile": "profilingizga izoh qoldirdi",
-	"followed_you": "sizga obuna bo'ldi"
+	"followed_you": "sizga obuna bo'ldi",
+	"new": "yangi",
+	"toggle_theme": "Mavzuni almashtirish",
+	"theme_light": "Yorug'",
+	"theme_dark": "Qorong'i",
+	"theme_system": "Tizim",
+	"loading": "Yuklanmoqda",
+	"close_menu": "Menyuni yopish"
 }

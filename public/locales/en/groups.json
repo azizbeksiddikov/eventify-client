@@ -83,5 +83,21 @@
 	"group_joined_successfully": "Group joined successfully",
 	"group_left_successfully": "Group left successfully",
 	"failed_to_delete_group": "Failed to delete group",
-	"optional": "(opt)"
+	"optional": "(opt)",
+	"filters": "Filters",
+	"load_failed": "Couldn't load the list. Check your connection and try again.",
+	"try_again": "Try again",
+	"leave_group_title": "Leave this group?",
+	"leave_group_description": "You will stop getting its events and updates. You can join again at any time.",
+	"leave_group_confirm": "Leave group",
+	"leave_group_stay": "Stay in group",
+	"like": "Like",
+	"liked": "Liked",
+	"view": "View",
+	"change_image": "Change image",
+	"updating": "Updating...",
+	"active members": "active members",
+	"events hosted": "events hosted",
+	"member_subscribed_successfully": "Subscribed",
+	"member_unsubscribed_successfully": "Unsubscribed"
 }

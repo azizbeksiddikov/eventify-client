@@ -1,8 +1,8 @@
-import { Avatar, AvatarImage, AvatarFallback } from "@/libs/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/libs/components/ui/avatar";
 import { Edit, Save, Trash2, User, X } from "lucide-react";
+import { useTranslation } from "next-i18next";
 import Link from "next/link";
 import { useState } from "react";
-import { useTranslation } from "next-i18next";
 
 import { Badge } from "@/libs/components/ui/badge";
 import { Button } from "@/libs/components/ui/button";
@@ -10,6 +10,7 @@ import { Input } from "@/libs/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/libs/components/ui/select";
 import { TableCell, TableRow } from "@/libs/components/ui/table";
 
+import { ConfirmAction } from "@/libs/components/common/ConfirmAction";
 import { NEXT_APP_API_URL } from "@/libs/config";
 import { MemberStatus, MemberType } from "@/libs/enums/member.enum";
 import { Member } from "@/libs/types/member/member";
@@ -142,7 +143,7 @@ const MemberRow = ({
 				{isEditing ? (
 					<Select value={memberUpdateInput.memberStatus} onValueChange={(value) => inputHandler("memberStatus", value)}>
 						<SelectTrigger className="h-8">
-							<SelectValue placeholder="Select status" />
+							<SelectValue placeholder={t("select_status")} />
 						</SelectTrigger>
 						<SelectContent>
 							<SelectItem value={MemberStatus.ACTIVE}>{t("active")}</SelectItem>
@@ -159,7 +160,7 @@ const MemberRow = ({
 				{isEditing ? (
 					<Select value={memberUpdateInput.memberType} onValueChange={(value) => inputHandler("memberType", value)}>
 						<SelectTrigger className="h-8">
-							<SelectValue placeholder="Select type" />
+							<SelectValue placeholder={t("select_type")} />
 						</SelectTrigger>
 						<SelectContent>
 							<SelectItem value={MemberType.ORGANIZER}>{t("organizer")}</SelectItem>
@@ -205,14 +206,22 @@ const MemberRow = ({
 							>
 								<Edit className="h-4 w-4" />
 							</Button>
-							<Button
-								variant="outline"
-								size="icon"
-								onClick={() => removeHandler()}
-								className="text-destructive hover:bg-destructive hover:text-destructive-foreground border-destructive"
+							<ConfirmAction
+								title={t("remove_confirm_title")}
+								description={t("remove_confirm_description")}
+								confirmLabel={t("remove_confirm_yes")}
+								cancelLabel={t("remove_confirm_no")}
+								onConfirm={removeHandler}
 							>
-								<Trash2 className="h-4 w-4" />
-							</Button>
+								<Button
+									variant="outline"
+									size="icon"
+									aria-label={t("remove_confirm_yes")}
+									className="text-destructive hover:bg-destructive hover:text-destructive-foreground border-destructive"
+								>
+									<Trash2 className="h-4 w-4" />
+								</Button>
+							</ConfirmAction>
 						</>
 					)}
 				</div>

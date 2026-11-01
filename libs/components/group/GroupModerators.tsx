@@ -62,7 +62,7 @@ const GroupModerators = ({ groupModerators }: GroupModeratorsProps) => {
 											{t("moderator")}
 										</Badge>
 									</div>
-									<p className="text-base text-card-foreground leading-relaxed group-hover:text-card-foreground/80 transition-colors duration-200">
+									<p className="text-base text-card-foreground leading-relaxed group-hover:text-card-foreground transition-colors duration-200">
 										{moderator.memberData?.memberDesc ?? "No Description"}
 									</p>
 								</div>

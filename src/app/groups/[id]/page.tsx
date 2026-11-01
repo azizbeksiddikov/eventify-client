@@ -64,7 +64,7 @@ const GroupDetailPage = () => {
 		<div>
 			<ChosenGroupHeader />
 
-			<div className="max-w-7xl mx-auto px-6 sm:px-12 lg:px-20 pb-10">
+			<div className="max-w-7xl mx-auto px-4 sm:px-12 lg:px-20 pb-10">
 				{groupLoading && <Loading />}
 
 				{!groupLoading && !group ? (

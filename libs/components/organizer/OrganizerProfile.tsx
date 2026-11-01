@@ -30,13 +30,13 @@ const getMemberTypeBadge = (type: MemberType, t: (key: string) => string) => {
 				<TooltipProvider delayDuration={300}>
 					<Tooltip>
 						<TooltipTrigger asChild>
-							<div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-rose-500/10 text-rose-600 border border-rose-500/20 text-[10px] font-bold uppercase tracking-widest cursor-default group/badge">
+							<div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-rose-500/10 text-rose-700 dark:text-rose-400 border border-rose-500/20 text-xs font-bold uppercase tracking-widest cursor-default group/badge">
 								<Crown className={iconBaseClass} fill="currentColor" fillOpacity={0.1} />
 								<span className="hidden sm:inline">{t("admin")}</span>
 							</div>
 						</TooltipTrigger>
 						<TooltipContent side="top">
-							<p className="text-[10px] font-bold">{t("platform_administrator")}</p>
+							<p className="text-xs font-bold">{t("platform_administrator")}</p>
 						</TooltipContent>
 					</Tooltip>
 				</TooltipProvider>
@@ -46,13 +46,13 @@ const getMemberTypeBadge = (type: MemberType, t: (key: string) => string) => {
 				<TooltipProvider delayDuration={300}>
 					<Tooltip>
 						<TooltipTrigger asChild>
-							<div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-blue-500/10 text-blue-600 border border-blue-500/20 text-[10px] font-bold uppercase tracking-widest cursor-default group/badge">
+							<div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-blue-500/10 text-blue-700 dark:text-blue-400 border border-blue-500/20 text-xs font-bold uppercase tracking-widest cursor-default group/badge">
 								<CheckCircle2 className={iconBaseClass} fill="currentColor" fillOpacity={0.1} />
 								<span className="hidden sm:inline">{t("organizer")}</span>
 							</div>
 						</TooltipTrigger>
 						<TooltipContent side="top">
-							<p className="text-[10px] font-bold">{t("official_organizer")}</p>
+							<p className="text-xs font-bold">{t("official_organizer")}</p>
 						</TooltipContent>
 					</Tooltip>
 				</TooltipProvider>
@@ -126,7 +126,7 @@ const OrganizerProfile = ({
 								/>
 							) : (
 								<AvatarFallback className="bg-muted rounded-full">
-									<UserIcon className="w-8 h-8 md:w-10 md:h-10 text-muted-foreground" />
+									<UserIcon className="w-8 h-8 fine:w-10 fine:h-10 text-muted-foreground" />
 								</AvatarFallback>
 							)}
 						</Avatar>
@@ -136,7 +136,7 @@ const OrganizerProfile = ({
 						<Button
 							disabled={organizer._id === currentUser?._id}
 							onClick={followHandler}
-							className={cn("w-full h-8 md:h-9 rounded-xl text-xs font-bold transition-all", {
+							className={cn("w-full h-11 fine:h-9 rounded-xl text-xs font-bold transition-all", {
 								"bg-primary text-primary-foreground hover:shadow-md": !isFollowing,
 								"bg-secondary/80 text-secondary-foreground hover:bg-secondary": isFollowing,
 							})}
@@ -147,7 +147,7 @@ const OrganizerProfile = ({
 							onClick={likeHandler}
 							variant="outline"
 							className={cn(
-								"w-full h-8 md:h-9 rounded-xl text-xs font-bold transition-all border",
+								"w-full h-11 fine:h-9 rounded-xl text-xs font-bold transition-all border",
 								isLiked
 									? "text-destructive border-destructive/20 bg-destructive/5"
 									: "text-muted-foreground hover:text-primary hover:border-primary/50",
@@ -156,7 +156,7 @@ const OrganizerProfile = ({
 							<Heart
 								className={cn(
 									"h-3 w-3 md:h-3.5 md:w-3.5 mr-2 transition-all",
-									isLiked ? "fill-destructive text-destructive" : "text-primary/70",
+									isLiked ? "fill-destructive text-destructive" : "text-primary",
 								)}
 							/>
 							<span className="tabular-nums">{organizer.memberLikes.toLocaleString()}</span>
@@ -173,10 +173,10 @@ const OrganizerProfile = ({
 							</h1>
 							<div className="flex justify-center md:justify-start">{getMemberTypeBadge(organizer.memberType, t)}</div>
 						</div>
-						<div className="flex flex-wrap items-center justify-center md:justify-start gap-x-4 gap-y-1 text-[11px] md:text-xs text-muted-foreground font-semibold">
+						<div className="flex flex-wrap items-center justify-center md:justify-start gap-x-4 gap-y-1 text-xs md:text-xs text-muted-foreground font-semibold">
 							<div className="flex items-center gap-1.5 uppercase tracking-wider">
 								<Mail className="h-3 w-3 text-primary" />
-								<span>{organizer.memberEmail}</span>
+								<span className="break-all">{organizer.memberEmail}</span>
 							</div>
 							{organizer.memberPhone && (
 								<div className="flex items-center gap-1.5 uppercase tracking-wider">
@@ -188,7 +188,7 @@ const OrganizerProfile = ({
 					</div>
 
 					{/* Stats Grid - Very Compact */}
-					<div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
+					<div className="grid grid-cols-[repeat(auto-fit,minmax(8rem,1fr))] gap-2">
 						{statsData.map((stat) => (
 							<div
 								key={stat.label}
@@ -198,7 +198,7 @@ const OrganizerProfile = ({
 									<div className="text-primary scale-75 md:scale-90 opacity-70 group-hover/stat:opacity-100 transition-opacity">
 										{stat.icon}
 									</div>
-									<span className="text-[8px] md:text-[9px] font-black text-muted-foreground uppercase tracking-widest line-clamp-1">
+									<span className="text-xs md:text-xs font-black text-muted-foreground uppercase tracking-widest break-words min-w-0">
 										{stat.label}
 									</span>
 								</div>
@@ -211,7 +211,7 @@ const OrganizerProfile = ({
 
 					{organizer.memberDesc && (
 						<div className="relative pl-3 border-l-2 border-primary/20">
-							<p className="text-[11px] md:text-[13px] text-muted-foreground leading-relaxed italic line-clamp-2 md:line-clamp-3">
+							<p className="text-xs md:text-[0.8125rem] text-muted-foreground leading-relaxed italic line-clamp-2 md:line-clamp-3">
 								&ldquo;{organizer.memberDesc}&rdquo;
 							</p>
 						</div>

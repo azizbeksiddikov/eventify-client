@@ -24,13 +24,13 @@ const ChosenGroupHeader = () => {
 	};
 
 	return (
-		<section className="bg-gradient-to-b from-muted-foreground/10 to-background py-8">
-			<div className="flex flex-col md:flex-row items-center justify-between mb-8 max-w-7xl mx-auto px-6 sm:px-12 lg:px-20 gap-3">
+		<section className="bg-gradient-to-b from-muted-foreground/10 to-background py-4 sm:py-8">
+			<div className="flex flex-row flex-wrap items-center justify-between sm:mb-6 max-w-7xl mx-auto px-4 sm:px-12 lg:px-20 gap-3">
 				<Button
 					type="button"
 					onClick={() => router.push("/groups")}
 					variant="outline"
-					className="h-10 px-4 w-full md:w-auto border-primary/30 text-primary hover:bg-primary/5 transition-colors duration-200"
+					className="h-auto min-h-11 fine:min-h-10 whitespace-normal text-left py-2 px-4 border-primary/30 text-primary hover:bg-primary/5 transition-colors duration-200"
 				>
 					<div className="flex items-center gap-2">
 						<ArrowLeft className="w-4 h-4" />
@@ -44,14 +44,15 @@ const ChosenGroupHeader = () => {
 							type="button"
 							onClick={createGroupHandler}
 							aria-disabled={user.memberType !== MemberType.ORGANIZER}
-							className={`h-10 px-4 w-full md:w-auto transition-colors duration-200 ${
+							aria-label={t("create_group")}
+							className={`h-11 w-11 fine:h-10 px-0 sm:w-auto sm:px-4 shrink-0 transition-colors duration-200 ${
 								user.memberType === MemberType.ORGANIZER
 									? "bg-primary text-primary-foreground hover:bg-primary/90"
 									: "bg-muted text-muted-foreground cursor-not-allowed"
 							}`}
 						>
 							<div className="flex items-center gap-2">
-								{t("create_group")}
+								<span className="hidden sm:inline">{t("create_group")}</span>
 								<Plus className="w-4 h-4" />
 							</div>
 						</Button>

@@ -38,5 +38,7 @@
 	"loading": "Загрузка",
 	"events_view_details": "Посмотреть детали",
 	"events_view_details_for": "Посмотреть детали для",
-	"there_are_no_events_in_these_categories_yet_check_back_later_or_explore_other_categories": "В этих категориях пока нет событий. Зайдите позже или выберите другие категории."
+	"there_are_no_events_in_these_categories_yet_check_back_later_or_explore_other_categories": "В этих категориях пока нет событий. Зайдите позже или выберите другие категории.",
+	"previous_event": "Предыдущее мероприятие",
+	"next_event": "Следующее мероприятие"
 }

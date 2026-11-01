@@ -11,5 +11,6 @@
 	"owner_avatar": "Аватар владельца",
 	"comment_deleted_successfully": "Комментарий успешно удален",
 	"comment_updated_successfully": "Комментарий успешно обновлен",
-	"comment_created_successfully": "Комментарий успешно создан"
+	"comment_created_successfully": "Комментарий успешно создан",
+	"per page": "на странице"
 }

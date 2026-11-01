@@ -17,6 +17,7 @@ import TicketCard from "@/libs/components/events/TicketCard";
 import { Tickets } from "@/libs/types/ticket/ticket";
 import { TicketStatus } from "@/libs/enums/ticket.enum";
 import { TicketInquiry } from "@/libs/types/ticket/ticket.input";
+import { smoothBehavior } from "@/libs/motion";
 
 const LIMIT_OPTIONS = [5, 10, 20, 50];
 const CATEGORY_OPTIONS = [...Object.values(TicketStatus), "ALL"];
@@ -40,7 +41,7 @@ const MyTickets = ({ setTicketInquiry, ticketInquiry, myTickets }: MyTicketsProp
 			const extraSpacing = 32; // 32px
 			const elementPosition = ticketsListRef.current.getBoundingClientRect().top + window.pageYOffset;
 			const scrollTop = Math.max(0, elementPosition - headerHeight - extraSpacing);
-			window.scrollTo({ top: scrollTop, behavior: "smooth" });
+			window.scrollTo({ top: scrollTop, behavior: smoothBehavior() });
 		}
 	};
 
@@ -65,9 +66,9 @@ const MyTickets = ({ setTicketInquiry, ticketInquiry, myTickets }: MyTicketsProp
 	return (
 		<Card className="mt-10 gap-0">
 			<CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-0 pb-2">
-				<CardTitle className="text-xl font-semibold text-foreground/90 w-full">{t("My Tickets")}</CardTitle>
+				<CardTitle className="text-xl font-semibold text-foreground w-full">{t("My Tickets")}</CardTitle>
 
-				<div className="flex justify-between items-center w-full">
+				<div className="flex flex-wrap justify-between items-center gap-2 w-full">
 					<Badge variant="outline" className="flex items-center gap-2">
 						<TicketIcon className="h-4 w-4" />
 						<span className="text-sm font-medium">
@@ -78,7 +79,7 @@ const MyTickets = ({ setTicketInquiry, ticketInquiry, myTickets }: MyTicketsProp
 					{/* Category Filter */}
 					<DropdownMenu>
 						<DropdownMenuTrigger asChild>
-							<Button variant="outline" size="sm" className="h-8 flex items-center gap-2">
+							<Button variant="outline" size="sm" className="h-11 fine:h-8 flex items-center gap-2">
 								<Filter className="h-4 w-4" />
 								{currentCategory}
 								<ChevronDown className="h-4 w-4 ml-1" />
@@ -100,7 +101,7 @@ const MyTickets = ({ setTicketInquiry, ticketInquiry, myTickets }: MyTicketsProp
 					{/* Limit Selector */}
 					<DropdownMenu>
 						<DropdownMenuTrigger asChild>
-							<Button variant="outline" size="sm" className="h-8 w-[70px] flex items-center justify-between">
+							<Button variant="outline" size="sm" className="h-11 fine:h-8 w-[70px] flex items-center justify-between">
 								{ticketInquiry.limit}
 								<ChevronDown className="h-4 w-4 ml-1" />
 							</Button>
@@ -125,8 +126,8 @@ const MyTickets = ({ setTicketInquiry, ticketInquiry, myTickets }: MyTicketsProp
 					<div className="text-center py-12">
 						<div className="flex flex-col items-center">
 							<TicketIcon className="h-12 w-12 text-muted-foreground/50" />
-							<div className="text-muted-foreground/80 text-sm">{t("You have no tickets yet")}</div>
-							<div className="text-muted-foreground/60 text-xs">{t("Purchase tickets to see them here")}</div>
+							<div className="text-muted-foreground text-sm">{t("You have no tickets yet")}</div>
+							<div className="text-muted-foreground text-xs">{t("Purchase tickets to see them here")}</div>
 						</div>
 					</div>
 				) : (

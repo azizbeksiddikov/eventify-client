@@ -7,7 +7,7 @@ import { Event } from "@/libs/types/event/event";
 import { EventUpdateInput } from "@/libs/types/event/event.update";
 import { CurrencyEntity } from "@/libs/types/currency/currency";
 import { CurrencyInput } from "@/libs/types/currency/currency.input";
-import { CurrencyUpdate } from "@/libs/types/currency/currnecy.update";
+import { CurrencyUpdate } from "@/libs/types/currency/currency.update";
 
 /**************************
  *         MEMBER          *

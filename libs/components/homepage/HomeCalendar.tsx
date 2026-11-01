@@ -1,9 +1,9 @@
-import * as React from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useTranslation } from "next-i18next";
+import * as React from "react";
 
-import { cn } from "@/libs/utils";
 import type { Event } from "@/libs/types/event/event";
+import { cn } from "@/libs/utils";
 
 type HomeCalendarProps = {
 	className?: string;
@@ -22,6 +22,7 @@ type HomeCalendarProps = {
  */
 export function HomeCalendar({ className, events, ...props }: HomeCalendarProps) {
 	const { i18n } = useTranslation();
+	const { t } = useTranslation("calendar");
 	const today = new Date();
 	const selected = props.selected;
 	const onSelect = props.onSelect;
@@ -91,9 +92,9 @@ export function HomeCalendar({ className, events, ...props }: HomeCalendarProps)
 					type="button"
 					onClick={goPrev}
 					disabled={!canGoPrev}
-					aria-label="Previous month"
+					aria-label={t("previous_month")}
 					className={cn(
-						"h-9 w-9 rounded-lg border border-border bg-card/70 text-foreground hover:bg-accent disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center",
+						"h-11 w-11 rounded-lg border border-border bg-card text-foreground hover:bg-accent disabled:bg-muted disabled:text-muted-foreground disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center",
 					)}
 				>
 					<ChevronLeft className="h-4 w-4" />
@@ -105,9 +106,9 @@ export function HomeCalendar({ className, events, ...props }: HomeCalendarProps)
 					type="button"
 					onClick={goNext}
 					disabled={!canGoNext}
-					aria-label="Next month"
+					aria-label={t("next_month")}
 					className={cn(
-						"h-9 w-9 rounded-lg border border-border bg-card/70 text-foreground hover:bg-accent disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center",
+						"h-11 w-11 rounded-lg border border-border bg-card text-foreground hover:bg-accent disabled:bg-muted disabled:text-muted-foreground disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center",
 					)}
 				>
 					<ChevronRight className="h-4 w-4" />
@@ -115,10 +116,10 @@ export function HomeCalendar({ className, events, ...props }: HomeCalendarProps)
 			</div>
 
 			{/* Grid */}
-			<div className="p-3 sm:p-4">
-				<div className="grid grid-cols-7 gap-1">
+			<div className="p-0 sm:p-4">
+				<div className="grid grid-cols-7 gap-0 sm:gap-1">
 					{weekdays.map((d) => (
-						<div key={d} className="text-[11px] sm:text-xs font-medium text-muted-foreground text-center py-1">
+						<div key={d} className="text-xs sm:text-xs font-medium text-muted-foreground text-center py-1">
 							{d}
 						</div>
 					))}
@@ -140,7 +141,7 @@ export function HomeCalendar({ className, events, ...props }: HomeCalendarProps)
 								disabled={isDisabled}
 								onClick={() => onSelect?.(date)}
 								className={cn(
-									"relative h-10 sm:h-12 rounded-lg text-xs sm:text-sm font-medium flex items-center justify-center transition-colors",
+									"relative h-11 sm:h-12 rounded-lg text-xs sm:text-sm font-medium flex items-center justify-center transition-colors",
 									isSelected ? "bg-primary text-primary-foreground" : "bg-transparent text-foreground hover:bg-accent",
 									isDisabled && "opacity-40 cursor-not-allowed hover:bg-transparent",
 								)}

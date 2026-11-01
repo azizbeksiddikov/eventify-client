@@ -1,12 +1,11 @@
 import { useState } from "react";
 import { useQuery } from "@apollo/client/react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useTranslation } from "next-i18next";
-import { MapPin, Clock, CalendarIcon, ChevronRight, ArrowRight } from "lucide-react";
+import { MapPin, Clock, CalendarIcon, ChevronRight } from "lucide-react";
 
 import { HomeCalendar } from "@/libs/components/homepage/HomeCalendar";
-import { Button } from "@/libs/components/ui/button";
+import { SectionHeader } from "@/libs/components/common/SectionHeader";
 import { GET_EVENTS } from "@/apollo/user/query";
 
 import { Event } from "@/libs/types/event/event";
@@ -23,7 +22,6 @@ export default function UpcomingEvents({
 		search: { eventStatus: EventStatus.UPCOMING },
 	},
 }: UpcomingEventsProps) {
-	const router = useRouter();
 	const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
 	const { t, i18n } = useTranslation(["home", "events"]);
 	const today = new Date();
@@ -45,24 +43,12 @@ export default function UpcomingEvents({
 
 	return (
 		<section className="py-10 sm:py-20 bg-muted">
-			<div className="max-w-7xl mx-auto px-6 sm:px-12 lg:px-20">
-				<div className="flex flex-row items-center justify-start gap-3 mb-6 sm:mb-8">
-					<h2 className="flex-1 min-w-0 text-foreground">{t("upcoming_events")}</h2>
-					<Button
-						type="submit"
-						onClick={() => router.push("/events")}
-						className="shrink-0 h-9 sm:h-10 md:h-12 px-3 sm:px-4 md:px-6"
-					>
-						<div className="flex items-center gap-1">
-							{t("view_all_events")}
-							<ArrowRight className="w-3 h-3 sm:w-4 sm:h-4" />
-						</div>
-					</Button>
-				</div>
+			<div className="max-w-7xl mx-auto px-4 sm:px-12 lg:px-20">
+				<SectionHeader title={t("upcoming_events")} href="/events" linkLabel={t("view_all_events")} />
 
 				<div className="grid grid-cols-1 md:grid-cols-4 gap-4 sm:gap-6">
 					{/* Large Calendar - Takes most of the space */}
-					<div className="md:col-span-3 bg-card rounded-lg sm:rounded-2xl shadow-sm p-3 sm:p-6">
+					<div className="md:col-span-3 bg-card rounded-lg sm:rounded-2xl shadow-sm p-2 sm:p-6">
 						<HomeCalendar
 							selected={selectedDate}
 							onSelect={(date: Date) => setSelectedDate(date)}
@@ -119,7 +105,7 @@ export default function UpcomingEvents({
 								</ul>
 							) : (
 								<div className="flex flex-col items-center justify-center flex-1 text-center">
-									<CalendarIcon className="w-8 h-8 sm:w-10 sm:h-10 text-muted-foreground/30 mb-2" />
+									<CalendarIcon className="w-8 h-8 fine:w-10 fine:h-10 text-muted-foreground/30 mb-2" />
 									<p className="text-xs text-muted-foreground">{t("events:no_events_scheduled")}</p>
 									<p className="text-xs text-muted-foreground mt-1">{t("events:select_another_date")}</p>
 								</div>

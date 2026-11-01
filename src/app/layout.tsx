@@ -55,6 +55,8 @@ const lora = Lora({
 export const viewport: Viewport = {
 	width: "device-width",
 	initialScale: 1,
+	// lets content run under the notch; fixed bars add env(safe-area-inset-*) padding
+	viewportFit: "cover",
 	themeColor: [
 		{ media: "(prefers-color-scheme: light)", color: "#ffffff" },
 		{ media: "(prefers-color-scheme: dark)", color: "#000000" },
@@ -120,8 +122,14 @@ export default function RootLayout({
 				<Providers>
 					<FontProvider>
 						<ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-							<Toaster richColors position="top-right" closeButton />
-							<div className="flex flex-col min-h-screen w-full">
+							<Toaster
+								richColors
+								position="top-right"
+								closeButton
+								offset="calc(env(safe-area-inset-top) + 16px)"
+								mobileOffset="calc(env(safe-area-inset-top) + 8px)"
+							/>
+							<div className="flex flex-col min-h-screen w-full pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)]">
 								<Header />
 								<main className="flex-1 w-full flex flex-col">{children}</main>
 								<Footer />

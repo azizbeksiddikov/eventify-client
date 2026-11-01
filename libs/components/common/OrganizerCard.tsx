@@ -40,11 +40,11 @@ const OrganizerCard = ({ organizer, likeMemberHandler, subscribeHandler, unsubsc
 					{/* Name and Email */}
 					<div className="space-y-1 text-left flex-1 min-w-0">
 						<h3 className="flex items-center font-semibold text-sm tracking-tight gap-1">
-							<User className="h-3 w-3 text-primary/70 shrink-0" />
+							<User className="h-3 w-3 text-primary shrink-0" />
 							<span className="truncate">{organizer.memberFullName}</span>
 						</h3>
-						<div className="flex items-center text-[10px] text-muted-foreground gap-1">
-							<Mail className="h-3 w-3 text-primary/70 shrink-0" />
+						<div className="flex items-center text-xs text-muted-foreground gap-1">
+							<Mail className="h-3 w-3 text-primary shrink-0" />
 							<span className="truncate">{organizer.memberEmail}</span>
 						</div>
 					</div>
@@ -57,8 +57,8 @@ const OrganizerCard = ({ organizer, likeMemberHandler, subscribeHandler, unsubsc
 					<Tooltip>
 						<TooltipTrigger asChild>
 							<div className="flex items-center justify-center gap-0.5 p-1 rounded-md bg-card/70 hover:bg-card transition-colors cursor-help">
-								<Calendar className="h-2.5 w-2.5 text-primary" />
-								<p className="text-[10px] font-medium">{organizer?.eventsOrganizedCount || 0}</p>
+								<Calendar className="h-3 w-3 text-primary" />
+								<p className="text-xs font-medium">{organizer?.eventsOrganizedCount || 0}</p>
 							</div>
 						</TooltipTrigger>
 						<TooltipContent side="bottom">{t("events_organized")}</TooltipContent>
@@ -66,8 +66,8 @@ const OrganizerCard = ({ organizer, likeMemberHandler, subscribeHandler, unsubsc
 					<Tooltip>
 						<TooltipTrigger asChild>
 							<div className="flex items-center justify-center gap-0.5 p-1 rounded-md bg-card/70 hover:bg-card transition-colors cursor-help">
-								<Users className="h-2.5 w-2.5 text-primary" />
-								<p className="text-[10px] font-medium">{organizer.memberFollowers || 0}</p>
+								<Users className="h-3 w-3 text-primary" />
+								<p className="text-xs font-medium">{organizer.memberFollowers || 0}</p>
 							</div>
 						</TooltipTrigger>
 						<TooltipContent side="bottom">{t("people_following_organizer")}</TooltipContent>
@@ -75,8 +75,8 @@ const OrganizerCard = ({ organizer, likeMemberHandler, subscribeHandler, unsubsc
 					<Tooltip>
 						<TooltipTrigger asChild>
 							<div className="flex items-center justify-center gap-0.5 p-1 rounded-md bg-card/70 hover:bg-card transition-colors cursor-help">
-								<Heart className="h-2.5 w-2.5 text-primary" />
-								<p className="text-[10px] font-medium">{organizer.memberLikes || 0}</p>
+								<Heart className="h-3 w-3 text-primary" />
+								<p className="text-xs font-medium">{organizer.memberLikes || 0}</p>
 							</div>
 						</TooltipTrigger>
 						<TooltipContent side="bottom">{t("total_likes_received")}</TooltipContent>
@@ -86,9 +86,9 @@ const OrganizerCard = ({ organizer, likeMemberHandler, subscribeHandler, unsubsc
 					<div className="relative">
 						<div className="bg-muted/30 px-2 py-2 rounded-md min-h-[36px]">
 							{organizer.memberDesc ? (
-								<p className="text-[10px] text-foreground leading-relaxed line-clamp-2">{organizer.memberDesc}</p>
+								<p className="text-sm text-foreground leading-relaxed line-clamp-2">{organizer.memberDesc}</p>
 							) : (
-								<p className="text-[10px] text-muted-foreground italic flex items-center justify-center py-1">
+								<p className="text-xs text-muted-foreground italic flex items-center justify-center py-1">
 									<span className="bg-muted/50 px-2 py-0.5 rounded-md">{t("no_description_available")}</span>
 								</p>
 							)}
@@ -103,7 +103,7 @@ const OrganizerCard = ({ organizer, likeMemberHandler, subscribeHandler, unsubsc
 					<Button
 						variant="ghost"
 						size="sm"
-						className={`h-9 w-9 p-0 transition-colors ${
+						className={`h-11 w-11 fine:h-9 fine:w-9 p-0 transition-colors ${
 							organizer?.meLiked?.[0]?.myFavorite
 								? "text-rose-500 hover:text-rose-500"
 								: "text-muted-foreground hover:text-foreground"
@@ -122,7 +122,7 @@ const OrganizerCard = ({ organizer, likeMemberHandler, subscribeHandler, unsubsc
 				<Button
 					variant={organizer?.meFollowed?.[0]?.myFollowing ? "outline" : "default"}
 					size="sm"
-					className={`h-9 px-3 text-sm font-medium transition-colors ${
+					className={`h-11 fine:h-9 px-4 sm:px-3 text-sm font-medium transition-colors ${
 						organizer?.meFollowed?.[0]?.myFollowing ? "border-primary/30 text-primary hover:bg-primary/5" : ""
 					}`}
 					onClick={() =>
@@ -137,10 +137,10 @@ const OrganizerCard = ({ organizer, likeMemberHandler, subscribeHandler, unsubsc
 					<Button
 						variant="outline"
 						size="sm"
-						className="h-6 w-6 p-0 rounded-md hover:bg-primary/5 border-primary/30 text-primary transition-colors"
+						className="h-11 w-11 fine:h-9 fine:w-9 p-0 rounded-md hover:bg-primary/5 border-primary/30 text-primary transition-colors"
 						aria-label={t("view")}
 					>
-						<ExternalLink className="h-3 w-3" />
+						<ExternalLink className="h-4 w-4" />
 					</Button>
 				</Link>
 			</CardFooter>

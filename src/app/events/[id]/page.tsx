@@ -1,27 +1,28 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
-import { useTranslation } from "next-i18next";
 import { userVar } from "@/apollo/store";
 import { useMutation, useQuery, useReactiveVar } from "@apollo/client/react";
+import { useTranslation } from "next-i18next";
+import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
+import CommentsComponent from "@/libs/components/common/CommentsComponent";
+import NotFound from "@/libs/components/common/NotFound";
 import ChosenEventData from "@/libs/components/events/ChosenEventData";
 import ChosenEventHeader from "@/libs/components/events/ChosenEventHeader";
 import ChosenEventOther from "@/libs/components/events/ChosenEventOther";
-import NotFound from "@/libs/components/common/NotFound";
-import CommentsComponent from "@/libs/components/common/CommentsComponent";
 import { CommentGroup } from "@/libs/enums/comment.enum";
 
-import { GET_EVENT, GET_MY_TICKETS } from "@/apollo/user/query";
 import { CREATE_TICKET, LIKE_TARGET_EVENT } from "@/apollo/user/mutation";
-import { Event } from "@/libs/types/event/event";
-import { smallSuccess, smallError } from "@/libs/alert";
-import { likeEvent } from "@/libs/utils";
-import MyTickets from "@/libs/components/events/MyTickets";
-import { TicketInput, TicketInquiry } from "@/libs/types/ticket/ticket.input";
-import { Tickets } from "@/libs/types/ticket/ticket";
+import { GET_EVENT, GET_MY_TICKETS } from "@/apollo/user/query";
+import { smallError, smallSuccess } from "@/libs/alert";
 import Loading from "@/libs/components/common/Loading";
+import MyTickets from "@/libs/components/events/MyTickets";
+import { AppError, friendlyErrorMessage } from "@/libs/errorMessages";
+import { Event } from "@/libs/types/event/event";
+import { Tickets } from "@/libs/types/ticket/ticket";
+import { TicketInput, TicketInquiry } from "@/libs/types/ticket/ticket.input";
+import { likeEvent } from "@/libs/utils";
 
 const ChosenEvent = () => {
 	const params = useParams();
@@ -110,9 +111,9 @@ const ChosenEvent = () => {
 
 	const purchaseTicketHandler = async () => {
 		try {
-			if (!user._id) throw new Error(t("errors:not_authenticated"));
-			if (!eventId) throw new Error(t("event_not_found"));
-			if (isExternalEvent) throw new Error(t("errors:invalid_request"));
+			if (!user._id) throw new AppError("NOT_AUTHENTICATED");
+			if (!eventId) throw new AppError("EVENT_NOT_FOUND");
+			if (isExternalEvent) throw new AppError("BAD_REQUEST");
 
 			await createTicket({ variables: { input: ticketInput } });
 			if (eventId) {
@@ -122,17 +123,8 @@ const ChosenEvent = () => {
 
 			await smallSuccess(t("ticket_purchased_successfully"));
 		} catch (error: unknown) {
-			// Handle Apollo GraphQL errors
-			const apolloError = error as { message?: string; graphQLErrors?: Array<{ message: string }> };
-			const rawMessage = apolloError.graphQLErrors?.[0]?.message || apolloError.message || "";
-
-			// Map known backend errors to translated messages
-			let errorMessage: string;
-			if (rawMessage.includes("do not have enough points")) {
-				errorMessage = t("errors:insufficient_points");
-			} else {
-				errorMessage = rawMessage || t("errors:something_went_wrong");
-			}
+			// The error code becomes a plain sentence with a hint in the visitor's language
+			const errorMessage = friendlyErrorMessage(error);
 			smallError(errorMessage);
 		}
 	};
@@ -143,7 +135,7 @@ const ChosenEvent = () => {
 		<div>
 			<ChosenEventHeader />
 
-			<div className="max-w-7xl mx-auto px-6 sm:px-12 lg:px-20 pb-10">
+			<div className="max-w-7xl mx-auto px-4 sm:px-12 lg:px-20 pb-10">
 				{eventLoading && <Loading />}
 
 				{!eventLoading && !event ? (

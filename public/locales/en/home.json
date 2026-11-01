@@ -38,5 +38,7 @@
 	"loading": "Loading",
 	"events_view_details": "View Details",
 	"events_view_details_for": "View details for",
-	"there_are_no_events_in_these_categories_yet_check_back_later_or_explore_other_categories": "There are no events in these categories yet. Check back later or explore other categories."
+	"there_are_no_events_in_these_categories_yet_check_back_later_or_explore_other_categories": "There are no events in these categories yet. Check back later or explore other categories.",
+	"previous_event": "Previous event",
+	"next_event": "Next event"
 }

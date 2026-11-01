@@ -11,6 +11,7 @@ import TopOrganizers from "@/libs/components/homepage/TopOrganizers";
 function Home() {
 	return (
 		<div className="min-h-screen flex flex-col w-full">
+			<h1 className="sr-only">Eventify</h1>
 			<AutoScrollEvents />
 			<SearchEvents />
 			<UpcomingEvents />

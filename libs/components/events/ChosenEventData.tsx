@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Image from "next/image";
+import { SafeImage } from "@/libs/components/common/SafeImage";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "next-i18next";
 import { Heart, Calendar, Clock, MapPin, Users, Plus, Minus, Ticket, Pencil, ExternalLink } from "lucide-react";
@@ -19,6 +19,7 @@ import {
 } from "@/libs/components/ui/dialog";
 
 import { cn, getImageUrl, formatPrice } from "@/libs/utils";
+import { getEventWhen } from "@/libs/eventDates";
 import { TicketInput } from "@/libs/types/ticket/ticket.input";
 import { EventStatus } from "@/libs/enums/event.enum";
 import { Event } from "@/libs/types/event/event";
@@ -104,13 +105,14 @@ const ChosenEventData = ({
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-4 sm:p-6 pb-4">
 						{/* Event Name and Image */}
 						<div className="relative w-full flex flex-col justify-start items-start">
-							<h2 className="text-lg sm:text-xl md:text-2xl font-semibold tracking-tight text-foreground mb-3 text-left">
+							<h1 className="text-lg sm:text-xl md:text-2xl font-semibold tracking-tight text-foreground mb-3 text-left">
 								{event.eventName}
-							</h2>
+							</h1>
 							{/* Event Image */}
-							<div className="relative aspect-video w-full group rounded-xl overflow-hidden border-2">
-								<Image
+							<div className="relative aspect-video min-h-[9rem] w-full group rounded-xl overflow-hidden border-2 bg-muted">
+								<SafeImage
 									src={getImageUrl(event.eventImages[0], "event", event.origin)}
+									fallbackType="event"
 									alt={event.eventName}
 									fill
 									className="object-contain transition-transform duration-500"
@@ -131,7 +133,7 @@ const ChosenEventData = ({
 									<div className="absolute top-4 left-4">
 										<Badge
 											variant="secondary"
-											className="bg-red-500/90 text-white backdrop-blur-sm shadow-md px-2 sm:px-3 py-1 font-medium"
+											className="bg-red-700 text-white backdrop-blur-sm shadow-md px-2 sm:px-3 py-1 font-medium"
 										>
 											{t("fake")}
 										</Badge>
@@ -166,34 +168,46 @@ const ChosenEventData = ({
 
 								{/* Event Date and Time, Location, Capacity */}
 								<div className="space-y-3">
-									{/* Event Date */}
-									<div className="flex items-center gap-3 text-muted-foreground hover:text-foreground transition-colors bg-muted/40 hover:bg-muted/50 p-2 sm:p-3 rounded-xl">
-										<Calendar className="h-5 w-5 shrink-0 text-primary" />
-										<span className="text-sm font-medium">
-											{new Date(event.eventStartAt).toLocaleDateString(i18n.language || "en", {
-												weekday: "short",
-												month: "short",
-												day: "numeric",
-												year: "numeric",
-											})}
-										</span>
-									</div>
-
-									{/* Event Time */}
-									<div className="flex items-center gap-3 text-muted-foreground hover:text-foreground transition-colors bg-muted/40 hover:bg-muted/50 p-2 sm:p-3 rounded-xl">
-										<Clock className="h-5 w-5 shrink-0 text-primary" />
-										<span className="text-sm font-medium">
-											{new Date(event.eventStartAt).toLocaleTimeString(i18n.language || "en", {
-												hour: "2-digit",
-												minute: "2-digit",
-											})}{" "}
-											-{" "}
-											{new Date(event.eventEndAt).toLocaleTimeString(i18n.language || "en", {
-												hour: "2-digit",
-												minute: "2-digit",
-											})}
-										</span>
-									</div>
+									{/* Event Date and Time (single day, several days, all day) */}
+									{(() => {
+										const when = getEventWhen(event.eventStartAt, event.eventEndAt, i18n.language || "en");
+										const row =
+											"flex items-center gap-3 text-muted-foreground hover:text-foreground transition-colors bg-muted/40 hover:bg-muted/50 p-2 sm:p-3 rounded-xl";
+										if (when.kind === "multi") {
+											return (
+												<>
+													<div className={row}>
+														<Calendar className="h-5 w-5 shrink-0 text-primary" />
+														<span className="text-sm font-medium">
+															<span className="text-muted-foreground">{t("event_starts")}: </span>
+															{when.startText}
+														</span>
+													</div>
+													<div className={row}>
+														<Clock className="h-5 w-5 shrink-0 text-primary" />
+														<span className="text-sm font-medium">
+															<span className="text-muted-foreground">{t("event_ends")}: </span>
+															{when.endText}
+														</span>
+													</div>
+												</>
+											);
+										}
+										return (
+											<>
+												<div className={row}>
+													<Calendar className="h-5 w-5 shrink-0 text-primary" />
+													<span className="text-sm font-medium">{when.dateText}</span>
+												</div>
+												<div className={row}>
+													<Clock className="h-5 w-5 shrink-0 text-primary" />
+													<span className="text-sm font-medium">
+														{when.kind === "allDay" ? t("all_day") : when.timeText}
+													</span>
+												</div>
+											</>
+										);
+									})()}
 
 									{/* Event Location */}
 									<div className="flex items-center gap-3 text-muted-foreground hover:text-foreground transition-colors bg-muted/40 hover:bg-muted/50 p-2 sm:p-3 rounded-xl">
@@ -216,10 +230,12 @@ const ChosenEventData = ({
 								</div>
 
 								{/* Event Likes and Views */}
-								<div className="grid grid-cols-2 gap-2 h-10">
+								<div className="grid grid-cols-2 gap-2 h-11 fine:h-10">
 									{/* Event Likes */}
 									<Button
 										onClick={() => likeEventHandler(event._id)}
+										aria-label={isLiked ? t("liked") : t("like")}
+										aria-pressed={!!isLiked}
 										className={cn(
 											"flex h-auto items-center m-0 p-0 justify-center gap-2 text-muted-foreground bg-muted/40 hover:bg-muted/50 transition-colors rounded-xl",
 											isLiked
@@ -230,7 +246,7 @@ const ChosenEventData = ({
 										<Heart
 											className={cn(
 												"h-5 w-5 transition-all duration-200",
-												isLiked ? "fill-destructive text-destructive" : "text-primary/70",
+												isLiked ? "fill-destructive text-destructive" : "text-primary",
 											)}
 										/>
 										<span className="text-sm font-medium">{event.eventLikes}</span>
@@ -238,7 +254,7 @@ const ChosenEventData = ({
 
 									{/* Event Remaining Capacity */}
 									<div className="flex items-center justify-center gap-2 text-muted-foreground bg-muted/40 hover:bg-muted/50 transition-colors rounded-xl">
-										<Ticket className="h-5 w-5 text-primary/70" />
+										<Ticket className="h-5 w-5 text-primary" />
 										<span className="text-sm font-medium">
 											{typeof event.eventCapacity === "number" && event.eventCapacity > 0
 												? Math.max(0, event.eventCapacity - (event.attendeeCount || 0))
@@ -272,8 +288,9 @@ const ChosenEventData = ({
 												<Button
 													variant="outline"
 													size="icon"
-													className="h-8 w-8 hover:bg-primary/10 hover:text-primary transition-colors border-primary/20"
+													className="h-11 w-11 fine:h-8 fine:w-8 hover:bg-primary/10 hover:text-primary transition-colors border-primary/20"
 													onClick={() => quantityHandler(-1)}
+													aria-label={t("decrease_tickets")}
 												>
 													<Minus className="h-3 w-3" />
 												</Button>
@@ -283,8 +300,9 @@ const ChosenEventData = ({
 												<Button
 													variant="outline"
 													size="icon"
-													className="h-8 w-8 hover:bg-primary/10 hover:text-primary transition-colors border-primary/20"
+													className="h-11 w-11 fine:h-8 fine:w-8 hover:bg-primary/10 hover:text-primary transition-colors border-primary/20"
 													onClick={() => quantityHandler(1)}
+													aria-label={t("increase_tickets")}
 												>
 													<Plus className="h-3 w-3" />
 												</Button>
@@ -305,7 +323,7 @@ const ChosenEventData = ({
 										<Button
 											onClick={purchaseHandler}
 											size="sm"
-											className="h-9 bg-primary hover:bg-primary/90 text-primary-foreground px-4 sm:px-6 shadow-sm hover:shadow transition-all duration-200 w-full sm:w-auto"
+											className="h-11 fine:h-9 bg-primary hover:bg-primary/90 text-primary-foreground px-4 sm:px-6 shadow-sm hover:shadow transition-all duration-200 w-full sm:w-auto"
 										>
 											{t("buy_ticket")}
 										</Button>
@@ -319,14 +337,14 @@ const ChosenEventData = ({
 				{/* Section: Description */}
 				<Separator />
 				<div className="px-4 sm:px-6 py-4">
-					<h3 className="text-sm font-semibold mb-2 text-foreground/90">{t("description")}</h3>
+					<h3 className="text-sm font-semibold mb-2 text-foreground">{t("description")}</h3>
 					<div className="text-sm text-muted-foreground leading-relaxed">
 						<ReactMarkdown
 							components={{
 								a: ({ node, ...props }) => (
 									<a
 										{...props}
-										className="text-primary hover:underline font-medium break-all"
+										className="inline-block min-w-11 py-3 text-primary hover:underline font-medium break-all"
 										target="_blank"
 										rel="noopener noreferrer"
 									/>
@@ -337,7 +355,7 @@ const ChosenEventData = ({
 								ol: ({ node, ...props }) => <ol {...props} className="list-decimal pl-5 mb-3 space-y-1" />,
 								li: ({ node, ...props }) => <li {...props} className="pl-1" />,
 								h1: ({ node, ...props }) => (
-									<h1 {...props} className="text-lg font-bold text-foreground mb-2 mt-4 first:mt-0" />
+									<h3 {...props} className="text-lg font-bold text-foreground mb-2 mt-4 first:mt-0" />
 								),
 								h2: ({ node, ...props }) => (
 									<h2 {...props} className="text-base font-bold text-foreground mb-2 mt-4 first:mt-0" />
@@ -348,7 +366,7 @@ const ChosenEventData = ({
 								blockquote: ({ node, ...props }) => (
 									<blockquote
 										{...props}
-										className="border-l-4 border-primary/30 pl-4 py-1 italic mb-3 text-muted-foreground/80"
+										className="border-l-4 border-primary/30 pl-4 py-1 italic mb-3 text-muted-foreground"
 									/>
 								),
 							}}

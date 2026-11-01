@@ -16,7 +16,7 @@ export const IsRealEventCheckbox = ({ checked, onCheckedChange }: IsRealEventChe
 			<Checkbox id="isRealEvent" checked={checked} onCheckedChange={(checked) => onCheckedChange(checked as boolean)} />
 			<label
 				htmlFor="isRealEvent"
-				className="text-sm font-medium text-foreground cursor-pointer leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+				className="flex min-h-11 flex-1 items-center text-sm font-medium text-foreground cursor-pointer leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
 			>
 				{t("real_event")}
 			</label>

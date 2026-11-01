@@ -1,15 +1,17 @@
 "use client";
 
 import { useTranslation } from "next-i18next";
+import type { InlineValidation } from "@/libs/hooks/useInlineValidation";
 import { Textarea } from "@/libs/components/ui/textarea";
 
 interface EventDescriptionFieldProps {
 	value: string;
 	onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
 	className?: string;
+	validation?: InlineValidation;
 }
 
-export const EventDescriptionField = ({ value, onChange, className }: EventDescriptionFieldProps) => {
+export const EventDescriptionField = ({ value, onChange, className, validation }: EventDescriptionFieldProps) => {
 	const { t } = useTranslation("events");
 
 	return (
@@ -19,12 +21,14 @@ export const EventDescriptionField = ({ value, onChange, className }: EventDescr
 			</label>
 			<Textarea
 				id="eventDesc"
+				{...validation?.errorProps("eventDesc")}
 				name="eventDesc"
 				value={value}
 				onChange={onChange}
 				placeholder={t("describe_your_event")}
 				className={`min-h-[120px] ${className || ""}`}
 			/>
+			{validation?.errorText("eventDesc")}
 		</div>
 	);
 };

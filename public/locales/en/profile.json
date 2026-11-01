@@ -60,5 +60,18 @@
 	"price": "Price",
 	"total": "Total",
 	"user": "User",
-	"following": "Following"
+	"following": "Following",
+	"cancel_ticket_title": "Cancel this ticket?",
+	"cancel_ticket_description": "Your points are returned to your balance and your spot is released. This cannot be undone.",
+	"cancel_ticket_confirm": "Cancel ticket",
+	"cancel_ticket_keep": "Keep ticket",
+	"leave_group_title": "Leave this group?",
+	"leave_group_description": "You will stop getting its events and updates. You can join again at any time.",
+	"leave_group_confirm": "Leave group",
+	"leave_group_stay": "Stay in group",
+	"member_subscribed_successfully": "Subscribed",
+	"member_unsubscribed_successfully": "Unsubscribed",
+	"group_joined_successfully": "Group joined successfully",
+	"group_left_successfully": "You left the group",
+	"free": "Free"
 }

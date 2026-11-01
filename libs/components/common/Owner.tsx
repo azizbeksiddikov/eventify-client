@@ -27,7 +27,7 @@ const Owner = ({ member, title = "Group Owner" }: OwnerProps) => {
 				href={`/organizers/${member._id}`}
 				className="block group hover:scale-105 transition-transform duration-300"
 			>
-				<div className="flex flex-row items-start gap-8">
+				<div className="flex flex-row items-start gap-4 sm:gap-8">
 					<div className="flex items-center">
 						<Avatar className="h-16 w-16">
 							{member?.memberImage ? (
@@ -43,7 +43,7 @@ const Owner = ({ member, title = "Group Owner" }: OwnerProps) => {
 							)}
 						</Avatar>
 					</div>
-					<div className="flex flex-col gap-2">
+					<div className="flex min-w-0 flex-col gap-2 break-words">
 						<h3 className="font-semibold text-card-foreground group-hover:text-card-foreground transition-colors duration-200">
 							{member.memberFullName ?? t("no_name")}
 						</h3>
@@ -51,7 +51,7 @@ const Owner = ({ member, title = "Group Owner" }: OwnerProps) => {
 							<Crown className="h-2.5 w-2.5 mr-1" />
 							{t("owner")}
 						</Badge>
-						<p className="text-card-foreground leading-relaxed group-hover:text-card-foreground/80 transition-colors duration-200 line-clamp-2">
+						<p className="text-card-foreground leading-relaxed group-hover:text-card-foreground transition-colors duration-200 line-clamp-2">
 							{member.memberDesc ?? t("no_description")}
 						</p>
 					</div>

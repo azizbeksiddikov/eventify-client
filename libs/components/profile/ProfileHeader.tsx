@@ -43,12 +43,12 @@ export const ProfileHeader = ({ member, groupsCount, ticketsCount }: ProfileHead
 	];
 
 	return (
-		<div className="bg-card rounded-xl shadow-lg p-8 md:p-10 border  /50">
-			<div className="flex flex-col gap-8">
-				<div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
+		<div className="bg-card rounded-xl shadow-lg p-5 sm:p-8 md:p-10 border">
+			<div className="flex flex-col gap-5 sm:gap-8">
+				<div className="flex flex-col lg:flex-row gap-5 sm:gap-8 lg:gap-12">
 					{/* Profile Section */}
-					<div className="flex flex-col md:flex-row items-center gap-6 md:gap-8 flex-1">
-						<Avatar className="w-28 h-28 md:w-36 md:h-36 ">
+					<div className="flex flex-col md:flex-row items-center gap-4 md:gap-8 flex-1">
+						<Avatar className="w-24 h-24 sm:w-28 sm:h-28 md:w-36 md:h-36">
 							{member.memberImage ? (
 								<AvatarImage
 									src={`${NEXT_APP_API_URL}/${member.memberImage}`}
@@ -57,20 +57,20 @@ export const ProfileHeader = ({ member, groupsCount, ticketsCount }: ProfileHead
 								/>
 							) : (
 								<AvatarFallback className="bg-muted rounded-full">
-									<User className="w-28 h-28 md:w-36 md:h-36 text-muted-foreground" />
+									<User className="w-24 h-24 sm:w-28 sm:h-28 md:w-36 md:h-36 text-muted-foreground" />
 								</AvatarFallback>
 							)}
 						</Avatar>
 
 						<div className="flex flex-col items-center md:items-start space-y-4  h-full justify-around">
 							<div className="flex flex-col items-center md:items-start gap-3 justify-between ">
-								<h1 className="text-3xl md:text-4xl font-bold text-card-foreground tracking-tight">
+								<h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-card-foreground tracking-tight text-center md:text-left break-words max-w-full">
 									{member.memberFullName}
 								</h1>
-								<div className="flex items-center gap-3">
-									<p className="text-muted-foreground text-lg md:text-xl font-medium">@{member.username}</p>
+								<div className="flex flex-wrap items-center justify-center md:justify-start gap-x-3 gap-y-2">
+									<p className="text-muted-foreground text-base md:text-xl font-medium break-all">@{member.username}</p>
 									<span
-										className={`px-3 py-1.5 rounded-full text-sm font-semibold ${getMemberTypeColor(member.memberType)}`}
+										className={`px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full text-xs sm:text-sm font-semibold ${getMemberTypeColor(member.memberType)}`}
 									>
 										{member.memberType}
 									</span>
@@ -80,19 +80,22 @@ export const ProfileHeader = ({ member, groupsCount, ticketsCount }: ProfileHead
 					</div>
 
 					{/* Stats Section */}
-					<div className="bg-muted/30 rounded-xl backdrop-blur-sm p-6">
-						<div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+					<div className="bg-muted/30 rounded-xl backdrop-blur-sm p-3 sm:p-6">
+						<div className="grid grid-cols-[repeat(auto-fit,minmax(6rem,1fr))] gap-2 sm:gap-4">
 							{stats.map((stat, index) => (
-								<div key={index} className="flex flex-col items-center min-w-[120px] p-4 rounded-lg bg-card/50">
-									<div className="flex items-center gap-2 mb-1">
+								<div
+									key={index}
+									className="flex flex-col items-center justify-center min-w-0 p-2.5 sm:p-4 rounded-lg bg-card/50 text-center"
+								>
+									<div className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 mb-1">
 										<stat.icon className="h-5 w-5 text-primary" />
 										{stat.label === t("points") ? (
 											<CurrencyConverter points={stat.value} showSelector={false} />
 										) : (
-											<span className="text-2xl font-bold text-card-foreground">{stat.value}</span>
+											<span className="text-xl sm:text-2xl font-bold text-card-foreground">{stat.value}</span>
 										)}
 									</div>
-									<span className="text-sm font-medium text-muted-foreground">{stat.label}</span>
+									<span className="text-xs sm:text-sm font-medium text-muted-foreground">{stat.label}</span>
 								</div>
 							))}
 						</div>
@@ -101,8 +104,8 @@ export const ProfileHeader = ({ member, groupsCount, ticketsCount }: ProfileHead
 
 				{/* Description Section */}
 				{member.memberDesc && (
-					<div className="border-t  /50 pt-4">
-						<p className="text-card-foreground/80 text-base md:text-lg text-left leading-relaxed">
+					<div className="border-t pt-4">
+						<p className="text-card-foreground text-base md:text-lg text-left leading-relaxed">
 							{member.memberDesc ?? t("no_description")}
 						</p>
 					</div>

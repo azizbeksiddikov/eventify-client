@@ -1,11 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
+import { SafeImage } from "@/libs/components/common/SafeImage";
 import { MapPin, Calendar, Heart, Eye } from "lucide-react";
 import { Button } from "@/libs/components/ui/button";
 import type { Event } from "@/libs/types/event/event";
-import { getImageUrl, formatSeoulDate } from "@/libs/utils";
+import { getImageUrl, formatDate } from "@/libs/utils";
 
 interface EventCardProps {
 	event: Event;
@@ -29,8 +29,9 @@ const SmallEventCard = ({ event, likeEventHandler }: EventCardProps) => {
 					{/* Image */}
 					<div className="shrink-0">
 						<div className="w-12 h-12 rounded-md overflow-hidden relative">
-							<Image
+							<SafeImage
 								src={getImageUrl(event.eventImages[0], "event", event.origin)}
+								fallbackType="event"
 								alt={event.eventName}
 								className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
 								width={48}
@@ -45,11 +46,11 @@ const SmallEventCard = ({ event, likeEventHandler }: EventCardProps) => {
 						<h4 className="text-xs sm:text-sm font-semibold text-card-foreground group-hover:text-card-foreground transition-colors duration-200 line-clamp-1 truncate">
 							{event.eventName}
 						</h4>
-						<div className="mt-0.5 flex flex-col gap-0.5 text-[10px] text-card-foreground/70 min-w-0">
+						<div className="mt-0.5 flex flex-col gap-0.5 text-xs text-muted-foreground min-w-0">
 							<div className="flex items-center min-w-0">
-								<Calendar className="w-2.5 h-2.5 mr-0.5 text-card-foreground/70 shrink-0" />
+								<Calendar className="w-3 h-3 mr-0.5 text-muted-foreground shrink-0" />
 								<span className="truncate">
-									{formatSeoulDate(event.eventStartAt, {
+									{formatDate(event.eventStartAt, {
 										month: "short",
 										day: "numeric",
 										year: "numeric",
@@ -57,7 +58,7 @@ const SmallEventCard = ({ event, likeEventHandler }: EventCardProps) => {
 								</span>
 							</div>
 							<div className="flex items-center min-w-0">
-								<MapPin className="w-2.5 h-2.5 mr-0.5 text-card-foreground/70 shrink-0" />
+								<MapPin className="w-3 h-3 mr-0.5 text-muted-foreground shrink-0" />
 								<span className="line-clamp-1 truncate">{locationText}</span>
 							</div>
 						</div>
@@ -67,17 +68,17 @@ const SmallEventCard = ({ event, likeEventHandler }: EventCardProps) => {
 				{/* Views and Like Column */}
 				<div className="flex flex-col items-end gap-1 shrink-0">
 					<div className="flex items-center">
-						<Eye className="w-2.5 h-2.5 mr-0.5 text-card-foreground/70 shrink-0" />
-						<span className="text-[10px] text-card-foreground/70">{event.eventViews.toLocaleString()}</span>
+						<Eye className="w-3 h-3 mr-0.5 text-muted-foreground shrink-0" />
+						<span className="text-xs text-muted-foreground">{event.eventViews.toLocaleString()}</span>
 					</div>
 					<Button
 						variant="ghost"
 						onClick={() => likeEventHandler(event?._id)}
-						className="h-5 w-5 p-0 text-card-foreground/70 hover:text-primary transition-colors duration-200 hover:bg-primary/10 flex items-center justify-center"
+						className="-my-3 -mr-2 h-11 w-11 p-0 text-muted-foreground hover:text-primary transition-colors duration-200 hover:bg-primary/10 flex items-center justify-center"
 						aria-label={event?.meLiked?.[0]?.myFavorite ? "Liked" : "Like"}
 					>
 						<Heart
-							className={`w-2.5 h-2.5 transition-all duration-200 ${
+							className={`w-3 h-3 transition-all duration-200 ${
 								event?.meLiked?.[0]?.myFavorite ? "fill-primary text-primary" : ""
 							}`}
 						/>

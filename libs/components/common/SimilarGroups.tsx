@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { SafeImage } from "@/libs/components/common/SafeImage";
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
 
@@ -6,7 +6,7 @@ import { Users, Calendar } from "lucide-react";
 import { Group } from "@/libs/types/group/group";
 import { Card } from "@/libs/components/ui/card";
 
-import { NEXT_APP_API_URL } from "@/libs/config";
+import { getImageUrl } from "@/libs/utils";
 
 interface SimilarGroupsProps {
 	groups: Group[];
@@ -34,8 +34,9 @@ const SimilarGroups = ({ groups, text = "similar_groups" }: SimilarGroupsProps) 
 							{/* Image */}
 							<div className="flex-shrink-0">
 								<div className="w-10 h-10 rounded-lg overflow-hidden relative shadow-sm">
-									<Image
-										src={`${NEXT_APP_API_URL}/${group.groupImage}`}
+									<SafeImage
+										src={getImageUrl(group.groupImage, "group")}
+										fallbackType="group"
 										alt={group.groupName}
 										fill
 										className="object-cover group-hover:scale-110 transition-transform duration-300"
@@ -45,21 +46,21 @@ const SimilarGroups = ({ groups, text = "similar_groups" }: SimilarGroupsProps) 
 
 							{/* Group Details */}
 							<div className="flex-1 min-w-0">
-								<h4 className="text-[13px] font-bold text-foreground line-clamp-1 group-hover:text-primary transition-colors">
+								<h4 className="text-[0.8125rem] font-bold text-foreground line-clamp-1 group-hover:text-primary transition-colors">
 									{group.groupName}
 								</h4>
 
 								{/* Stats */}
 								<div className="flex items-center gap-3 mt-0.5">
 									<div className="flex items-center gap-1">
-										<Users className="w-3 h-3 text-muted-foreground/70" />
-										<span className="text-[10px] font-black text-muted-foreground/70 tabular-nums">
+										<Users className="w-3 h-3 text-muted-foreground" />
+										<span className="text-xs font-black text-muted-foreground tabular-nums">
 											{group.memberCount}
 										</span>
 									</div>
 									<div className="flex items-center gap-1">
-										<Calendar className="w-3 h-3 text-muted-foreground/70" />
-										<span className="text-[10px] font-black text-muted-foreground/70 tabular-nums">
+										<Calendar className="w-3 h-3 text-muted-foreground" />
+										<span className="text-xs font-black text-muted-foreground tabular-nums">
 											{group.eventsCount}
 										</span>
 									</div>

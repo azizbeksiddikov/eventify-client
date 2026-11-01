@@ -20,14 +20,13 @@ import { EventCategory, EventStatus } from "@/libs/enums/event.enum";
 import { Event } from "@/libs/types/event/event";
 import { EventsInquiry } from "@/libs/types/event/event.input";
 import { Direction } from "@/libs/enums/common.enum";
-import Loading from "@/libs/components/common/Loading";
+import { ListSkeleton } from "@/libs/components/common/ListSkeleton";
+import { EmptyState } from "@/libs/components/common/EmptyState";
+import { smoothBehavior } from "@/libs/motion";
 
-interface EventsPageProps {
-	initialSearch?: EventsInquiry;
-}
-
-const EventsPage = ({
-	initialSearch = {
+const EventsPage = () => {
+	// Next.js pages must not take props, so the defaults live here.
+	const initialSearch: EventsInquiry = {
 		page: 1,
 		limit: 6,
 		sort: "eventStartAt",
@@ -39,8 +38,7 @@ const EventsPage = ({
 			eventStartDay: new Date(),
 			eventEndDay: undefined,
 		},
-	},
-}: EventsPageProps) => {
+	};
 	const searchParams = useSearchParams();
 	const router = useRouter();
 	const pathname = usePathname();
@@ -135,6 +133,7 @@ const EventsPage = ({
 	const {
 		data: getEventsData,
 		loading: eventsLoading,
+		error: eventsError,
 		refetch: getEventsRefetch,
 	} = useQuery(GET_EVENTS, {
 		fetchPolicy: "cache-and-network",
@@ -170,7 +169,7 @@ const EventsPage = ({
 			const extraSpacing = 32; // 32px
 			const elementPosition = eventsListRef.current.getBoundingClientRect().top + window.pageYOffset;
 			const scrollTop = Math.max(0, elementPosition - headerHeight - extraSpacing);
-			window.scrollTo({ top: scrollTop, behavior: "smooth" });
+			window.scrollTo({ top: scrollTop, behavior: smoothBehavior() });
 		}
 	};
 
@@ -181,11 +180,11 @@ const EventsPage = ({
 	return (
 		<div>
 			<EventsHeader />
-			<div className="px-6 sm:px-12 lg:px-20">
+			<div className="px-4 sm:px-12 lg:px-20">
 				<SortAndFilter updateURL={updateURL} eventsSearchFilters={eventsSearchFilters} initialSearch={initialSearch} />
 			</div>
 
-			<div className="max-w-7xl mx-auto px-6 sm:px-12 lg:px-20 py-10 mb-10">
+			<div className="max-w-7xl mx-auto px-4 sm:px-12 lg:px-20 py-6 sm:py-10 mb-6 sm:mb-10">
 				<div className="flex flex-col lg:flex-row gap-8">
 					{/* Categories Sidebar */}
 					<CategoriesSidebar
@@ -197,7 +196,13 @@ const EventsPage = ({
 					{/* Events Grid */}
 					<div className="flex-1">
 						{eventsLoading && events.length === 0 ? (
-							<Loading />
+							<ListSkeleton />
+						) : eventsError && events.length === 0 ? (
+							<EmptyState
+								message={t("load_failed")}
+								actionLabel={t("try_again")}
+								onAction={() => void getEventsRefetch()}
+							/>
 						) : events.length > 0 ? (
 							<>
 								<div ref={eventsListRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -217,9 +222,11 @@ const EventsPage = ({
 								</div>
 							</>
 						) : (
-							<div className="py-16 text-center">
-								<p className="text-muted-foreground">{t("no_events_found")}</p>
-							</div>
+							<EmptyState
+								message={t("no_events_found")}
+								actionLabel={t("clear")}
+								onAction={() => updateURL(initialSearch)}
+							/>
 						)}
 					</div>
 				</div>

@@ -1,25 +1,25 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
-import Link from "next/link";
 import { useTranslation } from "next-i18next";
+import Link from "next/link";
+import { useCallback, useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 
 // Apollo
-import { useQuery } from "@apollo/client/react";
 import { GET_UNIQUE_EVENTS } from "@/apollo/user/query";
+import { useQuery } from "@apollo/client/react";
 
 // Types
 import { Direction } from "@/libs/enums/common.enum";
-import { EventStatus, EventLocationType } from "@/libs/enums/event.enum";
+import { EventLocationType, EventStatus } from "@/libs/enums/event.enum";
 
-import { EventsInquiry } from "@/libs/types/event/event.input";
 import { Event } from "@/libs/types/event/event";
+import { EventsInquiry } from "@/libs/types/event/event.input";
 
 // Styles
-import { Calendar, MapPin, ChevronLeft, ChevronRight } from "lucide-react";
+import { prefersReducedMotion } from "@/libs/motion";
 import { cn, getImageUrl } from "@/libs/utils";
-import Loading from "../common/Loading";
+import { Calendar, ChevronLeft, ChevronRight, MapPin } from "lucide-react";
 
 interface AutoScrollEventsProps {
 	initialInput?: EventsInquiry;
@@ -113,7 +113,8 @@ const AutoScrollEvents = ({
 
 	// Auto-scroll functionality - changes every 3 seconds
 	useEffect(() => {
-		if (!eventList.length || !isAutoScrolling) return;
+		// Never move on its own for people who asked for reduced motion; arrows and swipe still work
+		if (!eventList.length || !isAutoScrolling || prefersReducedMotion()) return;
 
 		autoScrollIntervalRef.current = setInterval(() => {
 			setCurrentIndex((prevIndex) => (prevIndex + 1) % eventList.length);
@@ -135,6 +136,26 @@ const AutoScrollEvents = ({
 			}
 		};
 	}, []);
+
+	// Swipe left/right on touch screens (vertical scrolling keeps working).
+	const touchStartRef = useRef<{ x: number; y: number } | null>(null);
+	const touchStartHandler = useCallback((e: React.TouchEvent<HTMLElement>) => {
+		const t = e.touches[0];
+		touchStartRef.current = { x: t.clientX, y: t.clientY };
+	}, []);
+	const touchEndHandler = useCallback(
+		(e: React.TouchEvent<HTMLElement>) => {
+			const start = touchStartRef.current;
+			touchStartRef.current = null;
+			if (!start) return;
+			const t = e.changedTouches[0];
+			const dx = t.clientX - start.x;
+			const dy = t.clientY - start.y;
+			if (Math.abs(dx) < 50 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
+			navigationHandler(dx < 0 ? "next" : "prev");
+		},
+		[navigationHandler],
+	);
 
 	const moveMouseHandler = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
 		if (!containerRef.current) return;
@@ -178,7 +199,15 @@ const AutoScrollEvents = ({
 		[t],
 	);
 
-	if (upcomingEventsLoading) return <Loading />;
+	if (upcomingEventsLoading && !eventList.length)
+		return (
+			<div
+				role="status"
+				aria-busy="true"
+				aria-label={t("loading")}
+				className="h-[34rem] w-full bg-muted motion-safe:animate-pulse sm:h-[calc(100vh-4rem)] md:h-[calc(100vh-5rem)]"
+			/>
+		);
 	if (upcomingEventsError)
 		return (
 			<div>
@@ -190,8 +219,10 @@ const AutoScrollEvents = ({
 	return (
 		<section
 			ref={containerRef}
-			className="relative h-[calc(100vh-3.5rem)] sm:h-[calc(100vh-4rem)] md:h-[calc(100vh-5rem)] overflow-hidden w-full min-w-0"
+			className="relative h-[34rem] sm:h-[calc(100vh-4rem)] md:h-[calc(100vh-5rem)] overflow-hidden w-full min-w-0 touch-pan-y"
 			onMouseMove={moveMouseHandler}
+			onTouchStart={touchStartHandler}
+			onTouchEnd={touchEndHandler}
 			onContextMenu={(e) => {
 				e.preventDefault(); // Prevent the default context menu
 				navigationHandler("next"); // Navigate to next slide on right-click
@@ -236,7 +267,7 @@ const AutoScrollEvents = ({
 										{event.eventCategories.map((category, catIndex) => (
 											<span
 												key={catIndex}
-												className="block text-white bg-white/10 backdrop-blur-sm px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs sm:text-sm font-medium hover:bg-white/20 transition-colors duration-300 cursor-pointer"
+												className="block text-white bg-black/70 backdrop-blur-sm px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs sm:text-sm font-medium hover:bg-white/20 transition-colors duration-300 cursor-pointer"
 												onClick={handleUserInteraction}
 											>
 												#{category}
@@ -244,16 +275,16 @@ const AutoScrollEvents = ({
 										))}
 									</div>
 									<h2
-										className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold mb-3 sm:mb-4 md:mb-6 text-white px-2 sm:px-4 py-2 sm:py-3 rounded-lg cursor-pointer break-words bg-black/30 backdrop-blur-sm"
+										className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold mb-3 sm:mb-4 md:mb-6 text-white px-2 sm:px-4 py-2 sm:py-3 rounded-lg cursor-pointer break-words line-clamp-2 bg-black/60 backdrop-blur-sm"
 										onClick={handleUserInteraction}
 									>
 										{event.eventName}
 									</h2>
 									<div
-										className="text-sm sm:text-base md:text-lg lg:text-xl mb-4 sm:mb-6 md:mb-8 text-white max-w-2xl mx-auto px-2 sm:px-4 py-2 sm:py-3 rounded-lg cursor-pointer overflow-hidden bg-black/30 backdrop-blur-sm"
+										className="text-sm sm:text-base md:text-lg lg:text-xl mb-4 sm:mb-6 md:mb-8 text-white max-w-2xl mx-auto px-2 sm:px-4 py-2 sm:py-3 rounded-lg cursor-pointer overflow-hidden bg-black/60 backdrop-blur-sm"
 										onClick={handleUserInteraction}
 									>
-										<div className="line-clamp-2 sm:line-clamp-3 [&>*]:text-white [&>p]:mb-2 [&>p]:last:mb-0 [&>strong]:font-semibold [&>a]:text-white [&>a]:underline [&>a:hover]:text-white/80">
+										<div className="line-clamp-2 sm:line-clamp-3 [&_a]:pointer-events-none [&>*]:text-white [&>p]:mb-2 [&>p]:last:mb-0 [&>strong]:font-semibold [&>a]:text-white [&>a]:underline [&>a:hover]:text-white/80">
 											<ReactMarkdown
 												components={{
 													a: ({ ...props }) => (
@@ -272,7 +303,7 @@ const AutoScrollEvents = ({
 													),
 													li: ({ ...props }) => <li {...props} className="pl-1 text-white" />,
 													h1: ({ ...props }) => (
-														<h1 {...props} className="text-lg font-bold text-white mb-2 mt-2 first:mt-0" />
+														<h3 {...props} className="text-lg font-bold text-white mb-2 mt-2 first:mt-0" />
 													),
 													h2: ({ ...props }) => (
 														<h2 {...props} className="text-base font-bold text-white mb-2 mt-2 first:mt-0" />
@@ -294,14 +325,14 @@ const AutoScrollEvents = ({
 									</div>
 									<div className="flex flex-col sm:flex-row justify-center sm:space-x-4 md:space-x-6 space-y-2 sm:space-y-0 mb-3 sm:mb-4">
 										<span
-											className="flex items-center justify-center sm:justify-start bg-black/30 backdrop-blur-sm px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-white text-xs sm:text-sm"
+											className="flex items-center justify-center sm:justify-start bg-black/60 backdrop-blur-sm px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-white text-xs sm:text-sm"
 											onClick={handleUserInteraction}
 										>
 											<MapPin className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2 shrink-0" />
 											<span className="truncate">{getEventLocation(event)}</span>
 										</span>
 										<span
-											className="flex items-center justify-center sm:justify-start bg-black/30 backdrop-blur-sm px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-white text-xs sm:text-sm"
+											className="flex items-center justify-center sm:justify-start bg-black/60 backdrop-blur-sm px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-white text-xs sm:text-sm"
 											onClick={handleUserInteraction}
 										>
 											<Calendar className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2 shrink-0" />
@@ -315,7 +346,7 @@ const AutoScrollEvents = ({
 							<div className="shrink-0 flex justify-center pb-1 sm:pb-1.5 md:pb-2">
 								<Link
 									href={`/events/${event._id}`}
-									className="inline-block bg-primary text-white px-4 sm:px-6 md:px-8 py-2 sm:py-3 md:py-4 rounded-full text-sm sm:text-base font-medium hover:bg-primary/90 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
+									className="inline-block bg-primary text-white px-5 sm:px-6 md:px-8 py-3 sm:py-3 md:py-4 rounded-full text-sm sm:text-base font-medium hover:bg-primary/90 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
 									aria-label={`${t("events_view_details_for")} ${event.eventName}`}
 									onClick={handleUserInteraction}
 								>
@@ -336,14 +367,14 @@ const AutoScrollEvents = ({
 					return false;
 				}}
 				className="absolute inset-y-0 left-0 w-1/5 cursor-pointer group flex items-center justify-start pl-4 sm:pl-6 md:pl-8 z-20 focus-visible:outline-0"
-				aria-label="Previous event"
+				aria-label={t("previous_event")}
 			>
 				<span className="sr-only">Previous</span>
 
 				<ChevronLeft
 					className={cn(
 						"w-8 h-8 text-foreground/0 group-hover:text-white/80 transition-all duration-300",
-						hoverPosition === 0 ? "text-foreground/80" : "",
+						hoverPosition === 0 ? "text-foreground" : "",
 					)}
 				/>
 			</button>
@@ -355,32 +386,29 @@ const AutoScrollEvents = ({
 					return false;
 				}}
 				className="absolute inset-y-0 right-0 w-1/5 cursor-pointer group flex items-center justify-end pr-4 sm:pr-6 md:pr-8 z-20 focus-visible:outline-0"
-				aria-label="Next event"
+				aria-label={t("next_event")}
 			>
 				<span className="sr-only">Next</span>
 
 				<ChevronRight
 					className={cn(
 						"w-8 h-8 text-foreground/0 group-hover:text-white/80 transition-all duration-300",
-						hoverPosition === 1 ? "text-foreground/80" : "",
+						hoverPosition === 1 ? "text-foreground" : "",
 					)}
 				/>
 			</button>
 
 			{/* Carousel controls */}
 			<div className="absolute bottom-4 sm:bottom-6 md:bottom-8 left-0 right-0 flex flex-col items-center space-y-3 sm:space-y-4 z-20">
-				<div
-					className="flex justify-center items-center space-x-1.5 sm:space-x-2"
-					role="tablist"
-					aria-label="Event slides"
-				>
+				{/* Phones: a short counter (swipe or use the arrows); tablets and up: tappable dots */}
+				<p className="sm:hidden rounded-full bg-black/70 px-3 py-1 text-sm font-medium text-white" aria-live="polite">
+					{currentIndex + 1} / {eventList.length}
+				</p>
+				<div className="hidden sm:flex justify-center items-center gap-2" role="tablist" aria-label="Event slides">
 					{eventList.map((event, index) => (
 						<button
 							key={index}
-							className={cn(
-								"rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/50",
-								index === currentIndex ? "bg-primary scale-125 w-2.5 h-2.5" : "bg-white/50 hover:bg-white/75 w-2 h-2",
-							)}
+							className="group flex h-11 w-11 items-center justify-center rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
 							onClick={() => {
 								handleUserInteraction();
 								setCurrentIndex(index);
@@ -394,7 +422,16 @@ const AutoScrollEvents = ({
 							aria-label={`Go to slide ${index + 1}: ${event.eventName}`}
 							aria-selected={index === currentIndex}
 							role="tab"
-						/>
+						>
+							<span
+								className={cn(
+									"block rounded-full transition-all duration-300",
+									index === currentIndex
+										? "bg-primary h-2.5 w-2.5 scale-125"
+										: "bg-white/50 group-hover:bg-white/75 h-2 w-2",
+								)}
+							/>
+						</button>
 					))}
 				</div>
 			</div>

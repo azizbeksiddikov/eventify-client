@@ -17,6 +17,7 @@ import { Event } from "@/libs/types/event/event";
 import { EventUpdateInput } from "@/libs/types/event/event.update";
 import { EventStatus } from "@/libs/enums/event.enum";
 import { getImageUrl, formatPrice } from "@/libs/utils";
+import { ConfirmAction } from "@/libs/components/common/ConfirmAction";
 
 // Define status color mapping based on global CSS variables
 const STATUS_COLORS = {
@@ -298,14 +299,22 @@ const EventRow = ({
 							>
 								<Edit className="h-4 w-4" />
 							</Button>
-							<Button
-								variant="outline"
-								size="icon"
-								onClick={() => removeHandler()}
-								className="text-destructive hover:bg-destructive hover:text-destructive-foreground border-destructive"
+							<ConfirmAction
+								title={t("remove_confirm_title")}
+								description={t("remove_confirm_description")}
+								confirmLabel={t("remove_confirm_yes")}
+								cancelLabel={t("remove_confirm_no")}
+								onConfirm={removeHandler}
 							>
-								<Trash2 className="h-4 w-4" />
-							</Button>
+								<Button
+									variant="outline"
+									size="icon"
+									aria-label={t("remove_confirm_yes")}
+									className="text-destructive hover:bg-destructive hover:text-destructive-foreground border-destructive"
+								>
+									<Trash2 className="h-4 w-4" />
+								</Button>
+							</ConfirmAction>
 						</>
 					)}
 				</div>

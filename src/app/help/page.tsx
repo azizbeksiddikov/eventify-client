@@ -120,7 +120,7 @@ const HelpPage = () => {
 	};
 
 	return (
-		<div className="max-w-7xl mx-auto my-10 px-6 sm:px-12 lg:px-20">
+		<div className="max-w-7xl mx-auto my-10 px-4 sm:px-12 lg:px-20">
 			{/* Header Section */}
 			<div className="text-center mb-10 sm:mb-16">
 				<h1 className="text-3xl sm:text-4xl font-bold mb-4 text-foreground">{t("how_can_we_help")}</h1>

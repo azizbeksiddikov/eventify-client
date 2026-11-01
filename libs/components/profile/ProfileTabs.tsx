@@ -77,7 +77,7 @@ export const ProfileTabs = ({
 			</div>
 
 			{/* Tabs for larger screens */}
-			<TabsList className="hidden md:flex w-full justify-between bg-muted/80 p-1.5 rounded-lg h-auto gap-1">
+			<TabsList className="hidden md:flex w-full justify-between bg-muted/80 p-1.5 rounded-lg h-auto gap-2">
 				{tabs.map((tab) => (
 					<TabsTrigger
 						key={tab.id}

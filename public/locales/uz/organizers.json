@@ -34,5 +34,13 @@
 	"sort_followers": "Obunachilar",
 	"sort_events": "Tadbirlar",
 	"sort_groups": "Guruhlar",
-	"sort_rank": "Reyting"
+	"sort_rank": "Reyting",
+	"filters": "Filtrlar",
+	"load_failed": "Ro'yxatni yuklab bo'lmadi. Ulanishni tekshirib, qayta urinib ko'ring.",
+	"try_again": "Qayta urinish",
+	"member_subscribed_successfully": "Obuna bo'ldingiz",
+	"member_unsubscribed_successfully": "Obunadan chiqdingiz",
+	"group_joined_successfully": "Guruhga qo'shildingiz",
+	"group_left_successfully": "Guruhdan chiqdingiz",
+	"free": "Bepul"
 }

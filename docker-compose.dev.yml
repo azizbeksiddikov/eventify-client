@@ -9,7 +9,7 @@ services:
     ports:
       - "4020:3000"
     env_file:
-      - .env.dev
+      - .env.development
     environment:
       - NODE_ENV=development
       - CI=true

@@ -60,5 +60,18 @@
 	"price": "가격",
 	"total": "합계",
 	"user": "사용자",
-	"following": "팔로잉"
+	"following": "팔로잉",
+	"cancel_ticket_title": "이 티켓을 취소할까요?",
+	"cancel_ticket_description": "포인트가 잔액으로 환불되고 자리가 반환됩니다. 되돌릴 수 없습니다.",
+	"cancel_ticket_confirm": "티켓 취소",
+	"cancel_ticket_keep": "티켓 유지",
+	"leave_group_title": "이 그룹을 나갈까요?",
+	"leave_group_description": "이 그룹의 이벤트와 소식을 더 이상 받지 않습니다. 언제든 다시 가입할 수 있습니다.",
+	"leave_group_confirm": "그룹 나가기",
+	"leave_group_stay": "계속 머물기",
+	"member_subscribed_successfully": "구독했습니다",
+	"member_unsubscribed_successfully": "구독을 취소했습니다",
+	"group_joined_successfully": "그룹에 가입했습니다",
+	"group_left_successfully": "그룹을 나갔습니다",
+	"free": "무료"
 }

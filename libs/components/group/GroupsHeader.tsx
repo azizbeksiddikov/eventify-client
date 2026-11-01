@@ -24,11 +24,11 @@ const GroupsHeader = () => {
 	};
 
 	return (
-		<section className="bg-gradient-to-b from-muted-foreground/10 to-background py-8">
-			<div className="flex flex-col md:flex-row items-center justify-between mb-8 max-w-7xl mx-auto px-6 sm:px-12 lg:px-20">
-				<div className="text-center md:text-left mb-4 md:mb-0">
-					<h2>{t("discover_groups")}</h2>
-					<p className="text-muted-foreground mt-2 text-base md:text-lg">{t("find_and_join_amazing_groups")}</p>
+		<section className="bg-gradient-to-b from-muted-foreground/10 to-background py-5 sm:py-8">
+			<div className="flex flex-row items-start sm:items-center justify-between gap-3 sm:mb-8 max-w-7xl mx-auto px-4 sm:px-12 lg:px-20">
+				<div className="min-w-0 text-left">
+					<h1 className="text-2xl sm:text-3xl">{t("discover_groups")}</h1>
+					<p className="text-muted-foreground mt-1 sm:mt-2 text-sm sm:text-base md:text-lg">{t("find_and_join_amazing_groups")}</p>
 				</div>
 
 				<Tooltip>
@@ -37,14 +37,15 @@ const GroupsHeader = () => {
 							type="button"
 							onClick={createGroupHandler}
 							aria-disabled={user.memberType !== MemberType.ORGANIZER}
-							className={`w-full md:w-auto h-14 px-6 md:px-8 transition-colors duration-200 ${
+							aria-label={t("create_group")}
+							className={`h-11 w-11 px-0 sm:w-auto sm:h-14 sm:px-6 md:px-8 shrink-0 transition-colors duration-200 ${
 								user.memberType === MemberType.ORGANIZER
 									? "bg-primary text-primary-foreground hover:bg-primary/90"
 									: "bg-muted text-muted-foreground cursor-not-allowed"
 							}`}
 						>
 							<div className="flex items-center justify-center gap-2">
-								{t("create_group")}
+								<span className="hidden sm:inline">{t("create_group")}</span>
 								<Plus className="w-4 h-4" />
 							</div>
 						</Button>

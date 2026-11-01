@@ -1,11 +1,11 @@
-import numeral from "numeral";
-import { clsx, type ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
-import { Message } from "@/libs/enums/common.enum";
 import { smallError, smallInfo, smallSuccess } from "@/libs/alert";
-import { TFunction } from "i18next";
-import { ApolloLink } from "@apollo/client";
 import { NEXT_APP_API_URL } from "@/libs/config";
+import { AppError, friendlyErrorMessage } from "@/libs/errorMessages";
+import { ApolloLink } from "@apollo/client";
+import { clsx, type ClassValue } from "clsx";
+import { TFunction } from "i18next";
+import numeral from "numeral";
+import { twMerge } from "tailwind-merge";
 
 // Type for Apollo Client mutation functions
 // The mutation function from useMutation accepts options with variables
@@ -28,7 +28,7 @@ function generatePlaceholder(text: string, width: number, height: number, bgColo
 	// This ensures text remains readable even when the SVG is scaled down for small avatars
 	// Ensure minimum font size of 16px and maximum of 120px for readability
 	const minDimension = Math.min(width, height);
-	const calculatedFontSize = Math.max(16, Math.min(120, Math.round(minDimension * 0.6)));
+	const calculatedFontSize = Math.max(16, Math.min(72, Math.round(minDimension * 0.14)));
 
 	const svg = `
 		<svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
@@ -56,13 +56,28 @@ function generatePlaceholder(text: string, width: number, height: number, bgColo
 }
 
 /**
+ * Person silhouette used when a member has no photo (readable at any avatar size,
+ * unlike a text label which gets clipped in small circles).
+ */
+function generateAvatarPlaceholder(bgColor: string): string {
+	const svg = `
+		<svg width="400" height="400" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+			<rect width="400" height="400" fill="${bgColor}"/>
+			<circle cx="200" cy="160" r="70" fill="#faf5ff" opacity="0.92"/>
+			<path d="M60 400c0-84 63-150 140-150s140 66 140 150z" fill="#faf5ff" opacity="0.92"/>
+		</svg>
+	`;
+	return `data:image/svg+xml;base64,${btoa(svg)}`;
+}
+
+/**
  * Placeholder images for different types
  * Colors match the theme's primary purple/violet palette
  */
 const PLACEHOLDER_IMAGES = {
 	event: generatePlaceholder("Event", 600, 400, "#9333ea", "#faf5ff"), // Purple gradient
 	group: generatePlaceholder("Group", 600, 400, "#7c3aed", "#f5f3ff"), // Violet gradient
-	member: generatePlaceholder("Member", 400, 400, "#8b5cf6", "#faf5ff"), // Purple-violet gradient
+	member: generateAvatarPlaceholder("#8b5cf6"), // Purple person silhouette
 	other: generatePlaceholder("Other", 400, 400, "#8b5cf6", "#faf5ff"), // Purple-violet gradient
 };
 
@@ -86,13 +101,11 @@ export const formatterStr = (value: number | undefined): string => {
 	return numeral(value).format("0,0") != "0" ? numeral(value).format("0,0") : "";
 };
 
-const SEOUL_TIMEZONE = "Asia/Seoul";
-
 /**
- * Format date in Seoul timezone
+ * Format date in the visitor's browser timezone
  * example: "December 15, 2025"
  */
-export const formatSeoulDate = (
+export const formatDate = (
 	date: string | Date,
 	options: Intl.DateTimeFormatOptions = {
 		year: "numeric",
@@ -101,17 +114,16 @@ export const formatSeoulDate = (
 	},
 ): string => {
 	const d = new Date(date);
-	return d.toLocaleDateString("en-US", { ...options, timeZone: SEOUL_TIMEZONE });
+	return d.toLocaleDateString("en-US", options);
 };
 
 /**
- * Format time in Seoul timezone
+ * Format time in the visitor's browser timezone
  * example: "10:00"
  */
-export const formatSeoulTime = (date: string | Date, format: "12" | "24" = "24"): string => {
+export const formatTime = (date: string | Date, format: "12" | "24" = "24"): string => {
 	const d = new Date(date);
 	return d.toLocaleTimeString("en-US", {
-		timeZone: SEOUL_TIMEZONE,
 		hour: "2-digit",
 		minute: "2-digit",
 		hour12: format === "12",
@@ -119,13 +131,13 @@ export const formatSeoulTime = (date: string | Date, format: "12" | "24" = "24")
 };
 
 /**
- * Format date and time in Seoul timezone
+ * Format date and time in the visitor's browser timezone
  * example: "December 15, 2025 10:00"
  */
-export const formatSeoulDateTime = (date: string | Date): string => {
+export const formatDateTime = (date: string | Date): string => {
 	const d = new Date(date);
-	const dateStr = formatSeoulDate(d);
-	const timeStr = formatSeoulTime(d);
+	const dateStr = formatDate(d);
+	const timeStr = formatTime(d);
 	return `${dateStr} ${timeStr}`;
 };
 
@@ -209,12 +221,11 @@ export const likeEvent = async (
 ) => {
 	try {
 		if (!likeRefId || likeRefId === "") return;
-		if (!memberId || memberId === "") throw new Error(Message.NOT_AUTHENTICATED);
+		if (!memberId || memberId === "") throw new AppError("NOT_AUTHENTICATED");
 
 		await likeTargetEvent({ variables: { input: likeRefId } });
 	} catch (err) {
-		const errorMessage = err instanceof Error ? err.message : String(err);
-		smallError(errorMessage);
+		smallError(friendlyErrorMessage(err));
 	}
 };
 
@@ -225,12 +236,11 @@ export const likeMember = async (
 ) => {
 	try {
 		if (!likeRefId || likeRefId === "") return;
-		if (!memberId || memberId === "") throw new Error(Message.NOT_AUTHENTICATED);
+		if (!memberId || memberId === "") throw new AppError("NOT_AUTHENTICATED");
 
 		await likeTargetMember({ variables: { input: likeRefId } });
 	} catch (err) {
-		const errorMessage = err instanceof Error ? err.message : String(err);
-		smallError(errorMessage);
+		smallError(friendlyErrorMessage(err));
 	}
 };
 
@@ -241,12 +251,11 @@ export const likeGroup = async (
 ) => {
 	try {
 		if (!likeRefId || likeRefId === "") return;
-		if (!memberId || memberId === "") throw new Error(Message.NOT_AUTHENTICATED);
+		if (!memberId || memberId === "") throw new AppError("NOT_AUTHENTICATED");
 
 		await likeTargetGroup({ variables: { input: likeRefId } });
 	} catch (err) {
-		const errorMessage = err instanceof Error ? err.message : String(err);
-		smallError(errorMessage);
+		smallError(friendlyErrorMessage(err));
 	}
 };
 
@@ -259,7 +268,7 @@ export const followMember = async (
 ) => {
 	try {
 		if (!followRefId) return;
-		if (!memberId || memberId === "") throw new Error(Message.NOT_AUTHENTICATED);
+		if (!memberId || memberId === "") throw new AppError("NOT_AUTHENTICATED");
 
 		await followTargetMember({
 			variables: { input: followRefId },
@@ -267,9 +276,8 @@ export const followMember = async (
 
 		await smallSuccess(t("member_subscribed_successfully"));
 	} catch (err) {
-		const errorMessage = err instanceof Error ? err.message : String(err);
-		smallError(errorMessage);
-		console.log("ERROR, subscribeHandler:", errorMessage);
+		smallError(friendlyErrorMessage(err));
+		console.log("ERROR, subscribeHandler:", err);
 	}
 };
 
@@ -281,7 +289,7 @@ export const unfollowMember = async (
 ) => {
 	try {
 		if (!followRefId) return;
-		if (!memberId || memberId === "") throw new Error(Message.NOT_AUTHENTICATED);
+		if (!memberId || memberId === "") throw new AppError("NOT_AUTHENTICATED");
 
 		await unfollowTargetMember({
 			variables: { input: followRefId },
@@ -289,9 +297,8 @@ export const unfollowMember = async (
 
 		await smallInfo(t("member_unsubscribed_successfully"));
 	} catch (err) {
-		const errorMessage = err instanceof Error ? err.message : String(err);
-		smallError(errorMessage);
-		console.log("ERROR, unsubscribeHandler:", errorMessage);
+		smallError(friendlyErrorMessage(err));
+		console.log("ERROR, unsubscribeHandler:", err);
 	}
 };
 
@@ -304,7 +311,7 @@ export const joinGroup = async (
 ) => {
 	try {
 		if (!groupId) return;
-		if (!memberId || memberId === "") throw new Error(Message.NOT_AUTHENTICATED);
+		if (!memberId || memberId === "") throw new AppError("NOT_AUTHENTICATED");
 
 		await joinTargetGroup({
 			variables: { input: groupId },
@@ -312,9 +319,8 @@ export const joinGroup = async (
 
 		await smallSuccess(t("group_joined_successfully"));
 	} catch (err) {
-		const errorMessage = err instanceof Error ? err.message : String(err);
-		smallError(errorMessage);
-		console.log("ERROR, joinGroupHandler:", errorMessage);
+		smallError(friendlyErrorMessage(err));
+		console.log("ERROR, joinGroupHandler:", err);
 	}
 };
 
@@ -326,7 +332,7 @@ export const leaveGroup = async (
 ) => {
 	try {
 		if (!groupId) return;
-		if (!memberId || memberId === "") throw new Error(Message.NOT_AUTHENTICATED);
+		if (!memberId || memberId === "") throw new AppError("NOT_AUTHENTICATED");
 
 		await leaveTargetGroup({
 			variables: { input: groupId },
@@ -334,9 +340,8 @@ export const leaveGroup = async (
 
 		await smallSuccess(t("group_left_successfully"));
 	} catch (err) {
-		const errorMessage = err instanceof Error ? err.message : String(err);
-		smallError(errorMessage);
-		console.log("ERROR, leaveGroupHandler:", errorMessage);
+		smallError(friendlyErrorMessage(err));
+		console.log("ERROR, leaveGroupHandler:", err);
 	}
 };
 

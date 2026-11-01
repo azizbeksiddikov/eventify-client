@@ -1,16 +1,17 @@
 "use client";
 
-import { ApolloClient, HttpLink, InMemoryCache, ApolloLink } from "@apollo/client";
+import { ApolloClient, ApolloLink, HttpLink, InMemoryCache } from "@apollo/client";
 import { ApolloProvider } from "@apollo/client/react";
 import { ReactNode } from "react";
 // import { RetryLink } from "@apollo/client/link/retry";
-import { ErrorLink } from "@apollo/client/link/error";
-import { CombinedGraphQLErrors } from "@apollo/client/errors";
-import { getJwtToken, logOut } from "@/libs/auth";
 import { smallError } from "@/libs/alert";
-import { I18nProvider } from "@/libs/i18n/provider";
+import { getJwtToken, logOut } from "@/libs/auth";
 import { NEXT_PUBLIC_API_GRAPHQL_URL } from "@/libs/config";
+import { I18nProvider } from "@/libs/i18n/provider";
 import { logger } from "@/libs/logger";
+import { CombinedGraphQLErrors } from "@apollo/client/errors";
+import { ErrorLink } from "@apollo/client/link/error";
+import i18n from "i18next";
 
 // Auth link: Only add Authorization header when token exists
 const authLink = new ApolloLink((operation, forward) => {
@@ -106,12 +107,12 @@ const errorLink = new ErrorLink(({ error, operation }) => {
 					operationType,
 					statusCode,
 				});
-				smallError("Your session has expired. Please login again.");
+				smallError(i18n.t("errors:SESSION_EXPIRED"));
 				if (typeof window !== "undefined") logOut();
 				return;
 			}
 		}
-		smallError("Network connection error. Please try again.");
+		smallError(i18n.t("errors:NETWORK_ERROR"));
 	}
 });
 
