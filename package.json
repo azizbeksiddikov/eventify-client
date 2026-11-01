@@ -5,7 +5,7 @@
 	"author": "Azizbek Siddikov",
 	"license": "MIT",
 	"scripts": {
-		"dev": "next dev",
+		"dev": "next dev -p ${PORT:-4200}",
 		"build": "next build",
 		"start": "next start",
 		"lint": "npx eslint .",

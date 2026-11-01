@@ -8,6 +8,7 @@ Live at https://eventify.azbek.me, running from `master`.
 
 ## Done
 
+- Ports unified: prod 4000, dev 4100, local 4200; container port equals host port, set by `PORT` in the compose files. Local API is expected at 4201.
 - Events, groups, organizers, profiles, tickets, comments, likes and follows, notifications, admin panel (users, events, groups, currencies).
 - Four languages (en, ko, ru, uz), light and dark mode.
 - Currency-aware pricing: optional currency, auto-set currency on create, points formatting, clear errors for insufficient points.

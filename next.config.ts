@@ -27,7 +27,7 @@ const nextConfig = {
 			{
 				protocol: "http",
 				hostname: "localhost",
-				port: "3007",
+				port: "4201",
 				pathname: "/**",
 			},
 			// External event sources

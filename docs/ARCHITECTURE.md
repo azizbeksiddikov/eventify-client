@@ -6,7 +6,7 @@
 Browser
   │
   ▼
-reverse proxy ──► eventify-next  (Next.js standalone, container :3000)
+reverse proxy ──► eventify-next  (Next.js standalone, container :4000 prod / :4100 dev / :4200 local)
   │                              │
   │                              │ runs in the browser:
   │                              │   GraphQL  ──► NEXT_PUBLIC_API_GRAPHQL_URL  (/graphql)

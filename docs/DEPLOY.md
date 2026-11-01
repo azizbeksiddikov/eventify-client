@@ -4,7 +4,7 @@ The site runs in Docker behind a reverse proxy. Production runs only `master`. T
 
 ## Docker
 
-`Dockerfile` has three stages on Node 24 alpine: `base` (install dependencies with `npm ci`), `builder` (copies sources, runs `npm run build` with the two public variables as build args) and `runner` (copies only the `standalone` output, `.next/static` and `public`; runs as non-root `nextjs` under `dumb-init`; `node server.js` on port 3000).
+`Dockerfile` has three stages on Node 24 alpine: `base` (install dependencies with `npm ci`), `builder` (copies sources, runs `npm run build` with the two public variables as build args) and `runner` (copies only the `standalone` output, `.next/static` and `public`; runs as non-root `nextjs` under `dumb-init`; `node server.js` on port 4000 (`PORT` is set in each compose file)).
 
 |                 | Dev compose                | Prod compose                                           |
 | --------------- | -------------------------- | ------------------------------------------------------ |
@@ -12,7 +12,7 @@ The site runs in Docker behind a reverse proxy. Production runs only `master`. T
 | Container       | `eventify-next`            | `eventify-next-prod`                                   |
 | Image target    | `base`, runs `npm run dev` | full build, runs the standalone server                 |
 | Env file        | `.env.development`         | `.env.production` (also supplies the build args)       |
-| Host port       | 4020                       | 4000 (container 3000)                                  |
+| Host port       | 4100                       | 4000                                                   |
 | Restart         | unless-stopped             | always                                                 |
 | Limits / checks | none                       | 800 MB memory, healthcheck on `/api/health` every 30 s |
 

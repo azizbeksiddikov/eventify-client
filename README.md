@@ -11,7 +11,7 @@ Needs Node 24 and a running backend (or a reachable Eventify API).
 ```bash
 npm install
 cp .env.example .env.development   # set the two API URLs, see docs/KEYS.md
-npm run dev          # http://localhost:3000
+npm run dev          # http://localhost:4200
 npm test
 ```
 
