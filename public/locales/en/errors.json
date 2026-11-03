@@ -113,5 +113,11 @@
 	"INVALID_OBJECT_ID": "That link or ID isn't valid. Go back and try again.",
 	"LOGIN_FAILED": "Login failed. Please try again.",
 	"SIGNUP_FAILED": "Signup failed. Please try again.",
-	"COMMENT_CONTENT_REQUIRED": "Comment content is required"
+	"COMMENT_CONTENT_REQUIRED": "Comment content is required",
+	"page_not_found_title": "Page not found",
+	"page_not_found_message": "The page you are looking for does not exist. It may have moved, or the link may be wrong.",
+	"go_home": "Go to home page",
+	"error_page_title": "Something went wrong",
+	"error_page_message": "We hit an unexpected problem. You can try again, or go back to the home page.",
+	"try_again": "Try again"
 }

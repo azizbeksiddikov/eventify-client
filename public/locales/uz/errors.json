@@ -113,5 +113,11 @@
 	"INVALID_OBJECT_ID": "Havola yoki ID yaroqsiz. Orqaga qaytib, qayta urinib ko'ring.",
 	"LOGIN_FAILED": "Kirishda xatolik. Iltimos, qayta urinib ko'ring.",
 	"SIGNUP_FAILED": "Ro'yxatdan o'tishda xatolik. Iltimos, qayta urinib ko'ring.",
-	"COMMENT_CONTENT_REQUIRED": "Izoh tarkibi talab qilinadi"
+	"COMMENT_CONTENT_REQUIRED": "Izoh tarkibi talab qilinadi",
+	"page_not_found_title": "Sahifa topilmadi",
+	"page_not_found_message": "Siz izlayotgan sahifa mavjud emas. U ko'chirilgan bo'lishi yoki havola noto'g'ri bo'lishi mumkin.",
+	"go_home": "Bosh sahifaga o'tish",
+	"error_page_title": "Nimadir xato ketdi",
+	"error_page_message": "Kutilmagan muammo yuz berdi. Qayta urinib ko'ring yoki bosh sahifaga qayting.",
+	"try_again": "Qayta urinish"
 }

@@ -1,6 +1,6 @@
 # Progress: eventify-client
 
-Last updated: 2026-11-01
+Last updated: 2026-11-04
 
 ## Status
 
@@ -11,6 +11,7 @@ Live at https://eventify.azbek.me, running from `master`.
 - Ports unified: prod 4000, dev 4100, local 4200; container port equals host port, set by `PORT` in the compose files. Local API is expected at 4201.
 - Events, groups, organizers, profiles, tickets, comments, likes and follows, notifications, admin panel (users, events, groups, currencies).
 - Four languages (en, ko, ru, uz), light and dark mode.
+- Friendly error pages: `src/app/not-found.tsx` (unknown URL, real 404 status), `error.tsx` (a page crashed, with Try again and Home) and `global-error.tsx` (the layout itself crashed, plain English), checked at 350 to 1400 px.
 - Currency-aware pricing: optional currency, auto-set currency on create, points formatting, clear errors for insufficient points.
 - Friendly, translated error messages (`libs/errorMessages.ts`) and event date formatting (`libs/eventDates.ts`), both with tests.
 - Responsive pass: pagination overflow, tap targets, hero text, event images.
